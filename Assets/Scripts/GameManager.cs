@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 {
     public enum GameMode{
         None,
+        MainMenu,
         Draft,
         Match
     }
@@ -56,22 +57,16 @@ public class GameManager : MonoBehaviour
             PrintTeamPlayers();
             //print()
             mode = GameMode.Match;
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene("Match");//This should be team management screen
         }
         else
         {
+            if(mode == GameMode.Draft)
             // No save file, create new players
             GeneratePlayers(5); // Create 5 players
             //AlternateTeamsAndAddPlayers();//THIS WAS ALREADY TESTED!!!!!!
             
-            /*
-            //NOT NEED IT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            for (int i = 0; i < leagueTeams.Count; i++)
-            {
-                saveSystem.SaveTeam(leagueTeams[i]);
-            }
-            */
-            
+           
         }
     }
 
@@ -197,7 +192,7 @@ public class GameManager : MonoBehaviour
 
             // Change mode and scene
             mode = GameMode.Match;
-            SceneManager.LoadScene(1); // Change to your Match scene name
+            SceneManager.LoadScene("Match"); // Change to your Match scene name
         }
     }
 }
