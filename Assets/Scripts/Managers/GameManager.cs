@@ -42,12 +42,14 @@ public class GameManager : MonoBehaviour
         //saveSystem.ClearSave(team.TeamName);
         
         mode = GameMode.MainMenu;
+
         if (mode == GameMode.Draft)
         {
             glg_draftNames = GameObject.Find("DraftContent").GetComponent<GridLayoutGroup>();
         }
         // Check if there is a saved file for the team
-
+        #region Loading Teams
+        //Loadng teams
         if (IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
         {
             // Load the saved team
@@ -58,8 +60,8 @@ public class GameManager : MonoBehaviour
             }
             PrintTeamPlayers();
             //print()
-            mode = GameMode.Match;
-            SceneManager.LoadScene("Match");//This should be team management screen
+            //mode = GameMode.Match;
+            //SceneManager.LoadScene("Match");//This should be team management screen
         }
         else
         {
@@ -70,6 +72,7 @@ public class GameManager : MonoBehaviour
             
            
         }
+        #endregion
     }
 
     private void Update()
@@ -82,7 +85,7 @@ public class GameManager : MonoBehaviour
             
             
         }
-
+        #region Draft
         if (mode == GameMode.Draft)
         {
             if (mode == GameMode.Draft)
@@ -99,7 +102,7 @@ public class GameManager : MonoBehaviour
                 
             }
         }
-
+        #endregion
         if (mode == GameMode.Match)
         {
             print("Match State");
@@ -218,9 +221,17 @@ public class GameManager : MonoBehaviour
     //Testing
     public void AdvanceToDraft()
     {
+        if (IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
+        {
+            mode = GameMode.Match;
+            SceneManager.LoadScene("Match");//This should be team management screen
+        }
+        else
+        {
+            mode = GameMode.Draft;
+            SceneManager.LoadScene("Draft");
+        }
         
-        mode = GameMode.Draft;
-        SceneManager.LoadScene("Draft");
     }
 
 }
