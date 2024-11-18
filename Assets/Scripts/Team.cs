@@ -8,6 +8,7 @@ public class Team : MonoBehaviour
     public List<Player> playersListRoster = new List<Player>();
 
     public string TeamName;
+    public bool IsPlayerTeam = false;
 
     private void Awake()
     {
@@ -30,5 +31,9 @@ public class Team : MonoBehaviour
     public void ClearAllPlayers()
     {
         playersListRoster.Clear();
+    }
+    public void ActivatePlayerTeam()
+    {
+        IsPlayerTeam = true;
     }
 }

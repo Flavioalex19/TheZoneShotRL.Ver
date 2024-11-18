@@ -10,11 +10,17 @@ public class GameData : MonoBehaviour
 public class PlayerData
 {
     public string firstName;
+    public int inside;
+    public int mid;
+    public int outside;
     public int ovr;
 
     public PlayerData(Player player)
     {
-        firstName = player.playerFirstName;  // Assuming Player script has name set as firstName
+        firstName = player.playerFirstName;
+        inside = player.Inside;
+        mid = player.Mid;
+        outside = player.Outside;
         ovr = player.ovr;
     }
 }
@@ -24,10 +30,12 @@ public class TeamData
 {
     public List<PlayerData> playersListData = new List<PlayerData>();
     public string teamName;
+    public bool isPlayerControlled;
 
     public TeamData(Team team)
     {
         teamName = team.TeamName;  // Assuming Team script has a team name
+        isPlayerControlled = team.IsPlayerTeam;
         foreach (Player player in team.playersListRoster)
         {
             playersListData.Add(new PlayerData(player));

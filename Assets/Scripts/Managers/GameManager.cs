@@ -99,31 +99,52 @@ public class GameManager : MonoBehaviour
                         count++;
                     }
                 }
-                
+                //leagueTeams[1].IsPlayerTeam = true;//TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
             }
         }
         #endregion
+
+        #region Match
         if (mode == GameMode.Match)
         {
-            print("Match State");
+            //print("Match State");
             //PrintTeamPlayers();
             if(GameObject.Find("Text Area"))
             {
                 //leagueTeams[0].ClearAllPlayers();
                 Transform content = GameObject.Find("Text Area").transform;
+                Transform insideVariable = GameObject.Find("Inside Stat Text Area").transform;
+                Transform midVariable = GameObject.Find("Mid Stat Text Area").transform;
                 for (int i = 0; i < leagueTeams[0].playersListRoster.Count; i++)
                 {
 
                     content.GetChild(i).GetComponent<TextMeshProUGUI>().text = leagueTeams[0].playersListRoster[i].playerFirstName.ToString() + leagueTeams[0].playersListRoster[i].ovr.ToString();
+                    insideVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = leagueTeams[0].playersListRoster[i].Inside.ToString();
+                    midVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = leagueTeams[0].playersListRoster[i].Mid.ToString();
                 }
                 Transform awayContent = GameObject.Find("Text Area 2").transform;
-                
                 for (int i = 0; i < leagueTeams[1].playersListRoster.Count; i++)
                 {
                     awayContent.GetChild(i).GetComponent<TextMeshProUGUI>().text = leagueTeams[1].playersListRoster[i].playerFirstName.ToString();
                 }
             }
+            //testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if(GameObject.Find("Away Team Name Text"))
+            {
+                Transform aContentText = GameObject.Find("Away Team Name Text").transform;
+                for (int i = 0; i < leagueTeams.Count; i++)
+                {
+                    if (leagueTeams[i].IsPlayerTeam)
+                    {
+                        aContentText.GetComponent<TextMeshProUGUI>().text = leagueTeams[i].TeamName.ToString();
+                    }
+                }
+                
+            }
         }
+        #endregion
     }
 
     // Function to check if the save file exists
@@ -179,7 +200,9 @@ public class GameManager : MonoBehaviour
         GameObject newButton = Instantiate(player.bt_DraftInfo,glg_draftNames.transform, false);
         newButton.GetComponent<Button>().onClick.AddListener(() => AddPlayerToTeam(player, newButton.GetComponent<Button>()));
         newButton.GetComponent<Button>().transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = player.playerFirstName.ToString();
-        newButton.GetComponent<Button>().transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.ovr.ToString();
+        newButton.GetComponent<Button>().transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.Inside.ToString();
+        newButton.GetComponent<Button>().transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = player.Mid.ToString();
+        newButton.GetComponent<Button>().transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = player.Outside.ToString();
 
     }
     void AddPlayerToTeam(Player player, Button btn)

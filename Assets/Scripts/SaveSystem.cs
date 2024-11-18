@@ -43,6 +43,9 @@ public class SaveSystem : MonoBehaviour
                 Player newPlayer = new GameObject().AddComponent<Player>();
                 newPlayer.playerFirstName = playerData.firstName;
                 newPlayer.ovr = playerData.ovr;
+                newPlayer.Inside = playerData.inside;
+                newPlayer.Mid = playerData.mid;
+                newPlayer.Outside = playerData.outside;
                 team.playersListRoster.Add(newPlayer);
             }
 
