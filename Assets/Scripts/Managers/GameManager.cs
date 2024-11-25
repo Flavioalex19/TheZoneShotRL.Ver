@@ -95,7 +95,7 @@ public class GameManager : MonoBehaviour
                     glg_draftNames = GameObject.Find("DraftContent").GetComponent<GridLayoutGroup>();
                     if (count < 1)
                     {
-                        GeneratePlayers(5); // Create 5 players
+                        GeneratePlayers(8); // Create 5 players
                         count++;
                     }
                 }
@@ -107,22 +107,26 @@ public class GameManager : MonoBehaviour
         #endregion
 
         #region Match
+        //ui
         if (mode == GameMode.Match)
         {
             //print("Match State");
             //PrintTeamPlayers();
+            /*
             if(GameObject.Find("Text Area"))
             {
                 //leagueTeams[0].ClearAllPlayers();
                 Transform content = GameObject.Find("Text Area").transform;
                 Transform insideVariable = GameObject.Find("Inside Stat Text Area").transform;
                 Transform midVariable = GameObject.Find("Mid Stat Text Area").transform;
+                Transform outVariable = GameObject.Find("Out Stat Text Area").transform;
                 for (int i = 0; i < leagueTeams[0].playersListRoster.Count; i++)
                 {
 
-                    content.GetChild(i).GetComponent<TextMeshProUGUI>().text = leagueTeams[0].playersListRoster[i].playerFirstName.ToString() + leagueTeams[0].playersListRoster[i].ovr.ToString();
+                    content.GetChild(i).GetComponent<TextMeshProUGUI>().text = leagueTeams[0].playersListRoster[i].playerFirstName.ToString() + " " +leagueTeams[0].playersListRoster[i].ovr.ToString();
                     insideVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = leagueTeams[0].playersListRoster[i].Inside.ToString();
                     midVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = leagueTeams[0].playersListRoster[i].Mid.ToString();
+                    outVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = leagueTeams[0].playersListRoster[i].Outside.ToString();
                 }
                 Transform awayContent = GameObject.Find("Text Area 2").transform;
                 for (int i = 0; i < leagueTeams[1].playersListRoster.Count; i++)
@@ -143,8 +147,11 @@ public class GameManager : MonoBehaviour
                 }
                 
             }
+            */
         }
+        
         #endregion
+        
     }
 
     // Function to check if the save file exists

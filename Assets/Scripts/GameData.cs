@@ -13,7 +13,7 @@ public class PlayerData
     public int inside;
     public int mid;
     public int outside;
-    public int ovr;
+    public float ovr;
 
     public PlayerData(Player player)
     {

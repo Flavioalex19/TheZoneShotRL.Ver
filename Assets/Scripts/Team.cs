@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class Team : MonoBehaviour
 {
-
+    #region Saved Variables
     public List<Player> playersListRoster = new List<Player>();
 
     public string TeamName;
     public bool IsPlayerTeam = false;
-
+    #endregion
+    #region Match Variables
+    public bool hasPossession = false;
+    #endregion
     private void Awake()
     {
        
