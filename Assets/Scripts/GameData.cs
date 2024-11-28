@@ -14,6 +14,8 @@ public class PlayerData
     public int mid;
     public int outside;
     public float ovr;
+    public int awn;
+    public int persona;
 
     public PlayerData(Player player)
     {
@@ -22,6 +24,8 @@ public class PlayerData
         mid = player.Mid;
         outside = player.Outside;
         ovr = player.ovr;
+        awn = player.Awareness;
+        persona = player.Personality;
     }
 }
 

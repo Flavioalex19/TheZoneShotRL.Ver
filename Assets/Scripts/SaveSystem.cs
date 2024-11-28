@@ -46,6 +46,8 @@ public class SaveSystem : MonoBehaviour
                 newPlayer.Inside = playerData.inside;
                 newPlayer.Mid = playerData.mid;
                 newPlayer.Outside = playerData.outside;
+                newPlayer.Awareness = playerData.awn;
+                newPlayer.Personality = playerData.persona;
                 team.playersListRoster.Add(newPlayer);
             }
 

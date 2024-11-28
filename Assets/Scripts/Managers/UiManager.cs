@@ -8,6 +8,7 @@ public class UiManager : MonoBehaviour
     public static UiManager instance;
     
     GameManager gameManager;
+    MatchManager matchManager;
     void Awake()
     {
         // Check if an instance already exists
@@ -43,7 +44,7 @@ public class UiManager : MonoBehaviour
                 for (int i = 0; i < gameManager.leagueTeams[0].playersListRoster.Count; i++)
                 {
 
-                    content.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].playersListRoster[i].playerFirstName.ToString() + " " + gameManager.leagueTeams[0].playersListRoster[i].ovr.ToString();
+                    content.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].playersListRoster[i].playerFirstName.ToString() + " " + gameManager.leagueTeams[0].playersListRoster[i].ovr.ToString() + " AWA" + gameManager.leagueTeams[0].playersListRoster[i].Awareness.ToString();
                     insideVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].playersListRoster[i].Inside.ToString();
                     midVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].playersListRoster[i].Mid.ToString();
                     outVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].playersListRoster[i].Outside.ToString();
@@ -67,10 +68,26 @@ public class UiManager : MonoBehaviour
                 }
 
             }
+            //Possessions count text
+            if (GameObject.Find("NumberOfPossessionsText"))
+            {
+                Transform contentText = GameObject.Find("NumberOfPossessionsText").transform;
+                if (GameObject.Find("MatchManager"))
+                {
+                    matchManager = GameObject.Find("MatchManager").GetComponent<MatchManager>();
+                    contentText.GetComponent<TextMeshProUGUI>().text = matchManager.currentGamePossessons.ToString();
+                }
+                
+            }
             #endregion
 
         }
     }
         
+    public void PlaybyPlayText(string textContent)
+    {
+        Transform playByPlayText = GameObject.Find("play-by-playText").transform;
+        playByPlayText.GetComponent<TextMeshProUGUI>().text=textContent;
+    }
 }
 
