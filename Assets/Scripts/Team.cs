@@ -12,6 +12,7 @@ public class Team : MonoBehaviour
     #endregion
     #region Match Variables
     public bool hasPossession = false;
+    public int Score = 0;
     #endregion
     private void Awake()
     {

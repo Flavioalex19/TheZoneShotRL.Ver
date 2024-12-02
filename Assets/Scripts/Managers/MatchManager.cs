@@ -20,11 +20,12 @@ public class MatchManager : MonoBehaviour
     GameManager manager;
     UiManager uiManager;
     MatchStates match;
-    public int GamePossesions = 100;
+    public int GamePossesions = 10;
     public int currentGamePossessons;
     Team HomeTeam;
     Team AwayTeam;
     Team teamWithball;
+    Player playerWithTheBall;
     // Start is called before the first frame update
     void Start()
     {
@@ -43,18 +44,29 @@ public class MatchManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if(match == MatchStates.Start)PreparingMatch();
-        //if(match == MatchStates.Possesion)TeamPossession(teamWithball);
+        
     }
     IEnumerator GameFlow()
     {
-        //Step 1
-        if (match == MatchStates.Start)ChoosePlayerToCarrayBall();
-        yield return new WaitForSeconds(2f);
-        //Step 2
-        ChooseToPass();
-        yield return new WaitForSeconds(2f);
-        //uiManager.PlaybyPlayText("MatchEnded");
+        while (currentGamePossessons > 0)
+        {
+            //Step 1
+            if (match == MatchStates.Start) ChoosePlayerToCarrayBall();
+            else ChoosePlayerToCarrayBall();
+            match = MatchStates.Possesion;
+            yield return new WaitForSeconds(2f);
+            /*
+            //Step 2
+            ChooseToPass();
+            yield return new WaitForSeconds(2f);
+            */
+            //Step 2
+            yield return ChooseToPass();
+            //Step 3
+            yield return Scoring(playerWithTheBall);
+        }
+        
+        uiManager.PlaybyPlayText("MatchEnded");//This while be after/out of the while!!!!!
 
     }
     void ChoosePlayerToCarrayBall()
@@ -86,9 +98,9 @@ public class MatchManager : MonoBehaviour
         */
         playerWithHighAwareness.HasTheBall = true;
         uiManager.PlaybyPlayText(playerWithHighAwareness.playerFirstName + " " + " Has the ball" + " " + playerWithHighAwareness.HasTheBall);
-        match = MatchStates.Possesion;
+        //match = MatchStates.Possesion;
     }
-    void ChooseToPass()
+    IEnumerator ChooseToPass()
     {
         Player currentPlayer = null;
         for (int i = 0; i < teamWithball.playersListRoster.Count; i++)
@@ -97,15 +109,23 @@ public class MatchManager : MonoBehaviour
             {
                 currentPlayer = teamWithball.playersListRoster[i];
                 print(currentPlayer.playerFirstName + " HAS THE BALL!!!!!!!");
+                currentPlayer.CurrentZone = 0;
                 break; // Stop once the player with the ball is found
             }
         }
         while (true)
         {
+            if (currentGamePossessons <= 1)
+            {
+                print("Only one possession left, player must shoot.");
+                uiManager.PlaybyPlayText(currentPlayer.playerFirstName + " must shoot due to low possessions!");
+                playerWithTheBall = currentPlayer;
+                yield break; // Exit the passing loop and proceed to scoring
+            }
             int willMakeThePass = Random.Range(1, 4);
             //willMakeThePass = 1;
-            print(willMakeThePass);
-            if(willMakeThePass <= 2)
+            print(willMakeThePass +" WMP");
+            if(willMakeThePass < 3)
             {
                 print("Make the pass " + currentPlayer.playerFirstName);
                 Player nextPlayer = null;
@@ -122,22 +142,87 @@ public class MatchManager : MonoBehaviour
                 currentPlayer.HasTheBall = false;
                 nextPlayer.HasTheBall = true;
                 uiManager.PlaybyPlayText(currentPlayer.playerFirstName + " passes to " + nextPlayer.playerFirstName);
+                yield return new WaitForSeconds(2f);
                 print(currentPlayer.playerFirstName + " passes to " + nextPlayer.playerFirstName);
                 currentPlayer = nextPlayer;
+                currentPlayer.CurrentZone = 0;
                 currentGamePossessons--;
+                
                 
             }
             else
             {
                 print("No more passes allowed");
                 uiManager.PlaybyPlayText(currentPlayer.playerFirstName + " Try to score");
-                print(currentPlayer.playerFirstName + " Try to score");
-                currentGamePossessons--;
+                print(currentPlayer.playerFirstName + " Will Try to score");
+                yield return new WaitForSeconds(2f);
+                //Scoring(currentPlayer);
+                playerWithTheBall = currentPlayer;
+                //currentGamePossessons--;
                 break;
             }
 
         }
         
-
     }
+    
+    
+    IEnumerator Scoring(Player player)
+    {
+        while (true)
+        {
+            bool willShoot = Random.Range(1,4) < 3; // Adjust logic as needed
+            if (willShoot)
+            {
+                uiManager.PlaybyPlayText(player.playerFirstName + " takes a shot!");
+                yield return new WaitForSeconds(2f);
+                currentGamePossessons--;
+                bool hasScored= Random.Range(1, 4) < 3;
+                if (hasScored)
+                {
+                    player.PointsMatch += 2;
+                    teamWithball.Score += 2;
+                    uiManager.PlaybyPlayText(player.playerFirstName + " Has Scored" + " " + player.PointsMatch);
+                    
+                }
+                else
+                {
+                    uiManager.PlaybyPlayText(player.playerFirstName + " Missed");
+                }
+                yield return new WaitForSeconds(2f);
+                SwitchPossession(); // Switch possession after shot attempt
+                break; // Exit loop if shooting
+            }
+            else
+            {
+                if (currentGamePossessons <= 1)
+                {
+                    print("Only one possession left, player must shoot!");
+                    uiManager.PlaybyPlayText(player.playerFirstName + " must shoot due to low possessions!");
+                    continue; // Skip movement logic, forcing the player to attempt a shot
+                }
+                int newZone = Random.Range(player.CurrentZone, 3); // Restrict movement to current or forward zones
+                if (newZone > player.CurrentZone) // Only update if moving forward
+                {
+                    player.CurrentZone = newZone;
+                    uiManager.PlaybyPlayText(player.playerFirstName + " moves to zone " + player.CurrentZone);
+                    yield return new WaitForSeconds(2f);
+                    currentGamePossessons--;
+                    
+                }
+                else willShoot = true;
+            }
+
+            // Commented section for ball stolen logic
+            // if (ballStolen) break;
+        }
+        
+    }
+    void SwitchPossession()
+    {
+        teamWithball = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
+        playerWithTheBall = null;
+        uiManager.PlaybyPlayText("Possession switches to " + teamWithball.TeamName);
+    }
+
 }

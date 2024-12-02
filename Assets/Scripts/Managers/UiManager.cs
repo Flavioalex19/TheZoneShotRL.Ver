@@ -9,6 +9,11 @@ public class UiManager : MonoBehaviour
     
     GameManager gameManager;
     MatchManager matchManager;
+
+    //Match elements UI
+    Transform playerInfoInMach;
+    TextMeshProUGUI homeScoreText;
+    TextMeshProUGUI awayScoreText;
     void Awake()
     {
         // Check if an instance already exists
@@ -31,9 +36,36 @@ public class UiManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //ADD THIS AS A FUNCTION ALTER ON THE MATCH MANAGER!!!!!
         if(gameManager.mode == GameManager.GameMode.Match)
         {
             #region Player Info Match
+            if (GameObject.Find("Team A Players Area"))
+            {
+                playerInfoInMach = GameObject.Find("Team A Players Area").transform;
+                for (int i = 0; i < gameManager.leagueTeams[0].playersListRoster.Count; i++)
+                {
+                    playerInfoInMach.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].playersListRoster[i].playerFirstName.ToString();
+                }
+            }
+            if (GameObject.Find("Team B Players Area"))
+            {
+                playerInfoInMach = GameObject.Find("Team B Players Area").transform;
+                for (int i = 0; i < gameManager.leagueTeams[1].playersListRoster.Count; i++)
+                {
+                    playerInfoInMach.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[1].playersListRoster[i].playerFirstName.ToString();
+                }
+            }
+            //Scoreboard
+            if(GameObject.Find("Away Team Score Text") && GameObject.Find("Home Team Score Text"))
+            {
+                homeScoreText = GameObject.Find("Home Team Score Text").GetComponent<TextMeshProUGUI>();
+                awayScoreText = GameObject.Find("Away Team Score Text").GetComponent<TextMeshProUGUI>();
+
+                homeScoreText.text = gameManager.leagueTeams[0].Score.ToString();
+                awayScoreText.text = gameManager.leagueTeams[1].Score.ToString();
+            }
+            ///REMOVE THIS LATER    
             if (GameObject.Find("Text Area"))
             {
                 //leagueTeams[0].ClearAllPlayers();
@@ -83,11 +115,12 @@ public class UiManager : MonoBehaviour
 
         }
     }
-        
+    #region Match 
     public void PlaybyPlayText(string textContent)
     {
         Transform playByPlayText = GameObject.Find("play-by-playText").transform;
         playByPlayText.GetComponent<TextMeshProUGUI>().text=textContent;
     }
+    #endregion
 }
 

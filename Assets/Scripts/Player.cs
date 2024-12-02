@@ -36,6 +36,7 @@ public class Player : MonoBehaviour
     #region Match Variables
     public bool HasTheBall = false;
     public int CurrentZone = 0;
+    public int PointsMatch = 0;
     #endregion
     private void Start()
     {
