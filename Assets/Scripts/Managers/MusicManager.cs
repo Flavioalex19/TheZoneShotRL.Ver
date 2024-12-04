@@ -9,6 +9,8 @@ public class MusicManager : MonoBehaviour
     public List<AudioClip> songs = new List<AudioClip>();
 
     bool canChangeSong = true;
+
+    UiManager uiManager;
     void Awake()
     {
         // Check if an instance already exists
@@ -21,6 +23,7 @@ public class MusicManager : MonoBehaviour
         {
             Destroy(gameObject); // Ensures only one instance exists
         }
+        uiManager = GameObject.Find("UIManager").GetComponent<UiManager>();
     }
     private void Start()
     {
@@ -43,6 +46,7 @@ public class MusicManager : MonoBehaviour
         // Choose a random clip from the list
         AudioClip selectedClip = songs[Random.Range(0, songs.Count)];
         audioSource.clip = selectedClip;
+        uiManager.UpdateCurrentSongAlert(audioSource.clip.name);
         audioSource.Play();
 
         // Start the coroutine to play the next song when this one finishes
@@ -52,6 +56,7 @@ public class MusicManager : MonoBehaviour
     IEnumerator WaitForClipToEnd(float clipLength)
     {
         yield return new WaitForSeconds(clipLength);
+        uiManager.ReturnAnimTest();
         PlayRandomAudioClip(); // Play a new random clip when the current one ends
     }
 }

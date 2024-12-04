@@ -129,6 +129,7 @@ public class MatchManager : MonoBehaviour
             {
                 print("Make the pass " + currentPlayer.playerFirstName);
                 Player nextPlayer = null;
+                /*
                 for (int i = 0; i < teamWithball.playersListRoster.Count; i++)
                 {
                     if (teamWithball.playersListRoster[i].HasTheBall == false)
@@ -138,6 +139,14 @@ public class MatchManager : MonoBehaviour
                         break;
                     }
                 }
+                */
+                List<Player> availablePlayers = teamWithball.playersListRoster
+    .Where(player => !player.HasTheBall).ToList();
+                if (availablePlayers.Count > 0)
+                {
+                    nextPlayer = availablePlayers[Random.Range(0, availablePlayers.Count)];
+                }
+
                 print(nextPlayer.playerFirstName + " wants to reveice the ball from " + currentPlayer.playerFirstName);
                 currentPlayer.HasTheBall = false;
                 nextPlayer.HasTheBall = true;
@@ -177,11 +186,26 @@ public class MatchManager : MonoBehaviour
                 uiManager.PlaybyPlayText(player.playerFirstName + " takes a shot!");
                 yield return new WaitForSeconds(2f);
                 currentGamePossessons--;
-                bool hasScored= Random.Range(1, 4) < 3;
+                bool hasScored= /*Random.Range(1, 4) < 3*/Random.Range(1, 100) < (player.Inside + player.Mid + player.Outside / 3) - 100;
                 if (hasScored)
                 {
-                    player.PointsMatch += 2;
-                    teamWithball.Score += 2;
+                    //player.PointsMatch += 2;
+                    //teamWithball.Score += 2;
+                    if(player.CurrentZone == 0)
+                    {
+                        player.PointsMatch += 4;
+                        teamWithball.Score += 4;
+                    }
+                    else if (player.CurrentZone == 1)
+                    {
+                        player.PointsMatch += 3;
+                        teamWithball.Score += 3;
+                    }
+                    else
+                    {
+                        player.PointsMatch += 2;
+                        teamWithball.Score += 2;
+                    }
                     uiManager.PlaybyPlayText(player.playerFirstName + " Has Scored" + " " + player.PointsMatch);
                     
                 }

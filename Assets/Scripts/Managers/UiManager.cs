@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UiManager : MonoBehaviour
 {
@@ -9,6 +10,10 @@ public class UiManager : MonoBehaviour
     
     GameManager gameManager;
     MatchManager matchManager;
+
+    //Team Management UI
+    public GameObject btn_AdvanceToMatch;
+    public bool hasbeenCreatedTheBtn = false;
 
     //Match elements UI
     Transform playerInfoInMach;
@@ -37,7 +42,8 @@ public class UiManager : MonoBehaviour
     void Update()
     {
         //ADD THIS AS A FUNCTION ALTER ON THE MATCH MANAGER!!!!!
-        if(gameManager.mode == GameManager.GameMode.Match)
+        #region Match
+        if (gameManager.mode == GameManager.GameMode.Match)
         {
             #region Player Info Match
             if (GameObject.Find("Team A Players Area"))
@@ -46,6 +52,7 @@ public class UiManager : MonoBehaviour
                 for (int i = 0; i < gameManager.leagueTeams[0].playersListRoster.Count; i++)
                 {
                     playerInfoInMach.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].playersListRoster[i].playerFirstName.ToString();
+                    playerInfoInMach.GetChild(i).GetChild(3).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].playersListRoster[i].PointsMatch.ToString();
                 }
             }
             if (GameObject.Find("Team B Players Area"))
@@ -54,6 +61,7 @@ public class UiManager : MonoBehaviour
                 for (int i = 0; i < gameManager.leagueTeams[1].playersListRoster.Count; i++)
                 {
                     playerInfoInMach.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[1].playersListRoster[i].playerFirstName.ToString();
+                    playerInfoInMach.GetChild(i).GetChild(3).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[1].playersListRoster[i].PointsMatch.ToString();
                 }
             }
             //Scoreboard
@@ -112,8 +120,27 @@ public class UiManager : MonoBehaviour
                 
             }
             #endregion
-
+            
         }
+        #endregion
+        #region Team Managemet
+        if (gameManager.mode == GameManager.GameMode.TeamManagement && hasbeenCreatedTheBtn == false)
+        {
+            print("TM Screen");
+            GameObject matchButton = GameObject.Find("Match Button");
+            if (matchButton != null && matchButton.activeInHierarchy)
+            {
+                btn_AdvanceToMatch = matchButton;
+                btn_AdvanceToMatch.GetComponent<Button>().onClick.AddListener(() => gameManager.GoToMatch());
+                hasbeenCreatedTheBtn = true;
+            }
+            else
+            {
+                print("Match Button not found or inactive.");
+            }
+        }
+
+        #endregion
     }
     #region Match 
     public void PlaybyPlayText(string textContent)
@@ -122,5 +149,29 @@ public class UiManager : MonoBehaviour
         playByPlayText.GetComponent<TextMeshProUGUI>().text=textContent;
     }
     #endregion
+
+    public void UpdateCurrentSongAlert(string songName)
+    {
+        print("New Song");
+        if(GameObject.Find("Current Song Panel"))
+        {
+            Animator songAnim = GameObject.Find("Current Song Panel").GetComponent<Animator>();
+            TextMeshProUGUI songText = GameObject.Find("Current Song Panel").GetComponentInChildren<TextMeshProUGUI>();
+            songText.text = songName.ToString();
+            songAnim.SetTrigger("Play");
+
+        }
+    }
+    public void ReturnAnimTest()
+    {
+        if (GameObject.Find("Current Song Panel"))
+        {
+            Animator songAnim = GameObject.Find("Current Song Panel").GetComponent<Animator>();
+            //TextMeshProUGUI songText = GameObject.Find("Current Song Panel").GetComponentInChildren<TextMeshProUGUI>();
+            //songText.text = songName.ToString();
+            songAnim.SetTrigger("Return");
+
+        }
+    }
 }
 

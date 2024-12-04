@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
         None,
         MainMenu,
         Draft,
+        TeamManagement,
         Match
     }
     public GameMode mode;
@@ -251,10 +252,24 @@ public class GameManager : MonoBehaviour
     //Testing
     public void AdvanceToDraft()
     {
+        /*
+        if (GameObject.Find("Transition"))
+        {
+            print("Play transition");
+            Animator transitionAnim = GameObject.Find("Transition").GetComponent<Animator>();
+            transitionAnim.SetTrigger("Play");
+            StartCoroutine(Delay());
+        }*/
+        
         if (IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
         {
+            /*
             mode = GameMode.Match;
             SceneManager.LoadScene("Match");//This should be team management screen
+            */
+            print("TO TM");
+            mode = GameMode.TeamManagement;
+            SceneManager.LoadScene("MyTeamScreen");//This should be team management screen
         }
         else
         {
@@ -262,6 +277,17 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene("Draft");
         }
         
-    }
 
+
+
+    }
+    public void GoToMatch()
+    {
+        mode = GameMode.Match;
+        SceneManager.LoadScene("Match");
+    }
+    IEnumerator Delay()
+    {
+        yield return new WaitForSeconds(2f);
+    }
 }

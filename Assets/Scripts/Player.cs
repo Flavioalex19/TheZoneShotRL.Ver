@@ -19,7 +19,8 @@ public class Player : MonoBehaviour
     // Array of 8 player names
     private static readonly string[] names =
     {
-        "Albert", "Joseph", "Jonh", "Philip", "George", "Isaac", "Alan", "Homer", "Devon", "Clark", "Peter", "William", "Alexandre", "Rick", "Dante", "Virgil", "Frank"
+        "Albert", "Joseph", "Jonh", "Philip", "George", "Isaac", "Alan", "Homer", "Devon", "Clark", "Peter", "William", "Alexandre", "Rick", "Dante", "Virgil", "Frank" ,
+        "Caleb", "Rio"
     };
     [SerializeField] public string playerFirstName;
     [SerializeField] public float ovr;
