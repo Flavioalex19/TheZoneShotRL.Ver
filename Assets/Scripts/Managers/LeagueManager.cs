@@ -49,6 +49,7 @@ public class LeagueManager : MonoBehaviour
     {
         if(canGenerateEvents == true && gameManager.mode == GameManager.GameMode.TeamManagement)
         {
+            
             NewWeek();
         }
     }
@@ -59,8 +60,24 @@ public class LeagueManager : MonoBehaviour
         
         if (GameObject.Find("Choices"))
         {
-            
-            
+            //CHANGE TO SWITVH LATER ON!!!!!!!!!!!!!!!!!!!!!!!!
+            if (Week == 2)
+            {
+                eventOptions.Add(new EventOption { Description = "We have to win at any cost!", Modifier = Random.Range(1, 5) });
+                eventOptions.Add(new EventOption { Description = "We must manage expectations.", Modifier = Random.Range(1, 5) });
+                eventOptions.Add(new EventOption { Description = "Discipline and hard work are the focus.", Modifier = Random.Range(1, 5) });
+                eventOptions.Add(new EventOption { Description = "Power of friendship is the key guys", Modifier = Random.Range(1, 5) });
+                eventOptions.Add(new EventOption { Description = "This league will be yours!", Modifier = Random.Range(1, 5) });
+            }
+            else if (Week == 3)
+            {
+                eventOptions.Add(new EventOption { Description = "We have to win at any cost!", Modifier = Random.Range(1, 5) });
+                eventOptions.Add(new EventOption { Description = "We must manage expectations.", Modifier = Random.Range(1, 5) });
+                eventOptions.Add(new EventOption { Description = "Discipline and hard work are the focus.", Modifier = Random.Range(1, 5) });
+                eventOptions.Add(new EventOption { Description = "Power of friendship is the key guys", Modifier = Random.Range(1, 5) });
+                eventOptions.Add(new EventOption { Description = "This league will be yours!", Modifier = Random.Range(1, 5) });
+            }
+
             Transform ChoiceButtonsTransform = GameObject.Find("ChoiceButtons").transform;
             List<EventOption> tempOptions = new List<EventOption>(eventOptions); // Clone the list
 

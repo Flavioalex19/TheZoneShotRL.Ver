@@ -24,6 +24,7 @@ public class MusicManager : MonoBehaviour
             Destroy(gameObject); // Ensures only one instance exists
         }
         uiManager = GameObject.Find("UIManager").GetComponent<UiManager>();
+        
     }
     private void Start()
     {
@@ -41,8 +42,9 @@ public class MusicManager : MonoBehaviour
     }
     void PlayRandomAudioClip()
     {
+        
         if (songs.Count == 0) return;
-
+        
         // Choose a random clip from the list
         AudioClip selectedClip = songs[Random.Range(0, songs.Count)];
         audioSource.clip = selectedClip;
@@ -58,5 +60,9 @@ public class MusicManager : MonoBehaviour
         yield return new WaitForSeconds(clipLength);
         uiManager.ReturnAnimTest();
         PlayRandomAudioClip(); // Play a new random clip when the current one ends
+    }
+    IEnumerator IntroDelay()
+    {
+        yield return new WaitForSeconds(3);
     }
 }

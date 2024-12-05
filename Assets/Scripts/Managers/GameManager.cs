@@ -21,6 +21,9 @@ public class GameManager : MonoBehaviour
     public SaveSystem saveSystem; // Reference to the SaveSystem
     public static GameManager Instance { get; private set; }
 
+    LeagueManager leagueManager;
+    UiManager uiManager;
+
     GridLayoutGroup glg_draftNames;
     int currentTeamIndex = 0;
 
@@ -40,8 +43,10 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        //saveSystem.ClearSave(team.TeamName);
         
+        //saveSystem.ClearSave(team.TeamName);
+        leagueManager =GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
+        uiManager = GameObject.Find("UIManager").GetComponent<UiManager>();
         mode = GameMode.MainMenu;
 
         if (mode == GameMode.Draft)
@@ -83,8 +88,13 @@ public class GameManager : MonoBehaviour
         {
             saveSystem.ClearSave(leagueTeams[0].TeamName, leagueTeams[0]);
             saveSystem.ClearSave(leagueTeams[1].TeamName, leagueTeams[1]);
-            
-            
+            Application.Quit();
+
+
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
         }
         #region Draft
         if (mode == GameMode.Draft)
@@ -267,7 +277,7 @@ public class GameManager : MonoBehaviour
             mode = GameMode.Match;
             SceneManager.LoadScene("Match");//This should be team management screen
             */
-            print("TO TM");
+            
             mode = GameMode.TeamManagement;
             SceneManager.LoadScene("MyTeamScreen");//This should be team management screen
         }
@@ -286,6 +296,16 @@ public class GameManager : MonoBehaviour
         mode = GameMode.Match;
         SceneManager.LoadScene("Match");
     }
+    public void ReturnToTeamManegement()
+    {
+        mode = GameMode.TeamManagement;
+        leagueManager.canGenerateEvents = true;
+        leagueTeams[0].Score = 0;
+        leagueTeams[1].Score = 0;
+        uiManager.hasbeenCreatedTheBtn = false;
+        SceneManager.LoadScene("MyTeamScreen");//This should be team management screen
+    }
+    
     IEnumerator Delay()
     {
         yield return new WaitForSeconds(2f);

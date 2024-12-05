@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
+using UnityEngine.UI;
+//using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class MatchManager : MonoBehaviour
 {
@@ -26,17 +27,37 @@ public class MatchManager : MonoBehaviour
     Team AwayTeam;
     Team teamWithball;
     Player playerWithTheBall;
+    //UI Elemens test
+    GameObject EndScreenStatsPanel;
+    Button btn_ReturnToTeamManagement;
+
     // Start is called before the first frame update
     void Start()
     {
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
         uiManager = GameObject.Find("UIManager").GetComponent<UiManager>();
+        btn_ReturnToTeamManagement = GameObject.Find("Advance to Team Management Screen Button").GetComponent<Button>();
+        EndScreenStatsPanel = GameObject.Find("End Game Stats");
+        btn_ReturnToTeamManagement.onClick.AddListener(()=>manager.ReturnToTeamManegement());
+        EndScreenStatsPanel.SetActive(false);
         match = MatchStates.Start;
         currentGamePossessons = GamePossesions;
         //TESTING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         HomeTeam = manager.leagueTeams[0];
         AwayTeam = manager.leagueTeams[1];
+        HomeTeam.Score = 0;
+        AwayTeam.Score = 0;
         teamWithball = HomeTeam;//Change Later
+
+        //JUST FOR TESTINg
+        for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
+        {
+            HomeTeam.playersListRoster[i].PointsMatch = 0;
+        }
+        for (int i = 0; i < AwayTeam.playersListRoster.Count; i++)
+        {
+            AwayTeam.playersListRoster[i].PointsMatch = 0;
+        }
 
         StartCoroutine(GameFlow());
     }
@@ -66,7 +87,9 @@ public class MatchManager : MonoBehaviour
             yield return Scoring(playerWithTheBall);
         }
         
-        uiManager.PlaybyPlayText("MatchEnded");//This while be after/out of the while!!!!!
+        uiManager.PlaybyPlayText("MatchEnded");
+        
+        EndScreenStatsPanel.SetActive(true);
 
     }
     void ChoosePlayerToCarrayBall()

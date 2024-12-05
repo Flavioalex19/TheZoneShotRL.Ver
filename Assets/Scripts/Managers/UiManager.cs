@@ -121,9 +121,11 @@ public class UiManager : MonoBehaviour
             }
             #endregion
             
+
         }
         #endregion
         #region Team Managemet
+        /*
         if (gameManager.mode == GameManager.GameMode.TeamManagement && hasbeenCreatedTheBtn == false)
         {
             print("TM Screen");
@@ -139,8 +141,26 @@ public class UiManager : MonoBehaviour
                 print("Match Button not found or inactive.");
             }
         }
-
+        */
         #endregion
+    }
+    private void FixedUpdate()
+    {
+        if (gameManager.mode == GameManager.GameMode.TeamManagement && hasbeenCreatedTheBtn == false)
+        {
+            print("TM Screen");
+            GameObject matchButton = GameObject.Find("Match Button");
+            if (matchButton != null && matchButton.activeInHierarchy)
+            {
+                btn_AdvanceToMatch = matchButton;
+                btn_AdvanceToMatch.GetComponent<Button>().onClick.AddListener(() => gameManager.GoToMatch());
+                hasbeenCreatedTheBtn = true;
+            }
+            else
+            {
+                print("Match Button not found or inactive.");
+            }
+        }
     }
     #region Match 
     public void PlaybyPlayText(string textContent)
