@@ -125,30 +125,14 @@ public class UiManager : MonoBehaviour
         }
         #endregion
         #region Team Managemet
-        /*
-        if (gameManager.mode == GameManager.GameMode.TeamManagement && hasbeenCreatedTheBtn == false)
-        {
-            print("TM Screen");
-            GameObject matchButton = GameObject.Find("Match Button");
-            if (matchButton != null && matchButton.activeInHierarchy)
-            {
-                btn_AdvanceToMatch = matchButton;
-                btn_AdvanceToMatch.GetComponent<Button>().onClick.AddListener(() => gameManager.GoToMatch());
-                hasbeenCreatedTheBtn = true;
-            }
-            else
-            {
-                print("Match Button not found or inactive.");
-            }
-        }
-        */
+        
         #endregion
     }
     private void FixedUpdate()
     {
         if (gameManager.mode == GameManager.GameMode.TeamManagement && hasbeenCreatedTheBtn == false)
         {
-            print("TM Screen");
+            print("TM Screen -----------------------------");
             GameObject matchButton = GameObject.Find("Match Button");
             if (matchButton != null && matchButton.activeInHierarchy)
             {
@@ -161,7 +145,17 @@ public class UiManager : MonoBehaviour
                 print("Match Button not found or inactive.");
             }
         }
+        
     }
+    #region Team Management
+    public void SetChoiceText(string Message)
+    {
+        if (GameObject.Find("ChoiceText"))
+        {
+            GameObject.Find("ChoiceText").GetComponent<TextMeshProUGUI>().text = Message;
+        }
+    }
+    #endregion
     #region Match 
     public void PlaybyPlayText(string textContent)
     {
@@ -187,8 +181,6 @@ public class UiManager : MonoBehaviour
         if (GameObject.Find("Current Song Panel"))
         {
             Animator songAnim = GameObject.Find("Current Song Panel").GetComponent<Animator>();
-            //TextMeshProUGUI songText = GameObject.Find("Current Song Panel").GetComponentInChildren<TextMeshProUGUI>();
-            //songText.text = songName.ToString();
             songAnim.SetTrigger("Return");
 
         }

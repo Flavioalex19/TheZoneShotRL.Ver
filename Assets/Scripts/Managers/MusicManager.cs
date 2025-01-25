@@ -5,7 +5,7 @@ using UnityEngine;
 public class MusicManager : MonoBehaviour
 {
     private static MusicManager instance;
-    public AudioSource audioSource;
+    public AudioSource MainAudioSource;//Main Audio Source
     public List<AudioClip> songs = new List<AudioClip>();
 
     bool canChangeSong = true;
@@ -28,17 +28,20 @@ public class MusicManager : MonoBehaviour
     }
     private void Start()
     {
+        //Start Playing Songs
+        //PlayRandomAudioClip();
+        StartCoroutine(DelayForMusicStart());
         
-        //audioSource.clip = songs[3];
-        //audioSource.Play();
-        PlayRandomAudioClip();
     }
     private void Update()
     {
-        if (canChangeSong)
-        {
-
-        }
+        
+    }
+    IEnumerator DelayForMusicStart()
+    {
+        yield return new WaitForSeconds(5); // 3-second delay
+        PlayRandomAudioClip();             // Start playing music
+        
     }
     void PlayRandomAudioClip()
     {
@@ -47,9 +50,9 @@ public class MusicManager : MonoBehaviour
         
         // Choose a random clip from the list
         AudioClip selectedClip = songs[Random.Range(0, songs.Count)];
-        audioSource.clip = selectedClip;
-        uiManager.UpdateCurrentSongAlert(audioSource.clip.name);
-        audioSource.Play();
+        MainAudioSource.clip = selectedClip;
+        uiManager.UpdateCurrentSongAlert(MainAudioSource.clip.name);
+        MainAudioSource.Play();
 
         // Start the coroutine to play the next song when this one finishes
         StartCoroutine(WaitForClipToEnd(selectedClip.length));

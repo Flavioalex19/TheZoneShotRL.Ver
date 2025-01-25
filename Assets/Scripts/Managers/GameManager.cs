@@ -118,48 +118,7 @@ public class GameManager : MonoBehaviour
         #endregion
 
         #region Match
-        //ui
-        if (mode == GameMode.Match)
-        {
-            //print("Match State");
-            //PrintTeamPlayers();
-            /*
-            if(GameObject.Find("Text Area"))
-            {
-                //leagueTeams[0].ClearAllPlayers();
-                Transform content = GameObject.Find("Text Area").transform;
-                Transform insideVariable = GameObject.Find("Inside Stat Text Area").transform;
-                Transform midVariable = GameObject.Find("Mid Stat Text Area").transform;
-                Transform outVariable = GameObject.Find("Out Stat Text Area").transform;
-                for (int i = 0; i < leagueTeams[0].playersListRoster.Count; i++)
-                {
-
-                    content.GetChild(i).GetComponent<TextMeshProUGUI>().text = leagueTeams[0].playersListRoster[i].playerFirstName.ToString() + " " +leagueTeams[0].playersListRoster[i].ovr.ToString();
-                    insideVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = leagueTeams[0].playersListRoster[i].Inside.ToString();
-                    midVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = leagueTeams[0].playersListRoster[i].Mid.ToString();
-                    outVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = leagueTeams[0].playersListRoster[i].Outside.ToString();
-                }
-                Transform awayContent = GameObject.Find("Text Area 2").transform;
-                for (int i = 0; i < leagueTeams[1].playersListRoster.Count; i++)
-                {
-                    awayContent.GetChild(i).GetComponent<TextMeshProUGUI>().text = leagueTeams[1].playersListRoster[i].playerFirstName.ToString();
-                }
-            }
-            //testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            if(GameObject.Find("Away Team Name Text"))
-            {
-                Transform aContentText = GameObject.Find("Away Team Name Text").transform;
-                for (int i = 0; i < leagueTeams.Count; i++)
-                {
-                    if (leagueTeams[i].IsPlayerTeam)
-                    {
-                        aContentText.GetComponent<TextMeshProUGUI>().text = leagueTeams[i].TeamName.ToString();
-                    }
-                }
-                
-            }
-            */
-        }
+        
         
         #endregion
         
@@ -252,32 +211,19 @@ public class GameManager : MonoBehaviour
                 saveSystem.SaveTeam(leagueTeams[i]);
             }
 
-            // Change mode and scene
-            mode = GameMode.Match;
-            SceneManager.LoadScene("Match"); // Change to your Match scene name
+            // Change mode and scene---THIA COULD BE A BUTTON!!!!!!!!!!!!!!!!
+            mode = GameMode.TeamManagement;
+            SceneManager.LoadScene("MyTeamScreen");
         }
     }
 
     
-    //Testing
+    //Testing!!!!!!!!!!!!!!!!!!!!!
     public void AdvanceToDraft()
     {
-        /*
-        if (GameObject.Find("Transition"))
-        {
-            print("Play transition");
-            Animator transitionAnim = GameObject.Find("Transition").GetComponent<Animator>();
-            transitionAnim.SetTrigger("Play");
-            StartCoroutine(Delay());
-        }*/
         
         if (IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
         {
-            /*
-            mode = GameMode.Match;
-            SceneManager.LoadScene("Match");//This should be team management screen
-            */
-            
             mode = GameMode.TeamManagement;
             SceneManager.LoadScene("MyTeamScreen");//This should be team management screen
         }
@@ -286,10 +232,6 @@ public class GameManager : MonoBehaviour
             mode = GameMode.Draft;
             SceneManager.LoadScene("Draft");
         }
-        
-
-
-
     }
     public void GoToMatch()
     {
@@ -303,7 +245,7 @@ public class GameManager : MonoBehaviour
         leagueTeams[0].Score = 0;
         leagueTeams[1].Score = 0;
         uiManager.hasbeenCreatedTheBtn = false;
-        SceneManager.LoadScene("MyTeamScreen");//This should be team management screen
+        SceneManager.LoadScene("MyTeamScreen");
     }
     
     IEnumerator Delay()

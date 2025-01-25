@@ -76,11 +76,6 @@ public class MatchManager : MonoBehaviour
             else ChoosePlayerToCarrayBall();
             match = MatchStates.Possesion;
             yield return new WaitForSeconds(2f);
-            /*
-            //Step 2
-            ChooseToPass();
-            yield return new WaitForSeconds(2f);
-            */
             //Step 2
             yield return ChooseToPass();
             //Step 3
@@ -108,17 +103,6 @@ public class MatchManager : MonoBehaviour
             }
         }
         print(playerWithHighAwareness.playerFirstName);
-        /*
-        // Set HasTheBall to true for the identified player
-        if (playerWithHighAwareness != null)
-        {
-            foreach (Player player in teamWithball.playersListRoster)
-            {
-                player.HasTheBall = false; // Reset for all players
-            }
-            playerWithHighAwareness.HasTheBall = true;
-        }
-        */
         playerWithHighAwareness.HasTheBall = true;
         uiManager.PlaybyPlayText(playerWithHighAwareness.playerFirstName + " " + " Has the ball" + " " + playerWithHighAwareness.HasTheBall);
         //match = MatchStates.Possesion;
