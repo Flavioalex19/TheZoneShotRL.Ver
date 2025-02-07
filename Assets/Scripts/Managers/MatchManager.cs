@@ -23,12 +23,12 @@ public class MatchManager : MonoBehaviour
     MatchStates match;
     public int GamePossesions = 10;
     public int currentGamePossessons;
-    Team HomeTeam;
-    Team AwayTeam;
+    public Team HomeTeam;
+    public Team AwayTeam;
     Team teamWithball;
     Player playerWithTheBall;
     //UI Elemens test
-    GameObject EndScreenStatsPanel;
+    public GameObject EndScreenStatsPanel;
     Button btn_ReturnToTeamManagement;
 
     // Start is called before the first frame update

@@ -36,6 +36,7 @@ public class UiManager : MonoBehaviour
     void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        
     }
 
     // Update is called once per frame
@@ -125,8 +126,59 @@ public class UiManager : MonoBehaviour
         }
         #endregion
         #region Team Managemet
-        
+
         #endregion
+
+        /*
+        if (GameObject.Find("MatchManager"))
+        {
+           
+            if (matchManager.currentGamePossessons == 0)
+            {
+                matchManager = GameObject.Find("MatchManager").GetComponent<MatchManager>();
+                GameObject teamAStatsName = GameObject.Find("TeamANames");
+                GameObject teamAStatsPts = GameObject.Find("TeamAPoints");
+                for (int i = 0; i < matchManager.HomeTeam.playersListRoster.Count; i++)
+                {
+                    teamAStatsName.transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = matchManager.HomeTeam.playersListRoster[i].playerFirstName.ToString();
+                }
+            }
+        }
+        */
+        if (GameObject.Find("MatchManager"))
+        {
+            if (matchManager.currentGamePossessons == 0)
+            {
+                matchManager = GameObject.Find("MatchManager").GetComponent<MatchManager>();
+                GameObject teamAStatsName = GameObject.Find("TeamANames");
+                GameObject teamAStatsPts = GameObject.Find("TeamAPoints");
+                GameObject teamBStatsName = GameObject.Find("TeamBNames");
+                GameObject teamBStatsPts = GameObject.Find("TeamBPoints");
+
+                if (teamAStatsName != null) // Check if the object exists
+                {
+                    for (int i = 0; i < matchManager.HomeTeam.playersListRoster.Count; i++)
+                    {
+                        if (i < teamAStatsName.transform.childCount) // Prevent out-of-bounds errors
+                        {
+                            teamAStatsName.transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = matchManager.HomeTeam.playersListRoster[i].playerFirstName.ToString();
+                            teamAStatsPts.transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = matchManager.HomeTeam.playersListRoster[i].PointsMatch.ToString();
+                        }
+                    }
+                }
+                if (teamAStatsName != null) // Check if the object exists
+                {
+                    for (int i = 0; i < matchManager.AwayTeam.playersListRoster.Count; i++)
+                    {
+                        if (i < teamAStatsName.transform.childCount) // Prevent out-of-bounds errors
+                        {
+                            teamBStatsName.transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = matchManager.AwayTeam.playersListRoster[i].playerFirstName.ToString();
+                            teamBStatsPts.transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = matchManager.AwayTeam.playersListRoster[i].PointsMatch.ToString();
+                        }
+                    }
+                }
+            }
+        }
     }
     private void FixedUpdate()
     {
@@ -162,6 +214,8 @@ public class UiManager : MonoBehaviour
         Transform playByPlayText = GameObject.Find("play-by-playText").transform;
         playByPlayText.GetComponent<TextMeshProUGUI>().text=textContent;
     }
+    //After Game
+
     #endregion
 
     public void UpdateCurrentSongAlert(string songName)
