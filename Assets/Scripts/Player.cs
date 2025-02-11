@@ -20,10 +20,11 @@ public class Player : MonoBehaviour
     private static readonly string[] names =
     {
         "Albert", "Joseph", "Jonh", "Philip", "George", "Isaac", "Alan", "Homer", "Devon", "Clark", "Peter", "William", "Alexandre", "Rick", "Dante", "Virgil", "Frank" ,
-        "Caleb", "Rio"
+        "Caleb", "Rio", "Luke", "Morgan"
     };
     [SerializeField] public string playerFirstName;
     [SerializeField] public float ovr;
+    public int Shooting;
     public int Inside;
     public int Mid;
     public int Outside;
@@ -47,7 +48,8 @@ public class Player : MonoBehaviour
     // Function to randomly generate a player's OVR and name
     public void GenerateRandomPlayer()
     {
-         // Random OVR between 60 and 99
+        // Random OVR between 60 and 99
+        Shooting = Random.Range(40,99);
         Inside = Random.Range(40, 99);
         Mid = Random.Range(40, 99);
         Outside = Random.Range(40, 99);

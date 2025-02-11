@@ -10,6 +10,7 @@ public class GameData : MonoBehaviour
 public class PlayerData
 {
     public string firstName;
+    public int shooting;
     public int inside;
     public int mid;
     public int outside;
@@ -20,6 +21,7 @@ public class PlayerData
     public PlayerData(Player player)
     {
         firstName = player.playerFirstName;
+        shooting = player.Shooting;
         inside = player.Inside;
         mid = player.Mid;
         outside = player.Outside;

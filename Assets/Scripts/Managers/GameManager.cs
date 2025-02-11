@@ -53,6 +53,13 @@ public class GameManager : MonoBehaviour
         {
             glg_draftNames = GameObject.Find("DraftContent").GetComponent<GridLayoutGroup>();
         }
+
+        //ensure that all the teams, before loading, have 0 players
+        for (int i = 0; i < leagueTeams.Count; i++)
+        {
+            leagueTeams[i].playersListRoster.Clear();
+        }
+
         // Check if there is a saved file for the team
         #region Loading Teams
         //Loadng teams
@@ -177,9 +184,10 @@ public class GameManager : MonoBehaviour
         GameObject newButton = Instantiate(player.bt_DraftInfo,glg_draftNames.transform, false);
         newButton.GetComponent<Button>().onClick.AddListener(() => AddPlayerToTeam(player, newButton.GetComponent<Button>()));
         newButton.GetComponent<Button>().transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = player.playerFirstName.ToString();
-        newButton.GetComponent<Button>().transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.Inside.ToString();
-        newButton.GetComponent<Button>().transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = player.Mid.ToString();
-        newButton.GetComponent<Button>().transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = player.Outside.ToString();
+        newButton.GetComponent<Button>().transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.Shooting.ToString();
+        newButton.GetComponent<Button>().transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = player.Inside.ToString();
+        newButton.GetComponent<Button>().transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = player.Mid.ToString();
+        newButton.GetComponent<Button>().transform.GetChild(4).GetComponent<TextMeshProUGUI>().text = player.Outside.ToString();
 
     }
     void AddPlayerToTeam(Player player, Button btn)
@@ -251,5 +259,10 @@ public class GameManager : MonoBehaviour
     IEnumerator Delay()
     {
         yield return new WaitForSeconds(2f);
+    }
+
+    public int GetCurrentTeamIndex()
+    {
+        return currentTeamIndex;
     }
 }
