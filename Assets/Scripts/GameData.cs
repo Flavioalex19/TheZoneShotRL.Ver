@@ -37,6 +37,7 @@ public class TeamData
     public List<PlayerData> playersListData = new List<PlayerData>();
     public string teamName;
     public bool isPlayerControlled;
+    public List<EquipmentData> equiList = new List<EquipmentData>();
 
     public TeamData(Team team)
     {
@@ -46,5 +47,34 @@ public class TeamData
         {
             playersListData.Add(new PlayerData(player));
         }
+        if (team.IsPlayerTeam) // Only save equipment for player-controlled team
+        {
+            equiList = new List<EquipmentData>(); // Ensure list is initialized
+            foreach (Equipment equipment in team.GetEquipment())
+            {
+                equiList.Add(new EquipmentData(equipment));
+            }
+        }
+    }
+}
+[System.Serializable]
+public class EquipmentData
+{
+    public int indexNumber;//Number of the event
+    public string equipName; // Name of the equipment
+    public int lvl;
+    public int ShotB;
+    public int InsB;
+    public int MidB;
+    public int OutB;
+    public EquipmentData(Equipment equipment)
+    {
+        indexNumber = equipment.Index;
+        equipName = equipment.Name;
+        lvl = equipment.Level;
+        ShotB = equipment.ShotBoost;
+        InsB = equipment.InsBoost;
+        MidB = equipment.MidBoost; 
+        OutB = equipment.OutBoost;
     }
 }

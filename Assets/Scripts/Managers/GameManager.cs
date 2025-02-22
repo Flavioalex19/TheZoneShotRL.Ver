@@ -60,6 +60,10 @@ public class GameManager : MonoBehaviour
             leagueTeams[i].playersListRoster.Clear();
         }
 
+        //TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        leagueTeams[0].CreateEquips();
+        leagueTeams[0].ActivatePlayerTeam();//This should be set on the team selection!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
         // Check if there is a saved file for the team
         #region Loading Teams
         //Loadng teams
@@ -214,10 +218,12 @@ public class GameManager : MonoBehaviour
         // Check if all buttons are removed from GridLayoutGroup
         if (glg_draftNames.transform.childCount == 0)
         {
+            /*
             for (int i = 0; i < leagueTeams.Count; i++)
             {
                 saveSystem.SaveTeam(leagueTeams[i]);
             }
+            */
 
             // Change mode and scene---THIA COULD BE A BUTTON!!!!!!!!!!!!!!!!
             mode = GameMode.TeamManagement;

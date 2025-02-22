@@ -13,7 +13,7 @@ public class LeagueManager : MonoBehaviour
     public EventOption activeOption;
     public bool canGenerateEvents = true;
 
-    public GameObject Test;
+    Team _playerTeam;
 
     GameManager gameManager;
     UiManager uiManager;
@@ -46,6 +46,7 @@ public class LeagueManager : MonoBehaviour
         eventOptions.Add(new EventOption { Description = "This league will be yours!", Modifier = Random.Range(1, 5) });
         */
         //CreateEventsForWeek();
+        _playerTeam = gameManager.leagueTeams[0];//TODO: Search the team that is controlled by the player!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
 
     // Update is called once per frame
@@ -107,8 +108,8 @@ public class LeagueManager : MonoBehaviour
             EventOption currentEvent = eventOptions[Random.Range(0, eventOptions.Count)];
             //Ajustar os botoões para que cada um tenha uma função---Pensar niisso depois!!!!!!!
             uiManager.SetChoiceText(currentEvent.Description);
-            ChoiceButtonsTransform.GetChild(0).GetComponent<Button>().onClick.AddListener(() => AddOnClick(currentEvent));
-            ChoiceButtonsTransform.GetChild(1).GetComponent<Button>().onClick.AddListener(() => AddOnClick(currentEvent));
+            ChoiceButtonsTransform.GetChild(0).GetComponent<Button>().onClick.AddListener(() => AddOnClick(currentEvent,0));
+            ChoiceButtonsTransform.GetChild(1).GetComponent<Button>().onClick.AddListener(() => AddOnClick(currentEvent,1));
             ChoiceButtonsTransform.GetChild(0).Find("Description Text").GetComponentInChildren<TextMeshProUGUI>().text = currentEvent.Choice1;
             ChoiceButtonsTransform.GetChild(1).Find("Description Text").GetComponentInChildren<TextMeshProUGUI>().text = currentEvent.Choice2;
             
@@ -126,9 +127,9 @@ public class LeagueManager : MonoBehaviour
         eventOptions.Add(new EventOption 
         { 
             Index = 0, Description = "Since you are new here i think it's time to set the tone for the season. What kind of team do you want us to be?",
-            Choice1 = "Fast Pace and High Scoring", 
+            Choice1 = "Fast Pace and High Scoring",
             Choice2 = "Defense,Defense, Defense!",
-            Modifier = Random.Range(1, 5), 
+            Modifier = Random.Range(1, 5),
             eventType = EventType.Interview 
         });
         eventOptions.Add(new EventOption
@@ -141,9 +142,26 @@ public class LeagueManager : MonoBehaviour
             eventType = EventType.Interview
         });
     }
-    public void AddOnClick(EventOption eventOption)
+    public void AddOnClick(EventOption eventOption, int indexOfChoice)
     {
         activeOption = eventOption;
+        //Interviews
+        if(activeOption.eventType == EventType.Interview)
+        {
+            if (indexOfChoice == 0)
+            {
+                _playerTeam.GetEquipment()[0].Level += 1; /*.InsBoost += eventOption.Modifier;*/
+            }
+            else
+                _playerTeam.GetEquipment()[1].Level += 1; /*.MidBoost += eventOption.Modifier;*/
+        }
+        //gameManager.saveSystem.SaveTeam(_playerTeam);//This could change!
+        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+        {
+            gameManager.saveSystem.SaveTeam(gameManager.leagueTeams[i]);
+        }
+
+
     }
 }
 [System.Serializable]

@@ -126,7 +126,19 @@ public class UiManager : MonoBehaviour
         }
         #endregion
         #region Team Managemet
+        //Change later!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if (GameObject.Find("Equips"))
+        {
+            //Later create a check to find the team that is controlled by the player
 
+            //find equipment text
+            Transform equipAreaText = GameObject.Find("Equips").transform;
+            for (int i = 0; i < equipAreaText.childCount; i++)
+            {
+                equipAreaText.GetChild(i).GetComponent<TextMeshProUGUI>().text = 
+                    gameManager.leagueTeams[0].GetEquipment()[i].Name.ToString() + " " +gameManager.leagueTeams[0].GetEquipment()[i].Level.ToString();
+            }
+        }
         #endregion
 
         /*
@@ -145,6 +157,7 @@ public class UiManager : MonoBehaviour
             }
         }
         */
+        //Match Area!!!!!!!
         if (GameObject.Find("MatchManager"))
         {
             if (matchManager.currentGamePossessons == 0)
@@ -179,6 +192,7 @@ public class UiManager : MonoBehaviour
                 }
             }
         }
+
     }
     private void FixedUpdate()
     {

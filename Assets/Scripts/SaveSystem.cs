@@ -38,6 +38,30 @@ public class SaveSystem : MonoBehaviour
             // Clear existing roster and repopulate from saved data
             team.playersListRoster.Clear();
             team.ClearAllPlayers();
+            if (team.IsPlayerTeam) print("THS IS THE PLAYERS TEAM" + " " + team.TeamName);
+            //Load Equipment
+            if (team.IsPlayerTeam /*&& teamData.equiList != null*/)
+            {
+                //team.GetEquipment().Clear();
+                team._equipmentList.Clear();
+                foreach (EquipmentData equipData in teamData.equiList)
+                {
+                    Equipment newEquip = new Equipment
+                    {
+                        Index = equipData.indexNumber,
+                        Name = equipData.equipName,
+                        Level = equipData.lvl,
+                        ShotBoost = equipData.ShotB,
+                        InsBoost = equipData.InsB,
+                        MidBoost = equipData.MidB,
+                        OutBoost = equipData.OutB
+                    };
+                    team.GetEquipment().Add(newEquip);
+                    print("THS IS THE Equip" + " " + newEquip.Name + " Level:" + newEquip.Level);
+                }
+                //print(team._equipmentList.Count + " Number of equips");
+            }
+            //Load Players
             foreach (PlayerData playerData in teamData.playersListData)
             {
                 Player newPlayer = new GameObject().AddComponent<Player>();
