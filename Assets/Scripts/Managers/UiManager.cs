@@ -139,6 +139,18 @@ public class UiManager : MonoBehaviour
                     gameManager.leagueTeams[0].GetEquipment()[i].Name.ToString() + " " +gameManager.leagueTeams[0].GetEquipment()[i].Level.ToString();
             }
         }
+        //Team Stats and atrributes -DEBUG for now
+        if (GameObject.Find("TeamAttValues"))
+        {
+            Transform teamStatsTextsArea = GameObject.Find("TeamAttValues").transform;
+            teamStatsTextsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Moral: " + gameManager.leagueTeams[0].Moral.ToString();
+            /*
+            for (int i = 0; i < teamStatsTextsArea.childCount; i++)
+            {
+                
+            }
+            */
+        }
         #endregion
 
         /*

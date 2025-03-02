@@ -9,6 +9,10 @@ public class Team : MonoBehaviour
     [SerializeField] public List<Equipment> _equipmentList = new List<Equipment>(); 
     public string TeamName;
     public bool IsPlayerTeam = false;
+    int MoralReset = 100;
+    public int Moral;
+    public int FrontOfficePoints;
+    public int FansSupportPoints;
 
     #endregion
     #region Match Variables

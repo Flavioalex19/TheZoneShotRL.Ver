@@ -82,11 +82,18 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if(mode == GameMode.Draft)
+            //if(mode == GameMode.Draft)
             // No save file, create new players
-            GeneratePlayers(5); // Create 5 players
+            //GeneratePlayers(5); // Create 5 players
             //AlternateTeamsAndAddPlayers();//THIS WAS ALREADY TESTED!!!!!!
-            
+            for (int i = 0; i < leagueTeams.Count; i++)
+            {
+                if (leagueTeams[i].IsPlayerTeam)
+                {
+                    leagueTeams[i].Moral = 50;
+
+                }
+            }
            
         }
         #endregion

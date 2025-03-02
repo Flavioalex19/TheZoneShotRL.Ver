@@ -32,7 +32,7 @@ public class MatchManager : MonoBehaviour
 
     float _timeOutTimer = 0;
     [SerializeField] float _timeoutReset = 2f;
-    bool _canCallTimeout = false;
+    [SerializeField]bool _canCallTimeout = false;
     //[SerializeField]MatchStates _previousMatchState;//save the current state for the timeout
 
     //UI Elemens test
@@ -58,7 +58,7 @@ public class MatchManager : MonoBehaviour
         AwayTeam.Score = 0;
         teamWithball = HomeTeam;//Change Later
 
-        
+        _canCallTimeout = false;
 
         //JUST FOR TESTINg
         for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
@@ -69,7 +69,7 @@ public class MatchManager : MonoBehaviour
         {
             AwayTeam.playersListRoster[i].PointsMatch = 0;
         }
-
+        
         StartCoroutine(GameFlow());
     }
 
@@ -78,11 +78,14 @@ public class MatchManager : MonoBehaviour
     {
         if(_canCallTimeout == true)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                //_previousMatchState = match; // Save the last state
-                match = MatchStates.Timeout;
-            }
+            _debugTimeoutText.text = "Can Call Timeout";
+            
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            //_previousMatchState = match; // Save the last state
+            //match = MatchStates.Timeout;
+            _canCallTimeout = false;
         }
     }
     IEnumerator GameFlow()
@@ -93,20 +96,32 @@ public class MatchManager : MonoBehaviour
             if (match == MatchStates.Start) ChoosePlayerToCarrayBall();
             else ChoosePlayerToCarrayBall();
             match = MatchStates.Possesion;
-            yield return StartCoroutine(WaitForTimeOut());
+            //yield return StartCoroutine(WaitForTimeOut());
             yield return new WaitForSeconds(2f);
+            yield return StartCoroutine(WaitForTimeOut());
             //Step 2
 
-            yield return StartCoroutine(WaitForTimeOut());
+            // return StartCoroutine(WaitForTimeOut());
             yield return ChooseToPass();
+            yield return StartCoroutine(WaitForTimeOut());
 
             //Step 3
-            yield return StartCoroutine(WaitForTimeOut());
+            //yield return StartCoroutine(WaitForTimeOut());
             yield return Scoring(playerWithTheBall);
+            yield return StartCoroutine(WaitForTimeOut());
         }
-        
+
         uiManager.PlaybyPlayText("MatchEnded");
-        
+        if (HomeTeam.Score > AwayTeam.Score) { AwayTeam.Moral -= 15; HomeTeam.Moral += 15; }
+        else if (HomeTeam.Score < AwayTeam.Score) { HomeTeam.Moral -= 15; AwayTeam.Moral += 15; } 
+        else
+        {
+            HomeTeam.Moral -= 5;
+            AwayTeam.Moral -= 5;
+        }
+        //WIP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
         EndScreenStatsPanel.SetActive(true);
 
     }
@@ -282,6 +297,7 @@ public class MatchManager : MonoBehaviour
     //Function to enable call for a Timeout
     IEnumerator WaitForTimeOut()
     {
+        /*
         _canCallTimeout = true;
         _debugTimeoutText.text = "Can call a timeout";
         yield return new WaitForSeconds(5f);
@@ -299,6 +315,18 @@ public class MatchManager : MonoBehaviour
         
         _debugTimeoutText.text = "Game";
         _canCallTimeout = false;
+        
+        */
+        if (_canCallTimeout == false)
+        {
+            _debugTimeoutText.text = "Time Out!!!";
+            yield return new WaitForSeconds(5f); // Wait until the game is unpaused
+            _debugTimeoutText.text = "Return to game";
+            yield return new WaitForSeconds(2f);
+            _debugTimeoutText.text = "Can Call Timeout";
+            _canCallTimeout = true;
+        }
+        //else _debugTimeoutText.text = "No time outs called";
     }
 
 }

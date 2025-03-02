@@ -38,11 +38,17 @@ public class TeamData
     public string teamName;
     public bool isPlayerControlled;
     public List<EquipmentData> equiList = new List<EquipmentData>();
+    public int teamMoral;
+    public int teamFrontOffice;
+    public int teamFansSupport;
 
     public TeamData(Team team)
     {
         teamName = team.TeamName;  // Assuming Team script has a team name
         isPlayerControlled = team.IsPlayerTeam;
+        teamMoral = team.Moral;
+        teamFrontOffice = team.FrontOfficePoints;
+        teamFansSupport = team.FansSupportPoints;
         foreach (Player player in team.playersListRoster)
         {
             playersListData.Add(new PlayerData(player));
