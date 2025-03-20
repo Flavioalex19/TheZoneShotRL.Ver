@@ -15,6 +15,7 @@ public class Team : MonoBehaviour
     public int FansSupportPoints;
 
     #endregion
+    [SerializeField] string Description;
     #region Match Variables
     public bool hasPossession = false;
     public int Score = 0;

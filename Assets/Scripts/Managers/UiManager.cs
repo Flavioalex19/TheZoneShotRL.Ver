@@ -19,6 +19,7 @@ public class UiManager : MonoBehaviour
     Transform playerInfoInMach;
     TextMeshProUGUI homeScoreText;
     TextMeshProUGUI awayScoreText;
+    List<Transform> homePlayersStartersUI = new List<Transform>();
     void Awake()
     {
         // Check if an instance already exists
@@ -50,10 +51,13 @@ public class UiManager : MonoBehaviour
             if (GameObject.Find("Team A Players Area"))
             {
                 playerInfoInMach = GameObject.Find("Team A Players Area").transform;
+                //Change for the leagueManger Home Team
                 for (int i = 0; i < gameManager.leagueTeams[0].playersListRoster.Count; i++)
                 {
                     playerInfoInMach.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].playersListRoster[i].playerFirstName.ToString();
                     playerInfoInMach.GetChild(i).GetChild(3).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].playersListRoster[i].PointsMatch.ToString();
+                    homePlayersStartersUI.Add(playerInfoInMach.GetChild(i));
+
                 }
             }
             if (GameObject.Find("Team B Players Area"))

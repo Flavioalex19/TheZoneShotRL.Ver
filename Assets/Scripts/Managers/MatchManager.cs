@@ -54,6 +54,7 @@ public class MatchManager : MonoBehaviour
         //TESTING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         HomeTeam = manager.leagueTeams[0];
         AwayTeam = manager.leagueTeams[1];
+
         HomeTeam.Score = 0;
         AwayTeam.Score = 0;
         teamWithball = HomeTeam;//Change Later
@@ -98,12 +99,12 @@ public class MatchManager : MonoBehaviour
             match = MatchStates.Possesion;
             //yield return StartCoroutine(WaitForTimeOut());
             yield return new WaitForSeconds(2f);
-            yield return StartCoroutine(WaitForTimeOut());
+            //yield return StartCoroutine(WaitForTimeOut());
             //Step 2
 
             // return StartCoroutine(WaitForTimeOut());
             yield return ChooseToPass();
-            yield return StartCoroutine(WaitForTimeOut());
+            //yield return StartCoroutine(WaitForTimeOut());
 
             //Step 3
             //yield return StartCoroutine(WaitForTimeOut());
@@ -140,7 +141,7 @@ public class MatchManager : MonoBehaviour
                 
             }
         }
-        print(playerWithHighAwareness.playerFirstName);
+        //print(playerWithHighAwareness.playerFirstName);
         playerWithHighAwareness.HasTheBall = true;
         uiManager.PlaybyPlayText(playerWithHighAwareness.playerFirstName + " " + " Has the ball" + " " + playerWithHighAwareness.HasTheBall);
         //match = MatchStates.Possesion;
@@ -153,7 +154,7 @@ public class MatchManager : MonoBehaviour
             if (teamWithball.playersListRoster[i].HasTheBall)
             {
                 currentPlayer = teamWithball.playersListRoster[i];
-                print(currentPlayer.playerFirstName + " HAS THE BALL!!!!!!!");
+                //print(currentPlayer.playerFirstName + " HAS THE BALL!!!!!!!");
                 currentPlayer.CurrentZone = 0;
                 break; // Stop once the player with the ball is found
             }
@@ -169,7 +170,7 @@ public class MatchManager : MonoBehaviour
             }
             int willMakeThePass = Random.Range(1, 4);
             //willMakeThePass = 1;
-            print(willMakeThePass +" WMP");
+            print((currentPlayer.Shooting - 40f) / (99f - 40f) + " WMP");
             if(willMakeThePass < 3)
             {
                 print("Make the pass " + currentPlayer.playerFirstName);
@@ -231,7 +232,8 @@ public class MatchManager : MonoBehaviour
                 uiManager.PlaybyPlayText(player.playerFirstName + " takes a shot!");
                 yield return new WaitForSeconds(2f);
                 currentGamePossessons--;
-                bool hasScored= /*Random.Range(1, 4) < 3*/Random.Range(1, 100) < (player.Inside + player.Mid + player.Outside / 3) - 100;
+                //THIS 40 WILL BE REPLACED BY THE DEFENDER STAT/AKA THE STEAL VALUE 
+                bool hasScored=/* Random.Range(1, 100) < (player.Inside + player.Mid + player.Outside / 3) - 100*/Random.value <= (player.Shooting - 40f) / (99f - 40f);
                 if (hasScored)
                 {
                     //player.PointsMatch += 2;

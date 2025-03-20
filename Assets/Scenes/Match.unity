@@ -1180,7 +1180,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 195819036756344875, guid: b5aa336798e0df04280124ed94507f2a, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 185
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 195819036756344875, guid: b5aa336798e0df04280124ed94507f2a, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -5057,6 +5057,41 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 923873947}
   m_CullTransparentMesh: 1
+--- !u!1 &943121140
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 943121141}
+  m_Layer: 5
+  m_Name: TeamAPossession
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &943121141
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 943121140}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1749232982}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1002078008
 GameObject:
   m_ObjectHideFlags: 0
@@ -5647,7 +5682,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 195819036756344875, guid: b5aa336798e0df04280124ed94507f2a, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 185
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 195819036756344875, guid: b5aa336798e0df04280124ed94507f2a, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -6096,7 +6131,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 195819036756344875, guid: b5aa336798e0df04280124ed94507f2a, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 185
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 195819036756344875, guid: b5aa336798e0df04280124ed94507f2a, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -8917,6 +8952,7 @@ MonoBehaviour:
   HomeTeam: {fileID: 0}
   AwayTeam: {fileID: 0}
   _timeoutReset: 2
+  _canCallTimeout: 0
   EndScreenStatsPanel: {fileID: 0}
   _debugTimeoutText: {fileID: 1955637293}
 --- !u!4 &1651399474
@@ -9167,6 +9203,7 @@ RectTransform:
   - {fileID: 9152290}
   - {fileID: 1167838518}
   - {fileID: 1139064507}
+  - {fileID: 943121141}
   - {fileID: 1959294759}
   - {fileID: 1554530316}
   - {fileID: 392464937}
@@ -11203,7 +11240,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 195819036756344875, guid: b5aa336798e0df04280124ed94507f2a, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 185
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 195819036756344875, guid: b5aa336798e0df04280124ed94507f2a, type: 3}
       propertyPath: m_AnchoredPosition.y

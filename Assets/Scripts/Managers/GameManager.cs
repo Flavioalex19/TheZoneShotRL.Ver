@@ -76,16 +76,11 @@ public class GameManager : MonoBehaviour
                 saveSystem.LoadTeam(leagueTeams[i]);
             }
             PrintTeamPlayers();
-            //print()
-            //mode = GameMode.Match;
-            //SceneManager.LoadScene("Match");//This should be team management screen
+            
         }
         else
         {
-            //if(mode == GameMode.Draft)
-            // No save file, create new players
-            //GeneratePlayers(5); // Create 5 players
-            //AlternateTeamsAndAddPlayers();//THIS WAS ALREADY TESTED!!!!!!
+            
             for (int i = 0; i < leagueTeams.Count; i++)
             {
                 if (leagueTeams[i].IsPlayerTeam)
