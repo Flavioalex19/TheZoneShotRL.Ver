@@ -30,9 +30,11 @@ public class MatchManager : MonoBehaviour
     Team teamWithball;
     Player playerWithTheBall;
 
-    float _timeOutTimer = 0;
+    public float _timeOutTimer = 0;
+    float timerTimeOutReset = 7f;
     [SerializeField] float _timeoutReset = 2f;
     [SerializeField]bool _canCallTimeout = false;
+    public bool IsOnTimeout = false;
     //[SerializeField]MatchStates _previousMatchState;//save the current state for the timeout
 
     //UI Elemens test
@@ -60,6 +62,7 @@ public class MatchManager : MonoBehaviour
         teamWithball = HomeTeam;//Change Later
 
         _canCallTimeout = false;
+        
 
         //JUST FOR TESTINg
         for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
@@ -77,7 +80,7 @@ public class MatchManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(_canCallTimeout == true)
+        if(_canCallTimeout)
         {
             _debugTimeoutText.text = "Can Call Timeout";
             
@@ -108,7 +111,7 @@ public class MatchManager : MonoBehaviour
 
             //Step 3
             //yield return StartCoroutine(WaitForTimeOut());
-            yield return Scoring(playerWithTheBall);
+            //yield return Scoring(playerWithTheBall);
             yield return StartCoroutine(WaitForTimeOut());
         }
 
@@ -175,6 +178,16 @@ public class MatchManager : MonoBehaviour
             {
                 print("Make the pass " + currentPlayer.playerFirstName);
                 Player nextPlayer = null;
+
+                float passSuccessChance = Mathf.Clamp((currentPlayer.Awareness - 30f) / (99f - 30f), 0f, 1f);
+                if (Random.value > passSuccessChance)
+                {
+                    print(currentPlayer.playerFirstName + " made a bad pass! Turnover.");
+                    uiManager.PlaybyPlayText(currentPlayer.playerFirstName + " made a bad pass! Possession lost.");
+                    SwitchPossession();
+                    yield return new WaitForSeconds(2f);
+                    yield break;
+                }
                 /*
                 for (int i = 0; i < teamWithball.playersListRoster.Count; i++)
                 {
@@ -212,8 +225,19 @@ public class MatchManager : MonoBehaviour
                 print(currentPlayer.playerFirstName + " Will Try to score");
                 yield return new WaitForSeconds(2f);
                 //Scoring(currentPlayer);
-                playerWithTheBall = currentPlayer;
-                //currentGamePossessons--;
+                //playerWithTheBall = currentPlayer;
+                // Ensure playerWithTheBall is assigned correctly
+                if (currentPlayer != null)
+                {
+                    playerWithTheBall = currentPlayer;
+                }
+                else
+                {
+                    // Fallback in case of an unexpected error
+                    playerWithTheBall = teamWithball.playersListRoster[0]; // Pick first player
+                    Debug.LogWarning("playerWithTheBall was null. Assigned default player.");
+                }
+                yield return Scoring(playerWithTheBall);
                 break;
             }
 
@@ -294,41 +318,55 @@ public class MatchManager : MonoBehaviour
         teamWithball = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
         playerWithTheBall = null;
         uiManager.PlaybyPlayText("Possession switches to " + teamWithball.TeamName);
+
     }
 
     //Function to enable call for a Timeout
     IEnumerator WaitForTimeOut()
     {
         /*
-        _canCallTimeout = true;
-        _debugTimeoutText.text = "Can call a timeout";
-        yield return new WaitForSeconds(5f);
-        while (match == MatchStates.Timeout)
+        _timeOutTimer = timerTimeOutReset;
+
+        if (_canCallTimeout==false) // Check if timeouts are allowed before proceeding
         {
-            _debugTimeoutText.text = "Timeout!!!";
-            uiManager.PlaybyPlayText("Timeout!");
-            yield return new WaitForSeconds(5f); // Wait until the game is unpaused
-            //returen to last possiion before the 
-            match = MatchStates.Possesion; // Restore last state
-        }
-        _debugTimeoutText.text = "Returning to game";
-       
-        yield return new WaitForSeconds(2f); // Wait until the game is unpaused
-        
-        _debugTimeoutText.text = "Game";
-        _canCallTimeout = false;
-        
-        */
-        if (_canCallTimeout == false)
-        {
+            IsOnTimeout = true;
             _debugTimeoutText.text = "Time Out!!!";
-            yield return new WaitForSeconds(5f); // Wait until the game is unpaused
+            _canCallTimeout = false; // Prevent multiple timeouts
+
+            yield return new WaitForSeconds(_timeOutTimer); // Wait for timeout duration
+
             _debugTimeoutText.text = "Return to game";
             yield return new WaitForSeconds(2f);
+
             _debugTimeoutText.text = "Can Call Timeout";
             _canCallTimeout = true;
+            IsOnTimeout = false;
         }
-        //else _debugTimeoutText.text = "No time outs called";
+        */
+        
+        _timeOutTimer = timerTimeOutReset;
+
+        if (_canCallTimeout == false)
+        {
+            IsOnTimeout = true;
+            _canCallTimeout = false;
+
+            while (_timeOutTimer > 0) // Countdown loop
+            {
+                _debugTimeoutText.text = $"Time Out: {_timeOutTimer:F1}"; // Show countdown with 1 decimal place
+                yield return new WaitForSeconds(0.1f); // Update every 0.1 second
+                _timeOutTimer -= 0.1f;
+            }
+
+            _debugTimeoutText.text = "Return to game";
+            yield return new WaitForSeconds(2f);
+
+            _debugTimeoutText.text = "Can Call Timeout";
+            _canCallTimeout = true;
+            IsOnTimeout = false;
+        }
+
+
     }
 
 }

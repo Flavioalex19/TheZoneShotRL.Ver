@@ -111,6 +111,11 @@ public class BtnSelectionHandler : MonoBehaviour
         if(pointerEventData != null)
         {
             pointerEventData.selectedObject = pointerEventData.pointerEnter;
+            if (GameObject.Find("SoundTrack Buttons Source"))
+            {
+                AudioSource audioSource = GameObject.Find("SoundTrack Buttons Source").GetComponent<AudioSource>();
+                audioSource.Play();
+            }
         }
     }
     public void OnPointExit(BaseEventData eventData)

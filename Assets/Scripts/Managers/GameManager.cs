@@ -238,10 +238,30 @@ public class GameManager : MonoBehaviour
     public void AdvanceToDraft()
     {
         
+        StartCoroutine(AdvanceToDraftRoutine());
+
+    }
+    private IEnumerator AdvanceToDraftRoutine()
+    {
+        if (GameObject.Find("TransitionSequence"))
+        {
+            Animator animator = GameObject.Find("TransitionSequence").GetComponent<Animator>();
+            GameObject.Find("PhaseText").GetComponent<TextMeshProUGUI>().text = " Next Phase";
+            animator.SetTrigger("Go");
+        }
+
+        float timer = 3f;
+        while (timer > 0)
+        {
+            timer -= Time.deltaTime;
+            print("On Transition");
+            yield return null; // Wait a frame instead of freezing
+        }
+
         if (IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
         {
             mode = GameMode.TeamManagement;
-            SceneManager.LoadScene("MyTeamScreen");//This should be team management screen
+            SceneManager.LoadScene("MyTeamScreen");
         }
         else
         {
@@ -272,5 +292,9 @@ public class GameManager : MonoBehaviour
     public int GetCurrentTeamIndex()
     {
         return currentTeamIndex;
+    }
+    IEnumerator TransitionTime()
+    {
+        yield return new WaitForSeconds(3f);
     }
 }

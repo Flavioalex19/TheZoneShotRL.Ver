@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UiManager : MonoBehaviour
@@ -20,6 +21,7 @@ public class UiManager : MonoBehaviour
     TextMeshProUGUI homeScoreText;
     TextMeshProUGUI awayScoreText;
     List<Transform> homePlayersStartersUI = new List<Transform>();
+    GameObject _timeoutPanel;
     void Awake()
     {
         // Check if an instance already exists
@@ -37,6 +39,9 @@ public class UiManager : MonoBehaviour
     void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        
+        
         
     }
 
@@ -99,6 +104,8 @@ public class UiManager : MonoBehaviour
                 {
                     awayContent.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[1].playersListRoster[i].playerFirstName.ToString();
                 }
+
+                
             }
             //testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             if (GameObject.Find("Away Team Name Text"))
@@ -113,6 +120,7 @@ public class UiManager : MonoBehaviour
                 }
 
             }
+            
             //Possessions count text
             if (GameObject.Find("NumberOfPossessionsText"))
             {
@@ -124,8 +132,30 @@ public class UiManager : MonoBehaviour
                 }
                 
             }
-            #endregion
+
+
+            //Find on the match scene, the timout panel
+            if (GameObject.Find("TimeoutOptionsMenu"))
+            {
+                _timeoutPanel = GameObject.Find("TimeoutOptionsMenu");
+                //matchManager._timeOutTimer -= Time.deltaTime;
+                GameObject.Find("TimeoutTimerText").GetComponent<TextMeshProUGUI>().text = matchManager._timeOutTimer.ToString();
+                //_timeoutPanel.SetActive(false);
+                
+            }
+            if (matchManager != null && matchManager.IsOnTimeout)
+            {
+                _timeoutPanel.SetActive(true);
+
+            }
+            else 
+            {
+                if (_timeoutPanel != null)
+                    _timeoutPanel.SetActive(false);
+            }
             
+            #endregion
+
 
         }
         #endregion
@@ -144,10 +174,11 @@ public class UiManager : MonoBehaviour
             }
         }
         //Team Stats and atrributes -DEBUG for now
-        if (GameObject.Find("TeamAttValues"))
+        if (GameObject.Find("TeamPoints"))
         {
-            Transform teamStatsTextsArea = GameObject.Find("TeamAttValues").transform;
-            teamStatsTextsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Moral: " + gameManager.leagueTeams[0].Moral.ToString();
+            Transform teamStatsTextsArea = GameObject.Find("TeamPoints").transform;
+            //TODO- AT THE START CREATE A VARIABLE FOR THE TEAM CONTROLLERD BY THE PLAYER!!!!!
+            teamStatsTextsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].Moral.ToString();
             /*
             for (int i = 0; i < teamStatsTextsArea.childCount; i++)
             {
@@ -215,11 +246,11 @@ public class UiManager : MonoBehaviour
         if (gameManager.mode == GameManager.GameMode.TeamManagement && hasbeenCreatedTheBtn == false)
         {
             print("TM Screen -----------------------------");
-            GameObject matchButton = GameObject.Find("Match Button");
+            GameObject matchButton = GameObject.Find("Advance Button");
             if (matchButton != null && matchButton.activeInHierarchy)
             {
                 btn_AdvanceToMatch = matchButton;
-                btn_AdvanceToMatch.GetComponent<Button>().onClick.AddListener(() => gameManager.GoToMatch());
+                btn_AdvanceToMatch.GetComponent<Button>().onClick.AddListener(() => /*gameManager.GoToMatch()*/AdvanceToMatch());
                 hasbeenCreatedTheBtn = true;
             }
             else
@@ -229,13 +260,45 @@ public class UiManager : MonoBehaviour
         }
         
     }
+    #region TitleScreen
+
+    #endregion
+
     #region Team Management
+    #region WeeklyChoice
     public void SetChoiceText(string Message)
     {
         if (GameObject.Find("ChoiceText"))
         {
             GameObject.Find("ChoiceText").GetComponent<TextMeshProUGUI>().text = Message;
         }
+    }
+    #endregion
+    public void AdvanceToMatch()
+    {
+
+        StartCoroutine(AdvanceToMatchRoutine());
+
+    }
+    private IEnumerator AdvanceToMatchRoutine()
+    {
+        if (GameObject.Find("TransitionToMatch"))
+        {
+            Animator animator = GameObject.Find("TransitionToMatch").GetComponent<Animator>();
+            //GameObject.Find("PhaseText").GetComponent<TextMeshProUGUI>().text = " Next Phase";
+            animator.SetTrigger("Go");
+        }
+
+        float timer = 3f;
+        while (timer > 0)
+        {
+            timer -= Time.deltaTime;
+            //print("On Transition");
+            yield return null; // Wait a frame instead of freezing
+        }
+        gameManager.GoToMatch();
+
+
     }
     #endregion
     #region Match 
@@ -247,7 +310,7 @@ public class UiManager : MonoBehaviour
     //After Game
 
     #endregion
-
+    #region SongManager
     public void UpdateCurrentSongAlert(string songName)
     {
         print("New Song");
@@ -269,5 +332,6 @@ public class UiManager : MonoBehaviour
 
         }
     }
+    #endregion
 }
 
