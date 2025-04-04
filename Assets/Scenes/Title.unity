@@ -1342,6 +1342,14 @@ PrefabInstance:
       propertyPath: saveSystem
       value: 
       objectReference: {fileID: 6125366047793733995, guid: de1e7c960bb588d4fb3896ab6578c845, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: leagueTeams.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: leagueTeams.Array.data[2]
+      value: 
+      objectReference: {fileID: 3835133189410921805, guid: 0068726d1c5df484f9dc2630e4468009, type: 3}
     - target: {fileID: 3227278085919532099, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1469,7 +1477,10 @@ MonoBehaviour:
     of the equipment system (WIP)
 
     - Start of implementation of the team morale
-    system: When losing, winning or drawing, morale is affected'
+    system: When losing, winning or drawing, morale is affected
+
+    - Team selection
+    screen'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2429,63 +2440,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e19e5088ee497da4d97a55e529b3b56a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1001 &2940817817090536681
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1134001749044843863, guid: 0068726d1c5df484f9dc2630e4468009, type: 3}
-      propertyPath: m_Name
-      value: Team C
-      objectReference: {fileID: 0}
-    - target: {fileID: 8463571067953787440, guid: 0068726d1c5df484f9dc2630e4468009, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8463571067953787440, guid: 0068726d1c5df484f9dc2630e4468009, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8463571067953787440, guid: 0068726d1c5df484f9dc2630e4468009, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8463571067953787440, guid: 0068726d1c5df484f9dc2630e4468009, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8463571067953787440, guid: 0068726d1c5df484f9dc2630e4468009, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8463571067953787440, guid: 0068726d1c5df484f9dc2630e4468009, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8463571067953787440, guid: 0068726d1c5df484f9dc2630e4468009, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8463571067953787440, guid: 0068726d1c5df484f9dc2630e4468009, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8463571067953787440, guid: 0068726d1c5df484f9dc2630e4468009, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8463571067953787440, guid: 0068726d1c5df484f9dc2630e4468009, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 0068726d1c5df484f9dc2630e4468009, type: 3}
 --- !u!1001 &6259916297482952787
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2790,4 +2744,3 @@ SceneRoots:
   - {fileID: 110024698}
   - {fileID: 2144023458}
   - {fileID: 52360405}
-  - {fileID: 2940817817090536681}

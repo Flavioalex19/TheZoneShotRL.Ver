@@ -55,6 +55,8 @@ public class MatchManager : MonoBehaviour
         currentGamePossessons = GamePossesions;
         //TESTING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         HomeTeam = manager.leagueTeams[0];
+
+        
         AwayTeam = manager.leagueTeams[1];
 
         HomeTeam.Score = 0;

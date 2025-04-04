@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -57,10 +58,10 @@ public class UiManager : MonoBehaviour
             {
                 playerInfoInMach = GameObject.Find("Team A Players Area").transform;
                 //Change for the leagueManger Home Team
-                for (int i = 0; i < gameManager.leagueTeams[0].playersListRoster.Count; i++)
+                for (int i = 0; i < gameManager.playerTeam.playersListRoster.Count; i++)
                 {
-                    playerInfoInMach.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].playersListRoster[i].playerFirstName.ToString();
-                    playerInfoInMach.GetChild(i).GetChild(3).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].playersListRoster[i].PointsMatch.ToString();
+                    playerInfoInMach.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].playerFirstName.ToString();
+                    playerInfoInMach.GetChild(i).GetChild(3).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].PointsMatch.ToString();
                     homePlayersStartersUI.Add(playerInfoInMach.GetChild(i));
 
                 }
@@ -80,7 +81,7 @@ public class UiManager : MonoBehaviour
                 homeScoreText = GameObject.Find("Home Team Score Text").GetComponent<TextMeshProUGUI>();
                 awayScoreText = GameObject.Find("Away Team Score Text").GetComponent<TextMeshProUGUI>();
 
-                homeScoreText.text = gameManager.leagueTeams[0].Score.ToString();
+                homeScoreText.text = gameManager.playerTeam.Score.ToString();
                 awayScoreText.text = gameManager.leagueTeams[1].Score.ToString();
             }
             ///REMOVE THIS LATER    
@@ -91,13 +92,13 @@ public class UiManager : MonoBehaviour
                 Transform insideVariable = GameObject.Find("Inside Stat Text Area").transform;
                 Transform midVariable = GameObject.Find("Mid Stat Text Area").transform;
                 Transform outVariable = GameObject.Find("Out Stat Text Area").transform;
-                for (int i = 0; i < gameManager.leagueTeams[0].playersListRoster.Count; i++)
+                for (int i = 0; i < gameManager.playerTeam.playersListRoster.Count; i++)
                 {
 
-                    content.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].playersListRoster[i].playerFirstName.ToString() + " " + gameManager.leagueTeams[0].playersListRoster[i].ovr.ToString() + " AWA" + gameManager.leagueTeams[0].playersListRoster[i].Awareness.ToString();
-                    insideVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].playersListRoster[i].Inside.ToString();
-                    midVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].playersListRoster[i].Mid.ToString();
-                    outVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].playersListRoster[i].Outside.ToString();
+                    content.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].playerFirstName.ToString() + " " + gameManager.playerTeam.playersListRoster[i].ovr.ToString() + " AWA" + gameManager.playerTeam.playersListRoster[i].Awareness.ToString();
+                    insideVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].Inside.ToString();
+                    midVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].Mid.ToString();
+                    outVariable.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].Outside.ToString();
                 }
                 Transform awayContent = GameObject.Find("Text Area 2").transform;
                 for (int i = 0; i < gameManager.leagueTeams[1].playersListRoster.Count; i++)
@@ -164,27 +165,45 @@ public class UiManager : MonoBehaviour
         if (GameObject.Find("Equips"))
         {
             //Later create a check to find the team that is controlled by the player
-
+            
             //find equipment text
             Transform equipAreaText = GameObject.Find("Equips").transform;
-            for (int i = 0; i < equipAreaText.childCount; i++)
+            for (int i = 0; i < equipAreaText.childCount-1; i++)
             {
                 equipAreaText.GetChild(i).GetComponent<TextMeshProUGUI>().text = 
-                    gameManager.leagueTeams[0].GetEquipment()[i].Name.ToString() + " " +gameManager.leagueTeams[0].GetEquipment()[i].Level.ToString();
+                    gameManager.playerTeam.GetEquipment()[i].Name.ToString() + " " +gameManager.playerTeam.GetEquipment()[i].Level.ToString();
             }
         }
         //Team Stats and atrributes -DEBUG for now
+        if (GameObject.Find("PlayerTeamNameText"))
+        {
+            for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+            {
+                if (gameManager.leagueTeams[i].IsPlayerTeam) GameObject.Find("PlayerTeamNameText").GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[i].TeamName.ToString();
+            }
+        }
         if (GameObject.Find("TeamPoints"))
         {
             Transform teamStatsTextsArea = GameObject.Find("TeamPoints").transform;
             //TODO- AT THE START CREATE A VARIABLE FOR THE TEAM CONTROLLERD BY THE PLAYER!!!!!
-            teamStatsTextsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[0].Moral.ToString();
+            teamStatsTextsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.Moral.ToString();
             /*
             for (int i = 0; i < teamStatsTextsArea.childCount; i++)
             {
                 
             }
             */
+        }
+        if (GameObject.Find("LeagueTeams"))
+        {
+            for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+            {
+                for (int j = 0; j < gameManager.leagueTeams[i].playersListRoster.Count; j++)
+                {
+                    GameObject.Find("LeagueTeams").transform.GetChild(i).GetChild(j).GetComponent<TextMeshProUGUI>().text = 
+                        gameManager.leagueTeams[i].playersListRoster[j].playerFirstName.ToString();
+                }
+            }
         }
         #endregion
 
@@ -274,6 +293,7 @@ public class UiManager : MonoBehaviour
         }
     }
     #endregion
+
     public void AdvanceToMatch()
     {
 
@@ -300,6 +320,7 @@ public class UiManager : MonoBehaviour
 
 
     }
+    
     #endregion
     #region Match 
     public void PlaybyPlayText(string textContent)

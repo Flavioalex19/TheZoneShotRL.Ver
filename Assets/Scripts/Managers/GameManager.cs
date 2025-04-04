@@ -7,13 +7,15 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public enum GameMode{
+    public enum GameMode
+    {
         None,
         MainMenu,
         Draft,
         TeamManagement,
         Match
     }
+
     public GameMode mode;
     public List<Team> leagueTeams = new List<Team>();
     //public Team team; // Reference to the Team object
@@ -28,6 +30,8 @@ public class GameManager : MonoBehaviour
     int currentTeamIndex = 0;
 
     int count = 0;//testing the transition to onli create ince time the players
+
+    public Team playerTeam;
     private void Awake()
     {
         // Singleton implementation
@@ -61,8 +65,16 @@ public class GameManager : MonoBehaviour
         }
 
         //TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        leagueTeams[0].CreateEquips();
-        leagueTeams[0].ActivatePlayerTeam();//This should be set on the team selection!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //leagueTeams[0].CreateEquips();
+        //leagueTeams[0].ActivatePlayerTeam();//This should be set on the team selection!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        for (int i = 0; i < leagueTeams.Count; i++)
+        {
+            if (leagueTeams[i].IsPlayerTeam)
+            {
+                leagueTeams[i].CreateEquips();
+                //leagueTeams[0].ActivatePlayerTeam();
+            }
+        }
 
         // Check if there is a saved file for the team
         #region Loading Teams
@@ -74,8 +86,11 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < leagueTeams.Count; i++)
             {
                 saveSystem.LoadTeam(leagueTeams[i]);
+                if (leagueTeams[i].IsPlayerTeam)playerTeam = leagueTeams[i];
+                print(playerTeam + "THIS IS THE PLAYER!!!!!");
             }
             PrintTeamPlayers();
+
             
         }
         else
@@ -119,7 +134,7 @@ public class GameManager : MonoBehaviour
                     glg_draftNames = GameObject.Find("DraftContent").GetComponent<GridLayoutGroup>();
                     if (count < 1)
                     {
-                        GeneratePlayers(8); // Create 5 players
+                        GeneratePlayers(leagueTeams.Count * 4); // Create 5 players
                         count++;
                     }
                 }
@@ -265,8 +280,8 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            mode = GameMode.Draft;
-            SceneManager.LoadScene("Draft");
+            //mode = GameMode.Draft;
+            SceneManager.LoadScene("TeamSelection");
         }
     }
     public void GoToMatch()
