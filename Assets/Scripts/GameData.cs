@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameData : MonoBehaviour
@@ -41,6 +42,8 @@ public class TeamData
     public int teamMoral;
     public int teamFrontOffice;
     public int teamFansSupport;
+    public List<Team> teamSchedule = new List<Team>();
+    public List<string> scheduleTeamNames;
 
     public TeamData(Team team)
     {
@@ -60,6 +63,13 @@ public class TeamData
             {
                 equiList.Add(new EquipmentData(equipment));
             }
+        }
+        //teamSchedule = team.GetSchedule();
+        //scheduleTeamNames = team._schedule.Select(t => t.TeamName).ToList();
+        scheduleTeamNames = new List<string>();
+        foreach (var opponent in team._schedule)
+        {
+            scheduleTeamNames.Add(opponent.TeamName);
         }
     }
 }

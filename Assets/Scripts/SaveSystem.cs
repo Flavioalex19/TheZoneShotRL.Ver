@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 public class SaveSystem : MonoBehaviour
@@ -76,6 +77,17 @@ public class SaveSystem : MonoBehaviour
                 team.playersListRoster.Add(newPlayer);
             }
 
+            // Load schedule
+            team._schedule.Clear();
+            foreach (string teamName in teamData.scheduleTeamNames)
+            {
+                Team opponent = FindTeamByName(teamName); // Must return a valid Team from leagueTeams
+                if (opponent != null && opponent != team)
+                {
+                    team._schedule.Add(opponent);
+                }
+            }
+
             Debug.Log($"Team {team.TeamName} loaded successfully from {filePath}");
         }
         else
@@ -116,5 +128,10 @@ public class SaveSystem : MonoBehaviour
         {
             Debug.LogWarning("No save directory found to clear.");
         }
+    }
+    private Team FindTeamByName(string name)
+    {
+        return FindObjectOfType<GameManager>().leagueTeams
+            .FirstOrDefault(t => t.TeamName == name);
     }
 }

@@ -16,6 +16,7 @@ public class LeagueManager : MonoBehaviour
     public bool canGenerateEvents = true;
 
     Team _playerTeam;
+    
 
     #region Events Variables
     EventType _choseEventType;

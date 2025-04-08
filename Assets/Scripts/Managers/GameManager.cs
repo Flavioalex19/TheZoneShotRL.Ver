@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -63,6 +64,7 @@ public class GameManager : MonoBehaviour
         {
             leagueTeams[i].playersListRoster.Clear();
         }
+        ClearSchedule();
 
         //TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //leagueTeams[0].CreateEquips();
@@ -71,7 +73,8 @@ public class GameManager : MonoBehaviour
         {
             if (leagueTeams[i].IsPlayerTeam)
             {
-                leagueTeams[i].CreateEquips();
+                //leagueTeams[i].CreateEquips();
+                playerTeam = leagueTeams[i];
                 //leagueTeams[0].ActivatePlayerTeam();
             }
         }
@@ -87,7 +90,7 @@ public class GameManager : MonoBehaviour
             {
                 saveSystem.LoadTeam(leagueTeams[i]);
                 if (leagueTeams[i].IsPlayerTeam)playerTeam = leagueTeams[i];
-                print(playerTeam + "THIS IS THE PLAYER!!!!!");
+                //print(playerTeam + "THIS IS THE PLAYER!!!!!");
             }
             PrintTeamPlayers();
 
@@ -158,7 +161,27 @@ public class GameManager : MonoBehaviour
         string filePath = System.IO.Path.Combine(Application.persistentDataPath, $"{teamName}_teamData.json");
         return System.IO.File.Exists(filePath);
     }
+    //SCHEDULE AREA
+    public void ScheduleCreation(List<Team> leagueTeams)
+    {
+        foreach (Team team in leagueTeams)
+        {
+            List<Team> opponents = new List<Team>(leagueTeams);
+            opponents.Remove(team); // Remove itself
+            opponents = opponents.OrderBy(t => Random.value).ToList(); // Shuffle
+            //team._schedule = opponents;
+            team.SetSchedule(opponents);
+        }
+    }
+    public void ClearSchedule()
+    {
+        foreach (Team team in leagueTeams)
+        {
+            team.GetSchedule().Clear();
+        }
+    }
 
+    #region DRAFT METHODS
     // Function to generate a specified number of players and add them to the team
     private void GeneratePlayers(int numberOfPlayers)
     {
@@ -248,8 +271,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    
+
     //Testing!!!!!!!!!!!!!!!!!!!!!
+    
     public void AdvanceToDraft()
     {
         
@@ -284,6 +308,9 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene("TeamSelection");
         }
     }
+    #endregion
+
+    #region Transitions METHODS
     public void GoToMatch()
     {
         mode = GameMode.Match;
@@ -298,7 +325,7 @@ public class GameManager : MonoBehaviour
         uiManager.hasbeenCreatedTheBtn = false;
         SceneManager.LoadScene("MyTeamScreen");
     }
-    
+    #endregion
     IEnumerator Delay()
     {
         yield return new WaitForSeconds(2f);

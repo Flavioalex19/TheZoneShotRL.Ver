@@ -16,6 +16,7 @@ public class Team : MonoBehaviour
 
     #endregion
     [SerializeField] string Description;
+    [SerializeField]public  List<Team> _schedule = new List<Team>();
     #region Match Variables
     public bool hasPossession = false;
     public int Score = 0;
@@ -64,6 +65,14 @@ public class Team : MonoBehaviour
         _equipmentList.Add(new Equipment { Index = 3, Name = "Shoes", Level = 0, ShotBoost = 0, InsBoost = 0, MidBoost = 0, OutBoost = 0 });
         _equipmentList.Add(new Equipment { Index = 4, Name = "CoachSuit", Level = 0, ShotBoost = 0, InsBoost = 0, MidBoost = 0, OutBoost = 0 });
         print(name + " " + _equipmentList.Count + "TEAM EQUIPMENTS");
+    }
+    public List<Team> GetSchedule()
+    {
+        return _schedule;
+    }
+    public void SetSchedule(List<Team> teams)
+    {
+        _schedule = teams;
     }
 }
 [System.Serializable]

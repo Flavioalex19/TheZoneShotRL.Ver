@@ -168,10 +168,24 @@ public class UiManager : MonoBehaviour
             
             //find equipment text
             Transform equipAreaText = GameObject.Find("Equips").transform;
-            for (int i = 0; i < equipAreaText.childCount-1; i++)
+            //print(equipAreaText.childCount + " number of equips");
+            //print(gameManager.playerTeam.GetEquipment().Count);
+            
+            for (int i = 0; i < equipAreaText.childCount; i++)
             {
                 equipAreaText.GetChild(i).GetComponent<TextMeshProUGUI>().text = 
                     gameManager.playerTeam.GetEquipment()[i].Name.ToString() + " " +gameManager.playerTeam.GetEquipment()[i].Level.ToString();
+                
+            }
+            
+        }
+        //Schedule
+        if (GameObject.Find("MyTeamScheduleWeeks"))
+        {
+            Transform scheduleArea = GameObject.Find("MyTeamScheduleWeeks").transform;
+            for (int i = 0; i < gameManager.playerTeam._schedule.Count; i++)
+            {
+                scheduleArea.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam._schedule[i].TeamName.ToString();
             }
         }
         //Team Stats and atrributes -DEBUG for now
