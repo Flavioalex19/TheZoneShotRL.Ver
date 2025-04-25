@@ -57,14 +57,27 @@ public class Team : MonoBehaviour
     }
     public void CreateEquips()
     {
+        /*
         _equipmentList.Clear();
+        
         //Only create if has no save file-ADD THIS LATER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         _equipmentList.Add(new Equipment { Index = 0, Name = "Helmet", Level = 0, ShotBoost = 0, InsBoost = 0, MidBoost = 0, OutBoost = 0 });
         _equipmentList.Add(new Equipment { Index = 1, Name = "Pads", Level = 0, ShotBoost = 0, InsBoost = 0, MidBoost = 0, OutBoost = 0 });
         _equipmentList.Add(new Equipment { Index = 2, Name = "Gloves", Level = 0, ShotBoost = 0, InsBoost = 0, MidBoost = 0, OutBoost = 0 });
         _equipmentList.Add(new Equipment { Index = 3, Name = "Shoes", Level = 0, ShotBoost = 0, InsBoost = 0, MidBoost = 0, OutBoost = 0 });
         _equipmentList.Add(new Equipment { Index = 4, Name = "CoachSuit", Level = 0, ShotBoost = 0, InsBoost = 0, MidBoost = 0, OutBoost = 0 });
-        print(name + " " + _equipmentList.Count + "TEAM EQUIPMENTS");
+        */
+        if (_equipmentList.Count > 0) return; // Prevent overwrite if already loaded
+
+        _equipmentList.Clear();
+        _equipmentList.Add(new Equipment { Index = 0, Name = "Helmet", Level = 0, ShotBoost = 0, InsBoost = 0, MidBoost = 0, OutBoost = 0 });
+        _equipmentList.Add(new Equipment { Index = 1, Name = "Pads", Level = 0, ShotBoost = 0, InsBoost = 0, MidBoost = 0, OutBoost = 0 });
+        _equipmentList.Add(new Equipment { Index = 2, Name = "Gloves", Level = 0, ShotBoost = 0, InsBoost = 0, MidBoost = 0, OutBoost = 0 });
+        _equipmentList.Add(new Equipment { Index = 3, Name = "Shoes", Level = 0, ShotBoost = 0, InsBoost = 0, MidBoost = 0, OutBoost = 0 });
+        _equipmentList.Add(new Equipment { Index = 4, Name = "CoachSuit", Level = 0, ShotBoost = 0, InsBoost = 0, MidBoost = 0, OutBoost = 0 });
+
+        print(name + " " + _equipmentList.Count + " TEAM EQUIPMENTS CREATED");
+        //print(name + " " + _equipmentList.Count + "TEAM EQUIPMENTS");
     }
     public List<Team> GetSchedule()
     {
@@ -74,6 +87,7 @@ public class Team : MonoBehaviour
     {
         _schedule = teams;
     }
+    
 }
 [System.Serializable]
 public class Equipment
@@ -85,5 +99,6 @@ public class Equipment
     public int InsBoost;
     public int MidBoost;
     public int OutBoost;
+    
 
 }

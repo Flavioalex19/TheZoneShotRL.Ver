@@ -12,6 +12,7 @@ public class UiManager : MonoBehaviour
     
     GameManager gameManager;
     MatchManager matchManager;
+    LeagueManager leagueManager;
 
     //Team Management UI
     public GameObject btn_AdvanceToMatch;
@@ -40,7 +41,8 @@ public class UiManager : MonoBehaviour
     void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-
+        leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
+        
         
         
         
@@ -68,12 +70,21 @@ public class UiManager : MonoBehaviour
             }
             if (GameObject.Find("Team B Players Area"))
             {
-                playerInfoInMach = GameObject.Find("Team B Players Area").transform;
-                for (int i = 0; i < gameManager.leagueTeams[1].playersListRoster.Count; i++)
+                if (GameObject.Find("MatchManager"))
                 {
-                    playerInfoInMach.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[1].playersListRoster[i].playerFirstName.ToString();
-                    playerInfoInMach.GetChild(i).GetChild(3).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[1].playersListRoster[i].PointsMatch.ToString();
+                    matchManager = GameObject.Find("MatchManager").GetComponent<MatchManager>();
+                    if (matchManager.AwayTeam != null)
+                    {
+                        playerInfoInMach = GameObject.Find("Team B Players Area").transform;
+                        for (int i = 0; i < matchManager.AwayTeam.playersListRoster.Count; i++)
+                        {
+                            playerInfoInMach.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = matchManager.AwayTeam.playersListRoster[i].playerFirstName.ToString();
+                            playerInfoInMach.GetChild(i).GetChild(3).GetComponent<TextMeshProUGUI>().text = matchManager.AwayTeam.playersListRoster[i].PointsMatch.ToString();
+                        }
+                    }
                 }
+                
+                
             }
             //Scoreboard
             if(GameObject.Find("Away Team Score Text") && GameObject.Find("Home Team Score Text"))
@@ -82,7 +93,7 @@ public class UiManager : MonoBehaviour
                 awayScoreText = GameObject.Find("Away Team Score Text").GetComponent<TextMeshProUGUI>();
 
                 homeScoreText.text = gameManager.playerTeam.Score.ToString();
-                awayScoreText.text = gameManager.leagueTeams[1].Score.ToString();
+                awayScoreText.text = matchManager.AwayTeam.Score.ToString();
             }
             ///REMOVE THIS LATER    
             if (GameObject.Find("Text Area"))
@@ -162,22 +173,46 @@ public class UiManager : MonoBehaviour
         #endregion
         #region Team Managemet
         //Change later!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        
+
         if (GameObject.Find("Equips"))
         {
+            /*
+            if (leagueManager.canStartANewWeek == false)
+            {
+                print("THE WEEK HAS STARTED" + GameObject.Find("ChoicesForTheWeek").name);
+
+                if (GameObject.Find("ChoicesForTheWeek")) GameObject.Find("ChoicesForTheWeek").SetActive(false);
+
+                if (GameObject.Find("CurrentEventChoiceArea")) GameObject.Find("CurrentEventChoiceArea").SetActive(false);
+
+            }*/
             //Later create a check to find the team that is controlled by the player
-            
+
             //find equipment text
             Transform equipAreaText = GameObject.Find("Equips").transform;
             //print(equipAreaText.childCount + " number of equips");
             //print(gameManager.playerTeam.GetEquipment().Count);
             
-            for (int i = 0; i < equipAreaText.childCount; i++)
+            for (int i = 0; i < equipAreaText.childCount ; i++)
             {
+                //print(gameManager.playerTeam.GetEquipment()[i].Name.ToString() + " " + gameManager.playerTeam.GetEquipment()[i].Level.ToString() + " NAME OF AREA!!!!!!!!!!!!!!!!!!!!!!!!!");
                 equipAreaText.GetChild(i).GetComponent<TextMeshProUGUI>().text = 
                     gameManager.playerTeam.GetEquipment()[i].Name.ToString() + " " +gameManager.playerTeam.GetEquipment()[i].Level.ToString();
                 
             }
+            if (GameObject.Find("ChoicesForTheWeek"))
+            {
+                GameObject go = GameObject.Find("ChoicesForTheWeek");
+                if (leagueManager.canStartANewWeek == false)
+                {
+                    go.SetActive(false);
+                }
+            }
             
+
+
         }
         //Schedule
         if (GameObject.Find("MyTeamScheduleWeeks"))
@@ -219,6 +254,23 @@ public class UiManager : MonoBehaviour
                 }
             }
         }
+        if(GameObject.Find("Week Text"))
+        {
+            GameObject.Find("Week Text").GetComponent<TextMeshProUGUI>().text = leagueManager.Week.ToString();
+        }
+        //Team Moral/FrontOffice/FansSupport
+        if(GameObject.Find("MoralePointsText"))
+        {
+            GameObject.Find("MoralePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.Moral.ToString();
+        }
+        if (GameObject.Find("FrontOfficePointsText"))
+        {
+            GameObject.Find("FrontOfficePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FrontOfficePoints.ToString();
+        }
+        if (GameObject.Find("FanSupportPointsText"))
+        {
+            GameObject.Find("FanSupportPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FansSupportPoints.ToString();
+        }
         #endregion
 
         /*
@@ -259,12 +311,13 @@ public class UiManager : MonoBehaviour
                         }
                     }
                 }
-                if (teamAStatsName != null) // Check if the object exists
+                if (teamBStatsName != null) // Check if the object exists
                 {
                     for (int i = 0; i < matchManager.AwayTeam.playersListRoster.Count; i++)
                     {
-                        if (i < teamAStatsName.transform.childCount) // Prevent out-of-bounds errors
+                        if (i < teamBStatsName.transform.childCount) // Prevent out-of-bounds errors
                         {
+                            print(matchManager.AwayTeam.playersListRoster[i].playerFirstName + " THIS IS A PLAYER FROM THE AWAY TEAM");
                             teamBStatsName.transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = matchManager.AwayTeam.playersListRoster[i].playerFirstName.ToString();
                             teamBStatsPts.transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = matchManager.AwayTeam.playersListRoster[i].PointsMatch.ToString();
                         }

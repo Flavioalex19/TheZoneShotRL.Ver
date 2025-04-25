@@ -22,6 +22,7 @@ public class MatchManager : MonoBehaviour
     }
     GameManager manager;
     UiManager uiManager;
+    LeagueManager leagueManager;
     MatchStates match;
     public int GamePossesions = 10;
     public int currentGamePossessons;
@@ -47,6 +48,7 @@ public class MatchManager : MonoBehaviour
     {
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
         uiManager = GameObject.Find("UIManager").GetComponent<UiManager>();
+        leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
         btn_ReturnToTeamManagement = GameObject.Find("Advance to Team Management Screen Button").GetComponent<Button>();
         EndScreenStatsPanel = GameObject.Find("End Game Stats");
         btn_ReturnToTeamManagement.onClick.AddListener(()=>manager.ReturnToTeamManegement());
@@ -54,10 +56,21 @@ public class MatchManager : MonoBehaviour
         match = MatchStates.Start;
         currentGamePossessons = GamePossesions;
         //TESTING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        HomeTeam = manager.leagueTeams[0];
+        //HomeTeam = manager.leagueTeams[0];
+        HomeTeam = manager.playerTeam;
 
+
+        //AwayTeam = manager.leagueTeams[1];
+        for (int i = 0; i < manager.leagueTeams.Count; i++)
+        {
+            if (manager.leagueTeams[i] == manager.playerTeam._schedule[leagueManager.Week])
+            {
+                AwayTeam = manager.leagueTeams[i];
+            }
+        }
         
-        AwayTeam = manager.leagueTeams[1];
+
+        //print(HomeTeam.TeamName + " HOME TEAM " + AwayTeam.TeamName + " AWAYTEAM ");
 
         HomeTeam.Score = 0;
         AwayTeam.Score = 0;
@@ -80,8 +93,9 @@ public class MatchManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
+        /*
         if(_canCallTimeout)
         {
             _debugTimeoutText.text = "Can Call Timeout";
@@ -93,14 +107,28 @@ public class MatchManager : MonoBehaviour
             //match = MatchStates.Timeout;
             _canCallTimeout = false;
         }
+        */
+        if (_canCallTimeout)
+        {
+            _debugTimeoutText.text = "Can Call Timeout";
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                match = MatchStates.Timeout;
+                IsOnTimeout = true;
+                _canCallTimeout = false;
+                _debugTimeoutText.text = "Timeout Called!";
+            }
+        }
     }
     IEnumerator GameFlow()
     {
         while (currentGamePossessons > 0)
         {
+            /*
             //Step 1
-            if (match == MatchStates.Start) ChoosePlayerToCarrayBall();
-            else ChoosePlayerToCarrayBall();
+            if (match == MatchStates.Start) ChoosePlayerToCarryBall();
+            else ChoosePlayerToCarryBall();
             match = MatchStates.Possesion;
             //yield return StartCoroutine(WaitForTimeOut());
             yield return new WaitForSeconds(2f);
@@ -115,8 +143,22 @@ public class MatchManager : MonoBehaviour
             //yield return StartCoroutine(WaitForTimeOut());
             //yield return Scoring(playerWithTheBall);
             yield return StartCoroutine(WaitForTimeOut());
-        }
+            */
+            // Step 1: Choose the player to carry the ball
+            ChoosePlayerToCarryBall();
+            match = MatchStates.Possesion;
 
+            yield return new WaitForSeconds(2f);
+
+            // Step 2: Player decides to pass or not
+            yield return ChooseToPass();
+
+            // Step 3: Wait for final actions (e.g., scoring)
+            yield return StartCoroutine(WaitForTimeOut());
+
+            currentGamePossessons--;
+        }
+        /*
         uiManager.PlaybyPlayText("MatchEnded");
         if (HomeTeam.Score > AwayTeam.Score) { AwayTeam.Moral -= 15; HomeTeam.Moral += 15; }
         else if (HomeTeam.Score < AwayTeam.Score) { HomeTeam.Moral -= 15; AwayTeam.Moral += 15; } 
@@ -129,10 +171,31 @@ public class MatchManager : MonoBehaviour
 
 
         EndScreenStatsPanel.SetActive(true);
+        */
+        // End of match logic
+        uiManager.PlaybyPlayText("MatchEnded");
 
+        if (HomeTeam.Score > AwayTeam.Score)
+        {
+            AwayTeam.Moral -= 15;
+            HomeTeam.Moral += 15;
+        }
+        else if (HomeTeam.Score < AwayTeam.Score)
+        {
+            HomeTeam.Moral -= 15;
+            AwayTeam.Moral += 15;
+        }
+        else
+        {
+            HomeTeam.Moral -= 5;
+            AwayTeam.Moral -= 5;
+        }
+
+        EndScreenStatsPanel.SetActive(true);
     }
-    void ChoosePlayerToCarrayBall()
+    void ChoosePlayerToCarryBall()
     {
+        
         Player playerWithHighAwareness = null;
         int highestAwareness = int.MinValue;
 
@@ -150,6 +213,8 @@ public class MatchManager : MonoBehaviour
         playerWithHighAwareness.HasTheBall = true;
         uiManager.PlaybyPlayText(playerWithHighAwareness.playerFirstName + " " + " Has the ball" + " " + playerWithHighAwareness.HasTheBall);
         //match = MatchStates.Possesion;
+        
+       
     }
     IEnumerator ChooseToPass()
     {
@@ -309,9 +374,6 @@ public class MatchManager : MonoBehaviour
                 }
                 else willShoot = true;
             }
-
-            // Commented section for ball stolen logic
-            // if (ballStolen) break;
         }
         
     }
@@ -327,25 +389,6 @@ public class MatchManager : MonoBehaviour
     IEnumerator WaitForTimeOut()
     {
         /*
-        _timeOutTimer = timerTimeOutReset;
-
-        if (_canCallTimeout==false) // Check if timeouts are allowed before proceeding
-        {
-            IsOnTimeout = true;
-            _debugTimeoutText.text = "Time Out!!!";
-            _canCallTimeout = false; // Prevent multiple timeouts
-
-            yield return new WaitForSeconds(_timeOutTimer); // Wait for timeout duration
-
-            _debugTimeoutText.text = "Return to game";
-            yield return new WaitForSeconds(2f);
-
-            _debugTimeoutText.text = "Can Call Timeout";
-            _canCallTimeout = true;
-            IsOnTimeout = false;
-        }
-        */
-        
         _timeOutTimer = timerTimeOutReset;
 
         if (_canCallTimeout == false)
@@ -367,7 +410,25 @@ public class MatchManager : MonoBehaviour
             _canCallTimeout = true;
             IsOnTimeout = false;
         }
+        */
+        //create a variable to show the counter later!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        _canCallTimeout = true;
+        float elapsed = 0f;
 
+        while (elapsed < _timeoutReset)
+        {
+            if (IsOnTimeout)
+            {
+                yield return new WaitForSeconds(timerTimeOutReset); // simulate timeout duration
+                IsOnTimeout = false;
+                yield break;
+            }
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        _canCallTimeout = false;
 
     }
 

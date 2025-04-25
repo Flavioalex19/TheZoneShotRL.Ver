@@ -44,8 +44,9 @@ public class TeamData
     public int teamFansSupport;
     public List<Team> teamSchedule = new List<Team>();
     public List<string> scheduleTeamNames;
+    public LeagueManagerData leagueData;
 
-    public TeamData(Team team)
+    public TeamData(Team team, LeagueManager leagueManager)
     {
         teamName = team.TeamName;  // Assuming Team script has a team name
         isPlayerControlled = team.IsPlayerTeam;
@@ -71,6 +72,8 @@ public class TeamData
         {
             scheduleTeamNames.Add(opponent.TeamName);
         }
+        //leagueData = new LeagueManagerData(FindObjectOfType<LeagueManager>());
+        leagueData = new LeagueManagerData(leagueManager);
     }
 }
 [System.Serializable]
@@ -92,5 +95,18 @@ public class EquipmentData
         InsB = equipment.InsBoost;
         MidB = equipment.MidBoost; 
         OutB = equipment.OutBoost;
+    }
+}
+[System.Serializable]
+public class LeagueManagerData
+{
+    public int weekNumber;
+    public bool canGenEvent;
+    public bool canStartANewWeek;
+    public LeagueManagerData(LeagueManager leagueManager)
+    {
+        weekNumber = leagueManager.Week;
+        canGenEvent = leagueManager.canGenerateEvents;
+        canStartANewWeek = leagueManager.canStartANewWeek;
     }
 }

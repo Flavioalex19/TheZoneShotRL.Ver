@@ -63,21 +63,15 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < leagueTeams.Count; i++)
         {
             leagueTeams[i].playersListRoster.Clear();
+            //leagueTeams[i]._equipmentList.Clear();
+            //leagueTeams[i].IsPlayerTeam = false;
         }
         ClearSchedule();
 
         //TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //leagueTeams[0].CreateEquips();
         //leagueTeams[0].ActivatePlayerTeam();//This should be set on the team selection!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        for (int i = 0; i < leagueTeams.Count; i++)
-        {
-            if (leagueTeams[i].IsPlayerTeam)
-            {
-                //leagueTeams[i].CreateEquips();
-                playerTeam = leagueTeams[i];
-                //leagueTeams[0].ActivatePlayerTeam();
-            }
-        }
+        
 
         // Check if there is a saved file for the team
         #region Loading Teams
@@ -88,6 +82,7 @@ public class GameManager : MonoBehaviour
             //saveSystem.LoadTeam(team);OLD!!!!!!!!!!!!!!!!!!!!!!!!!!
             for (int i = 0; i < leagueTeams.Count; i++)
             {
+                //print("TIME TO LOAD");
                 saveSystem.LoadTeam(leagueTeams[i]);
                 if (leagueTeams[i].IsPlayerTeam)playerTeam = leagueTeams[i];
                 //print(playerTeam + "THIS IS THE PLAYER!!!!!");
@@ -98,16 +93,34 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            
+            print("NO SAVE");
             for (int i = 0; i < leagueTeams.Count; i++)
             {
                 if (leagueTeams[i].IsPlayerTeam)
                 {
-                    leagueTeams[i].Moral = 50;
+                    leagueTeams[i].Moral = 60;
+                    leagueTeams[i].FansSupportPoints = 20;
+                    leagueTeams[i].FrontOfficePoints = 50;
+                    leagueTeams[i].IsPlayerTeam = false;
+                    leagueTeams[i]._equipmentList.Clear();
 
                 }
+                leagueTeams[i].Moral = 60;
+                leagueTeams[i].FansSupportPoints = 20;
+                leagueTeams[i].FrontOfficePoints = 50;
+                leagueTeams[i].IsPlayerTeam = false;
+                leagueTeams[i]._equipmentList.Clear();
             }
            
+        }
+        for (int i = 0; i < leagueTeams.Count; i++)
+        {
+            if (leagueTeams[i].IsPlayerTeam)
+            {
+                //leagueTeams[i].CreateEquips();
+                playerTeam = leagueTeams[i];
+                //leagueTeams[0].ActivatePlayerTeam();
+            }
         }
         #endregion
     }
@@ -117,8 +130,12 @@ public class GameManager : MonoBehaviour
         // If the ESC key is pressed and there is a save file, clear the save
         if (Input.GetKeyDown(KeyCode.Escape) && IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
         {
-            saveSystem.ClearSave(leagueTeams[0].TeamName, leagueTeams[0]);
-            saveSystem.ClearSave(leagueTeams[1].TeamName, leagueTeams[1]);
+            //saveSystem.ClearSave(leagueTeams[0].TeamName, leagueTeams[0]);
+            //saveSystem.ClearSave(leagueTeams[1].TeamName, leagueTeams[1]);
+            for (int i = 0; i < leagueTeams.Count; i++)
+            {
+                saveSystem.ClearSave(leagueTeams[i].TeamName, leagueTeams[i]);
+            }
             Application.Quit();
 
 
@@ -205,7 +222,7 @@ public class GameManager : MonoBehaviour
     {
         foreach (Player player in leagueTeams[0].playersListRoster)
         {
-            Debug.Log($"Player: {player.playerFirstName}, OVR: {player.ovr}" +" Has a ssaved File");
+            //Debug.Log($"Player: {player.playerFirstName}, OVR: {player.ovr}" +" Has a ssaved File");
         }
     }
     void AlternateTeamsAndAddPlayers()
@@ -320,9 +337,11 @@ public class GameManager : MonoBehaviour
     {
         mode = GameMode.TeamManagement;
         leagueManager.canGenerateEvents = true;
+        leagueManager.canStartANewWeek = true;
         leagueTeams[0].Score = 0;
         leagueTeams[1].Score = 0;
         uiManager.hasbeenCreatedTheBtn = false;
+        //leagueManager.canStartANewWeek = true;
         SceneManager.LoadScene("MyTeamScreen");
     }
     #endregion
