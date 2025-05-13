@@ -1254,6 +1254,7 @@ MonoBehaviour:
     Modifier: 0
     eventType: 0
   canGenerateEvents: 1
+  canStartANewWeek: 1
 --- !u!224 &1120259091 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 202720102136231797, guid: 5aaba02b63188c74aac36df80b815a84, type: 3}
@@ -1344,12 +1345,16 @@ PrefabInstance:
       objectReference: {fileID: 6125366047793733995, guid: de1e7c960bb588d4fb3896ab6578c845, type: 3}
     - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
       propertyPath: leagueTeams.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
       propertyPath: leagueTeams.Array.data[2]
       value: 
       objectReference: {fileID: 3835133189410921805, guid: 0068726d1c5df484f9dc2630e4468009, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: leagueTeams.Array.data[3]
+      value: 
+      objectReference: {fileID: 4930805896377140774, guid: aeca574c5522f4645acfcfc17d6fd4d5, type: 3}
     - target: {fileID: 3227278085919532099, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

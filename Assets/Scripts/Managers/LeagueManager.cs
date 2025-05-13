@@ -155,7 +155,7 @@ public class LeagueManager : MonoBehaviour
         {
 
             Index = 3,
-            Description = "An unknown figure shows p at the training facility.I’ve seen how you run this team,they say, voice low. Want to hear something that'll give you the edge?",
+            Description = "An unknown figure shows up at the training facility.I’ve seen how you run this team,they say, voice low. Want to hear something that'll give you the edge?",
             Choice1 = "I’ll listen. What’s the catch?",
             Choice2= "No thanks. I run this clean.",
             Modifier = 25,
@@ -192,7 +192,7 @@ public class LeagueManager : MonoBehaviour
             Choice1 = "We feel it. That energy drives us every night.",
             Choice2 = "We stay focused inside the lines. Everything else is just noise.",
             Modifier = 10,
-            eventType = EventType.TeamMeeting
+            eventType = EventType.Interview
 
         });
 

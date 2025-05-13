@@ -2,6 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+public enum TeamStyle
+{
+    Normal,
+    HightRiskAndHighReward,
+    DefensiveMindset,
+    BullRush,
+    Chaos
+}
 public class Team : MonoBehaviour
 {
     #region Saved Variables
@@ -17,9 +26,11 @@ public class Team : MonoBehaviour
     #endregion
     [SerializeField] string Description;
     [SerializeField]public  List<Team> _schedule = new List<Team>();
+    [SerializeField] TeamStyle _teamStyle;
     #region Match Variables
     public bool hasPossession = false;
     public int Score = 0;
+    public bool isOnDefenseBonus = false;
     #endregion
     private void Awake()
     {

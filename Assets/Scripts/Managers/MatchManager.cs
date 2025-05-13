@@ -33,10 +33,17 @@ public class MatchManager : MonoBehaviour
 
     public float _timeOutTimer = 0;
     float timerTimeOutReset = 7f;
-    [SerializeField] float _timeoutReset = 2f;
-    [SerializeField]bool _canCallTimeout = false;
+    [SerializeField] float _timeoutReset = 10f;
+    [SerializeField] bool _canCallTimeout = false;
     public bool IsOnTimeout = false;
     //[SerializeField]MatchStates _previousMatchState;//save the current state for the timeout
+
+
+    //Area for swapping players
+    int _indexPLayerA;
+    int _indexPLayerB;
+
+    public bool HasActionOnTimeout = true;
 
     //UI Elemens test
     public GameObject EndScreenStatsPanel;
@@ -51,12 +58,11 @@ public class MatchManager : MonoBehaviour
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
         btn_ReturnToTeamManagement = GameObject.Find("Advance to Team Management Screen Button").GetComponent<Button>();
         EndScreenStatsPanel = GameObject.Find("End Game Stats");
-        btn_ReturnToTeamManagement.onClick.AddListener(()=>manager.ReturnToTeamManegement());
+        btn_ReturnToTeamManagement.onClick.AddListener(() => manager.ReturnToTeamManegement());
         EndScreenStatsPanel.SetActive(false);
         match = MatchStates.Start;
         currentGamePossessons = GamePossesions;
-        //TESTING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //HomeTeam = manager.leagueTeams[0];
+        
         HomeTeam = manager.playerTeam;
 
 
@@ -68,16 +74,16 @@ public class MatchManager : MonoBehaviour
                 AwayTeam = manager.leagueTeams[i];
             }
         }
-        
 
-        //print(HomeTeam.TeamName + " HOME TEAM " + AwayTeam.TeamName + " AWAYTEAM ");
 
         HomeTeam.Score = 0;
         AwayTeam.Score = 0;
+        HomeTeam.isOnDefenseBonus = false;
+        AwayTeam.isOnDefenseBonus = false;
         teamWithball = HomeTeam;//Change Later
 
-        _canCallTimeout = false;
-        
+        _canCallTimeout = true;
+        HasActionOnTimeout = true;
 
         //JUST FOR TESTINg
         for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
@@ -88,36 +94,21 @@ public class MatchManager : MonoBehaviour
         {
             AwayTeam.playersListRoster[i].PointsMatch = 0;
         }
-        
+
         StartCoroutine(GameFlow());
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        /*
-        if(_canCallTimeout)
-        {
-            _debugTimeoutText.text = "Can Call Timeout";
-            
-        }
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            //_previousMatchState = match; // Save the last state
-            //match = MatchStates.Timeout;
-            _canCallTimeout = false;
-        }
-        */
+        
         if (_canCallTimeout)
         {
             _debugTimeoutText.text = "Can Call Timeout";
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                match = MatchStates.Timeout;
-                IsOnTimeout = true;
-                _canCallTimeout = false;
-                _debugTimeoutText.text = "Timeout Called!";
+
             }
         }
     }
@@ -125,25 +116,6 @@ public class MatchManager : MonoBehaviour
     {
         while (currentGamePossessons > 0)
         {
-            /*
-            //Step 1
-            if (match == MatchStates.Start) ChoosePlayerToCarryBall();
-            else ChoosePlayerToCarryBall();
-            match = MatchStates.Possesion;
-            //yield return StartCoroutine(WaitForTimeOut());
-            yield return new WaitForSeconds(2f);
-            //yield return StartCoroutine(WaitForTimeOut());
-            //Step 2
-
-            // return StartCoroutine(WaitForTimeOut());
-            yield return ChooseToPass();
-            //yield return StartCoroutine(WaitForTimeOut());
-
-            //Step 3
-            //yield return StartCoroutine(WaitForTimeOut());
-            //yield return Scoring(playerWithTheBall);
-            yield return StartCoroutine(WaitForTimeOut());
-            */
             // Step 1: Choose the player to carry the ball
             ChoosePlayerToCarryBall();
             match = MatchStates.Possesion;
@@ -158,20 +130,7 @@ public class MatchManager : MonoBehaviour
 
             currentGamePossessons--;
         }
-        /*
-        uiManager.PlaybyPlayText("MatchEnded");
-        if (HomeTeam.Score > AwayTeam.Score) { AwayTeam.Moral -= 15; HomeTeam.Moral += 15; }
-        else if (HomeTeam.Score < AwayTeam.Score) { HomeTeam.Moral -= 15; AwayTeam.Moral += 15; } 
-        else
-        {
-            HomeTeam.Moral -= 5;
-            AwayTeam.Moral -= 5;
-        }
-        //WIP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-        EndScreenStatsPanel.SetActive(true);
-        */
+       
         // End of match logic
         uiManager.PlaybyPlayText("MatchEnded");
 
@@ -195,7 +154,7 @@ public class MatchManager : MonoBehaviour
     }
     void ChoosePlayerToCarryBall()
     {
-        
+
         Player playerWithHighAwareness = null;
         int highestAwareness = int.MinValue;
 
@@ -205,16 +164,16 @@ public class MatchManager : MonoBehaviour
             {
                 highestAwareness = player.Awareness;
                 playerWithHighAwareness = player;
-                
-                
+
+
             }
         }
         //print(playerWithHighAwareness.playerFirstName);
         playerWithHighAwareness.HasTheBall = true;
         uiManager.PlaybyPlayText(playerWithHighAwareness.playerFirstName + " " + " Has the ball" + " " + playerWithHighAwareness.HasTheBall);
         //match = MatchStates.Possesion;
-        
-       
+
+
     }
     IEnumerator ChooseToPass()
     {
@@ -241,7 +200,7 @@ public class MatchManager : MonoBehaviour
             int willMakeThePass = Random.Range(1, 4);
             //willMakeThePass = 1;
             print((currentPlayer.Shooting - 40f) / (99f - 40f) + " WMP");
-            if(willMakeThePass < 3)
+            if (willMakeThePass < 3)
             {
                 print("Make the pass " + currentPlayer.playerFirstName);
                 Player nextPlayer = null;
@@ -282,8 +241,8 @@ public class MatchManager : MonoBehaviour
                 currentPlayer = nextPlayer;
                 currentPlayer.CurrentZone = 0;
                 currentGamePossessons--;
-                
-                
+
+
             }
             else
             {
@@ -309,27 +268,27 @@ public class MatchManager : MonoBehaviour
             }
 
         }
-        
+
     }
-    
-    
+
+
     IEnumerator Scoring(Player player)
     {
         while (true)
         {
-            bool willShoot = Random.Range(1,4) < 3; // Adjust logic as needed
+            bool willShoot = Random.Range(1, 4) < 3; // Adjust logic as needed
             if (willShoot)
             {
                 uiManager.PlaybyPlayText(player.playerFirstName + " takes a shot!");
                 yield return new WaitForSeconds(2f);
                 currentGamePossessons--;
                 //THIS 40 WILL BE REPLACED BY THE DEFENDER STAT/AKA THE STEAL VALUE 
-                bool hasScored=/* Random.Range(1, 100) < (player.Inside + player.Mid + player.Outside / 3) - 100*/Random.value <= (player.Shooting - 40f) / (99f - 40f);
+                bool hasScored =/* Random.Range(1, 100) < (player.Inside + player.Mid + player.Outside / 3) - 100*/Random.value <= (player.Shooting - 40f) / (99f - 40f);
                 if (hasScored)
                 {
                     //player.PointsMatch += 2;
                     //teamWithball.Score += 2;
-                    if(player.CurrentZone == 0)
+                    if (player.CurrentZone == 0)
                     {
                         player.PointsMatch += 4;
                         teamWithball.Score += 4;
@@ -345,7 +304,7 @@ public class MatchManager : MonoBehaviour
                         teamWithball.Score += 2;
                     }
                     uiManager.PlaybyPlayText(player.playerFirstName + " Has Scored" + " " + player.PointsMatch);
-                    
+
                 }
                 else
                 {
@@ -370,12 +329,12 @@ public class MatchManager : MonoBehaviour
                     uiManager.PlaybyPlayText(player.playerFirstName + " moves to zone " + player.CurrentZone);
                     yield return new WaitForSeconds(2f);
                     currentGamePossessons--;
-                    
+
                 }
                 else willShoot = true;
             }
         }
-        
+
     }
     void SwitchPossession()
     {
@@ -412,6 +371,7 @@ public class MatchManager : MonoBehaviour
         }
         */
         //create a variable to show the counter later!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        /*
         _canCallTimeout = true;
         float elapsed = 0f;
 
@@ -429,7 +389,46 @@ public class MatchManager : MonoBehaviour
         }
 
         _canCallTimeout = false;
+        */
+        //yield return new WaitForSeconds(5);
+        if (_canCallTimeout == false)
+        {
+            IsOnTimeout = true;
+            uiManager.PlaybyPlayText("We are on a timeout Champ");
+            yield return new WaitForSeconds(timerTimeOutReset);
+            _canCallTimeout = true;
+            IsOnTimeout = false;
+            HasActionOnTimeout = true;
+        }
+        else
+        {
+            yield return null;
+        }
 
     }
+    public void CallTimeout()
+    {
+        if (_canCallTimeout)
+        {
+            match = MatchStates.Timeout;
+            //IsOnTimeout = true;
+            _canCallTimeout = false;
+            _debugTimeoutText.text = "Timeout Called!";
+        }
 
+    }
+    //Substituitions
+    public void SubIndex()
+    {
+
+    }
+    //Create timeout Events
+    public void CreateTimeoutEvents()
+    {
+
+    }
+    public bool GetCanCallTimeout()
+    {
+        return _canCallTimeout;
+    }
 }

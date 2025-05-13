@@ -181,6 +181,7 @@ public class GameManager : MonoBehaviour
     //SCHEDULE AREA
     public void ScheduleCreation(List<Team> leagueTeams)
     {
+        /*
         foreach (Team team in leagueTeams)
         {
             List<Team> opponents = new List<Team>(leagueTeams);
@@ -189,6 +190,54 @@ public class GameManager : MonoBehaviour
             //team._schedule = opponents;
             team.SetSchedule(opponents);
         }
+        */
+        int numTeams = leagueTeams.Count;
+        int numWeeks = numTeams - 1;
+
+        // Initialize schedule for each team: 1 opponent per week
+        foreach (Team team in leagueTeams)
+        {
+            team._schedule = new List<Team>(new Team[numWeeks]);
+        }
+
+        for (int week = 0; week < numWeeks; week++)
+        {
+            HashSet<int> scheduled = new HashSet<int>();
+
+            for (int i = 0; i < numTeams; i++)
+            {
+                if (scheduled.Contains(i)) continue;
+
+                for (int j = i + 1; j < numTeams; j++)
+                {
+                    if (scheduled.Contains(j)) continue;
+
+                    Team teamA = leagueTeams[i];
+                    Team teamB = leagueTeams[j];
+
+                    // Make sure they haven't faced each other yet
+                    if (!HasFaced(teamA, teamB))
+                    {
+                        teamA._schedule[week] = teamB;
+                        teamB._schedule[week] = teamA;
+
+                        scheduled.Add(i);
+                        scheduled.Add(j);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    // Helper to check if teams have already been matched
+    private bool HasFaced(Team a, Team b)
+    {
+        foreach (Team opponent in a._schedule)
+        {
+            if (opponent == b)
+                return true;
+        }
+        return false;
     }
     public void ClearSchedule()
     {
