@@ -60,7 +60,7 @@ public class UiManager : MonoBehaviour
             {
                 playerInfoInMach = GameObject.Find("Team A Players Area").transform;
                 //Change for the leagueManger Home Team
-                for (int i = 0; i < gameManager.playerTeam.playersListRoster.Count; i++)
+                for (int i = 0; i < /*gameManager.playerTeam.playersListRoster.Count*/4; i++)
                 {
                     playerInfoInMach.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].playerFirstName.ToString();
                     playerInfoInMach.GetChild(i).GetChild(3).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].PointsMatch.ToString();
@@ -76,7 +76,7 @@ public class UiManager : MonoBehaviour
                     if (matchManager.AwayTeam != null)
                     {
                         playerInfoInMach = GameObject.Find("Team B Players Area").transform;
-                        for (int i = 0; i < matchManager.AwayTeam.playersListRoster.Count; i++)
+                        for (int i = 0; i < /*matchManager.AwayTeam.playersListRoster.Count*/4; i++)
                         {
                             playerInfoInMach.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = matchManager.AwayTeam.playersListRoster[i].playerFirstName.ToString();
                             playerInfoInMach.GetChild(i).GetChild(3).GetComponent<TextMeshProUGUI>().text = matchManager.AwayTeam.playersListRoster[i].PointsMatch.ToString();
@@ -273,22 +273,7 @@ public class UiManager : MonoBehaviour
         }
         #endregion
 
-        /*
-        if (GameObject.Find("MatchManager"))
-        {
-           
-            if (matchManager.currentGamePossessons == 0)
-            {
-                matchManager = GameObject.Find("MatchManager").GetComponent<MatchManager>();
-                GameObject teamAStatsName = GameObject.Find("TeamANames");
-                GameObject teamAStatsPts = GameObject.Find("TeamAPoints");
-                for (int i = 0; i < matchManager.HomeTeam.playersListRoster.Count; i++)
-                {
-                    teamAStatsName.transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = matchManager.HomeTeam.playersListRoster[i].playerFirstName.ToString();
-                }
-            }
-        }
-        */
+        
         //Match Area!!!!!!!
         if (GameObject.Find("MatchManager"))
         {

@@ -45,6 +45,9 @@ public class TeamData
     public List<Team> teamSchedule = new List<Team>();
     public List<string> scheduleTeamNames;
     public LeagueManagerData leagueData;
+    public int win;
+    public int lost;
+    public int draw;
 
     public TeamData(Team team, LeagueManager leagueManager)
     {
@@ -53,6 +56,9 @@ public class TeamData
         teamMoral = team.Moral;
         teamFrontOffice = team.FrontOfficePoints;
         teamFansSupport = team.FansSupportPoints;
+        win = team.Wins;
+        lost = team.Loses;
+        draw = team.Draws;
         foreach (Player player in team.playersListRoster)
         {
             playersListData.Add(new PlayerData(player));

@@ -46,11 +46,17 @@ public class SaveSystem : MonoBehaviour
             team.Moral = 0;
             team.FrontOfficePoints = 0;
             team.FansSupportPoints = 0;
+            team.Wins = 0;
+            team.Draws = 0;
+            team.Loses = 0;
 
             team.IsPlayerTeam = teamData.isPlayerControlled;
             team.Moral = teamData.teamMoral;
             team.FrontOfficePoints = teamData.teamFrontOffice;
             team.FansSupportPoints = teamData.teamFansSupport;
+            team.Wins = teamData.win;
+            team.Draws = teamData.draw;
+            team.Loses = teamData.lost;
 
 
             
@@ -179,7 +185,10 @@ public class SaveSystem : MonoBehaviour
                 team.IsPlayerTeam = false;
                 team._equipmentList.Clear();
             }
-            
+            team.Wins = 0;
+            team.Loses = 0;
+            team.Draws = 0;
+
             File.Delete(filePath);
             Debug.Log($"Save file for team {teamName} has been deleted.");
         }

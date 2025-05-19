@@ -22,12 +22,16 @@ public class Team : MonoBehaviour
     public int Moral;
     public int FrontOfficePoints;
     public int FansSupportPoints;
+    public int Wins;
+    public int Loses;
+    public int Draws;
 
     #endregion
     [SerializeField] string Description;
     [SerializeField]public  List<Team> _schedule = new List<Team>();
     [SerializeField] TeamStyle _teamStyle;
     #region Match Variables
+    public bool HasPlayed = false;
     public bool hasPossession = false;
     public int Score = 0;
     public bool isOnDefenseBonus = false;
