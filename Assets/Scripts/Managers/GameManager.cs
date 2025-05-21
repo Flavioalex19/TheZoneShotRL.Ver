@@ -154,7 +154,7 @@ public class GameManager : MonoBehaviour
                     glg_draftNames = GameObject.Find("DraftContent").GetComponent<GridLayoutGroup>();
                     if (count < 1)
                     {
-                        GeneratePlayers(leagueTeams.Count * 4);
+                        GeneratePlayers(leagueTeams.Count * 8);
                         count++;
                     }
                 }

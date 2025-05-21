@@ -16,11 +16,10 @@ public class Player : MonoBehaviour
         James,
         Robert
     }
-    // Array of 8 player names
     private static readonly string[] names =
     {
         "Albert", "Joseph", "Jonh", "Philip", "George", "Isaac", "Alan", "Homer", "Devon", "Clark", "Peter", "William", "Alexandre", "Rick", "Dante", "Virgil", "Frank" ,
-        "Caleb", "Rio", "Luke", "Morgan"
+        "Caleb", "Rio", "Luke", "Morgan", "Anderson", "Richard", "Daniel", "David", "Jacob", "Arthur", "Lucas", "Walter", "Neil"
     };
     [SerializeField] public string playerFirstName;
     [SerializeField] public float ovr;

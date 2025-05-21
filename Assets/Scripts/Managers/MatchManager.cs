@@ -28,7 +28,7 @@ public class MatchManager : MonoBehaviour
     public int currentGamePossessons;
     public Team HomeTeam;
     public Team AwayTeam;
-    [SerializeField] Team teamWithball;
+    [SerializeField] public Team teamWithball;
     [SerializeField] Player playerWithTheBall;
 
     public float _timeOutTimer = 0;
