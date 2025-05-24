@@ -294,10 +294,37 @@ public class GameManager : MonoBehaviour
         GameObject newButton = Instantiate(player.bt_DraftInfo,glg_draftNames.transform, false);
         newButton.GetComponent<Button>().onClick.AddListener(() => AddPlayerToTeam(player, newButton.GetComponent<Button>()));
         newButton.GetComponent<Button>().transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = player.playerFirstName.ToString();
-        newButton.GetComponent<Button>().transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.Shooting.ToString();
-        newButton.GetComponent<Button>().transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = player.Inside.ToString();
-        newButton.GetComponent<Button>().transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = player.Mid.ToString();
-        newButton.GetComponent<Button>().transform.GetChild(4).GetComponent<TextMeshProUGUI>().text = player.Outside.ToString();
+        newButton.GetComponent<Button>().transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.ovr.ToString();
+        //newButton.GetComponent<Button>().transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = player.Inside.ToString();
+        //newButton.GetComponent<Button>().transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = player.Mid.ToString();
+        //newButton.GetComponent<Button>().transform.GetChild(4).GetComponent<TextMeshProUGUI>().text = player.Outside.ToString();
+        Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
+        switch (player.Personality)
+        {
+            case 1:
+                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_01");
+                break;
+            case 2:
+                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_02");
+                break; 
+            case 3:
+                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_03");
+                break;
+                
+            case 4:
+                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_04");
+                break;
+
+            case 5:
+                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_04");
+                break;
+
+            default:
+                break;
+        }
+        Image myImageComponent = newButton.GetComponent<Button>().transform.GetChild(2).GetComponent<Image>();
+        myImageComponent.sprite = sprite;
+        
 
     }
     void AddPlayerToTeam(Player player, Button btn)
