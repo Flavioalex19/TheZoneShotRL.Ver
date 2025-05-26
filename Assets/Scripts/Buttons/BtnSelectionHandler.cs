@@ -116,6 +116,7 @@ public class BtnSelectionHandler : MonoBehaviour
                 AudioSource audioSource = GameObject.Find("SoundTrack Buttons Source").GetComponent<AudioSource>();
                 audioSource.Play();
             }
+            OnSelect(pointerEventData);//MDOD
         }
     }
     public void OnPointExit(BaseEventData eventData)
