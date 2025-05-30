@@ -262,8 +262,6 @@ public class GameManager : MonoBehaviour
             GeneratePlayerDraftButton(newPlayer);//NEW!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             
         }
-
-        //Debug.Log($"{numberOfPlayers} players have been generated and added to team {team.name}.");
     }
 
     // Function to print all players' names and OVR from the team

@@ -23,6 +23,7 @@ public class MatchManager : MonoBehaviour
     GameManager manager;
     UiManager uiManager;
     LeagueManager leagueManager;
+    [SerializeField] MatchUI _matchUI;
     MatchStates match;
     public int GamePossesions = 10;
     public int currentGamePossessons;
@@ -70,13 +71,14 @@ public class MatchManager : MonoBehaviour
         //AwayTeam = manager.leagueTeams[1];
         for (int i = 0; i < manager.leagueTeams.Count; i++)
         {
-            if (manager.leagueTeams[i] == manager.playerTeam._schedule[leagueManager.Week])
+            if (manager.leagueTeams[i] == manager.playerTeam._schedule[leagueManager.Week-1])
             {
                 AwayTeam = manager.leagueTeams[i];
             }
         }
+        //AwayTeam = HomeTeam._schedule[leagueManager.Week - 1];
         _actionTimer = _actionTimerReset;
-
+        _matchUI.SetTheTeamTextForTheMatch();
         HomeTeam.Score = 0;
         AwayTeam.Score = 0;
         HomeTeam.HasPlayed = true;

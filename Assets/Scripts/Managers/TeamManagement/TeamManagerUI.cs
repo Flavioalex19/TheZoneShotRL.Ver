@@ -12,6 +12,7 @@ public class TeamManagerUI : MonoBehaviour
     GameObject _scheduleArea;
     Transform _schedulePanelTextsArea;
 
+    [SerializeField] GameObject _EndBuildScreen;
     //Team Roster panel
     [SerializeField]GameObject _teamRoster;
     [SerializeField]Transform _teamRosterStartersPlayersText;
@@ -40,6 +41,7 @@ public class TeamManagerUI : MonoBehaviour
         _currentTeamIndex = gameManager.leagueTeams.IndexOf(gameManager.playerTeam);
         TeamRoster(_currentTeamIndex);
         _teamRoster.SetActive(false);
+        _EndBuildScreen.SetActive(false);
 
     }
 
@@ -48,6 +50,10 @@ public class TeamManagerUI : MonoBehaviour
     {
         //Update the current Week text
         WeekText.text = leagueManager.Week.ToString();
+        if(leagueManager.Week> gameManager.leagueTeams.Count - 1)
+        {
+            _EndBuildScreen.SetActive(true);
+        }
     }
 
     //Schedule Updated
