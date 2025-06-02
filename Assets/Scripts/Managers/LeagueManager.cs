@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Searcher.Searcher.AnalyticsEvent;
 
 public class LeagueManager : MonoBehaviour
 {

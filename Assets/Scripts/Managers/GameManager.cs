@@ -127,6 +127,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+       
         // If the ESC key is pressed and there is a save file, clear the save
         if (Input.GetKeyDown(KeyCode.Escape) && IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
         {
@@ -181,16 +182,6 @@ public class GameManager : MonoBehaviour
     //SCHEDULE AREA
     public void ScheduleCreation(List<Team> leagueTeams)
     {
-        /*
-        foreach (Team team in leagueTeams)
-        {
-            List<Team> opponents = new List<Team>(leagueTeams);
-            opponents.Remove(team); // Remove itself
-            opponents = opponents.OrderBy(t => Random.value).ToList(); // Shuffle
-            //team._schedule = opponents;
-            team.SetSchedule(opponents);
-        }
-        */
         int numTeams = leagueTeams.Count;
         int numWeeks = numTeams - 1;
 
@@ -293,9 +284,7 @@ public class GameManager : MonoBehaviour
         newButton.GetComponent<Button>().onClick.AddListener(() => AddPlayerToTeam(player, newButton.GetComponent<Button>()));
         newButton.GetComponent<Button>().transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = player.playerFirstName.ToString();
         newButton.GetComponent<Button>().transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.ovr.ToString();
-        //newButton.GetComponent<Button>().transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = player.Inside.ToString();
-        //newButton.GetComponent<Button>().transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = player.Mid.ToString();
-        //newButton.GetComponent<Button>().transform.GetChild(4).GetComponent<TextMeshProUGUI>().text = player.Outside.ToString();
+
         Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
         switch (player.Personality)
         {
@@ -330,13 +319,13 @@ public class GameManager : MonoBehaviour
         // Add the player to the current team
         leagueTeams[currentTeamIndex].playersListRoster.Add(player);
         // Print the player's name and the team they were added to
-        Debug.Log($"Player {player.playerFirstName} added to Team {leagueTeams[currentTeamIndex].TeamName}");
+        //Debug.Log($"Player {player.playerFirstName} added to Team {leagueTeams[currentTeamIndex].TeamName}");
         Destroy(btn.gameObject);//NEW!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         // Check child count in the next frame
         StartCoroutine(CheckAndProceedAfterDestroy());
 
-        // Alternate to the next team
+        // Alternate to the next team""""""""""""""""""""""""
         currentTeamIndex = (currentTeamIndex + 1) % leagueTeams.Count;
         
         
@@ -360,11 +349,13 @@ public class GameManager : MonoBehaviour
             mode = GameMode.TeamManagement;
             SceneManager.LoadScene("MyTeamScreen");
         }
-    }
+        
 
+    }
+    
 
     //Testing!!!!!!!!!!!!!!!!!!!!!
-    
+
     public void AdvanceToDraft()
     {
         
@@ -431,5 +422,13 @@ public class GameManager : MonoBehaviour
     IEnumerator TransitionTime()
     {
         yield return new WaitForSeconds(3f);
+    }
+    public void QuitAndClear()
+    {
+        for (int i = 0; i < leagueTeams.Count; i++)
+        {
+            saveSystem.ClearSave(leagueTeams[i].TeamName, leagueTeams[i]);
+        }
+        Application.Quit();
     }
 }

@@ -22,6 +22,9 @@ public class TeamManagerUI : MonoBehaviour
 
     GameObject _advBtn;//to Advance Button Elements
     TextMeshProUGUI WeekText;
+
+
+    [SerializeField] Button _closeGameForTestersBtn;
     // Start is called before the first frame update
     void Start()
     {
@@ -41,6 +44,9 @@ public class TeamManagerUI : MonoBehaviour
         _currentTeamIndex = gameManager.leagueTeams.IndexOf(gameManager.playerTeam);
         TeamRoster(_currentTeamIndex);
         _teamRoster.SetActive(false);
+
+        //End tESTING Screen
+        _closeGameForTestersBtn.onClick.AddListener(() => gameManager.QuitAndClear());
         _EndBuildScreen.SetActive(false);
 
     }
@@ -81,7 +87,17 @@ public class TeamManagerUI : MonoBehaviour
         //AwayTeam
         Sprite sprite1 = null;
         string awayTeamName;
-        awayTeamName = gameManager.playerTeam._schedule[leagueManager.Week-1].TeamName;
+
+        int currentWeek = 0;
+        if(leagueManager.Week == 0)
+        {
+            currentWeek = 0;
+        }
+        else
+        {
+            currentWeek = leagueManager.Week -1;
+        }
+        awayTeamName = gameManager.playerTeam._schedule[currentWeek].TeamName;
         print(awayTeamName + "NEXT OPP");
         sprite1 = Resources.Load<Sprite>("2D/Team Logos/" + awayTeamName);
         Image image = _advBtn.transform.GetChild(2).GetComponent<Image>();

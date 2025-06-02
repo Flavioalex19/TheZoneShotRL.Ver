@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DraftUiManager : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class DraftUiManager : MonoBehaviour
     GameManager _gameManager;
     [SerializeField]Transform _currentOnTheClockTeamArea;
     [SerializeField]Transform _playersFromOnTheClockTeamArea;
+
+    [SerializeField] Transform _playerBtnsAreaContent;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +32,31 @@ public class DraftUiManager : MonoBehaviour
                 _playersFromOnTheClockTeamArea.GetChild(i).GetComponent<TextMeshProUGUI>().text = 
                     _gameManager.leagueTeams[_gameManager.GetCurrentTeamIndex()].playersListRoster[i].playerFirstName.ToString(); 
             }
+        }
+
+        if (_gameManager.playerTeam != _gameManager.leagueTeams[_gameManager.GetCurrentTeamIndex()])
+        {
+            Transform selectedBtn = GetRandomChild();
+            InvokeButtonClick(selectedBtn.GetComponent<Button>());
+        }
+    }
+    public Transform GetRandomChild()
+    {
+        if (_playerBtnsAreaContent.childCount == 0)
+        {
+            Debug.LogWarning("No children found on this Transform.");
+            return null;
+        }
+
+        int randomIndex = Random.Range(0, _playerBtnsAreaContent.childCount);
+        return _playerBtnsAreaContent.GetChild(randomIndex);
+    }
+    public void InvokeButtonClick(Button button)
+    {
+        if (button != null)
+        {
+            button.onClick.Invoke();
+            Debug.Log("Button click invoked through code.");
         }
     }
 }
