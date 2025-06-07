@@ -191,13 +191,13 @@ public class UiManager : MonoBehaviour
             //Later create a check to find the team that is controlled by the player
 
             //find equipment text
-            Transform equipAreaText = GameObject.Find("Equips").transform;
+
             //print(equipAreaText.childCount + " number of equips");
             //print(gameManager.playerTeam.GetEquipment().Count);
-            
+            /*
+            Transform equipAreaText = GameObject.Find("Equips").transform;
             for (int i = 0; i < equipAreaText.childCount ; i++)
             {
-                //print(gameManager.playerTeam.GetEquipment()[i].Name.ToString() + " " + gameManager.playerTeam.GetEquipment()[i].Level.ToString() + " NAME OF AREA!!!!!!!!!!!!!!!!!!!!!!!!!");
                 equipAreaText.GetChild(i).GetComponent<TextMeshProUGUI>().text = 
                     gameManager.playerTeam.GetEquipment()[i].Name.ToString() + " " +gameManager.playerTeam.GetEquipment()[i].Level.ToString();
                 
@@ -210,7 +210,7 @@ public class UiManager : MonoBehaviour
                     go.SetActive(false);
                 }
             }
-            
+           */ 
 
 
         }
@@ -233,9 +233,7 @@ public class UiManager : MonoBehaviour
         }
         if (GameObject.Find("TeamPoints"))
         {
-            Transform teamStatsTextsArea = GameObject.Find("TeamPoints").transform;
-            //TODO- AT THE START CREATE A VARIABLE FOR THE TEAM CONTROLLERD BY THE PLAYER!!!!!
-            teamStatsTextsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.Moral.ToString();
+            
             /*
             for (int i = 0; i < teamStatsTextsArea.childCount; i++)
             {
@@ -254,23 +252,7 @@ public class UiManager : MonoBehaviour
                 }
             }
         }
-        if(GameObject.Find("Week Text"))
-        {
-            GameObject.Find("Week Text").GetComponent<TextMeshProUGUI>().text = leagueManager.Week.ToString();
-        }
-        //Team Moral/FrontOffice/FansSupport
-        if(GameObject.Find("MoralePointsText"))
-        {
-            GameObject.Find("MoralePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.Moral.ToString();
-        }
-        if (GameObject.Find("FrontOfficePointsText"))
-        {
-            GameObject.Find("FrontOfficePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FrontOfficePoints.ToString();
-        }
-        if (GameObject.Find("FanSupportPointsText"))
-        {
-            GameObject.Find("FanSupportPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FansSupportPoints.ToString();
-        }
+        
         #endregion
 
         

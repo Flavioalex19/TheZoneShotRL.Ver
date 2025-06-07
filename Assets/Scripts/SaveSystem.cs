@@ -24,7 +24,7 @@ public class SaveSystem : MonoBehaviour
         string json = JsonUtility.ToJson(teamData, true);
         string filePath = GetSavePath(team.TeamName);
 
-        Debug.Log($"Saving {team._equipmentList.Count} equipment items for {team.TeamName}");
+        //Debug.Log($"Saving {team._equipmentList.Count} equipment items for {team.TeamName}");
         // Write the JSON data to a file
         File.WriteAllText(filePath, json);
 
@@ -69,11 +69,6 @@ public class SaveSystem : MonoBehaviour
             //Load Equipment
             if (team.IsPlayerTeam /*&& teamData.equiList != null && teamData.equiList.Count > 0/*&& teamData.equiList != null*/)
             {
-                
-                print("EquipSection!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                //team.GetEquipment().Clear();
-               
-
                 foreach (EquipmentData equipData in teamData.equiList)
                 {
                     /*
@@ -158,6 +153,7 @@ public class SaveSystem : MonoBehaviour
                     leagueManager.Week = teamData.leagueData.weekNumber;
                     leagueManager.canGenerateEvents = teamData.leagueData.canGenEvent;
                     leagueManager.canStartANewWeek = teamData.leagueData.canStartANewWeek;
+                    leagueManager.canTrade = teamData.leagueData.canTradePlayers;
                 }
             }
 

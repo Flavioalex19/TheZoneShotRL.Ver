@@ -14,12 +14,14 @@ public class LeagueManager : MonoBehaviour
     public bool canGenerateEvents = true;
     public bool canStartANewWeek = true;
 
-    Team _playerTeam;
+    [SerializeField]Team _playerTeam;
     
 
     #region Events Variables
     EventType _choseEventType;
     #endregion
+
+    public bool canTrade = true;
 
     GameManager gameManager;
     UiManager uiManager;
@@ -44,45 +46,46 @@ public class LeagueManager : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         uiManager = GameObject.Find("UIManager").GetComponent<UiManager>();
         //check to verify if thre is no save file here if thre is none satart the new week-week 1
-        /*
-        eventOptions.Add(new EventOption { Description = "We have to win at any cost!", Modifier = Random.Range(1,5)});
-        eventOptions.Add(new EventOption { Description = "We must manage expectations.", Modifier = Random.Range(1, 5) });
-        eventOptions.Add(new EventOption {Description = "Discipline and hard work are the focus.", Modifier = Random.Range(1, 5) });
-        eventOptions.Add(new EventOption { Description = "Power of friendship is the key guys", Modifier = Random.Range(1, 5) });
-        eventOptions.Add(new EventOption { Description = "This league will be yours!", Modifier = Random.Range(1, 5) });
-        */
-        //CreateEventsForWeek();
         _playerTeam = gameManager.playerTeam;//TODO: Search the team that is controlled by the player!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         for (int i = 0; i < gameManager.leagueTeams.Count; i++)
         {
             if (gameManager.leagueTeams[i].IsPlayerTeam) _playerTeam = gameManager.leagueTeams[i];
+        }
+        if (canGenerateEvents == true && gameManager.mode == GameManager.GameMode.TeamManagement)
+        {
+            NewWeek();
         }
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        /*
         if(canGenerateEvents == true && gameManager.mode == GameManager.GameMode.TeamManagement)
         {
             print("NEW WEEK");
             NewWeek();
-        }//Else will be about the play off
+        }
+        *///Else will be about the play off
+        if (!canGenerateEvents || gameManager == null) return;
+
+        if (gameManager.mode == GameManager.GameMode.TeamManagement)
+        {
+            print("NEW WEEK");
+            NewWeek();
+        }
     }
     void NewWeek()
     {
         Week++;
         //Create a IF to very the week
         
-        if (GameObject.Find("ChoicesForTheWeek") /*&& canStartANewWeek == true*/)
+        if (/*GameObject.Find("ChoicesForTheWeek") */gameManager.mode == GameManager.GameMode.TeamManagement/*&& canStartANewWeek == true*/)
         {
             if(canStartANewWeek == true)
             {
                 CreateEventsForWeek();
-
-
                 Transform ChoiceButtonsTransform = GameObject.Find("ChoiceButtons").transform;
-
-                //List<EventOption> tempOptions = new List<EventOption>(eventOptions); // Clone the list
 
                 int buttonCount = Mathf.Min(ChoiceButtonsTransform.childCount, 2); // Ensure no out-of-range
 
@@ -102,20 +105,8 @@ public class LeagueManager : MonoBehaviour
             else
             {
                 print("not ativate");
-                //GameObject.Find("Choices").SetActive(false);
             }
-            
-
-
-
-            //eventOptions.Clear(); // Clear only after usage
-           
-
         }
-        
-        
-        
-
         canGenerateEvents = false;
         
     }
@@ -210,31 +201,15 @@ public class LeagueManager : MonoBehaviour
             }
                 
         }
-        /*
-        if (filteredEvents.Count < 2)
-        {
-            event1 = filteredEvents.Count > 0 ? filteredEvents[0] : null;
-            event2 = null;
-            return;
-        }
-        */
-
         int firstIndex = Random.Range(0, filteredEvents.Count);
         int secondIndex;
-        /*
-        do
-        {
-            secondIndex = Random.Range(0, filteredEvents.Count);
-        } while (secondIndex == firstIndex);
-        */
-        //event1 = filteredEvents[firstIndex];
+        
         event1 = filteredEvents[Random.Range(0, filteredEvents.Count)];
         print(event1.Index + " This is the index of the event chosen");
-        //event2 = filteredEvents[secondIndex];
         //CREATE THE BUTTONS
         Transform EventsButtonsTransform = GameObject.Find("ButtonsEvent").transform;
-        TextMeshProUGUI eventTypeText = GameObject.Find("EventTypeText").GetComponent<TextMeshProUGUI>();
-        eventTypeText.text = type.ToString();
+        //TextMeshProUGUI eventTypeText = GameObject.Find("EventTypeText").GetComponent<TextMeshProUGUI>();
+        //eventTypeText.text = type.ToString();
         EventsButtonsTransform.GetChild(0).GetComponent<Button>().onClick.AddListener(() => AddOnClick(event1, 0));
         EventsButtonsTransform.GetChild(1).GetComponent<Button>().onClick.AddListener(() => AddOnClick(event1, 1));
         EventsButtonsTransform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = event1.Choice1;
@@ -246,86 +221,114 @@ public class LeagueManager : MonoBehaviour
     {
         activeOption = eventOption;
         canStartANewWeek = false;
-
-        //print(_playerTeam._equipmentList[2].Name + " " + _playerTeam._equipmentList[0].Level);
-        _playerTeam = gameManager.playerTeam;
+        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+        {
+            if (gameManager.leagueTeams[i].IsPlayerTeam)
+            {
+                _playerTeam = gameManager.leagueTeams[i];
+            }
+            
+        }
+        if (_playerTeam == null)
+        {
+            _playerTeam = gameManager.playerTeam;
+            if (_playerTeam == null)
+            {
+                Debug.LogError("_playerTeam is NULL in AddOnClick");
+                return;
+            }
+        }
         switch (eventOption.Index)
         {
             case 0:
                 print(eventOption.Index + " " + eventOption.Description);
                 if(indexOfChoice == 0)
                 {
-                    _playerTeam._equipmentList[0].Level++;
+                    print("YES");
+                    gameManager.playerTeam._equipmentList[0].Level++;
                 }
                 else
                 {
-                    _playerTeam._equipmentList[1].Level++;
+                    print("YES");
+                    gameManager.playerTeam._equipmentList[1].Level++;
                 }
                 break;
             case 1:
                 print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    _playerTeam._equipmentList[2].Level++;
+                    print("YES");
+                    gameManager.playerTeam._equipmentList[2].Level++;
                 }
                 else
                 {
-                    _playerTeam._equipmentList[3].Level++;
+                    print("YES");
+                    gameManager.playerTeam._equipmentList[3].Level++;
                 }
                 break; 
             case 2:
                 print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    _playerTeam.Moral+= eventOption.Modifier;
+                    print("YES");
+                    gameManager.playerTeam.Moral+= eventOption.Modifier;
                 }
                 else
                 {
-                    _playerTeam.FansSupportPoints += eventOption.Modifier;
+                    print("YES");
+                    gameManager.playerTeam.FansSupportPoints += eventOption.Modifier;
                 }
                 break;
             case 3:
                 print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    _playerTeam.FrontOfficePoints += eventOption.Modifier;
+                    print("YES");
+                    gameManager.playerTeam.FrontOfficePoints += eventOption.Modifier;
                 }
                 else
                 {
-                    _playerTeam.Moral += eventOption.Modifier;
+                    print("YES");
+                    gameManager.playerTeam.Moral += eventOption.Modifier;
                 }
                 break;
             case 4:
                 print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    _playerTeam.FrontOfficePoints += eventOption.Modifier;
+                    print("YES");
+                    gameManager.playerTeam.FrontOfficePoints += eventOption.Modifier;
                 }
                 else
                 {
-                    _playerTeam.Moral += eventOption.Modifier;
+                    print("YES");
+                    gameManager.playerTeam.Moral += eventOption.Modifier;
                 }
                 break;
             case 5:
                 print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    _playerTeam.FrontOfficePoints += eventOption.Modifier;
+                    print("YES");
+                    gameManager.playerTeam.FrontOfficePoints += eventOption.Modifier;
                 }
                 else
                 {
-                    _playerTeam.Moral += eventOption.Modifier;
+                    print("YES");
+                    gameManager.playerTeam.Moral += eventOption.Modifier;
                 }
                 break;
             case 6:
                 print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    _playerTeam.FansSupportPoints += eventOption.Modifier;
+                    print("YES");
+                    gameManager.playerTeam.FansSupportPoints += eventOption.Modifier;
                 }
                 else
                 {
-                    _playerTeam.FrontOfficePoints += eventOption.Modifier;
+                    print("YES");
+                    gameManager.playerTeam.FrontOfficePoints += eventOption.Modifier;
                 }
                 break;
             default:
@@ -346,6 +349,28 @@ public class LeagueManager : MonoBehaviour
         _choseEventType = eventType;
         SetNewChoiceForEvent(eventType);
         
+    }
+    //Trades
+    public void SwapPlayersBetweenTeams<T>(List<Player> TeamA, Player playerA, List<Player> TeamB, Player playerB)
+    {
+        if (playerA == null || TeamB == null)
+        {
+            Debug.LogError("One or both lists are null.");
+            return;
+        }
+
+        int indexA = TeamA.IndexOf(playerA);
+        int indexB = TeamB.IndexOf(playerB);
+
+        if (indexA == -1 || indexB == -1)
+        {
+            Debug.LogError("One or both elements were not found in their respective lists.");
+            return;
+        }
+
+        // Swap
+        TeamA[indexA] = playerB;
+        TeamB[indexB] = playerA;
     }
 }
 [System.Serializable]

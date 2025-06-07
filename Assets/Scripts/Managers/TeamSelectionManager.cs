@@ -1,11 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class TeamSelectionManager : MonoBehaviour
 {
     GameManager _gameManager;
+    public TextMeshProUGUI TeamInfo;
+    public TextMeshProUGUI TeamStyle;
+    public TextMeshProUGUI TeamCoach;
+    [SerializeField] TextMeshProUGUI _debugCurrentTeam;
+
+    [SerializeField] Team selectedTeam;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,11 +21,25 @@ public class TeamSelectionManager : MonoBehaviour
 
     public void SetPlayerTeam(Team team)
     {
-        team.ActivatePlayerTeam();
+        
+        //team.ActivatePlayerTeam();
         _gameManager.playerTeam = team;
-        team.CreateEquips();
+        selectedTeam = _gameManager.playerTeam;
+        //team.CreateEquips();
+        //_gameManager.mode = GameManager.GameMode.Draft;
+        //_gameManager.ScheduleCreation(_gameManager.leagueTeams);
+        //SceneManager.LoadScene("Draft");//no transition
+
+        _debugCurrentTeam.text = _gameManager.playerTeam.TeamName;
+    }
+    public void AdvanceToDraft()
+    {
+        selectedTeam = _gameManager.playerTeam;
+        selectedTeam.ActivatePlayerTeam();
+        selectedTeam.CreateEquips();
         _gameManager.mode = GameManager.GameMode.Draft;
         _gameManager.ScheduleCreation(_gameManager.leagueTeams);
         SceneManager.LoadScene("Draft");//no transition
+
     }
 }

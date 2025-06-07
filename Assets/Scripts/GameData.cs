@@ -109,10 +109,12 @@ public class LeagueManagerData
     public int weekNumber;
     public bool canGenEvent;
     public bool canStartANewWeek;
+    public bool canTradePlayers;
     public LeagueManagerData(LeagueManager leagueManager)
     {
         weekNumber = leagueManager.Week;
         canGenEvent = leagueManager.canGenerateEvents;
         canStartANewWeek = leagueManager.canStartANewWeek;
+        canTradePlayers = leagueManager.canTrade;
     }
 }

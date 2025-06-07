@@ -62,6 +62,7 @@ public class GameManager : MonoBehaviour
         //ensure that all the teams, before loading, have 0 players
         for (int i = 0; i < leagueTeams.Count; i++)
         {
+            leagueTeams[i].IsPlayerTeam = false;
             leagueTeams[i].playersListRoster.Clear();
             //leagueTeams[i]._equipmentList.Clear();
             //leagueTeams[i].IsPlayerTeam = false;
@@ -127,7 +128,16 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-       
+        for (int i = 0; i < leagueTeams.Count; i++)
+        {
+            if (leagueTeams[i].IsPlayerTeam)
+            {
+                //leagueTeams[i].CreateEquips();
+                playerTeam = leagueTeams[i];
+                //leagueTeams[0].ActivatePlayerTeam();
+            }
+        }
+
         // If the ESC key is pressed and there is a save file, clear the save
         if (Input.GetKeyDown(KeyCode.Escape) && IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
         {
@@ -429,6 +439,10 @@ public class GameManager : MonoBehaviour
         {
             saveSystem.ClearSave(leagueTeams[i].TeamName, leagueTeams[i]);
         }
+        Application.Quit();
+    }
+    public void QuitApp()
+    {
         Application.Quit();
     }
 }

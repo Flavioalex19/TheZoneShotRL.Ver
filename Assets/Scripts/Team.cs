@@ -27,9 +27,10 @@ public class Team : MonoBehaviour
     public int Draws;
 
     #endregion
-    [SerializeField] string Description;
+    [SerializeField]public string Description;
+    public string CoachName;
     [SerializeField]public  List<Team> _schedule = new List<Team>();
-    [SerializeField] TeamStyle _teamStyle;
+    [SerializeField]public TeamStyle _teamStyle;
     #region Match Variables
     public bool HasPlayed = false;
     public bool hasPossession = false;
