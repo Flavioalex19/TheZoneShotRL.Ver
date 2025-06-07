@@ -32,7 +32,7 @@ public class SaveSystem : MonoBehaviour
     }
 
     // Load team data from JSON file
-    public void LoadTeam(Team team)
+    public void LoadTeam(Team team, GameObject playerPrefab)
     {
         
         string filePath = GetSavePath(team.TeamName);
@@ -122,7 +122,10 @@ public class SaveSystem : MonoBehaviour
             //Load Players
             foreach (PlayerData playerData in teamData.playersListData)
             {
-                Player newPlayer = new GameObject().AddComponent<Player>();
+                GameObject playerGO = /*new GameObject("Player_" + playerData.firstName)*/Instantiate(playerPrefab);
+                //Player newPlayer = new GameObject().AddComponent<Player>();
+                Player newPlayer = playerGO.AddComponent<Player>();
+
                 newPlayer.playerFirstName = playerData.firstName;
                 newPlayer.ovr = playerData.ovr;
                 newPlayer.Shooting = playerData.shooting;

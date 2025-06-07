@@ -87,6 +87,7 @@ public class UiManager : MonoBehaviour
                 
             }
             //Scoreboard
+            /*
             if(GameObject.Find("Away Team Score Text") && GameObject.Find("Home Team Score Text"))
             {
                 homeScoreText = GameObject.Find("Home Team Score Text").GetComponent<TextMeshProUGUI>();
@@ -95,6 +96,7 @@ public class UiManager : MonoBehaviour
                 homeScoreText.text = gameManager.playerTeam.Score.ToString();
                 awayScoreText.text = matchManager.AwayTeam.Score.ToString();
             }
+            */
             ///REMOVE THIS LATER    
             if (GameObject.Find("Text Area"))
             {

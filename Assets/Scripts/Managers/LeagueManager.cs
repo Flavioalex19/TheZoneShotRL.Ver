@@ -350,28 +350,7 @@ public class LeagueManager : MonoBehaviour
         SetNewChoiceForEvent(eventType);
         
     }
-    //Trades
-    public void SwapPlayersBetweenTeams<T>(List<Player> TeamA, Player playerA, List<Player> TeamB, Player playerB)
-    {
-        if (playerA == null || TeamB == null)
-        {
-            Debug.LogError("One or both lists are null.");
-            return;
-        }
-
-        int indexA = TeamA.IndexOf(playerA);
-        int indexB = TeamB.IndexOf(playerB);
-
-        if (indexA == -1 || indexB == -1)
-        {
-            Debug.LogError("One or both elements were not found in their respective lists.");
-            return;
-        }
-
-        // Swap
-        TeamA[indexA] = playerB;
-        TeamB[indexB] = playerA;
-    }
+    
 }
 [System.Serializable]
 public class EventOption

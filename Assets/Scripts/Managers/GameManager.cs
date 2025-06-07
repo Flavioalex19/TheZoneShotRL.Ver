@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < leagueTeams.Count; i++)
             {
                 //print("TIME TO LOAD");
-                saveSystem.LoadTeam(leagueTeams[i]);
+                saveSystem.LoadTeam(leagueTeams[i],playerPrefab);
                 if (leagueTeams[i].IsPlayerTeam)playerTeam = leagueTeams[i];
                 //print(playerTeam + "THIS IS THE PLAYER!!!!!");
             }
