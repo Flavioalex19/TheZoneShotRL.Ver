@@ -19,9 +19,18 @@ public class Player : MonoBehaviour
     private static readonly string[] names =
     {
         "Albert", "Joseph", "Jonh", "Philip", "George", "Isaac", "Alan", "Homer", "Devon", "Clark", "Peter", "William", "Alexandre", "Rick", "Dante", "Virgil", "Frank" ,
-        "Caleb", "Rio", "Luke", "Morgan", "Anderson", "Richard", "Daniel", "David", "Jacob", "Arthur", "Lucas", "Walter", "Neil"
+        "Caleb", "Rio", "Luke", "Morgan", "Anderson", "Richard", "Daniel", "David", "Jacob", "Arthur", "Lucas", "Walter", "Neil", "Steve", "Ash", "Sergio", "Dean", "Samuel",
+        "Denis", "Scott", "Leon", "Nash", "Marc", "Kevin", "Tom", "Laurence", "Matt","Brian", "Travis", "Robert", "Bob", "Kevin", "Fabian", "Nelson", "Henry"
+    };
+    private static readonly string[] secondNames = 
+    {
+        "Smith","Wells", "Clark", "Parker", "Herbert", "Adams", "Taylor", "Walker", "Wilson", "Railey" , "Jonhson", "Brock", "Santos", "Gomes", "Castro", "Neves", "Owen",
+        "Young", "Hill", "Armstrong", "Roger", "Mackmanus", "Salvi", "Free", "Freeman", "Strong", "Jager", "Cross", "Hunter", "Doyle", "Dezz", "Malone", "Gray", "Summers",
+        "Miller", "Von", "Yorke", "Clancy", "Tyson", "Collins", "King"
     };
     [SerializeField] public string playerFirstName;
+    [SerializeField] public string playerLastName;
+    public int Age;
     [SerializeField] public float ovr;
     public int Shooting;
     public int Inside;
@@ -58,6 +67,8 @@ public class Player : MonoBehaviour
         //firstName = ((PlayerNames)Random.Range(0, System.Enum.GetValues(typeof(PlayerNames)).Length)).ToString(); // Random name from enum
         // Randomly select a name from the array
         playerFirstName = names[Random.Range(0, names.Length)];
+        playerLastName = secondNames[Random.Range(0,secondNames.Length)];
+        Age = Random.Range(20, 30);
         //Debug.Log($"Generated Player: {firstName}, OVR: {ovr}");
     }
 }

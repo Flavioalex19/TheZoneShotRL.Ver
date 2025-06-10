@@ -41,7 +41,8 @@ public class SaveSystem : MonoBehaviour
         {
             string json = File.ReadAllText(filePath);
             TeamData teamData = JsonUtility.FromJson<TeamData>(json);
-
+            
+            
             team.IsPlayerTeam = false;
             team.Moral = 0;
             team.FrontOfficePoints = 0;
@@ -127,6 +128,8 @@ public class SaveSystem : MonoBehaviour
                 Player newPlayer = playerGO.AddComponent<Player>();
 
                 newPlayer.playerFirstName = playerData.firstName;
+                newPlayer.playerLastName = playerData.secondName;
+                newPlayer.Age = playerData.playerAge;
                 newPlayer.ovr = playerData.ovr;
                 newPlayer.Shooting = playerData.shooting;
                 newPlayer.Inside = playerData.inside;
@@ -187,7 +190,7 @@ public class SaveSystem : MonoBehaviour
             team.Wins = 0;
             team.Loses = 0;
             team.Draws = 0;
-
+            
             File.Delete(filePath);
             Debug.Log($"Save file for team {teamName} has been deleted.");
         }

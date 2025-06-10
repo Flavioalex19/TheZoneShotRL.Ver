@@ -52,6 +52,7 @@ public class UiManager : MonoBehaviour
     void Update()
     {
         //ADD THIS AS A FUNCTION ALTER ON THE MATCH MANAGER!!!!!
+
         #region Match
         if (gameManager.mode == GameManager.GameMode.Match)
         {
@@ -86,17 +87,6 @@ public class UiManager : MonoBehaviour
                 
                 
             }
-            //Scoreboard
-            /*
-            if(GameObject.Find("Away Team Score Text") && GameObject.Find("Home Team Score Text"))
-            {
-                homeScoreText = GameObject.Find("Home Team Score Text").GetComponent<TextMeshProUGUI>();
-                awayScoreText = GameObject.Find("Away Team Score Text").GetComponent<TextMeshProUGUI>();
-
-                homeScoreText.text = gameManager.playerTeam.Score.ToString();
-                awayScoreText.text = matchManager.AwayTeam.Score.ToString();
-            }
-            */
             ///REMOVE THIS LATER    
             if (GameObject.Find("Text Area"))
             {
@@ -173,6 +163,7 @@ public class UiManager : MonoBehaviour
 
         }
         #endregion
+
         #region Team Managemet
         //Change later!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -259,6 +250,7 @@ public class UiManager : MonoBehaviour
 
         
         //Match Area!!!!!!!
+        /*
         if (GameObject.Find("MatchManager"))
         {
             if (matchManager.currentGamePossessons == 0)
@@ -294,7 +286,7 @@ public class UiManager : MonoBehaviour
                 }
             }
         }
-
+        */
     }
     private void FixedUpdate()
     {

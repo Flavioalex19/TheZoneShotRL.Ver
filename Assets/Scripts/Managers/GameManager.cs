@@ -146,6 +146,7 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < leagueTeams.Count; i++)
             {
                 saveSystem.ClearSave(leagueTeams[i].TeamName, leagueTeams[i]);
+                print("Clear");
             }
             Application.Quit();
 
@@ -192,10 +193,12 @@ public class GameManager : MonoBehaviour
     //SCHEDULE AREA
     public void ScheduleCreation(List<Team> leagueTeams)
     {
+        /*
         int numTeams = leagueTeams.Count;
-        int numWeeks = numTeams - 1;
+        int numWeeks = numTeams /*-1*/;
 
         // Initialize schedule for each team: 1 opponent per week
+        /*
         foreach (Team team in leagueTeams)
         {
             team._schedule = new List<Team>(new Team[numWeeks]);
@@ -217,6 +220,7 @@ public class GameManager : MonoBehaviour
                     Team teamB = leagueTeams[j];
 
                     // Make sure they haven't faced each other yet
+        
                     if (!HasFaced(teamA, teamB))
                     {
                         teamA._schedule[week] = teamB;
@@ -229,6 +233,52 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+        */
+        int numTeams = leagueTeams.Count;
+
+        // If odd, add a dummy "bye" team
+        bool hasBye = false;
+        if (numTeams % 2 != 0)
+        {
+            leagueTeams.Add(null);
+            numTeams++;
+            hasBye = true;
+        }
+
+        int numWeeks = numTeams - 1;
+
+        // Initialize each team’s schedule
+        foreach (Team team in leagueTeams)
+        {
+            if (team != null)
+                team._schedule = new List<Team>(new Team[numWeeks]);
+        }
+
+        for (int week = 0; week < numWeeks; week++)
+        {
+            for (int i = 0; i < numTeams / 2; i++)
+            {
+                int teamAIndex = (week + i) % (numTeams - 1);
+                int teamBIndex = (numTeams - 1 - i + week) % (numTeams - 1);
+
+                if (i == 0)
+                    teamBIndex = numTeams - 1;
+
+                Team teamA = leagueTeams[teamAIndex];
+                Team teamB = leagueTeams[teamBIndex];
+
+                // Skip if one is the bye
+                if (teamA == null || teamB == null)
+                    continue;
+
+                teamA._schedule[week] = teamB;
+                teamB._schedule[week] = teamA;
+            }
+        }
+
+        // Optional: remove the dummy bye team
+        if (hasBye)
+            leagueTeams.Remove(null);
     }
     // Helper to check if teams have already been matched
     private bool HasFaced(Team a, Team b)
@@ -293,7 +343,8 @@ public class GameManager : MonoBehaviour
         GameObject newButton = Instantiate(player.bt_DraftInfo,glg_draftNames.transform, false);
         newButton.GetComponent<Button>().onClick.AddListener(() => AddPlayerToTeam(player, newButton.GetComponent<Button>()));
         newButton.GetComponent<Button>().transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = player.playerFirstName.ToString();
-        newButton.GetComponent<Button>().transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.ovr.ToString();
+        newButton.GetComponent<Button>().transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.playerLastName.ToString();
+        newButton.GetComponent<Button>().transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = player.ovr.ToString();
 
         Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
         switch (player.Personality)
@@ -319,7 +370,7 @@ public class GameManager : MonoBehaviour
             default:
                 break;
         }
-        Image myImageComponent = newButton.GetComponent<Button>().transform.GetChild(2).GetComponent<Image>();
+        Image myImageComponent = newButton.GetComponent<Button>().transform.GetChild(3).GetComponent<Image>();
         myImageComponent.sprite = sprite;
         
 

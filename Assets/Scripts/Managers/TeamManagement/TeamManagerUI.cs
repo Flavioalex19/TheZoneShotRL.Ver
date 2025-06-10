@@ -9,8 +9,9 @@ public class TeamManagerUI : MonoBehaviour
     GameManager gameManager;
     LeagueManager leagueManager;
 
-    GameObject _scheduleArea;
-    Transform _schedulePanelTextsArea;
+    [Header("Schedule")]
+    [SerializeField]GameObject _scheduleArea;
+    [SerializeField] Transform _schedulePanelTextsArea;
     [SerializeField] TradeManager tradeManager;
 
     [SerializeField] GameObject _EndBuildScreen;
@@ -42,22 +43,22 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI _textDrillSelected;
 
     GameObject _advBtn;//to Advance Button Elements
-    TextMeshProUGUI WeekText;
+    [SerializeField]TextMeshProUGUI WeekText;
 
 
     [SerializeField] Button _closeGameForTestersBtn;
     //Testing
-    Transform teamStatsTextsArea;
+    [SerializeField]Transform teamStatsTextsArea;
     // Start is called before the first frame update
     void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
-        _scheduleArea = GameObject.Find("ScheduleTeamArea");
-        _schedulePanelTextsArea = GameObject.Find("ScheduleSeasonTexts").transform;
+        //_scheduleArea = GameObject.Find("ScheduleTeamArea");
+        //_schedulePanelTextsArea = GameObject.Find("ScheduleSeasonTexts").transform;
         ScheduleUpdated();
         _advBtn = GameObject.Find("Advance Button");
-        WeekText = GameObject.Find("Week Text").GetComponent<TextMeshProUGUI>();
+        //WeekText = GameObject.Find("Week Text").GetComponent<TextMeshProUGUI>();
 
         //EquipmentUI
         EquipUI();
@@ -84,10 +85,12 @@ public class TeamManagerUI : MonoBehaviour
         //End tESTING Screen
         _closeGameForTestersBtn.onClick.AddListener(() => gameManager.QuitAndClear());
         _EndBuildScreen.SetActive(false);
+        if (leagueManager.Week > gameManager.leagueTeams.Count - 1)
+        {
+            _EndBuildScreen.SetActive(true);
+        }
 
-
-        //Testing
-        teamStatsTextsArea = GameObject.Find("TeamPoints").transform;
+        
         
 
     }
@@ -97,11 +100,8 @@ public class TeamManagerUI : MonoBehaviour
     {
         //Update the current Week text
         WeekText.text = leagueManager.Week.ToString();
-        if(leagueManager.Week> gameManager.leagueTeams.Count - 1)
-        {
-            _EndBuildScreen.SetActive(true);
-        }
-        if(leagueManager.canGenerateEvents == false)
+        
+        if(leagueManager.canGenerateEvents == false && leagueManager.canStartANewWeek == false)
         {
             CurrentEventChoiceArea.SetActive(false);
         }
@@ -157,10 +157,15 @@ public class TeamManagerUI : MonoBehaviour
             choicesForTheWeek.SetActive(false);
         }
     }
-
-    //Advance Button Update the elements
-    void AdvButtonUpdate()
+    public void UpdateWeek()
     {
+        leagueManager.IncreaseWeek();
+    }
+    //Advance Button Update the elements
+    public void AdvButtonUpdate()
+    {
+        
+        
         //Player team
         Sprite sprite = null;
         string teamName;
@@ -193,16 +198,19 @@ public class TeamManagerUI : MonoBehaviour
     public void TeamRoster(int index)
     {
         _currentTeamNameTeamRosterText.text = gameManager.leagueTeams[_currentTeamIndex].TeamName.ToString();
-
+        //Starters
         for (int i = 0; i < 4; i++)
         {
             _teamRosterStartersPlayersText.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[_currentTeamIndex].playersListRoster[i].playerFirstName.ToString();
-            _teamRosterStartersPlayersText.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[_currentTeamIndex].playersListRoster[i].ovr.ToString();
+            _teamRosterStartersPlayersText.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[_currentTeamIndex].playersListRoster[i].playerLastName.ToString();
+            _teamRosterStartersPlayersText.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[_currentTeamIndex].playersListRoster[i].ovr.ToString();
         }
+        //Bench
         for (int i = 0; i < 4; i++)
         {
             _teamRosterBenchPlayerText.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[_currentTeamIndex].playersListRoster[i + 4].playerFirstName.ToString();
-            _teamRosterBenchPlayerText.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[_currentTeamIndex].playersListRoster[i + 4].ovr.ToString();
+            _teamRosterBenchPlayerText.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[_currentTeamIndex].playersListRoster[i + 4].playerLastName.ToString();
+            _teamRosterBenchPlayerText.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[_currentTeamIndex].playersListRoster[i + 4].ovr.ToString();
         }
     }
 

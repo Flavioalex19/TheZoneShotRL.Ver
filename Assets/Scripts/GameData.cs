@@ -11,6 +11,8 @@ public class GameData : MonoBehaviour
 public class PlayerData
 {
     public string firstName;
+    public string secondName;
+    public int playerAge;
     public int shooting;
     public int inside;
     public int mid;
@@ -18,10 +20,13 @@ public class PlayerData
     public float ovr;
     public int awn;
     public int persona;
+    
 
     public PlayerData(Player player)
     {
         firstName = player.playerFirstName;
+        secondName = player.playerLastName;
+        playerAge = player.Age;
         shooting = player.Shooting;
         inside = player.Inside;
         mid = player.Mid;
@@ -29,6 +34,8 @@ public class PlayerData
         ovr = player.ovr;
         awn = player.Awareness;
         persona = player.Personality;
+        
+        
     }
 }
 

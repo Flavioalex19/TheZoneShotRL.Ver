@@ -71,13 +71,16 @@ public class LeagueManager : MonoBehaviour
 
         if (gameManager.mode == GameManager.GameMode.TeamManagement)
         {
-            print("NEW WEEK");
             NewWeek();
         }
     }
-    void NewWeek()
+    public void IncreaseWeek()
     {
         Week++;
+    }
+    void NewWeek()
+    {
+        //Week++;
         //Create a IF to very the week
         
         if (/*GameObject.Find("ChoicesForTheWeek") */gameManager.mode == GameManager.GameMode.TeamManagement/*&& canStartANewWeek == true*/)
