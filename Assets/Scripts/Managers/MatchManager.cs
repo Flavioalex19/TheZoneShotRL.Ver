@@ -47,6 +47,12 @@ public class MatchManager : MonoBehaviour
 
     public bool HasActionOnTimeout = true;
 
+    #region PlayerActions
+    [SerializeField]public bool _ChoosePass;
+    [SerializeField]public bool _ChooseScoring;
+    public bool CanChooseAction = true;
+    #endregion
+
     //UI Elemens test
     public GameObject EndScreenStatsPanel;
     Button btn_ReturnToTeamManagement;
@@ -67,8 +73,6 @@ public class MatchManager : MonoBehaviour
 
         HomeTeam = manager.playerTeam;
 
-
-        //AwayTeam = manager.leagueTeams[1];
         for (int i = 0; i < manager.leagueTeams.Count; i++)
         {
             if (manager.leagueTeams[i] == manager.playerTeam._schedule[leagueManager.Week-1])
@@ -195,6 +199,99 @@ public class MatchManager : MonoBehaviour
     }
     IEnumerator HandlePossession()
     {
+        if(teamWithball == AwayTeam)
+        {
+            
+            while (true)
+            {
+                CanChooseAction = false;
+                if (currentGamePossessons <= 1)
+                {
+                    uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " must shoot due to low possessions!");
+                    yield return new WaitForSeconds(_actionTimer);
+                    yield return Scoring(playerWithTheBall);
+                    yield break;
+                }
+
+                bool shouldPass = Random.Range(1, 4) < 3;//Change Later
+
+                if (shouldPass)
+                {
+                    if (TryPassBall())
+                    {
+                        yield return new WaitForSeconds(_actionTimer);
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
+                        yield return new WaitForSeconds(_actionTimer);
+                        continue; // Keep the loop for multiple passes
+                    }
+                    else
+                    {
+                        yield return new WaitForSeconds(_actionTimer);
+                        SwitchPossession();
+                        uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
+                        yield return new WaitForSeconds(_actionTimer);
+                        yield break;
+                    }
+                }
+                else
+                {
+                    ChangePosOfPlayerWithTheBall();
+                    uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
+                    yield return new WaitForSeconds(_actionTimer);
+                    yield return Scoring(playerWithTheBall);
+                    yield break;
+                }
+            }
+        }
+        else if (teamWithball == HomeTeam)
+        {
+            
+            while (true)
+            {
+                CanChooseAction = true;
+                if (currentGamePossessons <= 1)
+                {
+                    uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " must shoot due to low possessions!");
+                    yield return new WaitForSeconds(_actionTimer);
+                    yield return Scoring(playerWithTheBall);
+                    yield break;
+                }
+                uiManager.PlaybyPlayText("Wait for Player Action");
+                // Wait until player makes a choice
+                yield return new WaitUntil(() => _ChoosePass || _ChooseScoring);
+
+                if (_ChooseScoring)
+                {
+                    ChangePosOfPlayerWithTheBall();
+                    uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
+                    yield return new WaitForSeconds(_actionTimer);
+                    yield return Scoring(playerWithTheBall);
+                    ResetChoices();
+                    yield break;
+                }
+                else if (_ChoosePass)
+                {
+                    if (TryPassBall())
+                    {
+                        yield return new WaitForSeconds(_actionTimer);
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
+                        yield return new WaitForSeconds(_actionTimer);
+                        ResetChoices();
+                        continue;
+                    }
+                    else
+                    {
+                        yield return new WaitForSeconds(_actionTimer);
+                        SwitchPossession();
+                        uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
+                        yield return new WaitForSeconds(_actionTimer);
+                        ResetChoices();
+                        yield break;
+                    }
+                }
+            }
+        }
+        /*
         while (true)
         {
             if (currentGamePossessons <= 1)
@@ -233,7 +330,23 @@ public class MatchManager : MonoBehaviour
                 yield return Scoring(playerWithTheBall);
                 yield break;
             }
-        }
+        }*/
+    }
+    void ResetChoices()
+    {
+        _ChoosePass = false;
+        _ChooseScoring = false;
+        CanChooseAction = true;
+    }
+    public void GetChoosePass()
+    {
+        _ChoosePass = true;
+        CanChooseAction = false;
+    }
+    public void GetChooseScoring()
+    {
+        _ChooseScoring = true;
+        CanChooseAction = false;
     }
     bool TryPassBall()
     {

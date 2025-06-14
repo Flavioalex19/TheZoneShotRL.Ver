@@ -20,6 +20,9 @@ public class MatchUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI _text_ScoreBoardHomeTeam;
     [SerializeField] TextMeshProUGUI _text_ScoreBoardAwayTeam;
 
+    [Header("Action Button Area")]
+    [SerializeField] GameObject _actionArea;
+
     [SerializeField] Animator _homeTeamAnimator;
     // Start is called before the first frame update
     void Start()
@@ -33,6 +36,15 @@ public class MatchUI : MonoBehaviour
     {
         UpdatePlayersActive();
         UpdateScore();
+
+        if(_matchManager.CanChooseAction)
+        {
+            _actionArea.SetActive(true);
+        }
+        else
+        {
+            _actionArea.SetActive(false);
+        }
         //Debug Area
         if (GameObject.Find("DebugTextHome"))
         {
