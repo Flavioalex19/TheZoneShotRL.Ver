@@ -217,6 +217,9 @@ public class LeagueManager : MonoBehaviour
         EventsButtonsTransform.GetChild(1).GetComponent<Button>().onClick.AddListener(() => AddOnClick(event1, 1));
         EventsButtonsTransform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = event1.Choice1;
         EventsButtonsTransform.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = event1.Choice2;
+
+        GameObject.Find("EventText").GetComponent<TextMeshProUGUI>().text = event1.Description.ToString();
+
     }
 
     //Buttons

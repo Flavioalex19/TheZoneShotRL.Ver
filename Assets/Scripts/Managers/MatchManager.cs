@@ -104,11 +104,11 @@ public class MatchManager : MonoBehaviour
         {
             AwayTeam.playersListRoster[i].PointsMatch = 0;
         }
-
+        CanChooseAction = false;
         StartCoroutine(GameFlow());
         //StartCoroutine(LeagueWeekSimulation());
     }
-
+    
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -119,6 +119,7 @@ public class MatchManager : MonoBehaviour
 
 
         }
+
     }
     IEnumerator GameFlow()
     {
@@ -201,6 +202,7 @@ public class MatchManager : MonoBehaviour
     {
         if(teamWithball == AwayTeam)
         {
+            CanChooseAction = false;
             
             while (true)
             {
@@ -245,7 +247,7 @@ public class MatchManager : MonoBehaviour
         }
         else if (teamWithball == HomeTeam)
         {
-            
+            ResetChoices();
             while (true)
             {
                 CanChooseAction = true;
@@ -266,7 +268,7 @@ public class MatchManager : MonoBehaviour
                     uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
                     yield return new WaitForSeconds(_actionTimer);
                     yield return Scoring(playerWithTheBall);
-                    ResetChoices();
+                    //ResetChoices();
                     yield break;
                 }
                 else if (_ChoosePass)
