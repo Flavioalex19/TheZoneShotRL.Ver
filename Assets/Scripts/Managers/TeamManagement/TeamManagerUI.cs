@@ -16,6 +16,7 @@ public class TeamManagerUI : MonoBehaviour
 
     [SerializeField] GameObject _EndBuildScreen;
     //Team Roster panel
+    [Header("Team Roster")]
     [SerializeField]GameObject _teamRoster;
     [SerializeField]Transform _teamRosterStartersPlayersText;
     [SerializeField] Transform _teamRosterBenchPlayerText;
@@ -23,6 +24,8 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI _currentTeamNameTeamRosterText;
     [SerializeField] Image _currentTeamImage;
     [SerializeField] Image _awayteamImage;
+    [SerializeField] Transform _text_playerInfoStats;
+    [SerializeField] TextMeshProUGUI _text_playerInfoLastName;
 
     [Header("Equips")]
     //Equips
@@ -42,6 +45,11 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI _textPlayerSelected;
     [SerializeField] TextMeshProUGUI _textDrillSelected;
 
+    [Header("Options")]
+    [SerializeField] GameObject _optionsPanel;
+    [SerializeField] Button _optionsQuitBtn;
+
+    [Header("UI")]
     GameObject _advBtn;//to Advance Button Elements
     [SerializeField]TextMeshProUGUI WeekText;
 
@@ -82,6 +90,9 @@ public class TeamManagerUI : MonoBehaviour
         //Training
         SetTrainingBtns();
         _trainingPanel.SetActive(false);
+        //Options
+        _optionsQuitBtn.onClick.AddListener(() => Application.Quit());
+        _optionsPanel.SetActive(false);
         //End tESTING Screen
         _closeGameForTestersBtn.onClick.AddListener(() => gameManager.QuitAndClear());
         _EndBuildScreen.SetActive(false);
@@ -195,6 +206,7 @@ public class TeamManagerUI : MonoBehaviour
         _awayteamImage.sprite = sprite1;
 
     }
+    //TeamRoster
     public void TeamRoster(int index)
     {
         _currentTeamNameTeamRosterText.text = gameManager.leagueTeams[_currentTeamIndex].TeamName.ToString();
@@ -204,6 +216,7 @@ public class TeamManagerUI : MonoBehaviour
             _teamRosterStartersPlayersText.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[_currentTeamIndex].playersListRoster[i].playerFirstName.ToString();
             _teamRosterStartersPlayersText.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[_currentTeamIndex].playersListRoster[i].playerLastName.ToString();
             _teamRosterStartersPlayersText.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[_currentTeamIndex].playersListRoster[i].ovr.ToString();
+            //_teamRosterStartersPlayersText.GetChild(i).GetComponent<Button>().onClick.AddListener(() => PlayerStats(i));
         }
         //Bench
         for (int i = 0; i < 4; i++)
@@ -211,9 +224,21 @@ public class TeamManagerUI : MonoBehaviour
             _teamRosterBenchPlayerText.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[_currentTeamIndex].playersListRoster[i + 4].playerFirstName.ToString();
             _teamRosterBenchPlayerText.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[_currentTeamIndex].playersListRoster[i + 4].playerLastName.ToString();
             _teamRosterBenchPlayerText.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[_currentTeamIndex].playersListRoster[i + 4].ovr.ToString();
+            //_teamRosterBenchPlayerText.GetChild(i).GetComponent<Button>().onClick.AddListener(() => PlayerStats(i+4));
         }
     }
-
+    public void CurrentPlayerStats(int index)
+    {
+        _text_playerInfoLastName.text = gameManager.playerTeam.playersListRoster[index].playerLastName.ToString();
+        _text_playerInfoStats.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Shooting.ToString();
+        _text_playerInfoStats.GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Inside.ToString();
+        _text_playerInfoStats.GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Mid.ToString();
+        _text_playerInfoStats.GetChild(3).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Outside.ToString();
+        _text_playerInfoStats.GetChild(4).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Awareness.ToString();
+        _text_playerInfoStats.GetChild(5).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Defending.ToString();
+        _text_playerInfoStats.GetChild(6).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Guarding.ToString();
+        _text_playerInfoStats.GetChild(7).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Stealing.ToString();
+    }
     //Trading
     public void SetTradePanel()
     {
@@ -227,7 +252,7 @@ public class TeamManagerUI : MonoBehaviour
         for (int i = 0; i < _trade_btn_PlayersFronControlledTeam.childCount; i++)
         {
             _trade_btn_PlayersFronControlledTeam.GetChild(i).GetComponent<Btn_TradeBtn>().player = gameManager.playerTeam.playersListRoster[i];
-            print(gameManager.playerTeam.playersListRoster[i] + "player on the trade btn" + gameManager.playerTeam.playersListRoster[i].playerFirstName);
+            print(gameManager.playerTeam.playersListRoster[i] + "player on the trade btn" + gameManager.playerTeam.playersListRoster[i].playerLastName);
             //_trade_btn_PlayersFronControlledTeam.GetChild(i).GetComponent<Button>().onClick.AddListener(() => tradeManager.SetPlayerToTrade(gameManager.playerTeam.playersListRoster.IndexOf(gameManager.playerTeam.playersListRoster[i])));
             int index = gameManager.playerTeam.playersListRoster.IndexOf(gameManager.playerTeam.playersListRoster[i]);
             _trade_btn_PlayersFronControlledTeam.GetChild(i).GetComponent<Button>().onClick.AddListener(() => tradeManager.SetPlayerToTrade(index));

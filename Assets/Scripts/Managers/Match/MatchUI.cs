@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MatchUI : MonoBehaviour
 {
+    GameManager gameManager;
     MatchManager _matchManager;
     Transform _debugText;
     [Header("Starters")]
@@ -23,12 +25,27 @@ public class MatchUI : MonoBehaviour
     [Header("Action Button Area")]
     [SerializeField] GameObject _actionArea;
 
+    [Header("Post game")]
+    public GameObject EndScreenStatsPanel;
+    [SerializeField] Transform teamANames;
+    [SerializeField] Transform teamBNames;
+    [SerializeField] Transform teamAScore;
+    [SerializeField] Transform teamBScore;
+    Button btn_ReturnToTeamManagement;
+
+
     [SerializeField] Animator _homeTeamAnimator;
     // Start is called before the first frame update
     void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         _matchManager = GameObject.Find("MatchManager").GetComponent<MatchManager>();
-        
+
+        btn_ReturnToTeamManagement = GameObject.Find("Advance to Team Management Screen Button").GetComponent<Button>();
+        btn_ReturnToTeamManagement.onClick.AddListener(() => gameManager.ReturnToTeamManegement());
+        EndScreenStatsPanel = GameObject.Find("End Game Stats");
+        EndScreenStatsPanel.SetActive(false);
+
     }
 
     // Update is called once per frame
@@ -92,6 +109,23 @@ public class MatchUI : MonoBehaviour
     {
         _text_ScoreBoardHomeTeam.text = _matchManager.HomeTeam.Score.ToString();
         _text_ScoreBoardAwayTeam.text = _matchManager.AwayTeam.Score.ToString();
+    }
+    //Post match stats
+    public void PostGameStats(Team A, Team B)
+    {
+        //print(B.playersListRoster.Count + "Number of players");
+        for (int i = 0; i < teamANames.childCount; i++)
+        {
+            teamANames.GetChild(i).GetComponent<TextMeshProUGUI>().text = A.playersListRoster[i].playerFirstName.ToString() + 
+                A.playersListRoster[i].playerLastName.ToString();
+            teamAScore.GetChild(i).GetComponent<TextMeshProUGUI>().text = A.playersListRoster[i].PointsMatch.ToString();
+        }
+        for (int i = 0; i < teamBNames.childCount; i++)
+        {
+            teamBNames.GetChild(i).GetComponent<TextMeshProUGUI>().text = B.playersListRoster[i].playerFirstName.ToString() + 
+                B.playersListRoster[i].playerLastName.ToString();
+            teamBScore.GetChild(i).GetComponent<TextMeshProUGUI>().text = B.playersListRoster[i].PointsMatch.ToString();
+        }
     }
     //Animators
     public void TriggerHomeTeamAnim()

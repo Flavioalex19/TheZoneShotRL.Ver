@@ -21,14 +21,14 @@ public class Player : MonoBehaviour
         "Albert", "Joseph", "Jonh", "Philip", "George", "Isaac", "Alan", "Homer", "Devon", "Clark", "Peter", "William", "Alexandre", "Rick", "Dante", "Virgil", "Frank" ,
         "Caleb", "Rio", "Luke", "Morgan", "Anderson", "Richard", "Daniel", "David", "Jacob", "Arthur", "Lucas", "Walter", "Neil", "Steve", "Ash", "Sergio", "Dean", "Samuel",
         "Denis", "Scott", "Leon", "Nash", "Marc", "Han", "Tom", "Laurence", "Matt","Brian", "Travis", "Robert", "Bob", "Kevin", "Fabian", "Nelson", "Henry", "Austin",
-        "Wagner", "Adrian", "Andy", "Eden", "Carl", "Martin", "Wallace", "Tim", "Douglas", "Harry", "Eric", "Ethan", "Max", "Afonso"
+        "Wagner", "Adrian", "Andy", "Eden", "Carl", "Martin", "Wallace", "Tim", "Douglas", "Harry", "Eric", "Ethan", "Max", "Afonso", "Oliver", "Dan", "Ian", "Ewan"
     };
     private static readonly string[] secondNames = 
     {
         "Smith","Wells", "Clark", "Parker", "Herbert", "Adams", "Taylor", "Walker", "Wilson", "Railey" , "Jonhson", "Brock", "Santos", "Gomes", "Castro", "Neves", "Owen",
         "Young", "Hill", "Armstrong", "Roger", "Macmanus", "Salvi", "Free", "Freeman", "Strong", "Jager", "Cross", "Hunter", "Doyle", "Howard", "Malone", "Gray", "Summers",
         "Miller", "Von", "Yorke", "Clancy", "Tyson", "Collins", "King","Dent", "Barry", "Chambers", "Cole", "Jones", "Langley", "Lee", "Ross", "Souza","Hart", "Kane", "Law",
-        "Rogers", "Newton", "Lewis", "Mckay", "Barnes", "Vincent", "Enies", "Wayne", "Burke", "Falcon", "Lamb", "Allen", "Connor", "Fray"
+        "Rogers", "Newton", "Lewis", "Mckay", "Barnes", "Vincent", "Enies", "Wayne", "Burke", "Falcon", "Lamb", "Allen", "Connor", "Fray", "White", "Kid", "Lane"
     };
     [SerializeField] public string playerFirstName;
     [SerializeField] public string playerLastName;
@@ -39,6 +39,9 @@ public class Player : MonoBehaviour
     public int Mid;
     public int Outside;
     public int Awareness;
+    public int Defending;
+    public int Guarding;
+    public int Stealing;
     #region Hidden Variables
     public int Personality;//1 to 5 , 1-calm and 5-Agressive 
     #endregion
@@ -49,6 +52,7 @@ public class Player : MonoBehaviour
     public bool HasTheBall = false;
     public int CurrentZone = 0;
     public int PointsMatch = 0;
+    public bool IsStun = false;
     #endregion
     private void Start()
     {
@@ -64,7 +68,10 @@ public class Player : MonoBehaviour
         Mid = Random.Range(40, 99);
         Outside = Random.Range(40, 99);
         Awareness = Random.Range(40, 99);
-        ovr = (Inside + Mid + Outside + Awareness) / 4;
+        Defending = Random.Range(40, 99);
+        Guarding = Random.Range(40, 99);
+        Stealing = Random.Range(40, 99);
+        ovr = (Shooting +Inside + Mid + Outside + Awareness + Defending + Guarding + Stealing) / 8;
         Personality = Random.Range(1, 5);
         //firstName = ((PlayerNames)Random.Range(0, System.Enum.GetValues(typeof(PlayerNames)).Length)).ToString(); // Random name from enum
         // Randomly select a name from the array

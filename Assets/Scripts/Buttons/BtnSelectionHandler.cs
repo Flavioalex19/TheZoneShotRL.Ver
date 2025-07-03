@@ -21,6 +21,8 @@ public class BtnSelectionHandler : MonoBehaviour
     protected Tween _scaleUpTween;
     protected Tween _scaleDownTween;
 
+    Selectable _lastHovered; // ADDED: store the currently hovered Selectable
+
 
     public virtual void Awake()
     {
@@ -96,12 +98,16 @@ public class BtnSelectionHandler : MonoBehaviour
     public void OnSelect(BaseEventData eventData)
     {
         Vector3 newScale = eventData.selectedObject.transform.localScale * _selectedAnimScale;
+        //_scaleUpTween = eventData.selectedObject.transform.DOScale(newScale, _scaleDuration);
+        _scaleUpTween?.Kill();
         _scaleUpTween = eventData.selectedObject.transform.DOScale(newScale, _scaleDuration);
     }
 
     public void OnDeselect(BaseEventData eventData)
     {
         Selectable sel = eventData.selectedObject.GetComponent<Selectable>();
+        //_scaleDownTween = eventData.selectedObject.transform.DOScale(_scales[sel], _scaleDuration);
+        _scaleDownTween?.Kill(); //Kill existing tween
         _scaleDownTween = eventData.selectedObject.transform.DOScale(_scales[sel], _scaleDuration);
     }
 
@@ -111,6 +117,10 @@ public class BtnSelectionHandler : MonoBehaviour
         if(pointerEventData != null)
         {
             pointerEventData.selectedObject = pointerEventData.pointerEnter;
+
+            // ADDED: Store the hovered selectable.
+            _lastHovered = pointerEventData.pointerEnter.GetComponent<Selectable>();
+
             if (GameObject.Find("SoundTrack Buttons Source"))
             {
                 AudioSource audioSource = GameObject.Find("SoundTrack Buttons Source").GetComponent<AudioSource>();
@@ -121,11 +131,20 @@ public class BtnSelectionHandler : MonoBehaviour
     }
     public void OnPointExit(BaseEventData eventData)
     {
+        /*
         PointerEventData pointerEventData = eventData as PointerEventData;
         if (pointerEventData != null)
         {
             pointerEventData.selectedObject = null;
         }
+        */
+        // Use the stored _lastHovered instead of pointerEventData.pointerEnter.
+        if (_lastHovered != null && _scales.ContainsKey(_lastHovered))
+        {
+            _scaleDownTween?.Kill(); // Kill any running tween
+            _scaleDownTween = _lastHovered.transform.DOScale(_scales[_lastHovered], _scaleDuration);
+        }
+        _lastHovered = null; // Clear the reference
     }
     
 }

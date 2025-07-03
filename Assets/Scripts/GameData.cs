@@ -17,6 +17,9 @@ public class PlayerData
     public int inside;
     public int mid;
     public int outside;
+    public int defend;
+    public int guard;
+    public int steal;
     public float ovr;
     public int awn;
     public int persona;
@@ -31,6 +34,9 @@ public class PlayerData
         inside = player.Inside;
         mid = player.Mid;
         outside = player.Outside;
+        defend = player.Defending;
+        guard = player.Guarding;
+        steal = player.Stealing;
         ovr = player.ovr;
         awn = player.Awareness;
         persona = player.Personality;

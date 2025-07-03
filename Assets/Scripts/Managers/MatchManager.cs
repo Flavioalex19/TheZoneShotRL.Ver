@@ -31,6 +31,7 @@ public class MatchManager : MonoBehaviour
     public Team AwayTeam;
     [SerializeField] public Team teamWithball;
     [SerializeField] Player playerWithTheBall;
+    [SerializeField] Player playerDefending;
 
     public float _timeOutTimer = 0;
     float timerTimeOutReset = 7f;
@@ -47,16 +48,19 @@ public class MatchManager : MonoBehaviour
 
     public bool HasActionOnTimeout = true;
 
+    [Header("PlayersActions")]
     #region PlayerActions
     [SerializeField]public bool _ChoosePass;
     [SerializeField]public bool _ChooseScoring;
+    [SerializeField] public bool _ChooseToStun;
     public bool CanChooseAction = true;
     #endregion
 
     //UI Elemens test
-    public GameObject EndScreenStatsPanel;
-    Button btn_ReturnToTeamManagement;
+
+    [Header("Debugs")]
     [SerializeField] TextMeshProUGUI _debugTimeoutText;
+    [SerializeField] string DefenderName;
 
     // Start is called before the first frame update
     void Start()
@@ -64,10 +68,8 @@ public class MatchManager : MonoBehaviour
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
         uiManager = GameObject.Find("UIManager").GetComponent<UiManager>();
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
-        btn_ReturnToTeamManagement = GameObject.Find("Advance to Team Management Screen Button").GetComponent<Button>();
-        EndScreenStatsPanel = GameObject.Find("End Game Stats");
-        btn_ReturnToTeamManagement.onClick.AddListener(() => manager.ReturnToTeamManegement());
-        EndScreenStatsPanel.SetActive(false);
+        
+        
         match = MatchStates.Start;
         currentGamePossessons = GamePossesions;
 
@@ -166,7 +168,8 @@ public class MatchManager : MonoBehaviour
             AwayTeam.Draws++;
         }
 
-        EndScreenStatsPanel.SetActive(true);
+        _matchUI.EndScreenStatsPanel.SetActive(true);
+        _matchUI.PostGameStats(HomeTeam, AwayTeam);
     }
     void ChoosePlayerToCarryBall()
     {
@@ -192,6 +195,7 @@ public class MatchManager : MonoBehaviour
             uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " has the ball.");
         }
         ChangePosOfPlayerWithTheBall();
+        SelectDefender();
         uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " has the ball.");
     }
     IEnumerator ChooseToPass()
@@ -223,6 +227,7 @@ public class MatchManager : MonoBehaviour
                     {
                         yield return new WaitForSeconds(_actionTimer);
                         uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
+                        SelectDefender();
                         yield return new WaitForSeconds(_actionTimer);
                         continue; // Keep the loop for multiple passes
                     }
@@ -264,6 +269,7 @@ public class MatchManager : MonoBehaviour
 
                 if (_ChooseScoring)
                 {
+                    _ChooseScoring = false;
                     ChangePosOfPlayerWithTheBall();
                     uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
                     yield return new WaitForSeconds(_actionTimer);
@@ -273,16 +279,37 @@ public class MatchManager : MonoBehaviour
                 }
                 else if (_ChoosePass)
                 {
+                    _ChoosePass = false;
                     if (TryPassBall())
                     {
                         yield return new WaitForSeconds(_actionTimer);
                         uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
+                        SelectDefender();
                         yield return new WaitForSeconds(_actionTimer);
                         ResetChoices();
                         continue;
                     }
                     else
                     {
+                        yield return new WaitForSeconds(_actionTimer);
+                        SwitchPossession();
+                        uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
+                        yield return new WaitForSeconds(_actionTimer);
+                        ResetChoices();
+                        yield break;
+                    }
+                }
+                else if (_ChooseToStun)
+                {
+                    _ChooseToStun = false;
+                    float stunSuccessRate = Mathf.Clamp((playerWithTheBall.Shooting - 30f) / (99f - 30f), 0f, 1f);
+                    if (Random.Range(0f, 1f) > stunSuccessRate)
+                    {
+
+                    }
+                    else
+                    {
+                        uiManager.PlaybyPlayText(teamWithball.TeamName + " fail to stun");
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
                         uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
@@ -357,6 +384,7 @@ public class MatchManager : MonoBehaviour
         if (Random.Range(0f, 1f) > passSuccessChance)
         {
             uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " made a bad pass! Possession lost.");
+            ResetChoices();//Restet
             return false;
         }
 
@@ -437,7 +465,10 @@ public class MatchManager : MonoBehaviour
         }
 
     }
-    
+    IEnumerator StunPlayer()
+    {
+        yield return new WaitForSeconds(_actionTimer);
+    }
     void SwitchPossession()
     {
         // Toggle team
@@ -457,10 +488,12 @@ public class MatchManager : MonoBehaviour
         playerWithTheBall = null;
         uiManager.PlaybyPlayText("Possession switches to " + teamWithball.TeamName);
         ChoosePlayerToCarryBall();
+        SelectDefender();
 
     }
     void SelectDefender()
     {
+        //print("CHOOSE DEFENDER!!!!!!!!!!!!!!!!!!!!!!!");
         Team DefendingTeam;
         if (HomeTeam.hasPossession == false)
             DefendingTeam = HomeTeam;
@@ -477,7 +510,8 @@ public class MatchManager : MonoBehaviour
         DefendingTeam.playersListRoster[randomIndex] = temp;
 
         //newDefender.CurrentZone = 0;
-
+        DefenderName = newDefender.playerFirstName + " " + DefendingTeam.TeamName;
+        playerDefending = newDefender;
         Debug.Log(newDefender.playerFirstName + " is now defending.");
     }
     //Function to enable call for a Timeout

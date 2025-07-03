@@ -14,20 +14,24 @@ public class TradeManager : MonoBehaviour
     public Team TradeTeam;
     [SerializeField]int _playerToTradeIndex;
     public int _playerToReceive;
+    [SerializeField] TextMeshProUGUI _trade_currentPlayerToTrade;
     // Start is called before the first frame update
     void Start()
     {
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         _leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
+        
 
         _gameManager.playerTeam = _playerTeam;
     }
 
     public void SetPlayerToTrade(int playerIndex)
     {
-        if(_leagueManager.canTrade == true)
+        _trade_currentPlayerToTrade = GameObject.Find("TPT").GetComponent<TextMeshProUGUI>();
+        if (_leagueManager.canTrade == true)
         {
             _playerToTradeIndex = playerIndex;
+            //_trade_currentPlayerToTrade.text = _playerTeam.playersListRoster[_playerToTradeIndex].playerLastName.ToString();
             FindTeamToTrade();
             FindPlayerForTrade();
         }
@@ -45,7 +49,8 @@ public class TradeManager : MonoBehaviour
         {
             teamToTradeIndex = Random.Range(0, _gameManager.leagueTeams.Count);
         }
-        TradeTeam = _gameManager.leagueTeams[teamToTradeIndex];   
+        TradeTeam = _gameManager.leagueTeams[teamToTradeIndex];
+        _trade_currentPlayerToTrade.GetComponent<TextMeshProUGUI>().text = _gameManager.leagueTeams[playerTeamIndex].playersListRoster[_playerToTradeIndex].playerLastName.ToString();
     }
     void FindPlayerForTrade()
     {
@@ -61,9 +66,11 @@ public class TradeManager : MonoBehaviour
                 print(TradeTeam.playersListRoster[i].playerFirstName + TradeTeam.playersListRoster[i].ovr + "This is the player avalible for trade");
             }
         }
-        _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = TradeTeam.playersListRoster[_playerToReceive].playerFirstName.ToString();
+        _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = TradeTeam.playersListRoster[_playerToReceive].playerFirstName.ToString() +
+            " " + TradeTeam.playersListRoster[_playerToReceive].playerLastName.ToString();
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = TradeTeam.playersListRoster[_playerToReceive].ovr.ToString();
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = TradeTeam.TeamName.ToString();
+        
 
     }
     public void SwapPlayersBetweenTeams(List<Player> TeamA, int playerAIndex, List<Player> TeamB, int playerBIndex)

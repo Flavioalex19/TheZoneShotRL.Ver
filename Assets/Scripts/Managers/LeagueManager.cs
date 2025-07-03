@@ -135,10 +135,10 @@ public class LeagueManager : MonoBehaviour
         eventOptions.Add(new EventOption
         {
             Index = 2,
-            Description = "Reporter: How do you project the rest of the season for your team?",
-            Choice1 = "The season has its ups and downs, but we think about doing our best for whatever comes.",
-            Choice2 = "We want to show everyone who we are, and to go mercilessly against our opponents.",
             Modifier = 15,
+            Description = "Reporter: How do you project the rest of the season for your team?",
+            Choice1 = "The season has its ups and downs, but we think about doing our best for whatever comes." + "  Moral +15",
+            Choice2 = "We want to show everyone who we are, and to go mercilessly against our opponents." + " Fan Support +15",
             eventType = EventType.Interview
 
 
@@ -148,9 +148,9 @@ public class LeagueManager : MonoBehaviour
 
             Index = 3,
             Description = "An unknown figure shows up at the training facility.I’ve seen how you run this team,they say, voice low. Want to hear something that'll give you the edge?",
-            Choice1 = "I’ll listen. What’s the catch?",
-            Choice2= "No thanks. I run this clean.",
-            Modifier = 25,
+            Choice1 = "I’ll listen. What’s the catch?" + " Front Office +10",
+            Choice2= "No thanks. I run this clean." + " Moral +10",
+            Modifier = 10,
             eventType = EventType.TeamMeeting
         
         });
@@ -159,8 +159,8 @@ public class LeagueManager : MonoBehaviour
 
             Index = 4,
             Description = "New Email: You receive a strange email late at night.It seems that the email shows certain aspects of the opposing teams. Not only the players but their Front Offices.",
-            Choice1 = "Read the message and study it",
-            Choice2 = "Ignore",
+            Choice1 = "Read the message and study it" + " Front Office +10",
+            Choice2 = "Ignore" + " Moral +10",
             Modifier = 10,
             eventType = EventType.ReplyToEmails
 
@@ -170,8 +170,8 @@ public class LeagueManager : MonoBehaviour
 
             Index = 5,
             Description = "You wake up feeling strange. There's no alert. No crisis. Just a feeling. Something’s off. You can’t shake it",
-            Choice1 = "Trust the feeling. Adjust the game plan.",
-            Choice2 = "Ignore it. Routine is everything",
+            Choice1 = "Trust the feeling. Adjust the game plan." + "FrontOffice +10",
+            Choice2 = "Ignore it. Routine is everything" + " Moral +10",
             Modifier = 10,
             eventType = EventType.TeamMeeting
 

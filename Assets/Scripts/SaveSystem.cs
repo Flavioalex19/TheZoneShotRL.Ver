@@ -135,6 +135,9 @@ public class SaveSystem : MonoBehaviour
                 newPlayer.Inside = playerData.inside;
                 newPlayer.Mid = playerData.mid;
                 newPlayer.Outside = playerData.outside;
+                newPlayer.Defending = playerData.defend;
+                newPlayer.Guarding = playerData.guard;
+                newPlayer.Stealing = playerData.steal;
                 newPlayer.Awareness = playerData.awn;
                 newPlayer.Personality = playerData.persona;
                 team.playersListRoster.Add(newPlayer);
