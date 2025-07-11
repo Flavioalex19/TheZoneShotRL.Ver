@@ -23,6 +23,8 @@ public class LeagueManager : MonoBehaviour
 
     public bool canTrade = true;
 
+    public bool canTrain = true;
+
     GameManager gameManager;
     UiManager uiManager;
 
@@ -87,6 +89,8 @@ public class LeagueManager : MonoBehaviour
         {
             if(canStartANewWeek == true)
             {
+                canTrain = true;
+                canTrade = true;
                 CreateEventsForWeek();
                 Transform ChoiceButtonsTransform = GameObject.Find("ChoiceButtons").transform;
 

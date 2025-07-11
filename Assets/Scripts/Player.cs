@@ -47,6 +47,7 @@ public class Player : MonoBehaviour
     #endregion
     #endregion
     [SerializeField] public GameObject bt_DraftInfo;
+    public int ImageCharacterPortrait;
 
     #region Match Variables
     public bool HasTheBall = false;
@@ -62,6 +63,7 @@ public class Player : MonoBehaviour
     // Function to randomly generate a player's OVR and name
     public void GenerateRandomPlayer()
     {
+
         // Random OVR between 60 and 99
         Shooting = Random.Range(40,99);
         Inside = Random.Range(40, 99);
@@ -78,6 +80,7 @@ public class Player : MonoBehaviour
         playerFirstName = names[Random.Range(0, names.Length)];
         playerLastName = secondNames[Random.Range(0,secondNames.Length)];
         Age = Random.Range(20, 30);
+        ImageCharacterPortrait = Random.Range(0, 4);
         //Debug.Log($"Generated Player: {firstName}, OVR: {ovr}");
     }
 }

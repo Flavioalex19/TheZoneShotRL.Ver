@@ -41,6 +41,7 @@ public class TeamManagerUI : MonoBehaviour
     //Training
     [SerializeField] TrainingManager trainingManager;
     [SerializeField] GameObject _trainingPanel;
+    [SerializeField] public GameObject _trainengCompletePanel;
     [SerializeField] Transform _training_btns;
     [SerializeField] TextMeshProUGUI _textPlayerSelected;
     [SerializeField] TextMeshProUGUI _textDrillSelected;

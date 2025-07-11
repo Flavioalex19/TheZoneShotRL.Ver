@@ -23,6 +23,7 @@ public class PlayerData
     public float ovr;
     public int awn;
     public int persona;
+    public int imageIndex;
     
 
     public PlayerData(Player player)
@@ -40,6 +41,7 @@ public class PlayerData
         ovr = player.ovr;
         awn = player.Awareness;
         persona = player.Personality;
+        imageIndex = player.ImageCharacterPortrait;
         
         
     }
@@ -123,11 +125,13 @@ public class LeagueManagerData
     public bool canGenEvent;
     public bool canStartANewWeek;
     public bool canTradePlayers;
+    public bool canTrainPlayer;
     public LeagueManagerData(LeagueManager leagueManager)
     {
         weekNumber = leagueManager.Week;
         canGenEvent = leagueManager.canGenerateEvents;
         canStartANewWeek = leagueManager.canStartANewWeek;
         canTradePlayers = leagueManager.canTrade;
+        canTrainPlayer = leagueManager.canTrain;
     }
 }

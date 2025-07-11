@@ -41,8 +41,8 @@ public class SaveSystem : MonoBehaviour
         {
             string json = File.ReadAllText(filePath);
             TeamData teamData = JsonUtility.FromJson<TeamData>(json);
-            
-            
+            LeagueManagerData leagueManagerData = JsonUtility.FromJson<LeagueManagerData>(json);//////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
             team.IsPlayerTeam = false;
             team.Moral = 0;
             team.FrontOfficePoints = 0;
@@ -140,6 +140,7 @@ public class SaveSystem : MonoBehaviour
                 newPlayer.Stealing = playerData.steal;
                 newPlayer.Awareness = playerData.awn;
                 newPlayer.Personality = playerData.persona;
+                newPlayer.ImageCharacterPortrait = playerData.imageIndex;
                 team.playersListRoster.Add(newPlayer);
             }
 

@@ -345,6 +345,10 @@ public class GameManager : MonoBehaviour
         newButton.GetComponent<Button>().transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = player.playerFirstName.ToString();
         newButton.GetComponent<Button>().transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.playerLastName.ToString();
         newButton.GetComponent<Button>().transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = player.ovr.ToString();
+        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().index = player.ImageCharacterPortrait;
+        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().SetSprite();
+        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().playerName = player.playerLastName;
+        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().playerAge = player.Age.ToString();
 
         Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
         switch (player.Personality)
