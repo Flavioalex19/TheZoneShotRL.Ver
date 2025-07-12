@@ -17,6 +17,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] GameObject _EndBuildScreen;
     //Team Roster panel
     [Header("Team Roster")]
+    [SerializeField] Image _image_playerPortrait;
     [SerializeField]GameObject _teamRoster;
     [SerializeField]Transform _teamRosterStartersPlayersText;
     [SerializeField] Transform _teamRosterBenchPlayerText;
@@ -239,6 +240,12 @@ public class TeamManagerUI : MonoBehaviour
         _text_playerInfoStats.GetChild(5).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Defending.ToString();
         _text_playerInfoStats.GetChild(6).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Guarding.ToString();
         _text_playerInfoStats.GetChild(7).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Stealing.ToString();
+
+        //Sprite alteration/update
+        Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
+        Sprite sprite = sprites[gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait];
+        _image_playerPortrait.sprite = sprite;
+
     }
     //Trading
     public void SetTradePanel()
