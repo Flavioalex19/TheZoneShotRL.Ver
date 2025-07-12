@@ -95,7 +95,7 @@ public class TrainingManager : MonoBehaviour
             }
 
             Player player = gameManager.playerTeam.playersListRoster[playerIndex];
-            drillChoosed.text = $"{player.playerFirstName} + {label} - All stats +{boost}";
+            drillChoosed.text = $"{player.playerFirstName} + {label} - All stats +{boost} + Training session for this week is completed";
 
             player.Awareness = Mathf.Min(player.Awareness + boost, 99);
             player.Shooting = Mathf.Min(player.Shooting + boost, 99);
@@ -111,7 +111,7 @@ public class TrainingManager : MonoBehaviour
         }
         else
         {
-            drillChoosed.text = "training session completed";
+            drillChoosed.text = "Training session for this week is completed";
         }
         
     }

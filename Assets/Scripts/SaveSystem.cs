@@ -164,6 +164,7 @@ public class SaveSystem : MonoBehaviour
                     leagueManager.canGenerateEvents = teamData.leagueData.canGenEvent;
                     leagueManager.canStartANewWeek = teamData.leagueData.canStartANewWeek;
                     leagueManager.canTrade = teamData.leagueData.canTradePlayers;
+                    leagueManager.canTrain = teamData.leagueData.canTrainPlayer;
                 }
             }
 
