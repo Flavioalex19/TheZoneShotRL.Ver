@@ -32,6 +32,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Transform teamAScore;
     [SerializeField] Transform teamBScore;
     Button btn_ReturnToTeamManagement;
+    [SerializeField] Transform GamesResults;
 
 
     [SerializeField] Animator _homeTeamAnimator;
@@ -126,6 +127,10 @@ public class MatchUI : MonoBehaviour
                 B.playersListRoster[i].playerLastName.ToString();
             teamBScore.GetChild(i).GetComponent<TextMeshProUGUI>().text = B.playersListRoster[i].PointsMatch.ToString();
         }
+    }
+    public void WeekResults(int index, Team A, Team B)
+    {
+        GamesResults.GetChild(index).GetComponent<TextMeshProUGUI>().text = A.TeamName + " " + A.Score.ToString() + " " + B.TeamName + " " + B.Score.ToString();
     }
     //Animators
     public void TriggerHomeTeamAnim()

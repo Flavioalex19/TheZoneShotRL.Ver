@@ -68,7 +68,12 @@ public class MatchManager : MonoBehaviour
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
         uiManager = GameObject.Find("UIManager").GetComponent<UiManager>();
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
-        
+
+        //Reset the teams to play
+        for (int i = 0; i < manager.leagueTeams.Count; i++)
+        {
+            manager.leagueTeams[i].HasPlayed = false;
+        }
         
         match = MatchStates.Start;
         currentGamePossessons = GamePossesions;
@@ -87,8 +92,6 @@ public class MatchManager : MonoBehaviour
         _matchUI.SetTheTeamTextForTheMatch();
         HomeTeam.Score = 0;
         AwayTeam.Score = 0;
-        HomeTeam.HasPlayed = true;
-        AwayTeam.HasPlayed = true;
         HomeTeam.isOnDefenseBonus = false;
         AwayTeam.isOnDefenseBonus = false;
         teamWithball = HomeTeam;//Change Later
@@ -107,8 +110,11 @@ public class MatchManager : MonoBehaviour
             AwayTeam.playersListRoster[i].PointsMatch = 0;
         }
         CanChooseAction = false;
-        StartCoroutine(GameFlow());
-        //StartCoroutine(LeagueWeekSimulation());
+        //StartCoroutine(GameFlow());
+        StartCoroutine(RunMatchThenSimulate());
+        //_matchUI.PostGameStats(HomeTeam, AwayTeam);
+
+        
     }
     
     // Update is called once per frame
@@ -125,6 +131,8 @@ public class MatchManager : MonoBehaviour
     }
     IEnumerator GameFlow()
     {
+        HomeTeam.HasPlayed = true;
+        AwayTeam.HasPlayed = true;
         while (currentGamePossessons > 0)
         {
             // Step 1: Choose the player to carry the ball
@@ -167,9 +175,11 @@ public class MatchManager : MonoBehaviour
             HomeTeam.Draws++;
             AwayTeam.Draws++;
         }
-
+        HomeTeam.HasPlayed = true;
+        AwayTeam.HasPlayed = true;
         _matchUI.EndScreenStatsPanel.SetActive(true);
-        _matchUI.PostGameStats(HomeTeam, AwayTeam);
+        //_matchUI.PostGameStats(HomeTeam, AwayTeam);///////////////////////////////////////////////
+        //yield return StartCoroutine(LeagueWeekSimulation());
     }
     void ChoosePlayerToCarryBall()
     {
@@ -204,7 +214,7 @@ public class MatchManager : MonoBehaviour
     }
     IEnumerator HandlePossession()
     {
-        if(teamWithball == AwayTeam)
+        if(/*teamWithball == AwayTeam*/ teamWithball.IsPlayerTeam == false)
         {
             CanChooseAction = false;
             
@@ -250,7 +260,7 @@ public class MatchManager : MonoBehaviour
                 }
             }
         }
-        else if (teamWithball == HomeTeam)
+        else if (/*teamWithball == HomeTeam*/ teamWithball.IsPlayerTeam)
         {
             ResetChoices();
             while (true)
@@ -320,46 +330,6 @@ public class MatchManager : MonoBehaviour
                 }
             }
         }
-        /*
-        while (true)
-        {
-            if (currentGamePossessons <= 1)
-            {
-                uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " must shoot due to low possessions!");
-                yield return new WaitForSeconds(_actionTimer);
-                yield return Scoring(playerWithTheBall);
-                yield break;
-            }
-
-            bool shouldPass = Random.Range(1, 4) < 3;
-
-            if (shouldPass)
-            {
-                if (TryPassBall())
-                {
-                    yield return new WaitForSeconds(_actionTimer);
-                    uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
-                    yield return new WaitForSeconds(_actionTimer);
-                    continue; // Keep the loop for multiple passes
-                }
-                else
-                {
-                    yield return new WaitForSeconds(_actionTimer);
-                    SwitchPossession();
-                    uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
-                    yield return new WaitForSeconds(_actionTimer);
-                    yield break;
-                }
-            }
-            else
-            {
-                ChangePosOfPlayerWithTheBall();
-                uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
-                yield return new WaitForSeconds(_actionTimer);
-                yield return Scoring(playerWithTheBall);
-                yield break;
-            }
-        }*/
     }
     void ResetChoices()
     {
@@ -411,7 +381,7 @@ public class MatchManager : MonoBehaviour
             {
                 uiManager.PlaybyPlayText(player.playerFirstName + " takes a shot!");
                 yield return new WaitForSeconds(_actionTimer);
-                currentGamePossessons--;
+                //currentGamePossessons--;
                 //THIS 40 WILL BE REPLACED BY THE DEFENDER STAT/AKA THE STEAL VALUE 
                 bool hasScored =/* Random.Range(1, 100) < (player.Inside + player.Mid + player.Outside / 3) - 100*/Random.value <= (player.Shooting - 40f) / (99f - 40f);
                 if (hasScored)
@@ -439,6 +409,7 @@ public class MatchManager : MonoBehaviour
                     uiManager.PlaybyPlayText(player.playerFirstName + " Missed");
                 }
                 yield return new WaitForSeconds(_actionTimer);
+                player.CurrentZone = 0;
                 SwitchPossession(); // Switch possession after shot attempt
                 yield return new WaitForSeconds(_actionTimer);
                 break; // Exit loop if shooting
@@ -447,7 +418,7 @@ public class MatchManager : MonoBehaviour
             {
                 if (currentGamePossessons <= 1)
                 {
-                    print("Only one possession left, player must shoot!");
+                    //print("Only one possession left, player must shoot!");
                     uiManager.PlaybyPlayText(player.playerFirstName + " must shoot due to low possessions!");
                     continue; // Skip movement logic, forcing the player to attempt a shot
                 }
@@ -457,7 +428,7 @@ public class MatchManager : MonoBehaviour
                     player.CurrentZone = newZone;
                     uiManager.PlaybyPlayText(player.playerFirstName + " moves to zone " + player.CurrentZone);
                     yield return new WaitForSeconds(_actionTimer);
-                    currentGamePossessons--;
+                    //currentGamePossessons--;
 
                 }
                 else willShoot = true;
@@ -501,7 +472,7 @@ public class MatchManager : MonoBehaviour
             DefendingTeam = AwayTeam;
 
         // Pick a random player (excluding index 0)
-        int randomIndex = Random.Range(1, DefendingTeam.playersListRoster.Count); // avoid 0
+        int randomIndex = Random.Range(1, 4); // avoid 0
         Player newDefender = DefendingTeam.playersListRoster[randomIndex];
 
         // Swap the random player with the one at index 0
@@ -512,7 +483,7 @@ public class MatchManager : MonoBehaviour
         //newDefender.CurrentZone = 0;
         DefenderName = newDefender.playerFirstName + " " + DefendingTeam.TeamName;
         playerDefending = newDefender;
-        Debug.Log(newDefender.playerFirstName + " is now defending.");
+        //Debug.Log(newDefender.playerFirstName + " is now defending.");
     }
     //Function to enable call for a Timeout
     IEnumerator WaitForTimeOut()
@@ -550,98 +521,53 @@ public class MatchManager : MonoBehaviour
     }
     public IEnumerator LeagueWeekSimulation()
     {
-        currentGamePossessons = GamePossesions;
+        int gameIndex = 0;
+        int week = leagueManager.Week;
+
+        Debug.Log($"[SIMULATION] Starting week {week}");
+
         while (manager.leagueTeams.Any(t => !t.HasPlayed))
         {
-            // Find a team that hasn't played this week
             Team teamA = manager.leagueTeams.FirstOrDefault(t => !t.HasPlayed);
+            Team teamB = teamA._schedule[leagueManager.Week - 1];
+            Debug.Log($"[SIMULATING] Match {gameIndex}: {teamA.TeamName} vs {teamB.TeamName}");
 
-            if (teamA == null)
-                break; // All teams have played this week
-
-            Team teamB = teamA._schedule[leagueManager.Week];
-
-            // Skip if opponent is null or already played (safety check)
-            if (teamB == null || teamB.HasPlayed)
-            {
-                teamA.HasPlayed = true; // Prevent infinite loop
-                continue;
-            }
-
-            // Assign match
+            // Setup
             HomeTeam = teamA;
             AwayTeam = teamB;
             teamWithball = HomeTeam;
-
-            _actionTimer = 0f; // Instant simulation
-
+            _actionTimer = 0f;
             currentGamePossessons = GamePossesions;
 
-            // Reset scores and flags
-            HomeTeam.Score = 0;
-            AwayTeam.Score = 0;
-            HomeTeam.HasPlayed = true;
-            AwayTeam.HasPlayed = true;
-            HomeTeam.isOnDefenseBonus = false;
-            AwayTeam.isOnDefenseBonus = false;
+            teamA.Score = teamB.Score = 0;
+            teamA.HasPlayed = teamB.HasPlayed = true;
+            teamA.isOnDefenseBonus = teamB.isOnDefenseBonus = false;
 
-            foreach (Player p in HomeTeam.playersListRoster)
-                p.PointsMatch = 0;
+            foreach (Player p in teamA.playersListRoster) p.PointsMatch = 0;
+            foreach (Player p in teamB.playersListRoster) p.PointsMatch = 0;
 
-            foreach (Player p in AwayTeam.playersListRoster)
-                p.PointsMatch = 0;
+            yield return StartCoroutine(GameFlow());
 
-            // Simulate match using your full GameFlow coroutine
-            //yield return StartCoroutine(GameFlow());
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            while (currentGamePossessons > 0)
-            {
-                // Step 1: Choose the player to carry the ball
-                ChoosePlayerToCarryBall();
-                match = MatchStates.Possesion;
+            Debug.Log($"[RESULT] {teamA.TeamName} {teamA.Score} - {teamB.Score} {teamB.TeamName}");
+            _matchUI.WeekResults(gameIndex, teamA, teamB);
 
-                yield return new WaitForSeconds(_actionTimer);
-
-                // Step 2: Player decides to pass or not
-                yield return ChooseToPass();
-
-                // Step 3: Wait for final actions (e.g., scoring)
-                yield return StartCoroutine(WaitForTimeOut());
-
-                currentGamePossessons--;
-            }
-
-            // End of match logic
-            uiManager.PlaybyPlayText("MatchEnded");
-
-            if (HomeTeam.Score > AwayTeam.Score)
-            {
-                AwayTeam.Moral -= 15;
-                HomeTeam.Moral += 15;
-                HomeTeam.Wins++;
-                AwayTeam.Loses--;
-            }
-            else if (HomeTeam.Score < AwayTeam.Score)
-            {
-                HomeTeam.Moral -= 15;
-                AwayTeam.Moral += 15;
-                HomeTeam.Loses--;
-                AwayTeam.Wins++;
-            }
-            else
-            {
-                HomeTeam.Moral -= 5;
-                AwayTeam.Moral -= 5;
-                HomeTeam.Draws++;
-                AwayTeam.Draws++;
-            }
+            gameIndex++;
         }
-        for (int i = 0; i < manager.leagueTeams.Count; i++)
-        {
-            manager.leagueTeams[i].HasPlayed = false;
-        }
+
+        Debug.Log("[SIMULATION COMPLETE]");
+
+        // Reset flags after all matches
+        foreach (var team in manager.leagueTeams)
+            team.HasPlayed = false;
 
         yield return null;
+
+    }
+    IEnumerator RunMatchThenSimulate()
+    {
+        yield return StartCoroutine(GameFlow());
+        _matchUI.PostGameStats(HomeTeam, AwayTeam);
+        yield return StartCoroutine(LeagueWeekSimulation());
     }
 
     void ChangePosOfPlayerWithTheBall()
@@ -666,6 +592,6 @@ public class MatchManager : MonoBehaviour
             teamWithball.playersListRoster[0] = teamWithball.playersListRoster[index];
             teamWithball.playersListRoster[index] = temp;
         }
-        print(playerWithTheBall.playerFirstName + " is hte guy with the ball");
+        //print(playerWithTheBall.playerFirstName + " is hte guy with the ball");
     }
 }

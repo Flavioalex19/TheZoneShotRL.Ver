@@ -193,47 +193,7 @@ public class GameManager : MonoBehaviour
     //SCHEDULE AREA
     public void ScheduleCreation(List<Team> leagueTeams)
     {
-        /*
-        int numTeams = leagueTeams.Count;
-        int numWeeks = numTeams /*-1*/;
-
-        // Initialize schedule for each team: 1 opponent per week
-        /*
-        foreach (Team team in leagueTeams)
-        {
-            team._schedule = new List<Team>(new Team[numWeeks]);
-        }
-
-        for (int week = 0; week < numWeeks; week++)
-        {
-            HashSet<int> scheduled = new HashSet<int>();
-
-            for (int i = 0; i < numTeams; i++)
-            {
-                if (scheduled.Contains(i)) continue;
-
-                for (int j = i + 1; j < numTeams; j++)
-                {
-                    if (scheduled.Contains(j)) continue;
-
-                    Team teamA = leagueTeams[i];
-                    Team teamB = leagueTeams[j];
-
-                    // Make sure they haven't faced each other yet
         
-                    if (!HasFaced(teamA, teamB))
-                    {
-                        teamA._schedule[week] = teamB;
-                        teamB._schedule[week] = teamA;
-
-                        scheduled.Add(i);
-                        scheduled.Add(j);
-                        break;
-                    }
-                }
-            }
-        }
-        */
         int numTeams = leagueTeams.Count;
 
         // If odd, add a dummy "bye" team
