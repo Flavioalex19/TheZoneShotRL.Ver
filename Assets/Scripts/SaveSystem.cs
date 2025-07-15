@@ -139,6 +139,8 @@ public class SaveSystem : MonoBehaviour
                 newPlayer.Guarding = playerData.guard;
                 newPlayer.Stealing = playerData.steal;
                 newPlayer.Awareness = playerData.awn;
+                newPlayer.ContractYears = playerData.yearsC;
+                newPlayer.Salary = playerData.salaryPlayer;
                 newPlayer.Personality = playerData.persona;
                 newPlayer.ImageCharacterPortrait = playerData.imageIndex;
                 team.playersListRoster.Add(newPlayer);

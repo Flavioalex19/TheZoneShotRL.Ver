@@ -22,6 +22,8 @@ public class PlayerData
     public int steal;
     public float ovr;
     public int awn;
+    public int yearsC;
+    public int salaryPlayer;
     public int persona;
     public int imageIndex;
     
@@ -40,6 +42,8 @@ public class PlayerData
         steal = player.Stealing;
         ovr = player.ovr;
         awn = player.Awareness;
+        yearsC = player.ContractYears;
+        salaryPlayer = player.Salary;
         persona = player.Personality;
         imageIndex = player.ImageCharacterPortrait;
         

@@ -159,13 +159,13 @@ public class MatchManager : MonoBehaviour
             AwayTeam.Moral -= 15;
             HomeTeam.Moral += 15;
             HomeTeam.Wins++;
-            AwayTeam.Loses--;
+            AwayTeam.Loses++;
         }
         else if (HomeTeam.Score < AwayTeam.Score)
         {
             HomeTeam.Moral -= 15;
             AwayTeam.Moral += 15;
-            HomeTeam.Loses--;
+            HomeTeam.Loses++;
             AwayTeam.Wins++;
         }
         else

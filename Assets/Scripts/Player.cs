@@ -42,6 +42,8 @@ public class Player : MonoBehaviour
     public int Defending;
     public int Guarding;
     public int Stealing;
+    public int ContractYears;
+    public int Salary;
     #region Hidden Variables
     public int Personality;//1 to 5 , 1-calm and 5-Agressive 
     #endregion
@@ -81,6 +83,41 @@ public class Player : MonoBehaviour
         playerLastName = secondNames[Random.Range(0,secondNames.Length)];
         Age = Random.Range(20, 30);
         ImageCharacterPortrait = Random.Range(0, 4);
+        GenerateContract();
         //Debug.Log($"Generated Player: {firstName}, OVR: {ovr}");
     }
+    void GenerateContract()
+    {
+        if(ovr>= 40 && ovr <= 50)
+        {
+            ContractYears = 1;
+            Salary = 4;
+        }
+        else if(ovr > 50 && ovr <= 60)
+        {
+            ContractYears = 1;
+            Salary = 5;
+        }
+        else if (ovr > 60 && ovr <= 70)
+        {
+            ContractYears = 1;
+            Salary = 6;
+        }
+        else if (ovr > 70 && ovr <= 80)
+        {
+            ContractYears = 3;
+            Salary = 8;
+        }
+        else if (ovr > 80 && ovr <= 90)
+        {
+            ContractYears = 2;
+            Salary = 10;
+        }
+        else if (ovr > 90)
+        {
+            ContractYears = 1;
+            Salary = 12;
+        }
+    }
+
 }

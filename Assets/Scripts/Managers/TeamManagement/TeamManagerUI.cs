@@ -27,6 +27,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Image _awayteamImage;
     [SerializeField] Transform _text_playerInfoStats;
     [SerializeField] TextMeshProUGUI _text_playerInfoLastName;
+    [SerializeField] Transform _text_ContractInfo;
 
     [Header("Equips")]
     //Equips
@@ -46,6 +47,10 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Transform _training_btns;
     [SerializeField] TextMeshProUGUI _textPlayerSelected;
     [SerializeField] TextMeshProUGUI _textDrillSelected;
+
+    [Header("Standings")]
+    [SerializeField] GameObject _standingsPanel;
+    [SerializeField] Transform _standingsPlacement;
 
     [Header("Options")]
     [SerializeField] GameObject _optionsPanel;
@@ -92,6 +97,10 @@ public class TeamManagerUI : MonoBehaviour
         //Training
         SetTrainingBtns();
         _trainingPanel.SetActive(false);
+        //Schedule
+        leagueManager.CreateStandings();
+        PopulateStandings();
+        _standingsPanel.SetActive(false);
         //Options
         _optionsQuitBtn.onClick.AddListener(() => Application.Quit());
         _optionsPanel.SetActive(false);
@@ -173,6 +182,7 @@ public class TeamManagerUI : MonoBehaviour
     public void UpdateWeek()
     {
         leagueManager.IncreaseWeek();
+        leagueManager.CreateStandings();
     }
     //Advance Button Update the elements
     public void AdvButtonUpdate()
@@ -228,6 +238,7 @@ public class TeamManagerUI : MonoBehaviour
             _teamRosterBenchPlayerText.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[_currentTeamIndex].playersListRoster[i + 4].ovr.ToString();
             //_teamRosterBenchPlayerText.GetChild(i).GetComponent<Button>().onClick.AddListener(() => PlayerStats(i+4));
         }
+        
     }
     public void CurrentPlayerStats(int index)
     {
@@ -245,6 +256,10 @@ public class TeamManagerUI : MonoBehaviour
         Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
         Sprite sprite = sprites[gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait];
         _image_playerPortrait.sprite = sprite;
+
+        //Contract Info
+        _text_ContractInfo.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].ContractYears.ToString();
+        _text_ContractInfo.GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Salary.ToString();
 
     }
     //Trading
@@ -280,6 +295,21 @@ public class TeamManagerUI : MonoBehaviour
             _training_btns.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].ovr.ToString();
             int index = gameManager.playerTeam.playersListRoster.IndexOf(gameManager.playerTeam.playersListRoster[i]);
             _training_btns.GetChild(i).GetComponent<Button>().onClick.AddListener(() => trainingManager.SetPlayerToTrainIndex(index, _textPlayerSelected, _textDrillSelected));
+        }
+    }
+    //Standings
+    void PopulateStandings()
+    {
+        print(_standingsPlacement.childCount + " Info teams slots");
+        for (int i = 0; i < /*_standingsPlacement.childCount*/gameManager.leagueTeams.Count; i++)
+        {
+            
+            _standingsPlacement.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = (i+1).ToString();
+            _standingsPlacement.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = leagueManager.Standings[i].TeamName.ToString();
+            _standingsPlacement.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = leagueManager.Standings[i].Wins.ToString();
+            _standingsPlacement.GetChild(i).GetChild(3).GetComponent<TextMeshProUGUI>().text = leagueManager.Standings[i].Draws.ToString();
+            _standingsPlacement.GetChild(i).GetChild(4).GetComponent<TextMeshProUGUI>().text = leagueManager.Standings[i].Loses.ToString();
+            
         }
     }
 }

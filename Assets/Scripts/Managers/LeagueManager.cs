@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,7 +17,8 @@ public class LeagueManager : MonoBehaviour
     public bool canStartANewWeek = true;
 
     [SerializeField]Team _playerTeam;
-    
+
+    [SerializeField]public List<Team> Standings = new List<Team>();
 
     #region Events Variables
     EventType _choseEventType;
@@ -57,6 +60,7 @@ public class LeagueManager : MonoBehaviour
         {
             NewWeek();
         }
+        Standings = gameManager.leagueTeams;
     }
 
     // Update is called once per frame
@@ -359,6 +363,22 @@ public class LeagueManager : MonoBehaviour
         _choseEventType = eventType;
         SetNewChoiceForEvent(eventType);
         
+    }
+
+    public void CreateStandings()
+    {
+        if (Week > 1)
+        {
+            Standings = Standings
+            .OrderByDescending(team => team.Wins)
+            .ThenByDescending(team => team.Draws)
+            .ThenBy(team => team.Loses)
+            .ToList();
+        }
+        for (int i = 0; i < Standings.Count; i++)
+        {
+            print(Standings[i].TeamName + " " + Standings[i].Wins);
+        }
     }
     
 }
