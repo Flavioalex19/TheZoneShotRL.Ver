@@ -36,6 +36,7 @@ public class MatchUI : MonoBehaviour
 
     [Header("Animators")]
     [SerializeField] Animator _homeTeamAnimator;
+    [SerializeField] Animator _awayTeamAnimator;
     // Start is called before the first frame update
     void Start()
     {
@@ -132,9 +133,23 @@ public class MatchUI : MonoBehaviour
     {
         GamesResults.GetChild(index).GetComponent<TextMeshProUGUI>().text = A.TeamName + " " + A.Score.ToString() + " " + B.TeamName + " " + B.Score.ToString();
     }
-    //Animators
-    public void TriggerHomeTeamAnim()
+    //Animatons calls
+    public void MatchStartAnim()
     {
         _homeTeamAnimator.SetTrigger("Go");
+        _awayTeamAnimator.SetTrigger("Go");
+    }
+    public void ChangePos(Team playerTeam)
+    {
+        if(playerTeam.hasPossession == true)
+        {
+            _homeTeamAnimator.SetTrigger("ToAttack");
+            _awayTeamAnimator.SetTrigger("ToDefense");
+        }
+        else
+        {
+            _homeTeamAnimator.SetTrigger("ToDefense");
+            _awayTeamAnimator.SetTrigger("ToAttack");
+        }
     }
 }

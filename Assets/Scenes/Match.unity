@@ -1840,6 +1840,7 @@ MonoBehaviour:
   teamBScore: {fileID: 1955077354}
   GamesResults: {fileID: 322796804}
   _homeTeamAnimator: {fileID: 1021187572}
+  _awayTeamAnimator: {fileID: 780025960}
 --- !u!1 &155397884
 GameObject:
   m_ObjectHideFlags: 0
@@ -3565,7 +3566,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0003344715}
+  m_AnchoredPosition: {x: 0, y: 0.00070400495}
   m_SizeDelta: {x: 0, y: 683}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &280098333
@@ -10661,6 +10662,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 780025959}
+  - component: {fileID: 780025960}
   m_Layer: 5
   m_Name: AwayPlayersStarters
   m_TagString: Untagged
@@ -10688,6 +10690,27 @@ RectTransform:
   m_AnchoredPosition: {x: 450, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!95 &780025960
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 780025958}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f5ea4ff1c2786414abde4e2c6d65c09c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &791653903
 GameObject:
   m_ObjectHideFlags: 0
@@ -21880,7 +21903,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _matchUI: {fileID: 154066590}
-  GamePossesions: 3
+  GamePossesions: 5
   currentGamePossessons: 0
   HomeTeam: {fileID: 0}
   AwayTeam: {fileID: 0}

@@ -133,6 +133,7 @@ public class MatchManager : MonoBehaviour
     {
         HomeTeam.HasPlayed = true;
         AwayTeam.HasPlayed = true;
+        _matchUI.MatchStartAnim();
         while (currentGamePossessons > 0)
         {
             // Step 1: Choose the player to carry the ball
@@ -464,6 +465,7 @@ public class MatchManager : MonoBehaviour
         uiManager.PlaybyPlayText("Possession switches to " + teamWithball.TeamName);
         ChoosePlayerToCarryBall();
         SelectDefender();
+        if(HomeTeam.IsPlayerTeam)_matchUI.ChangePos(HomeTeam);
 
     }
     void SelectDefender()
