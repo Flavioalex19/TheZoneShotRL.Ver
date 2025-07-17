@@ -262,10 +262,14 @@ public class MatchManager : MonoBehaviour
         }
         else if (/*teamWithball == HomeTeam*/ teamWithball.IsPlayerTeam)
         {
-            ResetChoices();
+            if (currentGamePossessons > 1)
+            {
+                ResetChoices();
+            }
+                
             while (true)
             {
-                CanChooseAction = true;
+                //CanChooseAction = true;
                 if (currentGamePossessons <= 1)
                 {
                     uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " must shoot due to low possessions!");
@@ -305,7 +309,7 @@ public class MatchManager : MonoBehaviour
                         SwitchPossession();
                         uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
                         yield return new WaitForSeconds(_actionTimer);
-                        ResetChoices();
+                        //ResetChoices();/////////////////
                         yield break;
                     }
                 }
@@ -354,7 +358,7 @@ public class MatchManager : MonoBehaviour
         if (Random.Range(0f, 1f) > passSuccessChance)
         {
             uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " made a bad pass! Possession lost.");
-            ResetChoices();//Restet
+            //ResetChoices();
             return false;
         }
 

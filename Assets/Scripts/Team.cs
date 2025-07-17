@@ -25,6 +25,8 @@ public class Team : MonoBehaviour
     public int Wins;
     public int Loses;
     public int Draws;
+    public int SalaryCap = 100;
+    public int CurrentSalary;
 
     #endregion
     [SerializeField]public string Description;

@@ -34,7 +34,7 @@ public class MatchUI : MonoBehaviour
     Button btn_ReturnToTeamManagement;
     [SerializeField] Transform GamesResults;
 
-
+    [Header("Animators")]
     [SerializeField] Animator _homeTeamAnimator;
     // Start is called before the first frame update
     void Start()

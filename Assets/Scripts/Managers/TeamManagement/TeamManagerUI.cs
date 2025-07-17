@@ -52,6 +52,9 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] GameObject _standingsPanel;
     [SerializeField] Transform _standingsPlacement;
 
+    [Header("SalaryCap")]
+    [SerializeField] TextMeshProUGUI _text_CurrentTeamSalary;
+
     [Header("Options")]
     [SerializeField] GameObject _optionsPanel;
     [SerializeField] Button _optionsQuitBtn;
@@ -112,8 +115,10 @@ public class TeamManagerUI : MonoBehaviour
             _EndBuildScreen.SetActive(true);
         }
 
-        
-        
+        leagueManager.CreateTeamSalary();
+        UpdateTeamSalary();
+
+
 
     }
 
@@ -311,5 +316,10 @@ public class TeamManagerUI : MonoBehaviour
             _standingsPlacement.GetChild(i).GetChild(4).GetComponent<TextMeshProUGUI>().text = leagueManager.Standings[i].Loses.ToString();
             
         }
+    }
+    //Salary
+    void UpdateTeamSalary()
+    {
+        _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
     }
 }

@@ -1,3 +1,4 @@
+using DG.Tweening.Core.Easing;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -83,6 +84,7 @@ public class LeagueManager : MonoBehaviour
     public void IncreaseWeek()
     {
         Week++;
+        
     }
     void NewWeek()
     {
@@ -364,20 +366,31 @@ public class LeagueManager : MonoBehaviour
         SetNewChoiceForEvent(eventType);
         
     }
-
+    //Standings
     public void CreateStandings()
     {
         if (Week > 1)
         {
             Standings = Standings
-            .OrderByDescending(team => team.Wins)
-            .ThenByDescending(team => team.Draws)
-            .ThenBy(team => team.Loses)
-            .ToList();
+                .OrderByDescending(team => team.Wins)
+                .ThenByDescending(team => team.Draws)
+                .ThenBy(team => team.Loses) // less losses is better
+                .ToList();
         }
         for (int i = 0; i < Standings.Count; i++)
         {
             print(Standings[i].TeamName + " " + Standings[i].Wins);
+        }
+    }
+    //SalaryCap
+    public void CreateTeamSalary()
+    {
+        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+        {
+            for(int j = 0; j < gameManager.leagueTeams[i].playersListRoster.Count; j++)
+            {
+                gameManager.leagueTeams[i].CurrentSalary += gameManager.leagueTeams[i].playersListRoster[j].Salary;
+            }
         }
     }
     

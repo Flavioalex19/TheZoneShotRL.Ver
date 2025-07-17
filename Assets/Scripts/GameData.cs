@@ -67,6 +67,7 @@ public class TeamData
     public int win;
     public int lost;
     public int draw;
+    public int cap;
 
     public TeamData(Team team, LeagueManager leagueManager)
     {
@@ -78,6 +79,7 @@ public class TeamData
         win = team.Wins;
         lost = team.Loses;
         draw = team.Draws;
+        cap = team.CurrentSalary;
         foreach (Player player in team.playersListRoster)
         {
             playersListData.Add(new PlayerData(player));

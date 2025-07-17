@@ -50,6 +50,7 @@ public class SaveSystem : MonoBehaviour
             team.Wins = 0;
             team.Draws = 0;
             team.Loses = 0;
+            team.CurrentSalary = 0;
 
             team.IsPlayerTeam = teamData.isPlayerControlled;
             team.Moral = teamData.teamMoral;
@@ -58,6 +59,7 @@ public class SaveSystem : MonoBehaviour
             team.Wins = teamData.win;
             team.Draws = teamData.draw;
             team.Loses = teamData.lost;
+            team.CurrentSalary = teamData.cap;
 
 
             
