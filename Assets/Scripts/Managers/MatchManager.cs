@@ -256,8 +256,22 @@ public class MatchManager : MonoBehaviour
                     ChangePosOfPlayerWithTheBall();
                     uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
                     yield return new WaitForSeconds(_actionTimer);
-                    yield return Scoring(playerWithTheBall);
-                    yield break;
+                    //yield return Scoring(playerWithTheBall);
+                    ///
+                    if (TryBeatDefender(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone))
+                    {
+                        yield return Scoring(playerWithTheBall);
+                        //ResetChoices();
+                        yield break;
+                    }
+                    else
+                    {
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " loses the ball to " + playerDefending.playerLastName);
+                        yield return new WaitForSeconds(_actionTimer);
+                        SwitchPossession();
+                        yield break;
+                    }
+                    //yield break;
                 }
             }
         }
@@ -288,9 +302,25 @@ public class MatchManager : MonoBehaviour
                     ChangePosOfPlayerWithTheBall();
                     uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
                     yield return new WaitForSeconds(_actionTimer);
+                    ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    if (TryBeatDefender(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone))
+                    {
+                        yield return Scoring(playerWithTheBall);
+                        //ResetChoices();
+                        yield break;
+                    }
+                    else
+                    {
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " loses the ball to "+ playerDefending.playerLastName);
+                        yield return new WaitForSeconds(_actionTimer);
+                        SwitchPossession();
+                        yield break;
+                    }
+                    /*
                     yield return Scoring(playerWithTheBall);
                     //ResetChoices();
                     yield break;
+                    */
                 }
                 else if (_ChoosePass)
                 {
@@ -490,6 +520,38 @@ public class MatchManager : MonoBehaviour
         DefenderName = newDefender.playerFirstName + " " + DefendingTeam.TeamName;
         playerDefending = newDefender;
         //Debug.Log(newDefender.playerFirstName + " is now defending.");
+    }
+    //Beat the defender and change zones
+    bool TryBeatDefender(Player offense, Player defense, int zone, int bonus = 0)
+    {
+        int x = Random.Range(1, 101)
+              + offense.Consistency
+              + offense.Control
+              + offense.Juking
+              + GetZoneValue(offense, zone)
+              + bonus;
+
+        int y = Random.Range(1, 101)
+              + defense.Consistency
+              + defense.Guarding
+              + defense.Stealing
+              + GetZoneValue(defense, zone);
+
+        int z = x - y;
+
+        if (z >= 100) return true;     // Juked
+        if (z <= -100) return false;   // Stolen
+        return false;                  // No progress
+    }
+    int GetZoneValue(Player player, int zone)
+    {
+        switch (zone)
+        {
+            case 0: return player.Inside;
+            case 1: return player.Mid;
+            case 2: return player.Outside;
+            default: return 0;
+        }
     }
     //Function to enable call for a Timeout
     IEnumerator WaitForTimeOut()

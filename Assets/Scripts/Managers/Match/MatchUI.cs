@@ -25,6 +25,10 @@ public class MatchUI : MonoBehaviour
     [Header("Action Button Area")]
     [SerializeField] GameObject _actionArea;
 
+    [Header("Substitutions")]
+    [SerializeField] TextMeshProUGUI text_playerOut;
+    [SerializeField] TextMeshProUGUI text_playerIn;
+
     [Header("Post game")]
     public GameObject EndScreenStatsPanel;
     [SerializeField] Transform teamANames;
@@ -77,14 +81,16 @@ public class MatchUI : MonoBehaviour
         {
             for (int i = 0; i < GameObject.Find("Starters").transform.childCount; i++)
             {
-                GameObject.Find("Starters").transform.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerFirstName.ToString();
+                GameObject.Find("Starters").transform.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerFirstName.ToString() + " "
+                    + _matchManager.HomeTeam.playersListRoster[i].playerLastName;
             }
         }
         if (GameObject.Find("Bench"))
         {
             for (int i = 0; i < GameObject.Find("Bench").transform.childCount; i++)
             {
-                GameObject.Find("Bench").transform.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i + 4].playerFirstName.ToString();
+                GameObject.Find("Bench").transform.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i + 4].playerFirstName.ToString() + " "+
+                    _matchManager.HomeTeam.playersListRoster[i + 4].playerLastName.ToString();
             }
         }
     }

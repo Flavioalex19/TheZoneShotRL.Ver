@@ -20,6 +20,9 @@ public class PlayerData
     public int defend;
     public int guard;
     public int steal;
+    public int juk;
+    public int cosis;
+    public int control;
     public float ovr;
     public int awn;
     public int yearsC;
@@ -40,6 +43,9 @@ public class PlayerData
         defend = player.Defending;
         guard = player.Guarding;
         steal = player.Stealing;
+        juk = player.Juking;
+        cosis = player.Consistency;
+        control = player.Control;
         ovr = player.ovr;
         awn = player.Awareness;
         yearsC = player.ContractYears;

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +11,9 @@ public class Substitutions : MonoBehaviour
     Player _BenchPlayerSelected;
     [SerializeField]int indexStarter;
     [SerializeField]int indexBench;
+    [SerializeField] List<TextMeshProUGUI> _text_StartersNames = new List<TextMeshProUGUI>();
 
+    
     Button confirmSwapBtn;
 
     private void Start()
@@ -24,6 +27,13 @@ public class Substitutions : MonoBehaviour
         if (GameObject.Find("btn_ConfirmSwap"))
         {
             
+        }
+    }
+    void TextNameUpdate()
+    {
+        for (int i = 0; i < _text_StartersNames.Count; i++)
+        {
+            _text_StartersNames[i].text = matchManager.HomeTeam.playersListRoster[i].playerFirstName + " " + matchManager.HomeTeam.playersListRoster[i].playerLastName;
         }
     }
     public void SwapPlayers()
@@ -41,6 +51,7 @@ public class Substitutions : MonoBehaviour
     public void ChooseStarterToSwap(int index)
     {
         _StarterPLayerSelected = matchManager.HomeTeam.playersListRoster[index];
+        
     }
     public void ChooseBenchToSwap(int index)
     {

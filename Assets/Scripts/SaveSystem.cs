@@ -141,6 +141,9 @@ public class SaveSystem : MonoBehaviour
                 newPlayer.Guarding = playerData.guard;
                 newPlayer.Stealing = playerData.steal;
                 newPlayer.Awareness = playerData.awn;
+                newPlayer.Juking = playerData.juk;
+                newPlayer.Consistency = playerData.cosis;
+                newPlayer.Control = playerData.control;
                 newPlayer.ContractYears = playerData.yearsC;
                 newPlayer.Salary = playerData.salaryPlayer;
                 newPlayer.Personality = playerData.persona;
