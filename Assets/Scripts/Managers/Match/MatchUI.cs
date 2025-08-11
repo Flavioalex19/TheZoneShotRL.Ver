@@ -14,6 +14,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Transform AwayTeamActive_Starters;
     [SerializeField] Transform _activeHomePlayers;
     [SerializeField] Transform _activeAwayPlayers;
+
     [Header("Team Names Text")]
     [SerializeField] TextMeshProUGUI _homeTeamName;
     [SerializeField] TextMeshProUGUI _awatTeamName;
@@ -25,9 +26,12 @@ public class MatchUI : MonoBehaviour
     [Header("Action Button Area")]
     [SerializeField] GameObject _actionArea;
 
+    
+    Substitutions _substitutions;
     [Header("Substitutions")]
-    [SerializeField] TextMeshProUGUI text_playerOut;
-    [SerializeField] TextMeshProUGUI text_playerIn;
+    [SerializeField] GameObject _panel_SubsPanel;
+    [SerializeField] TextMeshProUGUI text_playerStarter;
+    [SerializeField] TextMeshProUGUI text_playerBench;
 
     [Header("Post game")]
     public GameObject EndScreenStatsPanel;
@@ -46,6 +50,7 @@ public class MatchUI : MonoBehaviour
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         _matchManager = GameObject.Find("MatchManager").GetComponent<MatchManager>();
+        _substitutions = GameObject.Find("Subistitution").GetComponent<Substitutions>();
 
         btn_ReturnToTeamManagement = GameObject.Find("Advance to Team Management Screen Button").GetComponent<Button>();
         btn_ReturnToTeamManagement.onClick.AddListener(() => gameManager.ReturnToTeamManegement());
@@ -93,7 +98,9 @@ public class MatchUI : MonoBehaviour
                     _matchManager.HomeTeam.playersListRoster[i + 4].playerLastName.ToString();
             }
         }
+        
     }
+    
     public void SetTheTeamTextForTheMatch()
     {
         _homeTeamName.text = _matchManager.HomeTeam.TeamName.ToString();

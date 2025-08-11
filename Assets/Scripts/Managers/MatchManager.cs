@@ -62,13 +62,15 @@ public class MatchManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI _debugTimeoutText;
     [SerializeField] string DefenderName;
 
+    bool _isOnSetupStage;//
+
     // Start is called before the first frame update
     void Start()
     {
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
         uiManager = GameObject.Find("UIManager").GetComponent<UiManager>();
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
-
+        _isOnSetupStage = true;
         //Reset the teams to play
         for (int i = 0; i < manager.leagueTeams.Count; i++)
         {
@@ -113,8 +115,6 @@ public class MatchManager : MonoBehaviour
         //StartCoroutine(GameFlow());
         StartCoroutine(RunMatchThenSimulate());
         //_matchUI.PostGameStats(HomeTeam, AwayTeam);
-
-        
     }
     
     // Update is called once per frame
@@ -128,6 +128,16 @@ public class MatchManager : MonoBehaviour
 
         }
 
+    }
+    public void StartTheMatch()
+    {
+        _isOnSetupStage = false;
+    }
+    IEnumerator SetupGameplan()
+    {
+        //Wait for the intro to end
+
+        yield return new WaitUntil(()=> _isOnSetupStage == false);
     }
     IEnumerator GameFlow()
     {
@@ -633,6 +643,7 @@ public class MatchManager : MonoBehaviour
     }
     IEnumerator RunMatchThenSimulate()
     {
+        yield return StartCoroutine(SetupGameplan());
         yield return StartCoroutine(GameFlow());
         _matchUI.PostGameStats(HomeTeam, AwayTeam);
         yield return StartCoroutine(LeagueWeekSimulation());
