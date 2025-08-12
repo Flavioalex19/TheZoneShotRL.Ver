@@ -156,10 +156,19 @@ public class TeamManagerUI : MonoBehaviour
         {
             equipAreaText.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam._equipmentList[i].Level.ToString();
         }
-    }
 
+        //end build
+        if (leagueManager.Week > gameManager.leagueTeams.Count - 1)
+        {
+            _EndBuildScreen.SetActive(true);
+        }
+    }
+    public void UpdateTeamRoster()
+    {
+        TeamRoster(_currentTeamIndex);
+    }
     //Schedule Updated
-    void ScheduleUpdated()
+    public void ScheduleUpdated()
     {
         if (_schedulePanelTextsArea != null)
         {
@@ -168,6 +177,7 @@ public class TeamManagerUI : MonoBehaviour
                 _schedulePanelTextsArea.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam._schedule[i].TeamName.ToString();
             }
         }
+        leagueManager.CreateStandings();
     }
 
     //EquipUI
@@ -256,6 +266,9 @@ public class TeamManagerUI : MonoBehaviour
         _text_playerInfoStats.GetChild(5).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Defending.ToString();
         _text_playerInfoStats.GetChild(6).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Guarding.ToString();
         _text_playerInfoStats.GetChild(7).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Stealing.ToString();
+        _text_playerInfoStats.GetChild(8).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Juking.ToString();
+        _text_playerInfoStats.GetChild(9).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Consistency.ToString();
+        _text_playerInfoStats.GetChild(10).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Control.ToString();
 
         //Sprite alteration/update
         Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
@@ -320,6 +333,11 @@ public class TeamManagerUI : MonoBehaviour
     //Salary
     void UpdateTeamSalary()
     {
+        gameManager.playerTeam.CurrentSalary = 0;
+        for (int i = 0; i < gameManager.playerTeam.playersListRoster.Count; i++)
+        {
+            gameManager.playerTeam.CurrentSalary += gameManager.playerTeam.playersListRoster[i].Salary;
+        }
         _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
     }
 }

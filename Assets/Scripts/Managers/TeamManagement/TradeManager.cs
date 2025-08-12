@@ -54,6 +54,7 @@ public class TradeManager : MonoBehaviour
     }
     void FindPlayerForTrade()
     {
+        
         // Normalize and map front office points to OVR range (60 to 99)
         float normalized = (_gameManager.playerTeam.FrontOfficePoints - 20f) / 80f;
         int maxOVR = Mathf.RoundToInt(Mathf.Lerp(60f, 99f, normalized));
@@ -70,6 +71,7 @@ public class TradeManager : MonoBehaviour
             " " + TradeTeam.playersListRoster[_playerToReceive].playerLastName.ToString();
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = TradeTeam.playersListRoster[_playerToReceive].ovr.ToString();
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = TradeTeam.TeamName.ToString();
+       
         
 
     }

@@ -392,6 +392,7 @@ public class LeagueManager : MonoBehaviour
                 gameManager.leagueTeams[i].CurrentSalary += gameManager.leagueTeams[i].playersListRoster[j].Salary;
             }
         }
+
     }
     
 }

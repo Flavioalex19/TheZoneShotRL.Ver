@@ -3,11 +3,27 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+public enum TrainingAttribute
+{
+    Awareness,
+    Shooting,
+    Inside,
+    Outside,
+    Mid,
+    Defending,
+    Consistency,
+    Juking,
+    Stealing,
+    Control,
+    Guarding
+}
 public class TrainingManager : MonoBehaviour
 {
     [SerializeField] int playerIndex;
     [SerializeField] int _trainingIndex;
     [SerializeField] int _trainingDrillAmount = 5;
+
+    public TrainingAttribute selectedTrainingAttribute = TrainingAttribute.Awareness;
 
     GameManager gameManager;
     LeagueManager leagueManager;
@@ -27,61 +43,14 @@ public class TrainingManager : MonoBehaviour
         SetTraining(index, drillChoosed);
     }
 
-    void SetTraining(int playerIndex,TextMeshProUGUI drillChoosed)
+    void SetTraining(int playerIndex,TextMeshProUGUI drillChoosedText)
     {
         /*
-        //Change this for probability or use other varible to increase the chance
-        _trainingIndex = Random.Range(0, _trainingDrillAmount);
-        switch (_trainingIndex)
-        {
-            case 0:
-                drillChoosed.text = gameManager.playerTeam.playersListRoster[playerIndex].playerFirstName + " + Minimum Boost" + " All stats + 1";
-                gameManager.playerTeam.playersListRoster[playerIndex].Awareness += 1;
-                gameManager.playerTeam.playersListRoster[playerIndex].Shooting += 1;
-                gameManager.playerTeam.playersListRoster[playerIndex].Inside += 1;
-                gameManager.playerTeam.playersListRoster[playerIndex].Outside += 1;
-                gameManager.playerTeam.playersListRoster[playerIndex].Mid += 1;
-                break;
-            case 1:
-                drillChoosed.text = gameManager.playerTeam.playersListRoster[playerIndex].playerFirstName + " + Good Training day" + "All stats + 2 ";
-                gameManager.playerTeam.playersListRoster[playerIndex].Awareness += 2;
-                gameManager.playerTeam.playersListRoster[playerIndex].Shooting += 2;
-                gameManager.playerTeam.playersListRoster[playerIndex].Inside += 2;
-                gameManager.playerTeam.playersListRoster[playerIndex].Outside += 2;
-                gameManager.playerTeam.playersListRoster[playerIndex].Mid += 2;
-                break;
-            case 2:
-                drillChoosed.text = gameManager.playerTeam.playersListRoster[playerIndex].playerFirstName + " + Great training day" + " All stats +3";
-                gameManager.playerTeam.playersListRoster[playerIndex].Awareness += 3;
-                gameManager.playerTeam.playersListRoster[playerIndex].Shooting += 3;
-                gameManager.playerTeam.playersListRoster[playerIndex].Inside += 3;
-                gameManager.playerTeam.playersListRoster[playerIndex].Outside += 3;
-                gameManager.playerTeam.playersListRoster[playerIndex].Mid += 3;
-                break;
-            case 3:
-                drillChoosed.text = gameManager.playerTeam.playersListRoster[playerIndex].playerFirstName + " + Outstanding Training day" + " All stats +4";
-                gameManager.playerTeam.playersListRoster[playerIndex].Awareness += 4;
-                gameManager.playerTeam.playersListRoster[playerIndex].Shooting += 4;
-                gameManager.playerTeam.playersListRoster[playerIndex].Inside += 4;
-                gameManager.playerTeam.playersListRoster[playerIndex].Outside += 4;
-                gameManager.playerTeam.playersListRoster[playerIndex].Mid += 4;
-                break;
-            case 4:
-                drillChoosed.text = gameManager.playerTeam.playersListRoster[playerIndex].playerFirstName + "+ Perfect Training day" + " All stats +8";
-                gameManager.playerTeam.playersListRoster[playerIndex].Awareness += 8;
-                gameManager.playerTeam.playersListRoster[playerIndex].Shooting += 8;
-                gameManager.playerTeam.playersListRoster[playerIndex].Inside += 8;
-                gameManager.playerTeam.playersListRoster[playerIndex].Outside += 8;
-                gameManager.playerTeam.playersListRoster[playerIndex].Mid += 8;
-                break;
-            default:
-                break;
-        }
-        */
         if(leagueManager.canTrain == true)
         {
             _trainingIndex = Random.Range(0, _trainingDrillAmount);
             int boost = 0;
+            boost = Random.Range(0, 4);//Change this later
             string label = "";
 
             switch (_trainingIndex)
@@ -95,13 +64,19 @@ public class TrainingManager : MonoBehaviour
             }
 
             Player player = gameManager.playerTeam.playersListRoster[playerIndex];
-            drillChoosed.text = $"{player.playerFirstName} + {label} - All stats +{boost} + Training session for this week is completed";
+            drillChoosedText.text = $"{player.playerFirstName} + {label} - All stats +{boost} + Training session for this week is completed";
 
             player.Awareness = Mathf.Min(player.Awareness + boost, 99);
             player.Shooting = Mathf.Min(player.Shooting + boost, 99);
             player.Inside = Mathf.Min(player.Inside + boost, 99);
             player.Outside = Mathf.Min(player.Outside + boost, 99);
             player.Mid = Mathf.Min(player.Mid + boost, 99);
+            player.Defending = Mathf.Min(player.Defending + boost, 99);
+            player.Consistency = Mathf.Min(player.Consistency + boost, 99);
+            player.Juking = Mathf.Min(player.Juking + boost, 99);
+            player.Stealing = Mathf.Min(player.Stealing + boost, 99);
+            player.Control = Mathf.Min(player.Control + boost, 99);
+            player.Guarding = Mathf.Min(player.Guarding + boost, 99);
 
             leagueManager.canTrain = false;
             for (int i = 0; i < gameManager.leagueTeams.Count; i++)
@@ -111,9 +86,58 @@ public class TrainingManager : MonoBehaviour
         }
         else
         {
-            drillChoosed.text = "Training session for this week is completed";
+            drillChoosedText.text = "Training session for this week is completed";
         }
-        
+        */
+        if (leagueManager.canTrain == true)
+        {
+            _trainingIndex = Random.Range(0, _trainingDrillAmount);
+            int boost = 0;
+            boost = Random.Range(0, 4);//Change this later
+            selectedTrainingAttribute = (TrainingAttribute)Random.Range(0, System.Enum.GetValues(typeof(TrainingAttribute)).Length);
+            string label = "";
+
+            switch (_trainingIndex)
+            {
+                case 0: boost = 1; label = "Minimum Boost"; break;
+                case 1: boost = 2; label = "Good Training day"; break;
+                case 2: boost = 3; label = "Great training day"; break;
+                case 3: boost = 4; label = "Outstanding Training day"; break;
+                case 4: boost = 8; label = "Perfect Training day"; break;
+                default: return;
+            }
+
+            Player player = gameManager.playerTeam.playersListRoster[playerIndex];
+
+            // Apply boost only to chosen attribute
+            switch (selectedTrainingAttribute)
+            {
+                case TrainingAttribute.Awareness: player.Awareness = Mathf.Min(player.Awareness + boost, 99); break;
+                case TrainingAttribute.Shooting: player.Shooting = Mathf.Min(player.Shooting + boost, 99); break;
+                case TrainingAttribute.Inside: player.Inside = Mathf.Min(player.Inside + boost, 99); break;
+                case TrainingAttribute.Outside: player.Outside = Mathf.Min(player.Outside + boost, 99); break;
+                case TrainingAttribute.Mid: player.Mid = Mathf.Min(player.Mid + boost, 99); break;
+                case TrainingAttribute.Defending: player.Defending = Mathf.Min(player.Defending + boost, 99); break;
+                case TrainingAttribute.Consistency: player.Consistency = Mathf.Min(player.Consistency + boost, 99); break;
+                case TrainingAttribute.Juking: player.Juking = Mathf.Min(player.Juking + boost, 99); break;
+                case TrainingAttribute.Stealing: player.Stealing = Mathf.Min(player.Stealing + boost, 99); break;
+                case TrainingAttribute.Control: player.Control = Mathf.Min(player.Control + boost, 99); break;
+                case TrainingAttribute.Guarding: player.Guarding = Mathf.Min(player.Guarding + boost, 99); break;
+            }
+
+            drillChoosedText.text = $"{player.playerFirstName} {player.playerLastName} - {label} +{boost} to {selectedTrainingAttribute}. Training session for this week is completed.";
+
+            leagueManager.canTrain = false;
+
+            for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+            {
+                gameManager.saveSystem.SaveTeam(gameManager.leagueTeams[i]);
+            }
+        }
+        else
+        {
+            drillChoosedText.text = "Training session for this week is completed";
+        }
     }
     public void CheckIfTrainingIsCompleted()
     {
