@@ -59,10 +59,15 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] GameObject _optionsPanel;
     [SerializeField] Button _optionsQuitBtn;
 
+    [Header("News Info")]
+    [SerializeField] List<string> List_VoxEdgeNewsLines = new List<string>();
+    [SerializeField] List<string> list_VoxEdgeNewsResults = new List<string>();
+    [SerializeField] List<string> list_VoxelEdgePlayersNews = new List<string>();
+
     [Header("UI")]
-    GameObject _advBtn;//to Advance Button Elements
     [SerializeField]TextMeshProUGUI WeekText;
     [SerializeField] Image image_teamIcon;
+    GameObject _advBtn;//to Advance Button Elements
 
 
     [SerializeField] Button _closeGameForTestersBtn;
