@@ -41,6 +41,7 @@ public class Tooltip : MonoBehaviour
     private void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();
+        gameObject.SetActive(false);
     }
     // Update is called once per frame
     void Update()

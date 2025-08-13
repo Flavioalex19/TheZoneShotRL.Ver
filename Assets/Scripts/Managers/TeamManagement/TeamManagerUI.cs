@@ -62,6 +62,7 @@ public class TeamManagerUI : MonoBehaviour
     [Header("UI")]
     GameObject _advBtn;//to Advance Button Elements
     [SerializeField]TextMeshProUGUI WeekText;
+    [SerializeField] Image image_teamIcon;
 
 
     [SerializeField] Button _closeGameForTestersBtn;
@@ -110,6 +111,7 @@ public class TeamManagerUI : MonoBehaviour
         //End tESTING Screen
         _closeGameForTestersBtn.onClick.AddListener(() => gameManager.QuitAndClear());
         _EndBuildScreen.SetActive(false);
+        SetTeamIcon();
         if (leagueManager.Week > gameManager.leagueTeams.Count - 1)
         {
             _EndBuildScreen.SetActive(true);
@@ -163,6 +165,12 @@ public class TeamManagerUI : MonoBehaviour
             _EndBuildScreen.SetActive(true);
         }
     }
+    void SetTeamIcon()
+    {
+        Sprite sprite;
+        sprite = Resources.Load<Sprite>("2D/Team Logos/" + gameManager.playerTeam.TeamName);
+        image_teamIcon.sprite = sprite;
+    }
     public void UpdateTeamRoster()
     {
         TeamRoster(_currentTeamIndex);
@@ -170,11 +178,19 @@ public class TeamManagerUI : MonoBehaviour
     //Schedule Updated
     public void ScheduleUpdated()
     {
+        Sprite sprite;
+        string nameForOpponent;
         if (_schedulePanelTextsArea != null)
         {
             for (int i = 0; i < gameManager.playerTeam._schedule.Count; i++)
             {
-                _schedulePanelTextsArea.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam._schedule[i].TeamName.ToString();
+                nameForOpponent = gameManager.playerTeam._schedule[i].TeamName;
+                sprite = Resources.Load<Sprite>("2D/Team Logos/" + nameForOpponent);
+                //_schedulePanelTextsArea.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam._schedule[i].TeamName.ToString();
+                Image oppImage = _schedulePanelTextsArea.GetChild(i).GetChild(0).GetComponent<Image>();
+                oppImage.sprite = sprite;
+                _schedulePanelTextsArea.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = nameForOpponent;
+                _schedulePanelTextsArea.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = "Week " + (i + 1);
             }
         }
         leagueManager.CreateStandings();
