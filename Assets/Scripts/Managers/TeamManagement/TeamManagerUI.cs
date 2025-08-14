@@ -63,6 +63,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] List<string> List_VoxEdgeNewsLines = new List<string>();
     [SerializeField] List<string> list_VoxEdgeNewsResults = new List<string>();
     [SerializeField] List<string> list_VoxelEdgePlayersNews = new List<string>();
+    [SerializeField] TextMeshProUGUI text_newsInfo;
 
     [Header("UI")]
     [SerializeField]TextMeshProUGUI WeekText;
@@ -113,6 +114,8 @@ public class TeamManagerUI : MonoBehaviour
         //Options
         _optionsQuitBtn.onClick.AddListener(() => Application.Quit());
         _optionsPanel.SetActive(false);
+        //News
+        NewsUpdate();
         //End tESTING Screen
         _closeGameForTestersBtn.onClick.AddListener(() => gameManager.QuitAndClear());
         _EndBuildScreen.SetActive(false);
@@ -169,6 +172,12 @@ public class TeamManagerUI : MonoBehaviour
         {
             _EndBuildScreen.SetActive(true);
         }
+    }
+    //News
+    void NewsUpdate()
+    {
+        string newsLine = List_VoxEdgeNewsLines[Random.Range(0, List_VoxEdgeNewsLines.Count)];
+        text_newsInfo.text = newsLine;
     }
     void SetTeamIcon()
     {

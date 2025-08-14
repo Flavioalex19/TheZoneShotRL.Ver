@@ -56,6 +56,7 @@ public class MatchManager : MonoBehaviour
     public bool CanChooseAction = true;
     #endregion
 
+
     //UI Elemens test
 
     [Header("Debugs")]
@@ -213,11 +214,13 @@ public class MatchManager : MonoBehaviour
             playerWithTheBall.HasTheBall = true;
 
             ChangePosOfPlayerWithTheBall();
-            uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " has the ball.");
+            //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " has the ball.");
+            uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.ReceiveBallText());
         }
         ChangePosOfPlayerWithTheBall();
         SelectDefender();
-        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " has the ball.");
+        //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " has the ball.");
+        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.ReceiveBallText());
     }
     IEnumerator ChooseToPass()
     {
@@ -247,7 +250,8 @@ public class MatchManager : MonoBehaviour
                     if (TryPassBall())
                     {
                         yield return new WaitForSeconds(_actionTimer);
-                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
+                        //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.ReceiveBallText());
                         SelectDefender();
                         yield return new WaitForSeconds(_actionTimer);
                         continue; // Keep the loop for multiple passes
@@ -256,7 +260,8 @@ public class MatchManager : MonoBehaviour
                     {
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
-                        uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
+                        //uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.ReceiveBallText());
                         yield return new WaitForSeconds(_actionTimer);
                         yield break;
                     }
@@ -264,7 +269,8 @@ public class MatchManager : MonoBehaviour
                 else
                 {
                     ChangePosOfPlayerWithTheBall();
-                    uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
+                    //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
+                    uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.ShootingText());
                     yield return new WaitForSeconds(_actionTimer);
                     //yield return Scoring(playerWithTheBall);
                     ///
@@ -276,7 +282,7 @@ public class MatchManager : MonoBehaviour
                     }
                     else
                     {
-                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " loses the ball to " + playerDefending.playerLastName);
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.LosesPos() + " Loses the ball to " + playerDefending.playerLastName);
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
                         yield break;
@@ -310,7 +316,8 @@ public class MatchManager : MonoBehaviour
                 {
                     _ChooseScoring = false;
                     ChangePosOfPlayerWithTheBall();
-                    uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
+                    //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
+                    uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.ShootingText());
                     yield return new WaitForSeconds(_actionTimer);
                     ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if (TryBeatDefender(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone))
@@ -321,7 +328,8 @@ public class MatchManager : MonoBehaviour
                     }
                     else
                     {
-                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " loses the ball to "+ playerDefending.playerLastName);
+                        //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " loses the ball to "+ playerDefending.playerLastName);
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName +" " + _matchUI.LosesPos()  + " Loses the ball to " + playerDefending.playerLastName);
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
                         yield break;
@@ -338,7 +346,8 @@ public class MatchManager : MonoBehaviour
                     if (TryPassBall())
                     {
                         yield return new WaitForSeconds(_actionTimer);
-                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
+                        //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.ReceiveBallText());
                         SelectDefender();
                         yield return new WaitForSeconds(_actionTimer);
                         ResetChoices();
@@ -348,7 +357,8 @@ public class MatchManager : MonoBehaviour
                     {
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
-                        uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
+                        //uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.ReceiveBallText());
                         yield return new WaitForSeconds(_actionTimer);
                         //ResetChoices();/////////////////
                         yield break;
@@ -398,7 +408,8 @@ public class MatchManager : MonoBehaviour
 
         if (Random.Range(0f, 1f) > passSuccessChance)
         {
-            uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " made a bad pass! Possession lost.");
+            //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " made a bad pass! Possession lost.");
+            uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.LosesPos());
             //ResetChoices();
             return false;
         }

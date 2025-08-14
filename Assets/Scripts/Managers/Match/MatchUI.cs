@@ -33,6 +33,14 @@ public class MatchUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_playerStarter;
     [SerializeField] TextMeshProUGUI text_playerBench;
 
+    [Header("Action Lines")]
+    [SerializeField] List<string> list_ReceiveThePos = new List<string>();
+    [SerializeField] List<string> list_Passing = new List<string>();
+    [SerializeField] List<string> list_Shooting = new List<string>();
+    [SerializeField] List <string> list_LosesBall = new List<string>();
+    [SerializeField] List<string> list_Preparation = new List<string>();
+    public string gameAction = " ";
+
     [Header("Post game")]
     public GameObject EndScreenStatsPanel;
     [SerializeField] Transform teamANames;
@@ -100,7 +108,24 @@ public class MatchUI : MonoBehaviour
         }
         
     }
+    //texts for plays functions
+    public string ReceiveBallText()
+    {
+        gameAction = list_ReceiveThePos[Random.Range(0, list_ReceiveThePos.Count)];
+        return gameAction;
+    }
+    public string ShootingText()
+    {
+        gameAction = list_Shooting[Random.Range(0, list_Shooting.Count)];
+        return gameAction;
+    }
+    public string LosesPos()
+    {
+        gameAction = list_LosesBall[Random.Range(0, list_LosesBall.Count)];
+        return gameAction;
+    }
     
+    //Scoreboards
     public void SetTheTeamTextForTheMatch()
     {
         _homeTeamName.text = _matchManager.HomeTeam.TeamName.ToString();
