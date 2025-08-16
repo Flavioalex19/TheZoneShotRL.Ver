@@ -47,6 +47,7 @@ public class Player : MonoBehaviour
     public int Juking;
     public int Consistency;
     public int Control;
+    public int Positioning;
     public int ContractYears;
     public int Salary;
     #region Hidden Variables
@@ -83,7 +84,8 @@ public class Player : MonoBehaviour
         Juking = Random.Range(40, 99);
         Consistency = Random.Range(40, 99);
         Control = Random.Range(40, 99);
-        ovr = (Shooting +Inside + Mid + Outside + Awareness + Defending + Guarding + Stealing + Juking + Consistency + Control) / 11;
+        Positioning = Random.Range(40, 99);
+        ovr = (Shooting +Inside + Mid + Outside + Awareness + Defending + Guarding + Stealing + Juking + Consistency + Control + Positioning) / 12;
         Personality = Random.Range(1, 5);
         //firstName = ((PlayerNames)Random.Range(0, System.Enum.GetValues(typeof(PlayerNames)).Length)).ToString(); // Random name from enum
         // Randomly select a name from the array

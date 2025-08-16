@@ -144,6 +144,7 @@ public class SaveSystem : MonoBehaviour
                 newPlayer.Juking = playerData.juk;
                 newPlayer.Consistency = playerData.cosis;
                 newPlayer.Control = playerData.control;
+                newPlayer.Positioning = playerData.pos;
                 newPlayer.ContractYears = playerData.yearsC;
                 newPlayer.Salary = playerData.salaryPlayer;
                 newPlayer.Personality = playerData.persona;

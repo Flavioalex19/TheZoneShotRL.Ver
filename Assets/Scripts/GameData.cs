@@ -23,6 +23,7 @@ public class PlayerData
     public int juk;
     public int cosis;
     public int control;
+    public int pos;
     public float ovr;
     public int awn;
     public int yearsC;
@@ -46,6 +47,7 @@ public class PlayerData
         juk = player.Juking;
         cosis = player.Consistency;
         control = player.Control;
+        pos = player.Positioning;
         ovr = player.ovr;
         awn = player.Awareness;
         yearsC = player.ContractYears;

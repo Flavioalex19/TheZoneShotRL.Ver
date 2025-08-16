@@ -52,7 +52,7 @@ public class MatchManager : MonoBehaviour
     #region PlayerActions
     [SerializeField]public bool _ChoosePass;
     [SerializeField]public bool _ChooseScoring;
-    [SerializeField] public bool _ChooseToStun;
+    [SerializeField] public bool _ChooseToSpecialAtt;
     public bool CanChooseAction = true;
     #endregion
 
@@ -237,7 +237,7 @@ public class MatchManager : MonoBehaviour
                 CanChooseAction = false;
                 if (currentGamePossessons <= 1)
                 {
-                    uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " must shoot due to low possessions!");
+                    uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " must shoot due to low possessions!");
                     yield return new WaitForSeconds(_actionTimer);
                     yield return Scoring(playerWithTheBall);
                     yield break;
@@ -251,7 +251,7 @@ public class MatchManager : MonoBehaviour
                     {
                         yield return new WaitForSeconds(_actionTimer);
                         //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
-                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.ReceiveBallText());
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         SelectDefender();
                         yield return new WaitForSeconds(_actionTimer);
                         continue; // Keep the loop for multiple passes
@@ -261,7 +261,7 @@ public class MatchManager : MonoBehaviour
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
                         //uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
-                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.ReceiveBallText());
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         yield return new WaitForSeconds(_actionTimer);
                         yield break;
                     }
@@ -270,7 +270,7 @@ public class MatchManager : MonoBehaviour
                 {
                     ChangePosOfPlayerWithTheBall();
                     //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
-                    uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.ShootingText());
+                    uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ShootingText());
                     yield return new WaitForSeconds(_actionTimer);
                     //yield return Scoring(playerWithTheBall);
                     ///
@@ -282,7 +282,7 @@ public class MatchManager : MonoBehaviour
                     }
                     else
                     {
-                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.LosesPos() + " Loses the ball to " + playerDefending.playerLastName);
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos() + " Loses the ball to " + playerDefending.playerLastName);
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
                         yield break;
@@ -303,21 +303,21 @@ public class MatchManager : MonoBehaviour
                 //CanChooseAction = true;
                 if (currentGamePossessons <= 1)
                 {
-                    uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " must shoot due to low possessions!");
+                    uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " must shoot due to low possessions!");
                     yield return new WaitForSeconds(_actionTimer);
                     yield return Scoring(playerWithTheBall);
                     yield break;
                 }
                 uiManager.PlaybyPlayText("Wait for Player Action");
                 // Wait until player makes a choice
-                yield return new WaitUntil(() => _ChoosePass || _ChooseScoring);
+                yield return new WaitUntil(() => _ChoosePass || _ChooseScoring || _ChooseToSpecialAtt);
 
                 if (_ChooseScoring)
                 {
                     _ChooseScoring = false;
                     ChangePosOfPlayerWithTheBall();
                     //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
-                    uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.ShootingText());
+                    uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ShootingText());
                     yield return new WaitForSeconds(_actionTimer);
                     ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if (TryBeatDefender(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone))
@@ -328,10 +328,10 @@ public class MatchManager : MonoBehaviour
                     }
                     else
                     {
-                        //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " loses the ball to "+ playerDefending.playerLastName);
-                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName +" " + _matchUI.LosesPos()  + " Loses the ball to " + playerDefending.playerLastName);
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName +" " + _matchUI.LosesPos()  + " Loses the ball to " + playerDefending.playerLastName);
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
+                        //ResetChoices();
                         yield break;
                     }
                     /*
@@ -347,7 +347,7 @@ public class MatchManager : MonoBehaviour
                     {
                         yield return new WaitForSeconds(_actionTimer);
                         //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
-                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.ReceiveBallText());
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         SelectDefender();
                         yield return new WaitForSeconds(_actionTimer);
                         ResetChoices();
@@ -358,30 +358,58 @@ public class MatchManager : MonoBehaviour
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
                         //uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
-                        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.ReceiveBallText());
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         yield return new WaitForSeconds(_actionTimer);
                         //ResetChoices();/////////////////
                         yield break;
                     }
                 }
-                else if (_ChooseToStun)
+                else if (_ChooseToSpecialAtt)
                 {
-                    _ChooseToStun = false;
-                    float stunSuccessRate = Mathf.Clamp((playerWithTheBall.Shooting - 30f) / (99f - 30f), 0f, 1f);
-                    if (Random.Range(0f, 1f) > stunSuccessRate)
-                    {
+                    _ChooseToSpecialAtt = false;
 
+                    if(Random.Range(0f, 1f) < ActivateSpecialAttk())
+                    {
+                        //Add later the list of string for a success use o team abillity
+                        uiManager.PlaybyPlayText("The team will use their special abillity");
+                        yield return new WaitForSeconds(_actionTimer);
+                        switch (teamWithball._teamStyle)
+                        {
+                            case TeamStyle.Brawler:
+                                playerWithTheBall.PointsMatch += 10;
+                                teamWithball.Score += 10;
+                                break;
+                            case TeamStyle.PhaseDash:
+                                playerWithTheBall.PointsMatch += 10;
+                                teamWithball.Score += 10;
+                                break;
+                            case TeamStyle.RailShot:
+                                playerWithTheBall.PointsMatch += 10;
+                                teamWithball.Score += 10;
+                                break;
+                            case TeamStyle.HyperDribbler:
+                                playerWithTheBall.PointsMatch += 10;
+                                teamWithball.Score += 10;
+                                break;
+                            default: break;
+                        }
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + "has scored!");
+                        
+                        yield return new WaitForSeconds(_actionTimer);
+                        SwitchPossession();
+                        yield break;
                     }
                     else
                     {
-                        uiManager.PlaybyPlayText(teamWithball.TeamName + " fail to stun");
+                        //Change this later for a list of string for a fail event
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + "Fail to use special team trait");
+                        
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
-                        uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
-                        yield return new WaitForSeconds(_actionTimer);
-                        ResetChoices();
                         yield break;
                     }
+
+
                 }
             }
         }
@@ -390,6 +418,7 @@ public class MatchManager : MonoBehaviour
     {
         _ChoosePass = false;
         _ChooseScoring = false;
+        _ChooseToSpecialAtt = false;
         CanChooseAction = true;
     }
     public void GetChoosePass()
@@ -402,11 +431,16 @@ public class MatchManager : MonoBehaviour
         _ChooseScoring = true;
         CanChooseAction = false;
     }
+    public void UseSpecialAttk()
+    {
+        _ChooseToSpecialAtt = true;
+        CanChooseAction = false;
+    }
     bool TryPassBall()
     {
-        float passSuccessChance = Mathf.Clamp((playerWithTheBall.Awareness - 30f) / (99f - 30f), 0f, 1f);
+        //float passSuccessChance = Mathf.Clamp((playerWithTheBall.Awareness - 30f) / (99f - 30f), 0f, 1f);
 
-        if (Random.Range(0f, 1f) > passSuccessChance)
+        if (Random.Range(0f, 1f) >/*> passSuccessChance*/ PassEquation())
         {
             //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " made a bad pass! Possession lost.");
             uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.LosesPos());
@@ -439,7 +473,7 @@ public class MatchManager : MonoBehaviour
                 yield return new WaitForSeconds(_actionTimer);
                 //currentGamePossessons--;
                 //THIS 40 WILL BE REPLACED BY THE DEFENDER STAT/AKA THE STEAL VALUE 
-                bool hasScored =/* Random.Range(1, 100) < (player.Inside + player.Mid + player.Outside / 3) - 100*/Random.value <= (player.Shooting - 40f) / (99f - 40f);
+                bool hasScored =/*Random.value <= (player.Shooting - 40f) / (99f - 40f)*/Random.Range(0f, 1f) < ScoringEquation();
                 if (hasScored)
                 {
                     if (player.CurrentZone == 0)
@@ -683,5 +717,90 @@ public class MatchManager : MonoBehaviour
             teamWithball.playersListRoster[index] = temp;
         }
         //print(playerWithTheBall.playerFirstName + " is hte guy with the ball");
+    }
+    //Equations
+    float PassEquation()
+    {
+        float offenseScore = (playerWithTheBall.Awareness + playerWithTheBall.Consistency) / 2f;
+        float defenseScore = (playerDefending.Stealing + playerDefending.Guarding) / 2f;
+
+        float offenseNormalized = Mathf.Clamp((offenseScore - 30f) / (99f - 30f), 0f, 1f);
+        float defenseNormalized = Mathf.Clamp((defenseScore - 30f) / (99f - 30f), 0f, 1f);
+
+        float passSuccessChance = offenseNormalized / (offenseNormalized + defenseNormalized);
+
+        return passSuccessChance;
+    }
+    float ScoringEquation()
+    {
+        int zoneValue;
+        if (playerWithTheBall.CurrentZone == 0)
+        {
+            zoneValue = playerWithTheBall.Outside;
+        }
+        else if(playerWithTheBall.CurrentZone == 1)
+        {
+            zoneValue = playerWithTheBall.Mid;
+        }
+        else
+        {
+            zoneValue= playerWithTheBall.Inside;
+        }
+        
+
+        float offenseScore = (playerWithTheBall.Shooting + zoneValue) / 2f;
+        float defenseScore = (playerDefending.Defending + playerDefending.Guarding) / 2f;
+
+        float offenseNormalized = Mathf.Clamp((offenseScore - 30f) / (99f - 30f), 0f, 1f);
+        float defenseNormalized = Mathf.Clamp((defenseScore - 30f) / (99f - 30f), 0f, 1f);
+
+        float scoreingSuccessChance = offenseNormalized / (offenseNormalized + defenseNormalized);
+
+        return scoreingSuccessChance;
+    }
+    float ActivateSpecialAttk()
+    {
+        float specialAttkSuccess = 0f;
+        float offenseScore;
+        float defenseScore;
+        float offenseNormalized;
+        float defenseNormalized;
+
+        // Normalize fanSupport (0 to 100) to a 0–1 range
+        float fanSupportNormalized = Mathf.Clamp(teamWithball.FansSupportPoints / 100f, 0f, 1f);
+        // Dynamic risk penalty: ranges from 0.4 (fanSupport=0) to 0.1 (fanSupport=100)
+        float riskPenalty = 0.4f - (0.3f * fanSupportNormalized);
+
+        switch (teamWithball._teamStyle)
+        {
+            case TeamStyle.Brawler:
+                offenseScore = (playerWithTheBall.Shooting + playerWithTheBall.Positioning) / 2f;
+                defenseScore = (playerDefending.Defending + playerDefending.Guarding) / 2f;
+                break;
+            case TeamStyle.RailShot:
+                offenseScore = (playerWithTheBall.Awareness + playerWithTheBall.Outside) / 2f;
+                defenseScore = (playerDefending.Positioning + playerDefending.Guarding) / 2f;
+                break;
+            case TeamStyle.PhaseDash:
+                offenseScore = (playerWithTheBall.Juking + playerWithTheBall.Control) / 2f;
+                defenseScore = (playerDefending.Awareness + playerDefending.Stealing) / 2f;
+                break;
+            case TeamStyle.HyperDribbler:
+                offenseScore = (playerWithTheBall.Juking + playerWithTheBall.Consistency) / 2f;
+                defenseScore = (playerDefending.Awareness + playerDefending.Guarding) / 2f;
+                break;
+            default:
+                return 0f; // Fail if team style is undefined
+        }
+
+        // Normalize scores 
+        offenseNormalized = Mathf.Clamp(offenseScore / 100f, 0f, 1f);
+        defenseNormalized = Mathf.Clamp(defenseScore / 100f, 0f, 1f);
+
+        // Sigmoid-based formula for volatility, adjusted by dynamic risk penalty
+        float scoreDifference = offenseNormalized - defenseNormalized;
+        specialAttkSuccess = 1f / (1f + Mathf.Exp(-6f * scoreDifference));
+        specialAttkSuccess = Mathf.Clamp(specialAttkSuccess - riskPenalty, 0.05f, 0.95f);
+        return specialAttkSuccess;
     }
 }

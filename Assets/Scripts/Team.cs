@@ -6,10 +6,10 @@ using UnityEngine;
 public enum TeamStyle
 {
     Normal,
-    HightRiskAndHighReward,
-    DefensiveMindset,
-    BullRush,
-    Chaos
+    Brawler,
+    HyperDribbler,
+    PhaseDash,
+    RailShot
 }
 public class Team : MonoBehaviour
 {
