@@ -28,6 +28,9 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Transform _text_playerInfoStats;
     [SerializeField] TextMeshProUGUI _text_playerInfoLastName;
     [SerializeField] Transform _text_ContractInfo;
+    [SerializeField] Image _image_PersonalityImage;
+    [SerializeField] Image _image_playerStyle;
+    Sprite _sprite;
 
     [Header("Equips")]
     //Equips
@@ -310,6 +313,41 @@ public class TeamManagerUI : MonoBehaviour
         _text_ContractInfo.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].ContractYears.ToString();
         _text_ContractInfo.GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Salary.ToString();
 
+        //Icons
+        IconsUpdate(gameManager.playerTeam.playersListRoster[index]);
+        _image_PersonalityImage.sprite = _sprite;
+
+    }
+    void IconsUpdate(Player player)
+    {
+        //Personality Icons
+        Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
+        switch (player.Personality)
+        {
+            case 1:
+                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_01");
+                break;
+            case 2:
+                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_02");
+                break;
+            case 3:
+                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_03");
+                break;
+
+            case 4:
+                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_04");
+                break;
+
+            case 5:
+                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_04");
+                break;
+
+            default:
+                break;
+        }
+        _sprite = sprite;
+        
+        
     }
     //Trading
     public void SetTradePanel()
