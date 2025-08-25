@@ -22,7 +22,6 @@ public class TeamSelectionManager : MonoBehaviour
     public void SetPlayerTeam(Team team)
     {
         
-        //team.ActivatePlayerTeam();
         _gameManager.playerTeam = team;
         selectedTeam = _gameManager.playerTeam;
         //team.CreateEquips();
