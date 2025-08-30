@@ -54,7 +54,10 @@ public class TradeManager : MonoBehaviour
     }
     void FindPlayerForTrade()
     {
-        
+        int att0;
+        int att1;
+        string attName0;
+        string attName1;
         // Normalize and map front office points to OVR range (60 to 99)
         float normalized = (_gameManager.playerTeam.FrontOfficePoints - 20f) / 80f;
         int maxOVR = Mathf.RoundToInt(Mathf.Lerp(60f, 99f, normalized));
@@ -64,16 +67,32 @@ public class TradeManager : MonoBehaviour
             if (TradeTeam.playersListRoster[i].ovr <= maxOVR)
             {
                 _playerToReceive = TradeTeam.playersListRoster.IndexOf(TradeTeam.playersListRoster[i]);
-                print(TradeTeam.playersListRoster[i].playerFirstName + TradeTeam.playersListRoster[i].ovr + "This is the player avalible for trade");
+                print(TradeTeam.playersListRoster[i].playerLastName + TradeTeam.playersListRoster[i].ovr + "This is the player avalible for trade");
             }
         }
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = TradeTeam.playersListRoster[_playerToReceive].playerFirstName.ToString() +
             " " + TradeTeam.playersListRoster[_playerToReceive].playerLastName.ToString();
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = TradeTeam.playersListRoster[_playerToReceive].ovr.ToString();
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = TradeTeam.TeamName.ToString();
-       
-        
+        (attName0, att0, attName1, att1) = GetAttributeValuesForStyle(_gameManager.playerTeam._teamStyle, TradeTeam.playersListRoster[_playerToReceive]);
+        _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = att0.ToString();
+        _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text = att1.ToString();
+        _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(5).GetComponent<TextMeshProUGUI>().text = attName0;
+        _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(6).GetComponent<TextMeshProUGUI>().text = attName1;
 
+
+    }
+    public (string attr1Name, int attr1Value, string attr2Name, int attr2Value) GetAttributeValuesForStyle(TeamStyle style, Player player)
+    {
+        return style switch
+        {
+            TeamStyle.Normal => ("Consistency", player.Consistency, "Awareness", player.Awareness),
+            TeamStyle.Brawler => ("Shooting", player.Shooting, "Awareness", player.Awareness),
+            TeamStyle.HyperDribbler => ("Juking", player.Juking, "Control", player.Control),
+            TeamStyle.PhaseDash => ("Control", player.Control, "Positioning", player.Positioning),
+            TeamStyle.RailShot => ("Shooting", player.Shooting, "Outside", player.Outside),
+            _ => ("Consistency", player.Consistency, "Awareness", player.Awareness)
+        };
     }
     public void SwapPlayersBetweenTeams(List<Player> TeamA, int playerAIndex, List<Player> TeamB, int playerBIndex)
     {

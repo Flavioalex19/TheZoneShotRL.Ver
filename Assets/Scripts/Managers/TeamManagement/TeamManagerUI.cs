@@ -30,6 +30,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Transform _text_ContractInfo;
     [SerializeField] Image _image_PersonalityImage;
     [SerializeField] Image _image_playerStyle;
+    [SerializeField] TextMeshProUGUI _text_playerNUmber;
     Sprite _sprite;
 
     [Header("Equips")]
@@ -303,6 +304,7 @@ public class TeamManagerUI : MonoBehaviour
         _text_playerInfoStats.GetChild(9).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Consistency.ToString();
         _text_playerInfoStats.GetChild(10).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Control.ToString();
         _text_playerInfoStats.GetChild(11).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Positioning.ToString();
+        _text_playerNUmber.text = gameManager.playerTeam.playersListRoster[index].J_Number.ToString();
 
         //Sprite alteration/update
         Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");

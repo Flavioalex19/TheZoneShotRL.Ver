@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class MatchUI : MonoBehaviour
 {
@@ -41,6 +43,11 @@ public class MatchUI : MonoBehaviour
     [SerializeField] List<string> list_Preparation = new List<string>();
     public string gameAction = " ";
 
+    [Header("Action Panel")]
+    [SerializeField] Image image_actionPanel;
+    [SerializeField] TextMeshProUGUI text_actionNameText;
+    [SerializeField] Animator _animator_ActionPanel;
+
     [Header("Post game")]
     public GameObject EndScreenStatsPanel;
     [SerializeField] Transform teamANames;
@@ -49,6 +56,8 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Transform teamBScore;
     Button btn_ReturnToTeamManagement;
     [SerializeField] Transform GamesResults;
+    [SerializeField] TextMeshProUGUI text_Victory_Defeat;
+    [SerializeField] GameObject panel_victory_defeat;
 
     [Header("Animators")]
     [SerializeField] Animator _homeTeamAnimator;
@@ -64,6 +73,7 @@ public class MatchUI : MonoBehaviour
         btn_ReturnToTeamManagement.onClick.AddListener(() => gameManager.ReturnToTeamManegement());
         EndScreenStatsPanel = GameObject.Find("End Game Stats");
         EndScreenStatsPanel.SetActive(false);
+        panel_victory_defeat.SetActive(false);
 
     }
 
@@ -86,7 +96,7 @@ public class MatchUI : MonoBehaviour
         {
             for (int i = 0; i < GameObject.Find("DebugTextHome").transform.childCount; i++)
             {
-                GameObject.Find("DebugTextHome").transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerFirstName.ToString();
+                GameObject.Find("DebugTextHome").transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerLastName.ToString();
             }
         }
         //Substitution Buttons
@@ -95,7 +105,8 @@ public class MatchUI : MonoBehaviour
             for (int i = 0; i < GameObject.Find("Starters").transform.childCount; i++)
             {
                 GameObject.Find("Starters").transform.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerFirstName.ToString() + " "
-                    + _matchManager.HomeTeam.playersListRoster[i].playerLastName;
+                    + _matchManager.HomeTeam.playersListRoster[i].playerLastName + " " + _matchManager.HomeTeam.playersListRoster[i].J_Number.ToString();
+                GameObject.Find("Starters").transform.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = "OVR " + _matchManager.HomeTeam.playersListRoster[i].ovr.ToString();
             }
         }
         if (GameObject.Find("Bench"))
@@ -103,7 +114,8 @@ public class MatchUI : MonoBehaviour
             for (int i = 0; i < GameObject.Find("Bench").transform.childCount; i++)
             {
                 GameObject.Find("Bench").transform.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i + 4].playerFirstName.ToString() + " "+
-                    _matchManager.HomeTeam.playersListRoster[i + 4].playerLastName.ToString();
+                    _matchManager.HomeTeam.playersListRoster[i + 4].playerLastName.ToString() + " " + _matchManager.HomeTeam.playersListRoster[i + 4].J_Number.ToString();
+                GameObject.Find("Bench").transform.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = "OVR " +_matchManager.HomeTeam.playersListRoster[i + 4].ovr.ToString();
             }
         }
         
@@ -137,11 +149,14 @@ public class MatchUI : MonoBehaviour
         {
             _activeHomePlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerLastName.ToString();
             _activeHomePlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].PointsMatch.ToString();
+            _activeHomePlayers.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].J_Number.ToString();
         }
         for (int i = 0; i < 4; i++)
         {
             _activeAwayPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].playerLastName.ToString();
             _activeAwayPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].PointsMatch.ToString();
+            _activeAwayPlayers.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].J_Number.ToString();
+            
         }
 
     }
@@ -189,5 +204,23 @@ public class MatchUI : MonoBehaviour
             _homeTeamAnimator.SetTrigger("ToDefense");
             _awayTeamAnimator.SetTrigger("ToAttack");
         }
+    }
+
+    //Action panel call
+    public void ActionPanelAnim(int index, string actionName)
+    {
+        _animator_ActionPanel.SetTrigger("On");
+        Sprite sprite;
+        //Sprite alteration/update
+        Sprite[] sprites = Resources.LoadAll<Sprite>("2D/MatchActionsPanels");
+        //print(sprites.Length + "Number!!!");
+        sprite = sprites[index];
+        image_actionPanel.sprite = sprite;
+        text_actionNameText.text = actionName;
+    }
+    public void ActivateVictoryDefeat(string endText)
+    {
+        panel_victory_defeat.SetActive(true);
+        text_Victory_Defeat.text = endText;
     }
 }

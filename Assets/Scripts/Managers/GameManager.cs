@@ -341,6 +341,8 @@ public class GameManager : MonoBehaviour
     }
     void AddPlayerToTeam(Player player, Button btn)
     {
+        player.J_Number = leagueTeams[currentTeamIndex].GenerateUniqueShirtNumber();
+        print("This player number and team is: " + player.J_Number + " " + leagueTeams[currentTeamIndex].TeamName);
         // Add the player to the current team
         leagueTeams[currentTeamIndex].playersListRoster.Add(player);
         // Print the player's name and the team they were added to

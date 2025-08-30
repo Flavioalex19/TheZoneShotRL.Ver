@@ -149,6 +149,7 @@ public class SaveSystem : MonoBehaviour
                 newPlayer.Salary = playerData.salaryPlayer;
                 newPlayer.Personality = playerData.persona;
                 newPlayer.ImageCharacterPortrait = playerData.imageIndex;
+                newPlayer.J_Number = playerData.jNum;
                 team.playersListRoster.Add(newPlayer);
             }
 

@@ -32,6 +32,7 @@ public class MatchManager : MonoBehaviour
     [SerializeField] public Team teamWithball;
     [SerializeField] Player playerWithTheBall;
     [SerializeField] Player playerDefending;
+    bool playerTeamWin = false;
 
     public float _timeOutTimer = 0;
     float timerTimeOutReset = 7f;
@@ -72,6 +73,7 @@ public class MatchManager : MonoBehaviour
         uiManager = GameObject.Find("UIManager").GetComponent<UiManager>();
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
         _isOnSetupStage = true;
+        playerTeamWin = false;
         //Reset the teams to play
         for (int i = 0; i < manager.leagueTeams.Count; i++)
         {
@@ -172,6 +174,8 @@ public class MatchManager : MonoBehaviour
             HomeTeam.Moral += 15;
             HomeTeam.Wins++;
             AwayTeam.Loses++;
+            if (HomeTeam.IsPlayerTeam) { _matchUI.ActivateVictoryDefeat("Victory"); }
+            
         }
         else if (HomeTeam.Score < AwayTeam.Score)
         {
@@ -179,6 +183,7 @@ public class MatchManager : MonoBehaviour
             AwayTeam.Moral += 15;
             HomeTeam.Loses++;
             AwayTeam.Wins++;
+            if (HomeTeam.IsPlayerTeam) { _matchUI.ActivateVictoryDefeat("Defeat"); }
         }
         else
         {
@@ -186,10 +191,14 @@ public class MatchManager : MonoBehaviour
             AwayTeam.Moral -= 5;
             HomeTeam.Draws++;
             AwayTeam.Draws++;
+            if (HomeTeam.IsPlayerTeam) { _matchUI.ActivateVictoryDefeat("Draw"); }
         }
         HomeTeam.HasPlayed = true;
         AwayTeam.HasPlayed = true;
+        
+        yield return new WaitForSeconds(3f);
         _matchUI.EndScreenStatsPanel.SetActive(true);
+        
         //_matchUI.PostGameStats(HomeTeam, AwayTeam);///////////////////////////////////////////////
         //yield return StartCoroutine(LeagueWeekSimulation());
     }
@@ -215,12 +224,12 @@ public class MatchManager : MonoBehaviour
 
             ChangePosOfPlayerWithTheBall();
             //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " has the ball.");
-            uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.ReceiveBallText());
+            uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
         }
         ChangePosOfPlayerWithTheBall();
         SelectDefender();
         //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " has the ball.");
-        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " " + _matchUI.ReceiveBallText());
+        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
     }
     IEnumerator ChooseToPass()
     {
@@ -282,6 +291,7 @@ public class MatchManager : MonoBehaviour
                     }
                     else
                     {
+                        print("Fail to pass by");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos() + " Loses the ball to " + playerDefending.playerLastName);
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
@@ -315,6 +325,8 @@ public class MatchManager : MonoBehaviour
                 if (_ChooseScoring)
                 {
                     _ChooseScoring = false;
+                    _matchUI.ActionPanelAnim(2, "Shoot");
+                    yield return new WaitForSeconds(_actionTimer);
                     ChangePosOfPlayerWithTheBall();
                     //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
                     uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ShootingText());
@@ -328,6 +340,7 @@ public class MatchManager : MonoBehaviour
                     }
                     else
                     {
+                        print("Fail to pass by defender");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName +" " + _matchUI.LosesPos()  + " Loses the ball to " + playerDefending.playerLastName);
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
@@ -343,6 +356,8 @@ public class MatchManager : MonoBehaviour
                 else if (_ChoosePass)
                 {
                     _ChoosePass = false;
+                    _matchUI.ActionPanelAnim(0, "Passing");
+                    yield return new WaitForSeconds(_actionTimer);
                     if (TryPassBall())
                     {
                         yield return new WaitForSeconds(_actionTimer);
@@ -355,6 +370,7 @@ public class MatchManager : MonoBehaviour
                     }
                     else
                     {
+                        //print("Fail to pass by");
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
                         //uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
@@ -367,8 +383,9 @@ public class MatchManager : MonoBehaviour
                 else if (_ChooseToSpecialAtt)
                 {
                     _ChooseToSpecialAtt = false;
-
-                    if(Random.Range(0f, 1f) < ActivateSpecialAttk())
+                    _matchUI.ActionPanelAnim(1, "Special");
+                    yield return new WaitForSeconds(_actionTimer);
+                    if (Random.Range(0f, 1f) < ActivateSpecialAttk())
                     {
                         //Add later the list of string for a success use o team abillity
                         uiManager.PlaybyPlayText("The team will use their special abillity");
@@ -466,14 +483,14 @@ public class MatchManager : MonoBehaviour
     {
         while (true)
         {
-            bool willShoot = Random.Range(1, 4) < 3; // Adjust logic as needed
+            bool willShoot = Random.Range(1, 4) < 3; // Adjust logic as needed create a function base on the inside, mid and out
             if (willShoot)
             {
                 uiManager.PlaybyPlayText(player.playerFirstName + " takes a shot!");
                 yield return new WaitForSeconds(_actionTimer);
                 //currentGamePossessons--;
-                //THIS 40 WILL BE REPLACED BY THE DEFENDER STAT/AKA THE STEAL VALUE 
-                bool hasScored =/*Random.value <= (player.Shooting - 40f) / (99f - 40f)*/Random.Range(0f, 1f) < ScoringEquation();
+                bool hasScored =Random.Range(0f, 1f) < ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone);
+                print(hasScored + " is  the result of Shooting");
                 if (hasScored)
                 {
                     if (player.CurrentZone == 0)
@@ -579,24 +596,32 @@ public class MatchManager : MonoBehaviour
     //Beat the defender and change zones
     bool TryBeatDefender(Player offense, Player defense, int zone, int bonus = 0)
     {
-        int x = Random.Range(1, 101)
-              + offense.Consistency
-              + offense.Control
-              + offense.Juking
-              + GetZoneValue(offense, zone)
-              + bonus;
+        // Offense roll
+        int offenseRoll = UnityEngine.Random.Range(1, 101)
+                        + offense.Consistency
+                        + offense.Control
+                        + offense.Juking
+                        + GetZoneValue(offense, zone)
+                        + UnityEngine.Random.Range(-5, 15) // small variability
+                        + bonus;
 
-        int y = Random.Range(1, 101)
-              + defense.Consistency
-              + defense.Guarding
-              + defense.Stealing
-              + GetZoneValue(defense, zone);
+        // Defense roll
+        int defenseRoll = UnityEngine.Random.Range(1, 101)
+                        + defense.Consistency
+                        + defense.Guarding
+                        + defense.Stealing
+                        + GetZoneValue(defense, zone);
 
-        int z = x - y;
+        int difference = offenseRoll - defenseRoll;
 
-        if (z >= 100) return true;     // Juked
-        if (z <= -100) return false;   // Stolen
-        return false;                  // No progress
+        // --- Adjusted thresholds ---
+        if (difference > 20)
+            return true;   // Successful juke
+        else if (difference < -20)
+            return false;  // Defender shuts down (could extend to "steal" here)
+        else
+            return UnityEngine.Random.value < 0.4f;
+        // 40% chance nothing happens, 60% chance juke succeeds
     }
     int GetZoneValue(Player player, int zone)
     {
@@ -731,32 +756,50 @@ public class MatchManager : MonoBehaviour
 
         return passSuccessChance;
     }
-    float ScoringEquation()
+    float ScoringEquation(Player offense, Player defense, int zone)
     {
-        int zoneValue;
-        if (playerWithTheBall.CurrentZone == 0)
+        // 1. Base Zone Accuracy
+        float baseAccuracy = 0.7f; // default mid
+        switch (zone)
         {
-            zoneValue = playerWithTheBall.Outside;
+            case 0: baseAccuracy = 0.64f; break; // Outside
+            case 1: baseAccuracy = 0.70f; break; // Mid
+            case 2: baseAccuracy = 0.75f; break; // Inside
         }
-        else if(playerWithTheBall.CurrentZone == 1)
-        {
-            zoneValue = playerWithTheBall.Mid;
-        }
-        else
-        {
-            zoneValue= playerWithTheBall.Inside;
-        }
-        
 
-        float offenseScore = (playerWithTheBall.Shooting + zoneValue) / 2f;
-        float defenseScore = (playerDefending.Defending + playerDefending.Guarding) / 2f;
+        // 2. Offense Value (X)
+        int offenseValue =
+            UnityEngine.Random.Range(1, 101) +  // variance
+            offense.Consistency +
+            offense.Control +
+            offense.Shooting +
+            GetZoneValue(offense, zone) +
+            UnityEngine.Random.Range(-10, 26); // bonus
 
-        float offenseNormalized = Mathf.Clamp((offenseScore - 30f) / (99f - 30f), 0f, 1f);
-        float defenseNormalized = Mathf.Clamp((defenseScore - 30f) / (99f - 30f), 0f, 1f);
+        // 3. Defense Value (Y)
+        int defenseValue =
+            UnityEngine.Random.Range(1, 101) +  // variance
+            defense.Consistency +
+            defense.Guarding +
+            defense.Stealing +
+            GetZoneValue(defense, zone);
 
-        float scoreingSuccessChance = offenseNormalized / (offenseNormalized + defenseNormalized);
+        int Z = offenseValue - defenseValue;
 
-        return scoreingSuccessChance;
+        // 4. Modify accuracy based on result
+        if (Z >= 300 && Z <= 356) baseAccuracy += 0.18f;
+        else if (Z >= 200 && Z <= 299) baseAccuracy += 0.15f;
+        else if (Z >= 150 && Z <= 199) baseAccuracy += 0.12f;
+        else if (Z >= 100 && Z <= 149) baseAccuracy += 0.08f;
+        else if (Z >= 50 && Z <= 99) baseAccuracy += 0.05f;
+        else if (Z >= 0 && Z <= 49) baseAccuracy += 0f;
+        else if (Z >= -50 && Z <= -1) baseAccuracy -= 0.06f;
+        else if (Z >= -100 && Z <= -51) baseAccuracy -= 0.12f;
+        else if (Z <= -101 && Z >= -356) return 0f; // Block
+
+        // 5. Clamp result between 0%–100%
+        print(baseAccuracy + " is the value" + teamWithball.TeamName);
+        return Mathf.Clamp01(baseAccuracy);
     }
     float ActivateSpecialAttk()
     {

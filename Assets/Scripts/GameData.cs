@@ -30,6 +30,7 @@ public class PlayerData
     public int salaryPlayer;
     public int persona;
     public int imageIndex;
+    public int jNum;
     
 
     public PlayerData(Player player)
@@ -54,6 +55,7 @@ public class PlayerData
         salaryPlayer = player.Salary;
         persona = player.Personality;
         imageIndex = player.ImageCharacterPortrait;
+        jNum = player.J_Number;
         
         
     }

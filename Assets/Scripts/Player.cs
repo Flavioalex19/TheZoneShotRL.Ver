@@ -22,7 +22,7 @@ public class Player : MonoBehaviour
         "Caleb", "Rio", "Luke", "Anderson", "Richard", "Daniel", "David", "Jacob", "Arthur", "Lucas", "Walter", "Neil", "Steve", "Ash", "Sergio", "Dean", "Samuel",
         "Denis", "Scott", "Leon", "Nash", "Marc", "Han", "Tom", "Laurence", "Matt","Brian", "Travis", "Robert", "Bob", "Kevin", "Fabian", "Nelson", "Henry", "Austin",
         "Wagner", "Adrian", "Andy", "Eden", "Carl", "Martin", "Wallace", "Tim", "Douglas", "Harry", "Eric", "Ethan", "Max", "Afonso", "Oliver", "Dan", "Ian", "Ewan", "Jack",
-        "Felix", "Arnold", "Tommy", "Trevor", "Thomas", "Zack", "Isiah","Erick", "Josh", " Norman", "Marco"
+        "Felix", "Arnold", "Tommy", "Trevor", "Thomas", "Zack", "Isiah","Erick", "Josh", " Norman", "Marco", "Ed"
     };
     private static readonly string[] secondNames = 
     {
@@ -50,6 +50,7 @@ public class Player : MonoBehaviour
     public int Positioning;
     public int ContractYears;
     public int Salary;
+    public int J_Number;
     #region Hidden Variables
     public int Personality;//1 to 5 , 1-calm and 5-Agressive 
     #endregion
@@ -62,6 +63,8 @@ public class Player : MonoBehaviour
     public int CurrentZone = 0;
     public int PointsMatch = 0;
     public bool IsStun = false;
+    public int MaxStamina = 100;
+    public int CurrentStamina;
     #endregion
     private void Start()
     {

@@ -27,6 +27,7 @@ public class Team : MonoBehaviour
     public int Draws;
     public int SalaryCap = 100;
     public int CurrentSalary = 0;
+    HashSet<int> usedNumbers = new HashSet<int>();//Numbers on the jersey
 
     #endregion
     [SerializeField]public string Description;
@@ -105,8 +106,22 @@ public class Team : MonoBehaviour
     {
         _schedule = teams;
     }
-    
+
+    // Generate a unique shirt number for this team
+    public int GenerateUniqueShirtNumber(int min = 0, int max = 99)
+    {
+        int number;
+        do
+        {
+            number = UnityEngine.Random.Range(min, max + 1);
+        } while (usedNumbers.Contains(number));
+
+        usedNumbers.Add(number);
+        return number;
+    }
+
 }
+
 [System.Serializable]
 public class Equipment
 {
