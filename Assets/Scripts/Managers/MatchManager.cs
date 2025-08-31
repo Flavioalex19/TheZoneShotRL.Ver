@@ -146,6 +146,15 @@ public class MatchManager : MonoBehaviour
     {
         HomeTeam.HasPlayed = true;
         AwayTeam.HasPlayed = true;
+        //Stamina set fro the game
+        for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
+        {
+            HomeTeam.playersListRoster[i].CurrentStamina = 100;
+        }
+        for (int i = 0;i < AwayTeam.playersListRoster.Count; i++) 
+        {
+            AwayTeam.playersListRoster[i].CurrentStamina = 100;
+        }
         _matchUI.MatchStartAnim();
         while (currentGamePossessons > 0)
         {
@@ -640,11 +649,8 @@ public class MatchManager : MonoBehaviour
         if (_canCallTimeout == false)
         {
             IsOnTimeout = true;
-            uiManager.PlaybyPlayText("We are on a timeout Champ");
-            yield return new WaitForSeconds(timerTimeOutReset);
-            _canCallTimeout = true;
+            yield return new WaitUntil(() => _canCallTimeout == true);
             IsOnTimeout = false;
-            HasActionOnTimeout = true;
         }
         else
         {
@@ -656,12 +662,16 @@ public class MatchManager : MonoBehaviour
     {
         if (_canCallTimeout)
         {
-            match = MatchStates.Timeout;
+            //match = MatchStates.Timeout;
             //IsOnTimeout = true;
             _canCallTimeout = false;
             _debugTimeoutText.text = "Timeout Called!";
         }
 
+    }
+    public void ResumeTimeout()
+    {
+        _canCallTimeout = true;
     }
     public bool GetCanCallTimeout()
     {

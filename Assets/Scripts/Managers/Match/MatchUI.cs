@@ -99,6 +99,12 @@ public class MatchUI : MonoBehaviour
                 GameObject.Find("DebugTextHome").transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerLastName.ToString();
             }
         }
+        //Sub panel
+        if(_matchManager.IsOnTimeout == true)
+        {
+            print("Here");
+            _panel_SubsPanel.SetActive(true);
+        }
         //Substitution Buttons
         if (GameObject.Find("Starters"))
         {

@@ -137,7 +137,7 @@ public class UiManager : MonoBehaviour
                 
             }
 
-
+            /*
             //Find on the match scene, the timout panel
             if (GameObject.Find("TimeoutOptionsMenu"))
             {
@@ -157,7 +157,7 @@ public class UiManager : MonoBehaviour
                 if (_timeoutPanel != null)
                     _timeoutPanel.SetActive(false);
             }
-            
+            */
             #endregion
 
 
