@@ -202,6 +202,7 @@ public class TeamManagerUI : MonoBehaviour
         {
             for (int i = 0; i < gameManager.playerTeam._schedule.Count; i++)
             {
+                print(gameManager.playerTeam._schedule.Count);
                 nameForOpponent = gameManager.playerTeam._schedule[i].TeamName;
                 sprite = Resources.Load<Sprite>("2D/Team Logos/" + nameForOpponent);
                 //_schedulePanelTextsArea.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam._schedule[i].TeamName.ToString();
