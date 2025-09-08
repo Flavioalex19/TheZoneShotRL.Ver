@@ -31,6 +31,11 @@ public class PlayerData
     public int persona;
     public int imageIndex;
     public int jNum;
+    public int c_gamesPlayed;
+    public int c_pointsMade;
+    public int c_steals;
+    public int c_fieldGoal;
+    public int c_fieldGoalsMade;
     
 
     public PlayerData(Player player)
@@ -56,6 +61,11 @@ public class PlayerData
         persona = player.Personality;
         imageIndex = player.ImageCharacterPortrait;
         jNum = player.J_Number;
+        c_gamesPlayed = player.CareerGamesPlayed;
+        c_pointsMade = player.CareerPoints;
+        c_steals = player.CareerSteals;
+        c_fieldGoal = player.CareerFieldGoalAttempted;
+        c_fieldGoalsMade = player.CareerFieldGoalMade;
         
         
     }

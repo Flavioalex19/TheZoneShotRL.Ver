@@ -22,14 +22,14 @@ public class Player : MonoBehaviour
         "Caleb", "Rio", "Luke", "Anderson", "Richard", "Daniel", "David", "Jacob", "Arthur", "Lucas", "Walter", "Neil", "Steve", "Ash", "Sergio", "Dean", "Samuel",
         "Denis", "Scott", "Leon", "Nash", "Marc", "Han", "Tom", "Laurence", "Matt","Brian", "Travis", "Robert", "Bob", "Kevin", "Fabian", "Nelson", "Henry", "Austin",
         "Wagner", "Adrian", "Andy", "Eden", "Carl", "Martin", "Wallace", "Tim", "Douglas", "Harry", "Eric", "Ethan", "Max", "Afonso", "Oliver", "Dan", "Ian", "Ewan", "Jack",
-        "Felix", "Arnold", "Tommy", "Trevor", "Thomas", "Zack", "Isiah","Erick", "Josh", " Norman", "Marco", "Ed", "Fred", "Dennis"
+        "Felix", "Arnold", "Tommy", "Trevor", "Thomas", "Zack", "Isiah","Erick", "Josh", " Norman", "Marco", "Ed", "Fred", "Dennis", "Marshall", "Patrick"
     };
     private static readonly string[] secondNames = 
     {
         "Smith","Wells", "Clark", "Parker", "Herbert", "Adams", "Taylor", "Walker", "Wilson", "Railey" , "Jonhson", "Brock", "Santos", "Gomes", "Castro", "Neves", "Owen",
         "Young", "Hill", "Armstrong", "Roger", "Macmanus", "Salvi", "Free", "Freeman", "Strong", "Jager", "Cross", "Hunter", "Doyle", "Howard", "Malone", "Gray", "Summers",
         "Miller", "Von", "Yorke", "Clancy", "Tyson", "Collins", "King","Dent", "Barry", "Chambers", "Cole", "Jones", "Langley", "Lee", "Ross", "Souza","Hart", "Kane", "Law",
-        "Rogers", "Newton", "Lewis", "Mckay", "Barnes", "Vincent", "Enies", "Wayne", "Burke", "Falcon", "Lamb", "Allen", "Connor", "Fray", "White", "Kid", "Lane", "Morgan",
+        "Rogers", "Newton", "Lewis", "Mckay", "Barnes", "Vincent", "Enies", "Wayne", "Burke", "Falcon", "Lamb", "Allen", "Connor", "Fray", "White", "Lane", "Morgan",
         "Bollock", "Trent", "Brady", "Machado","Edwards", "Thompson", "Mitty"
     };
     [SerializeField] public string playerFirstName;
@@ -53,6 +53,13 @@ public class Player : MonoBehaviour
     public int J_Number;
     #region Hidden Variables
     public int Personality;//1 to 5 , 1-calm and 5-Agressive 
+    //CareerStats
+    public int CareerGamesPlayed = 0;
+    public int CareerPoints = 0;
+    public int CareerSteals = 0;
+    public int CareerFieldGoalAttempted = 0;
+    public int CareerFieldGoalMade = 0;
+    
     #endregion
     #endregion
     [SerializeField] public GameObject bt_DraftInfo;
@@ -62,6 +69,7 @@ public class Player : MonoBehaviour
     public bool HasTheBall = false;
     public int CurrentZone = 0;
     public int PointsMatch = 0;
+    public int StealsMatch = 0;
     public bool IsStun = false;
     public int MaxStamina = 100;
     public int CurrentStamina;

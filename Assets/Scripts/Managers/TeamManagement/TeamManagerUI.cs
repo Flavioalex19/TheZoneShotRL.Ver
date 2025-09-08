@@ -31,6 +31,9 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Image _image_PersonalityImage;
     [SerializeField] Image _image_playerStyle;
     [SerializeField] TextMeshProUGUI _text_playerNUmber;
+    [SerializeField] GameObject careerStatsArea;
+    [SerializeField] Transform careerStats;
+    Player currentPlayer;
     Sprite _sprite;
 
     [Header("Equips")]
@@ -69,6 +72,13 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] List<string> list_VoxelEdgePlayersNews = new List<string>();
     [SerializeField] TextMeshProUGUI text_newsInfo;
 
+    [Header("LeagueHistory")]
+    [SerializeField] GameObject leagueHistoryPanel;
+    //TextAreas
+    [SerializeField] Transform recordsArea;
+    [SerializeField] Transform awardsUpdatesArea;
+    [SerializeField] Transform playerTeamRecords;
+
     [Header("UI")]
     [SerializeField]TextMeshProUGUI WeekText;
     [SerializeField] Image image_teamIcon;
@@ -102,6 +112,7 @@ public class TeamManagerUI : MonoBehaviour
         //Team Roster panel setup
         _currentTeamIndex = gameManager.leagueTeams.IndexOf(gameManager.playerTeam);
         TeamRoster(_currentTeamIndex);
+        //careerStatsArea.SetActive(false);
         _teamRoster.SetActive(false);
         #endregion
         //Trading UI Elements
@@ -319,6 +330,20 @@ public class TeamManagerUI : MonoBehaviour
         //Icons
         IconsUpdate(gameManager.playerTeam.playersListRoster[index]);
         _image_PersonalityImage.sprite = _sprite;
+        currentPlayer = gameManager.playerTeam.playersListRoster[index];
+
+        CareerStatsUpdate(index, gameManager.playerTeam.playersListRoster[index]);
+    }
+    public void CareerStatsUpdate(int index, Player player)
+    {
+        
+        careerStats.GetChild(0).GetComponent<TextMeshProUGUI>().text = player.CareerPoints.ToString();//testing
+        if (leagueManager.Week < 2) careerStats.GetChild(1).GetComponent<TextMeshProUGUI>().text = "none";
+        else careerStats.GetChild(1).GetComponent<TextMeshProUGUI>().text = ((float)player.CareerPoints/(float)player.CareerGamesPlayed).ToString();
+        careerStats.GetChild(2).GetComponent<TextMeshProUGUI>().text = player.CareerSteals.ToString();
+        careerStats.GetChild(3).GetComponent<TextMeshProUGUI>().text = ((float)player.CareerSteals/(float)player.CareerGamesPlayed).ToString();
+        careerStats.GetChild(4).GetComponent<TextMeshProUGUI>().text = player.CareerGamesPlayed.ToString();
+
 
     }
     void IconsUpdate(Player player)
@@ -411,5 +436,10 @@ public class TeamManagerUI : MonoBehaviour
             gameManager.playerTeam.CurrentSalary += gameManager.playerTeam.playersListRoster[i].Salary;
         }
         _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
+    }
+    //LeagueHistory
+    public void LeagueHistory()
+    {
+
     }
 }

@@ -150,6 +150,11 @@ public class SaveSystem : MonoBehaviour
                 newPlayer.Personality = playerData.persona;
                 newPlayer.ImageCharacterPortrait = playerData.imageIndex;
                 newPlayer.J_Number = playerData.jNum;
+                newPlayer.CareerGamesPlayed = playerData.c_gamesPlayed;
+                newPlayer.CareerPoints = playerData.c_pointsMade;
+                newPlayer.CareerSteals = playerData.c_steals;
+                newPlayer.CareerFieldGoalAttempted = playerData.c_fieldGoal;
+                newPlayer.CareerFieldGoalMade = playerData.c_fieldGoalsMade;
                 team.playersListRoster.Add(newPlayer);
             }
 

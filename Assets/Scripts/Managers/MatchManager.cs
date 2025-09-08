@@ -109,10 +109,12 @@ public class MatchManager : MonoBehaviour
         for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
         {
             HomeTeam.playersListRoster[i].PointsMatch = 0;
+            HomeTeam.playersListRoster[i].StealsMatch = 0;
         }
         for (int i = 0; i < AwayTeam.playersListRoster.Count; i++)
         {
             AwayTeam.playersListRoster[i].PointsMatch = 0;
+            AwayTeam.playersListRoster[i].StealsMatch= 0;
         }
         CanChooseAction = false;
         //StartCoroutine(GameFlow());
@@ -139,6 +141,14 @@ public class MatchManager : MonoBehaviour
     IEnumerator SetupGameplan()
     {
         //Wait for the intro to end
+        for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
+        {
+            HomeTeam.playersListRoster[i].CurrentStamina = 100;
+        }
+        for (int i = 0; i < AwayTeam.playersListRoster.Count; i++)
+        {
+            AwayTeam.playersListRoster[i].CurrentStamina = 100;
+        }
 
         yield return new WaitUntil(()=> _isOnSetupStage == false);
     }
@@ -150,10 +160,14 @@ public class MatchManager : MonoBehaviour
         for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
         {
             HomeTeam.playersListRoster[i].CurrentStamina = 100;
+            HomeTeam.playersListRoster[i].PointsMatch = 0;
+            HomeTeam.playersListRoster[i].StealsMatch = 0;
         }
         for (int i = 0;i < AwayTeam.playersListRoster.Count; i++) 
         {
             AwayTeam.playersListRoster[i].CurrentStamina = 100;
+            AwayTeam.playersListRoster[i].PointsMatch = 0;
+            AwayTeam.playersListRoster[i].StealsMatch = 0;
         }
         _matchUI.MatchStartAnim();
         while (currentGamePossessons > 0)
@@ -204,7 +218,20 @@ public class MatchManager : MonoBehaviour
         }
         HomeTeam.HasPlayed = true;
         AwayTeam.HasPlayed = true;
-        
+        //Set career stats
+        for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
+        {
+            HomeTeam.playersListRoster[i].CareerPoints += HomeTeam.playersListRoster[i].PointsMatch;
+            HomeTeam.playersListRoster[i].CareerSteals += HomeTeam.playersListRoster[i].StealsMatch;
+            HomeTeam.playersListRoster[i].CareerGamesPlayed++;
+        }
+        for (int i = 0; i < AwayTeam.playersListRoster.Count; i++)
+        {
+            AwayTeam.playersListRoster[i].CareerPoints += AwayTeam.playersListRoster[i].PointsMatch;
+            AwayTeam.playersListRoster[i].CareerSteals += AwayTeam.playersListRoster[i].StealsMatch;
+            AwayTeam.playersListRoster[i].CareerGamesPlayed++;
+        }
+
         yield return new WaitForSeconds(3f);
         _matchUI.EndScreenStatsPanel.SetActive(true);
         
@@ -300,6 +327,9 @@ public class MatchManager : MonoBehaviour
                     }
                     else
                     {
+                        playerDefending.StealsMatch++;
+                        print(playerDefending.playerLastName + "Has " + playerDefending.StealsMatch + " Steals");
+                        StaminaLossByDefender(playerWithTheBall);
                         print("Fail to pass by");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos() + " Loses the ball to " + playerDefending.playerLastName);
                         yield return new WaitForSeconds(_actionTimer);
@@ -349,6 +379,8 @@ public class MatchManager : MonoBehaviour
                     }
                     else
                     {
+                        playerDefending.StealsMatch++;
+                        StaminaLossByDefender(playerWithTheBall);
                         print("Fail to pass by defender");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName +" " + _matchUI.LosesPos()  + " Loses the ball to " + playerDefending.playerLastName);
                         yield return new WaitForSeconds(_actionTimer);
@@ -380,6 +412,8 @@ public class MatchManager : MonoBehaviour
                     else
                     {
                         //print("Fail to pass by");
+                        playerDefending.StealsMatch++;
+                        print(playerDefending.playerLastName + "Has " + playerDefending.StealsMatch + " Steals");
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
                         //uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
@@ -558,6 +592,7 @@ public class MatchManager : MonoBehaviour
     }
     void SwitchPossession()
     {
+        ControlStamina(teamWithball);
         // Toggle team
         if (teamWithball == HomeTeam)
         {
@@ -701,8 +736,9 @@ public class MatchManager : MonoBehaviour
             teamA.HasPlayed = teamB.HasPlayed = true;
             teamA.isOnDefenseBonus = teamB.isOnDefenseBonus = false;
 
-            foreach (Player p in teamA.playersListRoster) p.PointsMatch = 0;
-            foreach (Player p in teamB.playersListRoster) p.PointsMatch = 0;
+            foreach (Player p in teamA.playersListRoster) { p.PointsMatch = 0;p.StealsMatch = 0; }
+
+            foreach (Player p in teamB.playersListRoster) { p.PointsMatch = 0; p.StealsMatch = 0; } 
 
             yield return StartCoroutine(GameFlow());
 
@@ -855,5 +891,27 @@ public class MatchManager : MonoBehaviour
         specialAttkSuccess = 1f / (1f + Mathf.Exp(-6f * scoreDifference));
         specialAttkSuccess = Mathf.Clamp(specialAttkSuccess - riskPenalty, 0.05f, 0.95f);
         return specialAttkSuccess;
+    }
+    //Stamina managers
+    void ControlStamina(Team team)
+    {
+        int staminaLoss = 5;
+        for (int i = 0; i < 4; i++)
+        {
+            if (team.playersListRoster[i].HasTheBall)
+            {
+                team.playersListRoster[i].CurrentStamina -= staminaLoss*2;
+            }
+            else
+            {
+                team.playersListRoster[i].CurrentStamina -= staminaLoss;
+            }
+        }
+    }
+    void StaminaLossByDefender(Player player)
+    {
+        int staminaLoss = 15;
+        player.CurrentStamina-=staminaLoss;
+
     }
 }
