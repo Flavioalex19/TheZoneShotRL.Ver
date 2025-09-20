@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -16,6 +17,10 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Transform AwayTeamActive_Starters;
     [SerializeField] Transform _activeHomePlayers;
     [SerializeField] Transform _activeAwayPlayers;
+
+    [Header("BenchPlayers")]
+    [SerializeField] Transform _benchPlayers;
+    [SerializeField] Transform _timeOutBenchPlayers;
 
     [Header("Team Names Text")]
     [SerializeField] TextMeshProUGUI _homeTeamName;
@@ -58,6 +63,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Transform GamesResults;
     [SerializeField] TextMeshProUGUI text_Victory_Defeat;
     [SerializeField] GameObject panel_victory_defeat;
+    [SerializeField] Button advbtn;
 
     [Header("Animators")]
     [SerializeField] Animator _homeTeamAnimator;
@@ -122,12 +128,20 @@ public class MatchUI : MonoBehaviour
         {
             for (int i = 0; i < GameObject.Find("Bench").transform.childCount; i++)
             {
-                GameObject.Find("Bench").transform.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i + 4].playerFirstName.ToString() + " "+
-                    _matchManager.HomeTeam.playersListRoster[i + 4].playerLastName.ToString() + " " + _matchManager.HomeTeam.playersListRoster[i + 4].J_Number.ToString();
-                GameObject.Find("Bench").transform.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = "OVR " +_matchManager.HomeTeam.playersListRoster[i + 4].ovr.ToString();
-                GameObject.Find("Bench").transform.GetChild(i).GetChild(2).GetChild(0).GetComponent<Image>().fillAmount =
-                    (float)_matchManager.HomeTeam.playersListRoster[i + 4].CurrentStamina / (float)_matchManager.HomeTeam.playersListRoster[i+4].MaxStamina;
+
+                //print(GameObject.Find("Bench").transform.GetChild(0).GetChild(0).name + " Number od players");
+                //GameObject.Find("Bench").transform.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i + 4].playerFirstName.ToString() + " "+
+                //_matchManager.HomeTeam.playersListRoster[i + 4].playerLastName.ToString() + " " + _matchManager.HomeTeam.playersListRoster[i + 4].J_Number.ToString();
+                //GameObject.Find("Bench").transform.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = "OVR " +_matchManager.HomeTeam.playersListRoster[i + 4].ovr.ToString();
+                //GameObject.Find("Bench").transform.GetChild(i).GetChild(2).GetChild(0).GetComponent<Image>().fillAmount =
+                //(float)_matchManager.HomeTeam.playersListRoster[i + 4].CurrentStamina / (float)_matchManager.HomeTeam.playersListRoster[i+4].MaxStamina;
             }
+        }
+        for (int i = 0; i < _timeOutBenchPlayers.childCount; i++)
+        {
+            _timeOutBenchPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i + 4].playerLastName;
+            _timeOutBenchPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = "OVR " + _matchManager.HomeTeam.playersListRoster[i + 4].ovr.ToString();
+            _timeOutBenchPlayers.GetChild(i).GetChild(2).GetChild(0).GetComponent<Image>().fillAmount = (float)_matchManager.HomeTeam.playersListRoster[i + 4].CurrentStamina / (float)_matchManager.HomeTeam.playersListRoster[i + 4].MaxStamina;
         }
         
     }
@@ -168,6 +182,11 @@ public class MatchUI : MonoBehaviour
             _activeAwayPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].PointsMatch.ToString();
             _activeAwayPlayers.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].J_Number.ToString();
             
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            _benchPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i+4].J_Number.ToString();
+            _benchPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i + 4].PointsMatch.ToString();
         }
 
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -78,6 +79,24 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Transform recordsArea;
     [SerializeField] Transform awardsUpdatesArea;
     [SerializeField] Transform playerTeamRecords;
+    Player playerMvp;
+
+    [Header("Contract")]
+    [SerializeField] ContractManager contractManager;
+    [SerializeField] GameObject contract_ContractPainel;
+    [SerializeField] GameObject contract_asstancePanel;
+    [SerializeField] Transform contract_newContractValuesArea;
+    [SerializeField] Transform contract_PlayerbuttonsArea;
+    [SerializeField] Transform contract_changeValuesButtons;
+    [SerializeField] TextMeshProUGUI contract_resultNegotiationText;
+    [SerializeField] TextMeshProUGUI contract_CurrentPlayerGames;
+    [SerializeField] TextMeshProUGUI contract_CurrentPlayerSalary;
+    [SerializeField] TextMeshProUGUI contract_playerName;
+    [SerializeField] Image contract_selectePlayer;
+    int newGamesValue;
+    int newSalaryValue;
+    int indexForPlayer;
+    Player _contractPlayer;
 
     [Header("UI")]
     [SerializeField]TextMeshProUGUI WeekText;
@@ -129,6 +148,10 @@ public class TeamManagerUI : MonoBehaviour
         //Options
         _optionsQuitBtn.onClick.AddListener(() => Application.Quit());
         _optionsPanel.SetActive(false);
+        //Contract
+        ContractButtonsUpdate();
+        contract_asstancePanel.SetActive(false);
+        contract_ContractPainel.SetActive(false);
         //News
         NewsUpdate();
         //End tESTING Screen
@@ -191,7 +214,7 @@ public class TeamManagerUI : MonoBehaviour
     //News
     void NewsUpdate()
     {
-        string newsLine = List_VoxEdgeNewsLines[Random.Range(0, List_VoxEdgeNewsLines.Count)];
+        string newsLine = List_VoxEdgeNewsLines[UnityEngine.Random.Range(0, List_VoxEdgeNewsLines.Count)];
         text_newsInfo.text = newsLine;
     }
     void SetTeamIcon()
@@ -437,9 +460,112 @@ public class TeamManagerUI : MonoBehaviour
         }
         _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
     }
+    //Contracts 
+    public void ContractButtonsUpdate()
+    {
+        for (int i = 0; i < contract_PlayerbuttonsArea.childCount; i++)
+        {
+            contract_PlayerbuttonsArea.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].playerFirstName + " " +
+                gameManager.playerTeam.playersListRoster[i].playerLastName;
+            contract_PlayerbuttonsArea.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].ContractYears.ToString();
+        }
+    }
+    public void UpdatePlayerContract(int index)
+    {
+        //print(gameManager.playerTeam.playersListRoster[index].playerFirstName);
+        //contractManager.CurrentPlayer(index);
+        //print("HAS A PLAYER");
+        contract_playerName.text = gameManager.playerTeam.playersListRoster[index].playerFirstName + " " + gameManager.playerTeam.playersListRoster[index].playerLastName;
+        contract_CurrentPlayerGames.text = "Games Remaining " + gameManager.playerTeam.playersListRoster[index].ContractYears.ToString();
+        contract_CurrentPlayerSalary.text = "Salary " + gameManager.playerTeam.playersListRoster[index].Salary.ToString();
+        Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
+        Sprite sprite = sprites[gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait];
+        contract_selectePlayer.sprite = sprite;
+        indexForPlayer = index;
+        newSalaryValue = 2;
+        newGamesValue = 2;
+        contract_newContractValuesArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = newGamesValue.ToString();
+        contract_newContractValuesArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = newSalaryValue.ToString();
+
+
+
+    }
+    public void ContractDiscussion()
+    {
+        contract_asstancePanel.SetActive(true);
+        if(gameManager.playerTeam.playersListRoster[indexForPlayer].ContractYears < 5 || 
+            (gameManager.playerTeam.playersListRoster[indexForPlayer].Salary + newSalaryValue) +gameManager.playerTeam.CurrentSalary < gameManager.playerTeam.SalaryCap)
+        {
+            if (TryExtendContract(gameManager.playerTeam, gameManager.playerTeam.playersListRoster[indexForPlayer], newSalaryValue, newGamesValue))
+            {
+                gameManager.playerTeam.playersListRoster[indexForPlayer].ContractYears += newGamesValue;
+                gameManager.playerTeam.playersListRoster[indexForPlayer].Salary = newSalaryValue;
+                contract_resultNegotiationText.text = "Good Job Boss!" + gameManager.playerTeam.playersListRoster[indexForPlayer].playerLastName + " for " + gameManager.playerTeam.playersListRoster[indexForPlayer].ContractYears;
+            }
+            else
+            {
+                contract_resultNegotiationText.text = "Damn! We can't come to an agreement with " + gameManager.playerTeam.playersListRoster[indexForPlayer].playerLastName + ". " +
+                    "Maybe he needs some time to think...";
+            }
+        }
+        else
+        {
+            contract_resultNegotiationText.text = "Boss, we can't extend his contract for now.";
+        }
+        ContractButtonsUpdate();
+
+
+    }
+    public bool TryExtendContract(Team team, Player player, int salaryProposed, int gamesProposed)
+    {
+        // Base demand: higher personality = tougher negotiation
+        float baseDemand = player.Salary * (1f + (player.Personality - 1) * 0.1f);
+
+        // Adjust with front office (good management lowers demand)
+        baseDemand *= 1f - (team.FrontOfficePoints / 200f);
+
+        // Fan support adds pressure (more fans = higher chance of accept)
+        float fanFactor = 1f + (team.FansSupportPoints / 300f);
+
+        // Compare proposed salary vs demand
+        float salaryScore = (float)salaryProposed / baseDemand;
+
+        // Game years factor: if offering longer than remaining, good; shorter is worse
+        float contractFactor = (gamesProposed >= player.ContractYears) ? 1.1f : 0.9f;
+
+        // Final acceptance chance
+        float acceptanceChance = salaryScore * contractFactor * fanFactor;
+
+        // Clamp
+        acceptanceChance = Mathf.Clamp01(acceptanceChance);
+
+        return UnityEngine.Random.value < acceptanceChance;
+    }
+    public void AddOrDecreaseContractGamesGamesValue(bool isAdding)
+    {
+        if (isAdding)
+        {
+            if (newGamesValue < 5) newGamesValue++;
+            contract_newContractValuesArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = newGamesValue.ToString();
+        }
+        else
+        {
+            if (newGamesValue > 0) newGamesValue--;
+            contract_newContractValuesArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = newGamesValue.ToString();
+        }
+    }
     //LeagueHistory
     public void LeagueHistory()
     {
-
+        //LeagueHistoryy
+        //Awards
+        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+        {
+            for (int j = 0; j < gameManager.leagueTeams[i].playersListRoster.Count; j++)
+            {
+                //gameManager.leagueTeams[i].playersListRoster[j];
+            }
+        }
+        //TEAMHisotry
     }
 }

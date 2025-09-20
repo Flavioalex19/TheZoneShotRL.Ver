@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class TeamSelectionManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class TeamSelectionManager : MonoBehaviour
     public TextMeshProUGUI TeamInfo;
     public TextMeshProUGUI TeamStyle;
     public TextMeshProUGUI TeamCoach;
+    public Image CurrentTeamIcon;
     [SerializeField] TextMeshProUGUI _debugCurrentTeam;
 
     [SerializeField] Team selectedTeam;

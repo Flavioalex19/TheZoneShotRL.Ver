@@ -65,7 +65,11 @@ public class MatchManager : MonoBehaviour
     [SerializeField] string DefenderName;
 
     bool _isOnSetupStage;//
-
+    private void Awake()
+    {
+        manager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        HomeTeam = manager.playerTeam;
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -231,7 +235,15 @@ public class MatchManager : MonoBehaviour
             AwayTeam.playersListRoster[i].CareerSteals += AwayTeam.playersListRoster[i].StealsMatch;
             AwayTeam.playersListRoster[i].CareerGamesPlayed++;
         }
-
+        //Reduce the contract for the players
+        if (HomeTeam.IsPlayerTeam)
+        {
+            print("Count Team");
+            for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
+            {
+                HomeTeam.playersListRoster[i].ContractYears--;
+            }
+        }
         yield return new WaitForSeconds(3f);
         _matchUI.EndScreenStatsPanel.SetActive(true);
         
