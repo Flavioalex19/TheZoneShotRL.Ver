@@ -12,6 +12,7 @@ public class TeamSelectionManager : MonoBehaviour
     public TextMeshProUGUI TeamStyle;
     public TextMeshProUGUI TeamCoach;
     public Image CurrentTeamIcon;
+    public Transform _teamStatsArea;
     [SerializeField] TextMeshProUGUI _debugCurrentTeam;
 
     [SerializeField] Team selectedTeam;

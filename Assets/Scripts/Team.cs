@@ -30,6 +30,10 @@ public class Team : MonoBehaviour
     HashSet<int> usedNumbers = new HashSet<int>();//Numbers on the jersey
 
     #endregion
+    //ResetStats
+    public int fixMoral;
+    public int fixFans;
+    public int fixFrontOffice;
     [SerializeField]public string Description;
     public string CoachName;
     [SerializeField]public  List<Team> _schedule = new List<Team>();

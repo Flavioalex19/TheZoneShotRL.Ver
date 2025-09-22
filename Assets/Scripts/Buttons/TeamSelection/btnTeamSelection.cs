@@ -21,5 +21,8 @@ public class btnTeamSelection : MonoBehaviour, IPointerEnterHandler
         _teamSelectManager.TeamInfo.text = team.Description.ToString();
         _teamSelectManager.TeamCoach.text = team.CoachName.ToString();
         _teamSelectManager.TeamStyle.text = team._teamStyle.ToString();
+        _teamSelectManager._teamStatsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = team.Moral.ToString();
+        _teamSelectManager._teamStatsArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = team.FrontOfficePoints.ToString();
+        _teamSelectManager._teamStatsArea.GetChild(2).GetComponent<TextMeshProUGUI>().text = team.FansSupportPoints.ToString();
     }
 }

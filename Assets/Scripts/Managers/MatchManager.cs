@@ -54,7 +54,9 @@ public class MatchManager : MonoBehaviour
     [SerializeField]public bool _ChoosePass;
     [SerializeField]public bool _ChooseScoring;
     [SerializeField] public bool _ChooseToSpecialAtt;
+    [SerializeField] Button btn_spAttck;
     public bool CanChooseAction = true;
+    public int _sp_numberOfSPActions;
     #endregion
 
 
@@ -69,6 +71,8 @@ public class MatchManager : MonoBehaviour
     {
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
         HomeTeam = manager.playerTeam;
+        _sp_numberOfSPActions = manager.playerTeam.FansSupportPoints / 20;
+        print(_sp_numberOfSPActions + " Here");
     }
     // Start is called before the first frame update
     void Start()
@@ -121,11 +125,18 @@ public class MatchManager : MonoBehaviour
             AwayTeam.playersListRoster[i].StealsMatch= 0;
         }
         CanChooseAction = false;
+        _matchUI.SetSkillPints();
         //StartCoroutine(GameFlow());
         StartCoroutine(RunMatchThenSimulate());
         //_matchUI.PostGameStats(HomeTeam, AwayTeam);
     }
-    
+    private void Update()
+    {
+        if (_sp_numberOfSPActions <= 0)
+        {
+            btn_spAttck.interactable = false;
+        }
+    }
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -438,6 +449,8 @@ public class MatchManager : MonoBehaviour
                 else if (_ChooseToSpecialAtt)
                 {
                     _ChooseToSpecialAtt = false;
+                    _sp_numberOfSPActions--;
+                    _matchUI.SetSkillPints();
                     _matchUI.ActionPanelAnim(1, "Special");
                     yield return new WaitForSeconds(_actionTimer);
                     if (Random.Range(0f, 1f) < ActivateSpecialAttk())

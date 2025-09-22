@@ -83,16 +83,7 @@ public class MatchUI : MonoBehaviour
         EndScreenStatsPanel = GameObject.Find("End Game Stats");
         EndScreenStatsPanel.SetActive(false);
         panel_victory_defeat.SetActive(false);
-        //Set SP Points
-        int spCount = 20;
-        for (int i = 0; i < SpArea.childCount; i++)
-        {
-            if(gameManager.playerTeam.FansSupportPoints< spCount) 
-            {
-                SpArea.GetChild(i).GetChild(0).gameObject.SetActive(false);
-            }
-            spCount += 20;
-        }
+        
 
     }
 
@@ -265,5 +256,14 @@ public class MatchUI : MonoBehaviour
     {
         panel_victory_defeat.SetActive(true);
         text_Victory_Defeat.text = endText;
+    }
+    public void SetSkillPints()
+    {
+        //Set SP Points
+        for (int i = 0; i < SpArea.childCount; i++)
+        {
+            if (i < _matchManager._sp_numberOfSPActions) SpArea.GetChild(i).GetChild(0).gameObject.SetActive(true);
+            else SpArea.GetChild(i).GetChild(0).gameObject.SetActive(false);
+        }
     }
 }
