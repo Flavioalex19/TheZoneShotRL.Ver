@@ -179,6 +179,7 @@ public class SaveSystem : MonoBehaviour
                     leagueManager.canStartANewWeek = teamData.leagueData.canStartANewWeek;
                     leagueManager.canTrade = teamData.leagueData.canTradePlayers;
                     leagueManager.canTrain = teamData.leagueData.canTrainPlayer;
+                    leagueManager.CanStartTutorial = teamData.leagueData.canStartTutorial;
                 }
             }
 

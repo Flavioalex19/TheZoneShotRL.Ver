@@ -29,6 +29,8 @@ public class LeagueManager : MonoBehaviour
 
     public bool canTrain = true;
 
+    public bool CanStartTutorial = true;
+
     GameManager gameManager;
     UiManager uiManager;
 

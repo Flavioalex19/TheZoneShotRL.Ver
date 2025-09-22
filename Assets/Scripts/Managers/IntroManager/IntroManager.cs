@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class IntroManager : MonoBehaviour
@@ -7,13 +8,22 @@ public class IntroManager : MonoBehaviour
     [SerializeField] bool _canProgressToMainMenu = false;
     [SerializeField] bool _canPressEnter = false;
     [SerializeField] Animator _introAnimator;
+    [SerializeField] TextMeshProUGUI _teamText;
+    [SerializeField] GameManager _gameManager;
     // Start is called before the first frame update
     void Start()
     {
         _canProgressToMainMenu = false;
         _canPressEnter = false;
         StartCoroutine(ProgressToMainMenu());
-
+        if(_gameManager.playerTeam != null)
+        {
+            _teamText.text = "Welcome back coach!" +_gameManager.playerTeam.TeamName + " Career";
+        }
+        else
+        {
+            _teamText.text = "A new journey towards the trophy awaits you.";
+        }
         
     }
 

@@ -554,6 +554,19 @@ public class TeamManagerUI : MonoBehaviour
             contract_newContractValuesArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = newGamesValue.ToString();
         }
     }
+    public void AddOrDecreaseSalary(bool isAdding)
+    {
+        if (isAdding)
+        {
+            if (newSalaryValue < 12) newSalaryValue++;
+            contract_newContractValuesArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = newSalaryValue.ToString();
+        }
+        else
+        {
+            if(newSalaryValue>0)newSalaryValue--;
+            contract_newContractValuesArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = newSalaryValue.ToString();
+        }
+    }
     //LeagueHistory
     public void LeagueHistory()
     {

@@ -53,6 +53,9 @@ public class MatchUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_actionNameText;
     [SerializeField] Animator _animator_ActionPanel;
 
+    [Header("Special Skill Area")]
+    [SerializeField] Transform SpArea;
+
     [Header("Post game")]
     public GameObject EndScreenStatsPanel;
     [SerializeField] Transform teamANames;
@@ -80,6 +83,16 @@ public class MatchUI : MonoBehaviour
         EndScreenStatsPanel = GameObject.Find("End Game Stats");
         EndScreenStatsPanel.SetActive(false);
         panel_victory_defeat.SetActive(false);
+        //Set SP Points
+        int spCount = 20;
+        for (int i = 0; i < SpArea.childCount; i++)
+        {
+            if(gameManager.playerTeam.FansSupportPoints< spCount) 
+            {
+                SpArea.GetChild(i).GetChild(0).gameObject.SetActive(false);
+            }
+            spCount += 20;
+        }
 
     }
 
