@@ -51,7 +51,6 @@ public class TeamManagerUI : MonoBehaviour
     //Training
     [SerializeField] TrainingManager trainingManager;
     [SerializeField] GameObject _trainingPanel;
-    [SerializeField] public GameObject _trainengCompletePanel;
     [SerializeField] Transform _training_btns;
     [SerializeField] TextMeshProUGUI _textPlayerSelected;
     [SerializeField] TextMeshProUGUI _textDrillSelected;
@@ -472,9 +471,7 @@ public class TeamManagerUI : MonoBehaviour
     }
     public void UpdatePlayerContract(int index)
     {
-        //print(gameManager.playerTeam.playersListRoster[index].playerFirstName);
-        //contractManager.CurrentPlayer(index);
-        //print("HAS A PLAYER");
+
         contract_playerName.text = gameManager.playerTeam.playersListRoster[index].playerFirstName + " " + gameManager.playerTeam.playersListRoster[index].playerLastName;
         contract_CurrentPlayerGames.text = "Games Remaining " + gameManager.playerTeam.playersListRoster[index].ContractYears.ToString();
         contract_CurrentPlayerSalary.text = "Salary " + gameManager.playerTeam.playersListRoster[index].Salary.ToString();
@@ -493,25 +490,34 @@ public class TeamManagerUI : MonoBehaviour
     public void ContractDiscussion()
     {
         contract_asstancePanel.SetActive(true);
-        if(gameManager.playerTeam.playersListRoster[indexForPlayer].ContractYears < 5 || 
-            (gameManager.playerTeam.playersListRoster[indexForPlayer].Salary + newSalaryValue) +gameManager.playerTeam.CurrentSalary < gameManager.playerTeam.SalaryCap)
+        if(leagueManager.canNegociateContract == true)
         {
-            if (TryExtendContract(gameManager.playerTeam, gameManager.playerTeam.playersListRoster[indexForPlayer], newSalaryValue, newGamesValue))
+            if (gameManager.playerTeam.playersListRoster[indexForPlayer].ContractYears < 5 ||
+            (gameManager.playerTeam.playersListRoster[indexForPlayer].Salary + newSalaryValue) + gameManager.playerTeam.CurrentSalary < gameManager.playerTeam.SalaryCap)
             {
-                gameManager.playerTeam.playersListRoster[indexForPlayer].ContractYears += newGamesValue;
-                gameManager.playerTeam.playersListRoster[indexForPlayer].Salary = newSalaryValue;
-                contract_resultNegotiationText.text = "Good Job Boss!" + gameManager.playerTeam.playersListRoster[indexForPlayer].playerLastName + " for " + gameManager.playerTeam.playersListRoster[indexForPlayer].ContractYears;
+                if (TryExtendContract(gameManager.playerTeam, gameManager.playerTeam.playersListRoster[indexForPlayer], newSalaryValue, newGamesValue))
+                {
+                    gameManager.playerTeam.playersListRoster[indexForPlayer].ContractYears += newGamesValue;
+                    gameManager.playerTeam.playersListRoster[indexForPlayer].Salary = newSalaryValue;
+                    contract_resultNegotiationText.text = "Good Job Boss!" + gameManager.playerTeam.playersListRoster[indexForPlayer].playerLastName + " for " + gameManager.playerTeam.playersListRoster[indexForPlayer].ContractYears;
+                }
+                else
+                {
+                    contract_resultNegotiationText.text = "Damn! We can't come to an agreement with " + gameManager.playerTeam.playersListRoster[indexForPlayer].playerLastName + ". " +
+                        "Maybe he needs some time to think...";
+                }
+                leagueManager.canNegociateContract = false;
             }
             else
             {
-                contract_resultNegotiationText.text = "Damn! We can't come to an agreement with " + gameManager.playerTeam.playersListRoster[indexForPlayer].playerLastName + ". " +
-                    "Maybe he needs some time to think...";
+                contract_resultNegotiationText.text = "Boss, we can't extend his contract for now.";
             }
         }
         else
         {
-            contract_resultNegotiationText.text = "Boss, we can't extend his contract for now.";
+            contract_resultNegotiationText.text = "Boss, we can't negotiate any more contracts this week.";
         }
+        
         ContractButtonsUpdate();
 
 

@@ -58,6 +58,9 @@ public class MatchManager : MonoBehaviour
     public bool CanChooseAction = true;
     public int _sp_numberOfSPActions;
     #endregion
+    //Ai variables
+    int ai_maxNumberOfPasses = 5;
+    int ai_currentNumberOfPasses =0;
 
 
     //UI Elemens test
@@ -72,7 +75,7 @@ public class MatchManager : MonoBehaviour
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
         HomeTeam = manager.playerTeam;
         _sp_numberOfSPActions = manager.playerTeam.FansSupportPoints / 20;
-        print(_sp_numberOfSPActions + " Here");
+        //print(_sp_numberOfSPActions + " Here");
     }
     // Start is called before the first frame update
     void Start()
@@ -299,6 +302,7 @@ public class MatchManager : MonoBehaviour
         if(/*teamWithball == AwayTeam*/ teamWithball.IsPlayerTeam == false)
         {
             CanChooseAction = false;
+            ai_currentNumberOfPasses = ai_maxNumberOfPasses;
             
             while (true)
             {
@@ -313,10 +317,12 @@ public class MatchManager : MonoBehaviour
 
                 bool shouldPass = Random.Range(1, 4) < 3;//Change Later
 
-                if (shouldPass)
+                if (shouldPass && ai_currentNumberOfPasses > 0)
                 {
+                    ai_currentNumberOfPasses--;
                     if (TryPassBall())
                     {
+                        
                         yield return new WaitForSeconds(_actionTimer);
                         //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
@@ -455,26 +461,27 @@ public class MatchManager : MonoBehaviour
                     yield return new WaitForSeconds(_actionTimer);
                     if (Random.Range(0f, 1f) < ActivateSpecialAttk())
                     {
+                        int spPoints = 8;
                         //Add later the list of string for a success use o team abillity
                         uiManager.PlaybyPlayText("The team will use their special abillity");
                         yield return new WaitForSeconds(_actionTimer);
                         switch (teamWithball._teamStyle)
                         {
                             case TeamStyle.Brawler:
-                                playerWithTheBall.PointsMatch += 10;
-                                teamWithball.Score += 10;
+                                playerWithTheBall.PointsMatch += spPoints;
+                                teamWithball.Score += spPoints;
                                 break;
                             case TeamStyle.PhaseDash:
-                                playerWithTheBall.PointsMatch += 10;
-                                teamWithball.Score += 10;
+                                playerWithTheBall.PointsMatch += spPoints;
+                                teamWithball.Score += spPoints;
                                 break;
                             case TeamStyle.RailShot:
-                                playerWithTheBall.PointsMatch += 10;
-                                teamWithball.Score += 10;
+                                playerWithTheBall.PointsMatch += spPoints;
+                                teamWithball.Score += spPoints;
                                 break;
                             case TeamStyle.HyperDribbler:
-                                playerWithTheBall.PointsMatch += 10;
-                                teamWithball.Score += 10;
+                                playerWithTheBall.PointsMatch += spPoints;
+                                teamWithball.Score += spPoints;
                                 break;
                             default: break;
                         }
@@ -788,6 +795,8 @@ public class MatchManager : MonoBehaviour
         yield return StartCoroutine(GameFlow());
         _matchUI.PostGameStats(HomeTeam, AwayTeam);
         yield return StartCoroutine(LeagueWeekSimulation());
+        //Enable progress button
+        _matchUI.btn_ReturnToTeamManagement.gameObject.SetActive(true);
     }
 
     void ChangePosOfPlayerWithTheBall()

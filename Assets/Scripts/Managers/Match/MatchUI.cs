@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -62,7 +61,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Transform teamBNames;
     [SerializeField] Transform teamAScore;
     [SerializeField] Transform teamBScore;
-    Button btn_ReturnToTeamManagement;
+    public Button btn_ReturnToTeamManagement;
     [SerializeField] Transform GamesResults;
     [SerializeField] TextMeshProUGUI text_Victory_Defeat;
     [SerializeField] GameObject panel_victory_defeat;
@@ -80,6 +79,7 @@ public class MatchUI : MonoBehaviour
 
         btn_ReturnToTeamManagement = GameObject.Find("Advance to Team Management Screen Button").GetComponent<Button>();
         btn_ReturnToTeamManagement.onClick.AddListener(() => gameManager.ReturnToTeamManegement());
+        btn_ReturnToTeamManagement.gameObject.SetActive(false);
         EndScreenStatsPanel = GameObject.Find("End Game Stats");
         EndScreenStatsPanel.SetActive(false);
         panel_victory_defeat.SetActive(false);

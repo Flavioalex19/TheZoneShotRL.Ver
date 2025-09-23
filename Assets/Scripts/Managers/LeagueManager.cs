@@ -29,6 +29,8 @@ public class LeagueManager : MonoBehaviour
 
     public bool canTrain = true;
 
+    public bool canNegociateContract;
+
     public bool CanStartTutorial = true;
 
     GameManager gameManager;
@@ -99,6 +101,7 @@ public class LeagueManager : MonoBehaviour
             {
                 canTrain = true;
                 canTrade = true;
+                canNegociateContract = true;
                 CreateEventsForWeek();
                 Transform ChoiceButtonsTransform = GameObject.Find("ChoiceButtons").transform;
 

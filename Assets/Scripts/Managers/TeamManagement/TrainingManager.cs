@@ -45,50 +45,8 @@ public class TrainingManager : MonoBehaviour
 
     void SetTraining(int playerIndex,TextMeshProUGUI drillChoosedText)
     {
-        /*
-        if(leagueManager.canTrain == true)
-        {
-            _trainingIndex = Random.Range(0, _trainingDrillAmount);
-            int boost = 0;
-            boost = Random.Range(0, 4);//Change this later
-            string label = "";
+        
 
-            switch (_trainingIndex)
-            {
-                case 0: boost = 1; label = "Minimum Boost"; break;
-                case 1: boost = 2; label = "Good Training day"; break;
-                case 2: boost = 3; label = "Great training day"; break;
-                case 3: boost = 4; label = "Outstanding Training day"; break;
-                case 4: boost = 8; label = "Perfect Training day"; break;
-                default: return;
-            }
-
-            Player player = gameManager.playerTeam.playersListRoster[playerIndex];
-            drillChoosedText.text = $"{player.playerFirstName} + {label} - All stats +{boost} + Training session for this week is completed";
-
-            player.Awareness = Mathf.Min(player.Awareness + boost, 99);
-            player.Shooting = Mathf.Min(player.Shooting + boost, 99);
-            player.Inside = Mathf.Min(player.Inside + boost, 99);
-            player.Outside = Mathf.Min(player.Outside + boost, 99);
-            player.Mid = Mathf.Min(player.Mid + boost, 99);
-            player.Defending = Mathf.Min(player.Defending + boost, 99);
-            player.Consistency = Mathf.Min(player.Consistency + boost, 99);
-            player.Juking = Mathf.Min(player.Juking + boost, 99);
-            player.Stealing = Mathf.Min(player.Stealing + boost, 99);
-            player.Control = Mathf.Min(player.Control + boost, 99);
-            player.Guarding = Mathf.Min(player.Guarding + boost, 99);
-
-            leagueManager.canTrain = false;
-            for (int i = 0; i < gameManager.leagueTeams.Count; i++)
-            {
-                gameManager.saveSystem.SaveTeam(gameManager.leagueTeams[i]);
-            }
-        }
-        else
-        {
-            drillChoosedText.text = "Training session for this week is completed";
-        }
-        */
         if (leagueManager.canTrain == true)
         {
             _trainingIndex = Random.Range(0, _trainingDrillAmount);

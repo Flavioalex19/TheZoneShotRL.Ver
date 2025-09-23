@@ -153,6 +153,7 @@ public class LeagueManagerData
     public bool canTradePlayers;
     public bool canTrainPlayer;
     public bool canStartTutorial;
+    public bool canNegociateContract;
     public LeagueManagerData(LeagueManager leagueManager)
     {
         weekNumber = leagueManager.Week;
@@ -161,5 +162,6 @@ public class LeagueManagerData
         canTradePlayers = leagueManager.canTrade;
         canTrainPlayer = leagueManager.canTrain;
         canStartTutorial = leagueManager.CanStartTutorial;
+        canNegociateContract = leagueManager.canNegociateContract;
     }
 }
