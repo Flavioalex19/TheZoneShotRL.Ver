@@ -84,7 +84,7 @@ public class TrainingManager : MonoBehaviour
             }
 
             drillChoosedText.text = $"{player.playerFirstName} {player.playerLastName} - {label} +{boost} to {selectedTrainingAttribute}. Training session for this week is completed.";
-
+            teamManagerUI.UpdateAssistancePortrait();
             leagueManager.canTrain = false;
 
             for (int i = 0; i < gameManager.leagueTeams.Count; i++)

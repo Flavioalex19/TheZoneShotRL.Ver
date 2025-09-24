@@ -70,6 +70,7 @@ public class MatchUI : MonoBehaviour
     [Header("Animators")]
     [SerializeField] Animator _homeTeamAnimator;
     [SerializeField] Animator _awayTeamAnimator;
+    [SerializeField] Animator _upgradePanel;
     // Start is called before the first frame update
     void Start()
     {
@@ -238,6 +239,11 @@ public class MatchUI : MonoBehaviour
             _homeTeamAnimator.SetTrigger("ToDefense");
             _awayTeamAnimator.SetTrigger("ToAttack");
         }
+    }
+    public void UpgradeTeamAnim()
+    {
+        //Add sfx
+        _upgradePanel.SetTrigger("On");
     }
 
     //Action panel call

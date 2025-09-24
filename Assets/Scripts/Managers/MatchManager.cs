@@ -61,7 +61,7 @@ public class MatchManager : MonoBehaviour
     //Ai variables
     int ai_maxNumberOfPasses = 5;
     int ai_currentNumberOfPasses =0;
-
+    float ai_difficulty = 0.75f;
 
     //UI Elemens test
 
@@ -311,7 +311,7 @@ public class MatchManager : MonoBehaviour
                 {
                     uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " must shoot due to low possessions!");
                     yield return new WaitForSeconds(_actionTimer);
-                    yield return Scoring(playerWithTheBall);
+                    yield return Scoring(playerWithTheBall,true);
                     yield break;
                 }
 
@@ -350,7 +350,7 @@ public class MatchManager : MonoBehaviour
                     ///
                     if (TryBeatDefender(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone))
                     {
-                        yield return Scoring(playerWithTheBall);
+                        yield return Scoring(playerWithTheBall, true);
                         //ResetChoices();
                         yield break;
                     }
@@ -383,7 +383,7 @@ public class MatchManager : MonoBehaviour
                 {
                     uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " must shoot due to low possessions!");
                     yield return new WaitForSeconds(_actionTimer);
-                    yield return Scoring(playerWithTheBall);
+                    yield return Scoring(playerWithTheBall, false);
                     yield break;
                 }
                 uiManager.PlaybyPlayText("Wait for Player Action");
@@ -402,7 +402,7 @@ public class MatchManager : MonoBehaviour
                     ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if (TryBeatDefender(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone))
                     {
-                        yield return Scoring(playerWithTheBall);
+                        yield return Scoring(playerWithTheBall, false);
                         //ResetChoices();
                         yield break;
                     }
@@ -554,7 +554,7 @@ public class MatchManager : MonoBehaviour
         uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " receives the pass.");
         return true;
     }
-    IEnumerator Scoring(Player player)
+    IEnumerator Scoring(Player player, bool isAI)
     {
         while (true)
         {
@@ -564,7 +564,7 @@ public class MatchManager : MonoBehaviour
                 uiManager.PlaybyPlayText(player.playerFirstName + " takes a shot!");
                 yield return new WaitForSeconds(_actionTimer);
                 //currentGamePossessons--;
-                bool hasScored =Random.Range(0f, 1f) < ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone);
+                bool hasScored =Random.Range(0f, 1f) < ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, isAI);
                 print(hasScored + " is  the result of Shooting");
                 if (hasScored)
                 {
@@ -794,9 +794,13 @@ public class MatchManager : MonoBehaviour
         yield return StartCoroutine(SetupGameplan());
         yield return StartCoroutine(GameFlow());
         _matchUI.PostGameStats(HomeTeam, AwayTeam);
+        //Do only for yur team-cahnge if  the others need after 3 games
+        if (leagueManager.Week % 3 == 0) ApplyFiveWeekTraining(manager.playerTeam, manager.playerTeam.Wins, manager.playerTeam.Draws, manager.playerTeam.Loses);
+        _matchUI.UpgradeTeamAnim();
         yield return StartCoroutine(LeagueWeekSimulation());
         //Enable progress button
         _matchUI.btn_ReturnToTeamManagement.gameObject.SetActive(true);
+
     }
 
     void ChangePosOfPlayerWithTheBall()
@@ -824,7 +828,7 @@ public class MatchManager : MonoBehaviour
         //print(playerWithTheBall.playerFirstName + " is hte guy with the ball");
     }
     //Equations
-    float PassEquation()
+    float PassEquation(bool isAI = false)
     {
         float offenseScore = (playerWithTheBall.Awareness + playerWithTheBall.Consistency) / 2f;
         float defenseScore = (playerDefending.Stealing + playerDefending.Guarding) / 2f;
@@ -834,9 +838,11 @@ public class MatchManager : MonoBehaviour
 
         float passSuccessChance = offenseNormalized / (offenseNormalized + defenseNormalized);
 
-        return passSuccessChance;
+        //return passSuccessChance;
+        // Apply AI coefficient only if AI
+        return isAI ? passSuccessChance * ai_difficulty : passSuccessChance;
     }
-    float ScoringEquation(Player offense, Player defense, int zone)
+    float ScoringEquation(Player offense, Player defense, int zone, bool isAI = false)
     {
         // 1. Base Zone Accuracy
         float baseAccuracy = 0.7f; // default mid
@@ -878,8 +884,9 @@ public class MatchManager : MonoBehaviour
         else if (Z <= -101 && Z >= -356) return 0f; // Block
 
         // 5. Clamp result between 0%–100%
-        print(baseAccuracy + " is the value" + teamWithball.TeamName);
-        return Mathf.Clamp01(baseAccuracy);
+        //return Mathf.Clamp01(baseAccuracy);
+        // Apply AI coefficient only if AI
+        return isAI ? Mathf.Clamp01(baseAccuracy * ai_difficulty) : Mathf.Clamp01(baseAccuracy);
     }
     float ActivateSpecialAttk()
     {
@@ -947,5 +954,69 @@ public class MatchManager : MonoBehaviour
         int staminaLoss = 15;
         player.CurrentStamina-=staminaLoss;
 
+    }
+    //UpdateStatsAfter5Weeks
+    public void ApplyFiveWeekTraining(Team team, int wins, int draws, int losses)
+    {
+        // Performance factor: team success influences growth
+        float performanceFactor = (wins * 1.5f + draws * 0.5f - losses * 0.5f);
+
+        // Equipment factor
+        int equipmentLevel = team._equipmentList[4].Level; // Assuming this is an int
+        float equipmentBonus = 1f + (equipmentLevel * 0.1f); // +10% per level
+
+        foreach (Player player in team.playersListRoster)
+        {
+            // Base growth
+            int growthMin = 1;
+            int growthMax = 5;
+
+            // Adjust based on personality (1–5)
+            // Lower values = easier going, less ambitious
+            // Higher values = more competitive, more ambitious
+            switch (player.Personality)
+            {
+                case 1: // Cool guy
+                    growthMax = 3;
+                    break;
+                case 2:
+                    growthMax = 4;
+                    break;
+                case 3: // Balanced
+                        // no change
+                    break;
+                case 4:
+                    growthMin = 2;
+                    break;
+                case 5: // Competitive/difficult
+                    growthMin = 3;
+                    break;
+            }
+
+            // Pick random growth
+            int growthValue = UnityEngine.Random.Range(growthMin, growthMax + 1);
+
+            // Scale with performance + equipment
+            growthValue = Mathf.RoundToInt(growthValue * performanceFactor * equipmentBonus);
+
+            // Keep it realistic
+            growthValue = Mathf.Clamp(growthValue, 0, 5);
+
+            // Apply to player stats (example attributes)
+            player.Awareness = Mathf.Min(99, player.Awareness + growthValue);
+            player.Consistency = Mathf.Min(99, player.Consistency + growthValue);
+            player.Shooting = Mathf.Min(99, player.Shooting + growthValue);
+            player.Control = Mathf.Min(99, player.Control + growthValue);
+            player.Guarding = Mathf.Min(99, player.Guarding + growthValue);
+            player.Stealing = Mathf.Min(99, player.Stealing + growthValue);
+            player.Defending = Mathf.Min(99, player.Defending + growthValue);
+            player.Juking = Mathf.Min(99, player.Juking + growthValue);
+            player.Inside = Mathf.Min(99, player.Inside + growthValue);
+            player.Mid = Mathf.Min(99, player.Mid + growthValue);
+            player.Outside = Mathf.Min(99, player.Outside + growthValue);
+            player.Positioning = Mathf.Min(99, player.Positioning + growthValue);
+
+
+        }
     }
 }

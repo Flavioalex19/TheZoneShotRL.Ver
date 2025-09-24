@@ -54,6 +54,8 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Transform _training_btns;
     [SerializeField] TextMeshProUGUI _textPlayerSelected;
     [SerializeField] TextMeshProUGUI _textDrillSelected;
+    [SerializeField] Image _training_assistancePortrait;
+    [SerializeField] Sprite _training_AssistanceSprite;
 
     [Header("Standings")]
     [SerializeField] GameObject _standingsPanel;
@@ -433,6 +435,10 @@ public class TeamManagerUI : MonoBehaviour
             int index = gameManager.playerTeam.playersListRoster.IndexOf(gameManager.playerTeam.playersListRoster[i]);
             _training_btns.GetChild(i).GetComponent<Button>().onClick.AddListener(() => trainingManager.SetPlayerToTrainIndex(index, _textPlayerSelected, _textDrillSelected));
         }
+    }
+    public void UpdateAssistancePortrait()
+    {
+        _training_assistancePortrait.sprite = _training_AssistanceSprite;
     }
     //Standings
     void PopulateStandings()
