@@ -795,8 +795,14 @@ public class MatchManager : MonoBehaviour
         yield return StartCoroutine(GameFlow());
         _matchUI.PostGameStats(HomeTeam, AwayTeam);
         //Do only for yur team-cahnge if  the others need after 3 games
-        if (leagueManager.Week % 3 == 0) ApplyFiveWeekTraining(manager.playerTeam, manager.playerTeam.Wins, manager.playerTeam.Draws, manager.playerTeam.Loses);
-        _matchUI.UpgradeTeamAnim();
+        if (leagueManager.Week % 3 == 0) 
+        {
+            ApplyFiveWeekTraining(manager.playerTeam, manager.playerTeam.Wins, manager.playerTeam.Draws, manager.playerTeam.Loses);
+            _matchUI.UpgradeTeamAnim();
+            //Wait for seconds
+            StartCoroutine(waitSecondsForAction());
+            
+        } 
         yield return StartCoroutine(LeagueWeekSimulation());
         //Enable progress button
         _matchUI.btn_ReturnToTeamManagement.gameObject.SetActive(true);
@@ -1018,5 +1024,9 @@ public class MatchManager : MonoBehaviour
 
 
         }
+    }
+    IEnumerator waitSecondsForAction()
+    {
+        yield return new WaitForSeconds(3f);
     }
 }

@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour
                 if (leagueTeams[i].IsPlayerTeam)playerTeam = leagueTeams[i];
                 //print(playerTeam + "THIS IS THE PLAYER!!!!!");
             }
-            PrintTeamPlayers();
+            //PrintTeamPlayers();
 
             
         }
@@ -266,7 +266,7 @@ public class GameManager : MonoBehaviour
 
     #region DRAFT METHODS
     // Function to generate a specified number of players and add them to the team
-    private void GeneratePlayers(int numberOfPlayers)
+    public void GeneratePlayers(int numberOfPlayers)
     {
         for (int i = 0; i < numberOfPlayers; i++)
         {
@@ -281,14 +281,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Function to print all players' names and OVR from the team
-    private void PrintTeamPlayers()
-    {
-        foreach (Player player in leagueTeams[0].playersListRoster)
-        {
-            //Debug.Log($"Player: {player.playerFirstName}, OVR: {player.ovr}" +" Has a ssaved File");
-        }
-    }
+    
     void AlternateTeamsAndAddPlayers()
     {
         int teamIndex = 0; // To track which team to add the player to
@@ -304,7 +297,7 @@ public class GameManager : MonoBehaviour
             teamIndex = (teamIndex + 1) % leagueTeams.Count;
         }
     }
-    void GeneratePlayerDraftButton(Player player)
+    public void GeneratePlayerDraftButton(Player player)
     {
         GameObject newButton = Instantiate(player.bt_DraftInfo,glg_draftNames.transform, false);
         newButton.GetComponent<Button>().onClick.AddListener(() => AddPlayerToTeam(player, newButton.GetComponent<Button>()));

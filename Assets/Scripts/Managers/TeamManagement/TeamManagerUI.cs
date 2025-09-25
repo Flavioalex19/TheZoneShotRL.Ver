@@ -99,6 +99,15 @@ public class TeamManagerUI : MonoBehaviour
     int indexForPlayer;
     Player _contractPlayer;
 
+    [Header("GameOverPanel")]
+    [SerializeField] Animator gameoverPanel;
+    [SerializeField] Button gameover_Btn;
+
+    [Header("FreeAgents")]
+    [SerializeField] GameObject _freeAgents_panel;
+    [SerializeField] FreeAgentManager freeAgentManager;
+    public bool canProgressWithWeek = false;
+
     [Header("UI")]
     [SerializeField]TextMeshProUGUI WeekText;
     [SerializeField] Image image_teamIcon;
@@ -117,8 +126,14 @@ public class TeamManagerUI : MonoBehaviour
         //_schedulePanelTextsArea = GameObject.Find("ScheduleSeasonTexts").transform;
         ScheduleUpdated();
         _advBtn = GameObject.Find("Advance Button");
+        gameover_Btn.onClick.AddListener(() => gameManager.QuitAndClear());//Set Game over button
         //WeekText = GameObject.Find("Week Text").GetComponent<TextMeshProUGUI>();
 
+;
+
+        
+        
+        
         //EquipmentUI
         EquipUI();
 
@@ -127,11 +142,12 @@ public class TeamManagerUI : MonoBehaviour
         AdvButtonUpdate();
         #endregion
         _scheduleArea.SetActive(false);
+        
 
         #region TeamRoster Panel
         //Team Roster panel setup
         _currentTeamIndex = gameManager.leagueTeams.IndexOf(gameManager.playerTeam);
-        TeamRoster(_currentTeamIndex);
+        TeamRoster();
         //careerStatsArea.SetActive(false);
         _teamRoster.SetActive(false);
         #endregion
@@ -167,7 +183,30 @@ public class TeamManagerUI : MonoBehaviour
         leagueManager.CreateTeamSalary();
         UpdateTeamSalary();
 
+        if (gameManager.playerTeam.Moral < 0) 
+        {
+            gameoverPanel.SetTrigger("On");
+            gameover_Btn.gameObject.SetActive(true);
+        }
+        else
+        {
+            gameover_Btn.gameObject.SetActive(false);
+        }
 
+
+        //FreeAgents if necessary
+        _freeAgents_panel.SetActive(false);
+        freeAgentManager.RemoveExpiredContracts(gameManager.playerTeam);
+        if (gameManager.playerTeam.playersListRoster.Count < 8)
+        {
+            canProgressWithWeek = false;
+            _freeAgents_panel.SetActive(true);
+            freeAgentManager.GeneratePlayers(10 - gameManager.playerTeam.playersListRoster.Count);
+            StartCoroutine(ProgressWithWeek());
+
+            //_freeAgents_panel.SetActive(false);
+            print("Pass");
+        }
 
     }
 
@@ -226,7 +265,7 @@ public class TeamManagerUI : MonoBehaviour
     }
     public void UpdateTeamRoster()
     {
-        TeamRoster(_currentTeamIndex);
+        TeamRoster();
     }
     //Schedule Updated
     public void ScheduleUpdated()
@@ -304,7 +343,7 @@ public class TeamManagerUI : MonoBehaviour
 
     }
     //TeamRoster
-    public void TeamRoster(int index)
+    public void TeamRoster()
     {
         _currentTeamNameTeamRosterText.text = gameManager.leagueTeams[_currentTeamIndex].TeamName.ToString();
         //Starters
@@ -328,6 +367,7 @@ public class TeamManagerUI : MonoBehaviour
     public void CurrentPlayerStats(int index)
     {
         _text_playerInfoLastName.text = gameManager.playerTeam.playersListRoster[index].playerLastName.ToString();
+        gameManager.playerTeam.playersListRoster[index].UpdateOVR();
         _text_playerInfoStats.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Shooting.ToString();
         _text_playerInfoStats.GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Inside.ToString();
         _text_playerInfoStats.GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Mid.ToString();
@@ -407,6 +447,7 @@ public class TeamManagerUI : MonoBehaviour
         if(leagueManager.canTrade == true)
         {
             _tradePanel.SetActive(true);
+            SetTheTradingBtns();
         }
     }
     public void SetTheTradingBtns()
@@ -426,7 +467,7 @@ public class TeamManagerUI : MonoBehaviour
         }
     }
     //Training
-    void SetTrainingBtns()
+    public void SetTrainingBtns()
     {
         for (int i = 0; i < _training_btns.childCount; i++)
         {
@@ -525,7 +566,7 @@ public class TeamManagerUI : MonoBehaviour
         }
         
         ContractButtonsUpdate();
-
+        UpdateTeamSalary();
 
     }
     public bool TryExtendContract(Team team, Player player, int salaryProposed, int gamesProposed)
@@ -579,6 +620,18 @@ public class TeamManagerUI : MonoBehaviour
             contract_newContractValuesArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = newSalaryValue.ToString();
         }
     }
+    //FreeAgent
+    IEnumerator ProgressWithWeek()
+    {
+        yield return null;
+        yield return new WaitUntil(()=>canProgressWithWeek);
+        _freeAgents_panel.SetActive(false);
+    }
+    public void ValidateProgressWeek()
+    {
+        canProgressWithWeek = true;
+    }
+
     //LeagueHistory
     public void LeagueHistory()
     {

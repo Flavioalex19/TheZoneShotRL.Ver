@@ -22,10 +22,14 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
     void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        playerPortrait = GameObject.Find("Image_CurrentPlayerToSelect").GetComponent<Image>();
+        if(gameManager.mode == GameManager.GameMode.Draft)
+        {
+            playerPortrait = GameObject.Find("Image_CurrentPlayerToSelect").GetComponent<Image>();
 
-        text_playerName = GameObject.Find("Text_PlayerName").GetComponent<TextMeshProUGUI>();
-        text_PlayerAge = GameObject.Find("Text_PlayerAge").GetComponent<TextMeshProUGUI>();
+            text_playerName = GameObject.Find("Text_PlayerName").GetComponent<TextMeshProUGUI>();
+            text_PlayerAge = GameObject.Find("Text_PlayerAge").GetComponent<TextMeshProUGUI>();
+        }
+        
 
     }
     public void SetSprite()
@@ -36,8 +40,12 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        playerPortrait.sprite = sprite;
-        text_PlayerAge.text = playerAge;
-        text_playerName.text = playerName;
+        if (gameManager.mode == GameManager.GameMode.Draft)
+        {
+            playerPortrait.sprite = sprite;
+            text_PlayerAge.text = playerAge;
+            text_playerName.text = playerName;
+        }
+            
     }
 }

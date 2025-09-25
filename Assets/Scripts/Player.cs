@@ -141,5 +141,9 @@ public class Player : MonoBehaviour
             Salary = 12;
         }
     }
+    public void UpdateOVR()
+    {
+        ovr = (Shooting + Inside + Mid + Outside + Awareness + Defending + Guarding + Stealing + Juking + Consistency + Control + Positioning) / 12;
+    }
 
 }

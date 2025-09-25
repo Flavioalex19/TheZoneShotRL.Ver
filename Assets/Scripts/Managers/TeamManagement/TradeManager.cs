@@ -113,7 +113,7 @@ public class TradeManager : MonoBehaviour
     {
         SwapPlayersBetweenTeams(_gameManager.playerTeam.playersListRoster, _playerToTradeIndex, TradeTeam.playersListRoster, _playerToReceive);
         int _currentTeamIndex = _gameManager.leagueTeams.IndexOf(_gameManager.playerTeam);
-        _teamManagerUI.TeamRoster(_currentTeamIndex);
+        _teamManagerUI.TeamRoster();
         _teamManagerUI.SetTheTradingBtns();
         _leagueManager.canTrade = false;
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "";
