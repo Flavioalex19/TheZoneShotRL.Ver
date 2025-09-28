@@ -68,4 +68,19 @@ public class MusicManager : MonoBehaviour
     {
         yield return new WaitForSeconds(3);
     }
+
+    //Adjust Audio Priority
+    public void RestoreMutedAudioSources()
+    {
+        AudioSource[] sources = FindObjectsOfType<AudioSource>();
+
+        foreach (var source in sources)
+        {
+            if (source.priority == 256)
+            {
+                source.priority = 128; // volta pro padrão audível
+                Debug.Log($"AudioSource {source.name} restaurado para prioridade {source.priority}");
+            }
+        }
+    }
 }

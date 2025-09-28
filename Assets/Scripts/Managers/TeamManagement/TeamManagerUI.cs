@@ -9,6 +9,7 @@ public class TeamManagerUI : MonoBehaviour
 {
     GameManager gameManager;
     LeagueManager leagueManager;
+    MusicManager musicManager;
 
     [Header("Schedule")]
     [SerializeField]GameObject _scheduleArea;
@@ -113,6 +114,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Image image_teamIcon;
     GameObject _advBtn;//to Advance Button Elements
 
+    [SerializeField] GameObject tutorialPanel;
 
     [SerializeField] Button _closeGameForTestersBtn;
     //Testing
@@ -122,6 +124,7 @@ public class TeamManagerUI : MonoBehaviour
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
+        musicManager = GameObject.Find("MusicManager").GetComponent<MusicManager>();
         //_scheduleArea = GameObject.Find("ScheduleTeamArea");
         //_schedulePanelTextsArea = GameObject.Find("ScheduleSeasonTexts").transform;
         ScheduleUpdated();
@@ -131,8 +134,11 @@ public class TeamManagerUI : MonoBehaviour
 
 ;
 
-        
-        
+        if(leagueManager.Week > 1 || leagueManager.canStartANewWeek == false)
+        {
+            tutorialPanel.SetActive(false);
+        }
+        musicManager.RestoreMutedAudioSources();
         
         //EquipmentUI
         EquipUI();

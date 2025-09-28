@@ -23,6 +23,7 @@ public class MatchManager : MonoBehaviour
     GameManager manager;
     UiManager uiManager;
     LeagueManager leagueManager;
+    [SerializeField] MatchSfxManager sfxManager;
     [SerializeField] MatchUI _matchUI;
     MatchStates match;
     public int GamePossesions = 10;
@@ -802,7 +803,8 @@ public class MatchManager : MonoBehaviour
             //Wait for seconds
             StartCoroutine(waitSecondsForAction());
             
-        } 
+        }
+        sfxManager.ResetVolume();
         yield return StartCoroutine(LeagueWeekSimulation());
         //Enable progress button
         _matchUI.btn_ReturnToTeamManagement.gameObject.SetActive(true);
