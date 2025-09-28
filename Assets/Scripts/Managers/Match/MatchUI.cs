@@ -173,20 +173,38 @@ public class MatchUI : MonoBehaviour
         _homeTeamName.text = _matchManager.HomeTeam.TeamName.ToString();
         _awatTeamName.text = _matchManager.AwayTeam.TeamName.ToString();
     }
-    void UpdatePlayersActive()
+    public void UpdatePlayersActive()
     {
         for (int i = 0; i < 4; i++)
         {
             _activeHomePlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerLastName.ToString();
             _activeHomePlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].PointsMatch.ToString();
             _activeHomePlayers.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].J_Number.ToString();
+            if (_matchManager.HomeTeam.playersListRoster[i].HasTheBall)
+            {
+                _activeHomePlayers.GetChild(i).GetChild(3).gameObject.SetActive(true);
+                //print(_matchManager.HomeTeam.playersListRoster[i] + "Here DUDE");
+            }
+            else
+            {
+                _activeHomePlayers.GetChild(i).GetChild(3).gameObject.SetActive(false);
+            }
         }
         for (int i = 0; i < 4; i++)
         {
             _activeAwayPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].playerLastName.ToString();
             _activeAwayPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].PointsMatch.ToString();
             _activeAwayPlayers.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].J_Number.ToString();
-            
+            if (_matchManager.AwayTeam.playersListRoster[i].HasTheBall)
+            {
+                _activeAwayPlayers.GetChild(i).GetChild(3).gameObject.SetActive(true);
+                //print(_matchManager.HomeTeam.playersListRoster[i] + "Here DUDE");
+            }
+            else
+            {
+                _activeAwayPlayers.GetChild(i).GetChild(3).gameObject.SetActive(false);
+            }
+
         }
         for (int i = 0; i < 4; i++)
         {

@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
 
     LeagueManager leagueManager;
     UiManager uiManager;
+    [SerializeField] IntroManager introManager;
 
     GridLayoutGroup glg_draftNames;
     int currentTeamIndex = 0;
@@ -390,6 +391,7 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator AdvanceToDraftRoutine()
     {
+        
         if (GameObject.Find("TransitionSequence"))
         {
             Animator animator = GameObject.Find("TransitionSequence").GetComponent<Animator>();
@@ -400,8 +402,8 @@ public class GameManager : MonoBehaviour
         float timer = 3f;
         while (timer > 0)
         {
+            introManager.ChangeStageTransitionTextIntro();
             timer -= Time.deltaTime;
-            print("On Transition");
             yield return null; // Wait a frame instead of freezing
         }
 

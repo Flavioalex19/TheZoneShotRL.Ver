@@ -16,14 +16,7 @@ public class IntroManager : MonoBehaviour
         _canProgressToMainMenu = false;
         _canPressEnter = false;
         StartCoroutine(ProgressToMainMenu());
-        if(_gameManager.playerTeam != null)
-        {
-            _teamText.text = "Welcome back coach!" +_gameManager.playerTeam.TeamName + " Career";
-        }
-        else
-        {
-            _teamText.text = "A new journey towards the trophy awaits you.";
-        }
+        
         
     }
 
@@ -43,5 +36,16 @@ public class IntroManager : MonoBehaviour
         _canPressEnter = true;
         yield return new WaitUntil(() => _canProgressToMainMenu);
         _introAnimator.SetTrigger("ToMain");
+    }
+    public void ChangeStageTransitionTextIntro()
+    {
+        if (_gameManager.playerTeam != null)
+        {
+            _teamText.text = "Welcome back coach! " + _gameManager.playerTeam.TeamName + " Career";
+        }
+        else
+        {
+            _teamText.text = "A new journey towards the trophy awaits you.";
+        }
     }
 }

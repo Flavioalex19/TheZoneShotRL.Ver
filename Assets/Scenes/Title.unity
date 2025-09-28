@@ -2407,6 +2407,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 6125366047793733995, guid: de1e7c960bb588d4fb3896ab6578c845, type: 3}
     - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: introManager
+      value: 
+      objectReference: {fileID: 1820020468}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
       propertyPath: playerPrefab
       value: 
       objectReference: {fileID: 7670340910797544326, guid: b9c439e9a7bf0334d8bdff84654cdb1f, type: 3}
@@ -2537,8 +2541,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 700, y: 383}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 676.6, y: 383}
+  m_SizeDelta: {x: 75, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1239194675
 MonoBehaviour:
@@ -2616,8 +2620,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 5344aee95bc2ec443bb759ec4a5c6e33, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2669,7 +2673,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 447.2357, y: 383.1362}
+  m_SizeDelta: {x: 500, y: 385}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1256902207
 MonoBehaviour:
@@ -2691,9 +2695,18 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Greeting to ZoneShot!
+  m_text: 'Welcome to version V0.1 (Beta)!
 
-    Version.09 - Alpha'
+    We hope you have fun and help us
+    make this game a success!
+
+
+    Please note that this is only a beta version
+    of the project, so some elements may be missing, incomplete, or subject to errors/bugs.
+
+
+    Thank
+    you once again for supporting us and helping make this project a success!'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7fd61b49d8a59ab4cbe838e6a605d9a3, type: 2}
   m_sharedMaterial: {fileID: 2425081184956513082, guid: 7fd61b49d8a59ab4cbe838e6a605d9a3, type: 2}
@@ -2727,7 +2740,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -2862,7 +2875,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1438187072
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2879,7 +2892,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.002163, y: -138.07}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 447.24, y: 107}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1438187073
@@ -3351,10 +3364,10 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Disclaimer:
 
-    This game still in early stages of development.
+    This game still in a beta stage of development.
 
     This
-    is the first test build to evaluate some systems'
+    is a beta build to evaluate some systems and detect bugs'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4397,13 +4410,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5346972075224712809, guid: 5aaba02b63188c74aac36df80b815a84, type: 3}
-      propertyPath: m_text
-      value: 'v0.09
-
-
-'
-      objectReference: {fileID: 0}
     - target: {fileID: 6890731919854353440, guid: 5aaba02b63188c74aac36df80b815a84, type: 3}
       propertyPath: m_Name
       value: VersionText
@@ -4421,6 +4427,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 265078788}
     m_Modifications:
+    - target: {fileID: 1273323334582235077, guid: f82df41960cbb764186f101b510a3429, type: 3}
+      propertyPath: m_text
+      value: Game On!
+      objectReference: {fileID: 0}
     - target: {fileID: 3560078363112964691, guid: f82df41960cbb764186f101b510a3429, type: 3}
       propertyPath: m_Sprite
       value: 
