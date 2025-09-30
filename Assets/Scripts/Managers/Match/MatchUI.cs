@@ -38,6 +38,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] GameObject _panel_SubsPanel;
     [SerializeField] TextMeshProUGUI text_playerStarter;
     [SerializeField] TextMeshProUGUI text_playerBench;
+    [SerializeField] TextMeshProUGUI text_CurrentDefensiveStyle;
 
     [Header("Action Lines")]
     [SerializeField] List<string> list_ReceiveThePos = new List<string>();
@@ -113,8 +114,16 @@ public class MatchUI : MonoBehaviour
         //Sub panel
         if(_matchManager.IsOnTimeout == true)
         {
-            print("Here");
+            //print("Here");
             _panel_SubsPanel.SetActive(true);
+        }
+        if (_matchManager.HomeTeam.hasHDefense)
+        {
+            text_CurrentDefensiveStyle.text = "Aggressive";
+        }
+        else
+        {
+            text_CurrentDefensiveStyle.text = "Normal";
         }
         //Substitution Buttons
         if (GameObject.Find("Starters"))
@@ -126,7 +135,7 @@ public class MatchUI : MonoBehaviour
                 GameObject.Find("Starters").transform.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = "OVR " + _matchManager.HomeTeam.playersListRoster[i].ovr.ToString();
                 GameObject.Find("Starters").transform.GetChild(i).GetChild(2).GetChild(0).GetComponent<Image>().fillAmount =
                     (float)_matchManager.HomeTeam.playersListRoster[i].CurrentStamina / (float)_matchManager.HomeTeam.playersListRoster[i].MaxStamina;
-                print(_matchManager.HomeTeam.playersListRoster[i].CurrentStamina + "thisis my stamina");
+                //print(_matchManager.HomeTeam.playersListRoster[i].CurrentStamina + "thisis my stamina");
             }
         }
         if (GameObject.Find("Bench"))

@@ -34,6 +34,7 @@ public class Team : MonoBehaviour
     public int fixMoral;
     public int fixFans;
     public int fixFrontOffice;
+    //Atrributes
     [SerializeField]public string Description;
     public string CoachName;
     [SerializeField]public  List<Team> _schedule = new List<Team>();
@@ -43,6 +44,7 @@ public class Team : MonoBehaviour
     public bool hasPossession = false;
     public int Score = 0;
     public bool isOnDefenseBonus = false;
+    public bool hasHDefense = false;
     #endregion
     private void Awake()
     {

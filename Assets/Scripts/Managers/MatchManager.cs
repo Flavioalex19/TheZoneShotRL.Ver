@@ -175,6 +175,7 @@ public class MatchManager : MonoBehaviour
     {
         HomeTeam.HasPlayed = true;
         AwayTeam.HasPlayed = true;
+        HomeTeam.hasHDefense = false;
         //Stamina set fro the game
         for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
         {
@@ -379,10 +380,10 @@ public class MatchManager : MonoBehaviour
             if (currentGamePossessons > 1)
             {
                 ResetChoices();
-            }
-                
+            }   
             while (true)
             {
+
                 //CanChooseAction = true;
                 if (currentGamePossessons <= 1)
                 {
@@ -391,6 +392,7 @@ public class MatchManager : MonoBehaviour
                     yield return Scoring(playerWithTheBall, false);
                     yield break;
                 }
+                print(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false) + " Is the cahnce of success");
                 uiManager.PlaybyPlayText("Wait for Player Action");
                 // Wait until player makes a choice
                 yield return new WaitUntil(() => _ChoosePass || _ChooseScoring || _ChooseToSpecialAtt);
@@ -847,6 +849,10 @@ public class MatchManager : MonoBehaviour
         float offenseScore = (playerWithTheBall.Awareness + playerWithTheBall.Consistency) / 2f;
         float defenseScore = (playerDefending.Stealing + playerDefending.Guarding) / 2f;
 
+        // --- NOVO ---
+        if (teamWithball.hasHDefense)
+            defenseScore *= 1.1f; // +10% eficácia
+
         float offenseNormalized = Mathf.Clamp((offenseScore - 30f) / (99f - 30f), 0f, 1f);
         float defenseNormalized = Mathf.Clamp((defenseScore - 30f) / (99f - 30f), 0f, 1f);
 
@@ -884,6 +890,9 @@ public class MatchManager : MonoBehaviour
             defense.Stealing +
             GetZoneValue(defense, zone);
 
+        if (teamWithball.hasHDefense)
+            defenseValue = (int)(defenseValue * 1.1f); // +10% eficácia
+
         int Z = offenseValue - defenseValue;
 
         // 4. Modify accuracy based on result
@@ -897,6 +906,10 @@ public class MatchManager : MonoBehaviour
         else if (Z >= -100 && Z <= -51) baseAccuracy -= 0.12f;
         else if (Z <= -101 && Z >= -356) return 0f; // Block
 
+        // 5. Stamina factor (0 = sempre erra, 100 = bônus)
+        float staminaFactor = offense.CurrentStamina / 100f;
+        float staminaBonus = 1f + (offense.CurrentStamina / 500f); // até +20% no máximo
+        baseAccuracy *= staminaFactor * staminaBonus;
         // 5. Clamp result between 0%–100%
         //return Mathf.Clamp01(baseAccuracy);
         // Apply AI coefficient only if AI
@@ -946,6 +959,51 @@ public class MatchManager : MonoBehaviour
         specialAttkSuccess = 1f / (1f + Mathf.Exp(-6f * scoreDifference));
         specialAttkSuccess = Mathf.Clamp(specialAttkSuccess - riskPenalty, 0.05f, 0.95f);
         return specialAttkSuccess;
+    }
+    public float GetScoringChance(Player offense, Player defense, int zone, bool isAI = false)
+    {
+        float baseAccuracy = 0.7f; // default mid
+        switch (zone)
+        {
+            case 0: baseAccuracy = 0.64f; break;
+            case 1: baseAccuracy = 0.70f; break;
+            case 2: baseAccuracy = 0.75f; break;
+        }
+
+        int offenseValue =
+            UnityEngine.Random.Range(1, 101) +
+            offense.Consistency +
+            offense.Control +
+            offense.Shooting +
+            GetZoneValue(offense, zone) +
+            UnityEngine.Random.Range(-10, 26);
+
+        int defenseValue =
+            UnityEngine.Random.Range(1, 101) +
+            defense.Consistency +
+            defense.Guarding +
+            defense.Stealing +
+            GetZoneValue(defense, zone);
+
+        int Z = offenseValue - defenseValue;
+
+        if (Z >= 300 && Z <= 356) baseAccuracy += 0.18f;
+        else if (Z >= 200 && Z <= 299) baseAccuracy += 0.15f;
+        else if (Z >= 150 && Z <= 199) baseAccuracy += 0.12f;
+        else if (Z >= 100 && Z <= 149) baseAccuracy += 0.08f;
+        else if (Z >= 50 && Z <= 99) baseAccuracy += 0.05f;
+        else if (Z >= 0 && Z <= 49) baseAccuracy += 0f;
+        else if (Z >= -50 && Z <= -1) baseAccuracy -= 0.06f;
+        else if (Z >= -100 && Z <= -51) baseAccuracy -= 0.12f;
+        else if (Z <= -101 && Z >= -356) return 0f;
+
+        // stamina factor
+        float staminaFactor = offense.CurrentStamina / 100f;
+        baseAccuracy *= staminaFactor;
+
+        if (isAI) baseAccuracy *= ai_difficulty;
+
+        return Mathf.Clamp01(baseAccuracy) * 100f; // retorna em %
     }
     //Stamina managers
     void ControlStamina(Team team)
@@ -1032,6 +1090,10 @@ public class MatchManager : MonoBehaviour
 
 
         }
+    }
+    public void ChangeTeamDefenseStyle(bool style)
+    {
+        HomeTeam.hasHDefense = style;
     }
     IEnumerator waitSecondsForAction()
     {
