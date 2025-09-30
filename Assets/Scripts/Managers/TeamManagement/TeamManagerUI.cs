@@ -134,9 +134,13 @@ public class TeamManagerUI : MonoBehaviour
 
 ;
 
-        if(leagueManager.Week > 1 || leagueManager.canStartANewWeek == false)
+        if(leagueManager.Week > 1)
         {
-            tutorialPanel.SetActive(false);
+            if(leagueManager.canStartANewWeek == false)
+            {
+                tutorialPanel.SetActive(false);
+            }
+            
         }
         musicManager.RestoreMutedAudioSources();
         

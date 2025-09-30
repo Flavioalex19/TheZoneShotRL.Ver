@@ -558,7 +558,7 @@ public class MatchManager : MonoBehaviour
         playerWithTheBall = receiver;
 
         //ChangePosOfPlayerWithTheBall();
-        uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " receives the pass.");
+        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " receives the pass.");
         return true;
     }
     IEnumerator Scoring(Player player, bool isAI)
@@ -568,7 +568,7 @@ public class MatchManager : MonoBehaviour
             bool willShoot = Random.Range(1, 4) < 3; // Adjust logic as needed create a function base on the inside, mid and out
             if (willShoot)
             {
-                uiManager.PlaybyPlayText(player.playerFirstName + " takes a shot!");
+                uiManager.PlaybyPlayText(player.playerLastName + " takes a shot!");
                 yield return new WaitForSeconds(_actionTimer);
                 bool hasScored =Random.Range(0f, 1f) < ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, isAI);
                 print(hasScored + " is  the result of Shooting");
@@ -589,12 +589,12 @@ public class MatchManager : MonoBehaviour
                         player.PointsMatch += 2;
                         teamWithball.Score += 2;
                     }
-                    uiManager.PlaybyPlayText(player.playerFirstName + " Has Scored" + " " + player.PointsMatch);
+                    uiManager.PlaybyPlayText(player.playerLastName + " Has Scored" + " " + player.PointsMatch);
 
                 }
                 else
                 {
-                    uiManager.PlaybyPlayText(player.playerFirstName + " Missed");
+                    uiManager.PlaybyPlayText(player.playerLastName + " Missed");
                 }
                 playerWithTheBall.HasTheBall = false;
                 yield return new WaitForSeconds(_actionTimer);
@@ -608,14 +608,14 @@ public class MatchManager : MonoBehaviour
                 if (currentGamePossessons <= 1)
                 {
                     //print("Only one possession left, player must shoot!");
-                    uiManager.PlaybyPlayText(player.playerFirstName + " must shoot due to low possessions!");
+                    uiManager.PlaybyPlayText(player.playerLastName + " must shoot due to low possessions!");
                     continue; // Skip movement logic, forcing the player to attempt a shot
                 }
                 int newZone = Random.Range(player.CurrentZone, 3); // Restrict movement to current or forward zones
                 if (newZone > player.CurrentZone) // Only update if moving forward
                 {
                     player.CurrentZone = newZone;
-                    uiManager.PlaybyPlayText(player.playerFirstName + " moves to zone " + player.CurrentZone);
+                    uiManager.PlaybyPlayText(player.playerLastName + " moves to zone " + player.CurrentZone);
                     yield return new WaitForSeconds(_actionTimer);
                     //currentGamePossessons--;
 
@@ -623,7 +623,7 @@ public class MatchManager : MonoBehaviour
                 else willShoot = true;
             }
         }
-
+        //currentGamePossessons--;
     }
     IEnumerator StunPlayer()
     {

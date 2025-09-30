@@ -27,11 +27,32 @@ public class MatchSfxManager : MonoBehaviour
 
     public void MuteByPriority(AudioSource audio)
     {
+        float fadeTime = 2f;
+
         mainSFXaudio = audio;
         volumeSFX = audio.volume;
-        print("HERE!!!!!!!!!!!!");
         audio.volume = 0;
-        
+
+        matchMainAudioSource.volume = 0f;
+
+        StartCoroutine(FadeInAudio(fadeTime));
+    }
+    private IEnumerator FadeInAudio(float duration)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            matchMainAudioSource.volume = Mathf.Lerp(0f, volumeSFX, elapsed / duration);
+
+            //mainSFXaudio.volume = matchMainAudioSource.volume;
+
+            yield return null;
+        }
+
+        matchMainAudioSource.volume = volumeSFX;
+        //mainSFXaudio.volume = volumeSFX;
     }
     public void ResetVolume()
     {

@@ -146,7 +146,7 @@ public class GameManager : MonoBehaviour
         }
 
         // If the ESC key is pressed and there is a save file, clear the save
-        if (Input.GetKeyDown(KeyCode.Escape) && IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
+        if (Input.GetKeyDown(KeyCode.Tab) && IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
         {
             //saveSystem.ClearSave(leagueTeams[0].TeamName, leagueTeams[0]);
             //saveSystem.ClearSave(leagueTeams[1].TeamName, leagueTeams[1]);
