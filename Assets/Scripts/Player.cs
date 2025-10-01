@@ -22,15 +22,15 @@ public class Player : MonoBehaviour
         "Caleb", "Rio", "Luke", "Anderson", "Richard", "Daniel", "David", "Jacob", "Arthur", "Lucas", "Walter", "Neil", "Steve", "Ash", "Sergio", "Dean", "Samuel",
         "Denis", "Scott", "Leon", "Nash", "Marc", "Han", "Tom", "Laurence", "Matt","Brian", "Travis", "Robert", "Bob", "Kevin", "Fabian", "Nelson", "Henry", "Austin",
         "Wagner", "Adrian", "Andy", "Eden", "Carl", "Martin", "Wallace", "Tim", "Douglas", "Harry", "Eric", "Ethan", "Max", "Afonso", "Oliver", "Dan", "Ian", "Ewan", "Jack",
-        "Felix", "Arnold", "Tommy", "Trevor", "Thomas", "Zack", "Isiah","Erick", "Josh", " Norman", "Marco", "Ed", "Fred", "Dennis", "Marshall", "Patrick"
+        "Felix", "Arnold", "Tommy", "Trevor", "Thomas", "Zack", "Isiah","Erick", "Josh", " Norman", "Marco", "Ed", "Fred", "Dennis", "Marshall", "Patrick", "Ty", "Jerry"
     };
     private static readonly string[] secondNames = 
     {
-        "Smith","Wells", "Clark", "Parker", "Herbert", "Adams", "Taylor", "Walker", "Wilson", "Railey" , "Jonhson", "Brock", "Santos", "Gomes", "Castro", "Neves", "Owen",
+        "Smith","Wells", "Clark", "Parker", "Herbert", "Adams", "Taylor", "Walker", "Wilson", "Railey" , "Jonhson", "Brock", "Santos", "Gomes", "Castro", "Nunes", "Owen",
         "Young", "Hill", "Armstrong", "Roger", "Macmanus", "Salvi", "Free", "Freeman", "Strong", "Jager", "Cross", "Hunter", "Doyle", "Howard", "Malone", "Gray", "Summers",
         "Miller", "Von", "Yorke", "Clancy", "Tyson", "Collins", "King","Dent", "Barry", "Chambers", "Cole", "Jones", "Langley", "Lee", "Ross", "Souza","Hart", "Kane", "Law",
         "Rogers", "Newton", "Lewis", "Mckay", "Barnes", "Vincent", "Enies", "Wayne", "Burke", "Falcon", "Lamb", "Allen", "Connor", "Fray", "White", "Lane", "Morgan",
-        "Bollock", "Trent", "Brady", "Machado","Edwards", "Thompson", "Mitty"
+        "Bollock", "Trent", "Brady", "Machado","Edwards", "Thompson", "Mitty", "Webster", "Web", "Watson", "Homes"
     };
     [SerializeField] public string playerFirstName;
     [SerializeField] public string playerLastName;
@@ -51,6 +51,7 @@ public class Player : MonoBehaviour
     public int ContractYears;
     public int Salary;
     public int J_Number;
+    public int Zone;
     #region Hidden Variables
     public int Personality;//1 to 5 , 1-calm and 5-Agressive 
     //CareerStats
@@ -98,6 +99,7 @@ public class Player : MonoBehaviour
         Positioning = Random.Range(40, 99);
         ovr = (Shooting +Inside + Mid + Outside + Awareness + Defending + Guarding + Stealing + Juking + Consistency + Control + Positioning) / 12;
         Personality = Random.Range(1, 5);
+        Zone = Random.Range(0, 2);
         //firstName = ((PlayerNames)Random.Range(0, System.Enum.GetValues(typeof(PlayerNames)).Length)).ToString(); // Random name from enum
         // Randomly select a name from the array
         playerFirstName = names[Random.Range(0, names.Length)];

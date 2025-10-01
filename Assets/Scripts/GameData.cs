@@ -31,6 +31,7 @@ public class PlayerData
     public int persona;
     public int imageIndex;
     public int jNum;
+    public int zone;
     public int c_gamesPlayed;
     public int c_pointsMade;
     public int c_steals;
@@ -61,6 +62,7 @@ public class PlayerData
         persona = player.Personality;
         imageIndex = player.ImageCharacterPortrait;
         jNum = player.J_Number;
+        zone = player.Zone;
         c_gamesPlayed = player.CareerGamesPlayed;
         c_pointsMade = player.CareerPoints;
         c_steals = player.CareerSteals;

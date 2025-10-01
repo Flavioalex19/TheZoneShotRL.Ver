@@ -150,6 +150,7 @@ public class SaveSystem : MonoBehaviour
                 newPlayer.Personality = playerData.persona;
                 newPlayer.ImageCharacterPortrait = playerData.imageIndex;
                 newPlayer.J_Number = playerData.jNum;
+                newPlayer.Zone = playerData.zone;
                 newPlayer.CareerGamesPlayed = playerData.c_gamesPlayed;
                 newPlayer.CareerPoints = playerData.c_pointsMade;
                 newPlayer.CareerSteals = playerData.c_steals;

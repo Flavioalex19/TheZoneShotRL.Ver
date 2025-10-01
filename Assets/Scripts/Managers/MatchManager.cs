@@ -565,6 +565,7 @@ public class MatchManager : MonoBehaviour
     }
     IEnumerator Scoring(Player player, bool isAI)
     {
+        /*
         while (true)
         {
             bool willShoot = Random.Range(1, 4) < 3; // Adjust logic as needed create a function base on the inside, mid and out
@@ -578,18 +579,18 @@ public class MatchManager : MonoBehaviour
                 {
                     if (player.CurrentZone == 0)
                     {
-                        player.PointsMatch += 4;
-                        teamWithball.Score += 4;
+                        player.PointsMatch += 6;
+                        teamWithball.Score += 6;
                     }
                     else if (player.CurrentZone == 1)
                     {
-                        player.PointsMatch += 3;
-                        teamWithball.Score += 3;
+                        player.PointsMatch += 5;
+                        teamWithball.Score += 5;
                     }
                     else
                     {
-                        player.PointsMatch += 2;
-                        teamWithball.Score += 2;
+                        player.PointsMatch += 4;
+                        teamWithball.Score += 4;
                     }
                     uiManager.PlaybyPlayText(player.playerLastName + " Has Scored" + " " + player.PointsMatch);
 
@@ -626,6 +627,54 @@ public class MatchManager : MonoBehaviour
             }
         }
         //currentGamePossessons--;
+        */
+        // Jogador escolhe a zona (considerando a preferida)
+        player.CurrentZone = ChooseZone(player);
+
+        uiManager.PlaybyPlayText(player.playerLastName + " takes a shot from zone " + player.CurrentZone);
+        yield return new WaitForSeconds(_actionTimer);
+
+        bool hasScored = Random.Range(0f, 1f) < ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, isAI);
+        //print(hasScored + " is the result of Shooting");
+
+        if (hasScored)
+        {
+            if (player.CurrentZone == 0)
+            {
+                player.PointsMatch += 6;
+                teamWithball.Score += 6;
+            }
+            else if (player.CurrentZone == 1)
+            {
+                player.PointsMatch += 5;
+                teamWithball.Score += 5;
+            }
+            else
+            {
+                player.PointsMatch += 4;
+                teamWithball.Score += 4;
+            }
+            uiManager.PlaybyPlayText(player.playerLastName + " Has Scored " + " " + player.PointsMatch);
+        }
+        else
+        {
+            uiManager.PlaybyPlayText(player.playerLastName + " Missed");
+        }
+
+        playerWithTheBall.HasTheBall = false;
+        yield return new WaitForSeconds(_actionTimer);
+        player.CurrentZone = 0;
+        SwitchPossession();
+        yield return new WaitForSeconds(_actionTimer);
+    }
+    int ChooseZone(Player player)
+    {
+        // 60% de chance do jogador ir para a zona preferida
+        if (Random.Range(0f, 1f) < 0.6f)
+            return player.Zone;
+
+        // Caso contrário, escolhe aleatoriamente entre 0 e 2
+        return 0;
     }
     IEnumerator StunPlayer()
     {
