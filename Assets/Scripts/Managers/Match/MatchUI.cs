@@ -56,12 +56,18 @@ public class MatchUI : MonoBehaviour
     [Header("Special Skill Area")]
     [SerializeField] Transform SpArea;
 
+    [Header("Percentages Area")]
+    public GameObject percentagePanel;
+    [SerializeField] TextMeshProUGUI text_shootPercentage;
+
     [Header("Post game")]
     public GameObject EndScreenStatsPanel;
     [SerializeField] Transform teamANames;
     [SerializeField] Transform teamBNames;
     [SerializeField] Transform teamAScore;
     [SerializeField] Transform teamBScore;
+    [SerializeField] Transform teamASteals;
+    [SerializeField] Transform teamBSteals;
     public Button btn_ReturnToTeamManagement;
     [SerializeField] Transform GamesResults;
     [SerializeField] TextMeshProUGUI text_Victory_Defeat;
@@ -236,12 +242,14 @@ public class MatchUI : MonoBehaviour
             teamANames.GetChild(i).GetComponent<TextMeshProUGUI>().text = A.playersListRoster[i].playerFirstName.ToString() + " " +
                 A.playersListRoster[i].playerLastName.ToString();
             teamAScore.GetChild(i).GetComponent<TextMeshProUGUI>().text = A.playersListRoster[i].PointsMatch.ToString();
+            teamASteals.GetChild(i).GetComponent<TextMeshProUGUI>().text = A.playersListRoster[i].StealsMatch.ToString();
         }
         for (int i = 0; i < teamBNames.childCount; i++)
         {
             teamBNames.GetChild(i).GetComponent<TextMeshProUGUI>().text = B.playersListRoster[i].playerFirstName.ToString() + " " +
                 B.playersListRoster[i].playerLastName.ToString();
             teamBScore.GetChild(i).GetComponent<TextMeshProUGUI>().text = B.playersListRoster[i].PointsMatch.ToString();
+            teamBSteals.GetChild(i).GetComponent<TextMeshProUGUI>().text = B.playersListRoster[i].StealsMatch.ToString();
         }
     }
     public void WeekResults(int index, Team A, Team B)
@@ -298,5 +306,10 @@ public class MatchUI : MonoBehaviour
             if (i < _matchManager._sp_numberOfSPActions) SpArea.GetChild(i).GetChild(0).gameObject.SetActive(true);
             else SpArea.GetChild(i).GetChild(0).gameObject.SetActive(false);
         }
+    }
+    //Update Percentages
+    public void SetScoringPercentage(string perc)
+    {
+        text_shootPercentage.text = perc;
     }
 }

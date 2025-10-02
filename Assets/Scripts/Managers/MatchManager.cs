@@ -311,6 +311,7 @@ public class MatchManager : MonoBehaviour
             
             while (true)
             {
+                _matchUI.percentagePanel.SetActive(false);
                 CanChooseAction = false;
                 if (currentGamePossessons <= 1)
                 {
@@ -383,7 +384,7 @@ public class MatchManager : MonoBehaviour
             }   
             while (true)
             {
-
+                _matchUI.percentagePanel.SetActive(true);
                 //CanChooseAction = true;
                 if (currentGamePossessons <= 1)
                 {
@@ -392,7 +393,8 @@ public class MatchManager : MonoBehaviour
                     yield return Scoring(playerWithTheBall, false);
                     yield break;
                 }
-                print(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false) + " Is the cahnce of success");
+                //print(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false) + " Is the cahnce of success");
+                _matchUI.SetScoringPercentage(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false).ToString());
                 uiManager.PlaybyPlayText("Wait for Player Action");
                 // Wait until player makes a choice
                 yield return new WaitUntil(() => _ChoosePass || _ChooseScoring || _ChooseToSpecialAtt);

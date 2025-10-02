@@ -74,6 +74,8 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] List<string> list_VoxEdgeNewsResults = new List<string>();
     [SerializeField] List<string> list_VoxelEdgePlayersNews = new List<string>();
     [SerializeField] TextMeshProUGUI text_newsInfo;
+    [SerializeField] List<Sprite> sprites_newsSprites = new List<Sprite>();
+    [SerializeField] Animator _animator_newsTransition;
 
     [Header("LeagueHistory")]
     [SerializeField] GameObject leagueHistoryPanel;
@@ -134,14 +136,7 @@ public class TeamManagerUI : MonoBehaviour
 
 ;
 
-        if(leagueManager.Week > 1)
-        {
-            if(leagueManager.canStartANewWeek == false)
-            {
-                tutorialPanel.SetActive(false);
-            }
-            
-        }
+        
         musicManager.RestoreMutedAudioSources();
         
         //EquipmentUI
@@ -217,7 +212,10 @@ public class TeamManagerUI : MonoBehaviour
             //_freeAgents_panel.SetActive(false);
             print("Pass");
         }
-
+        if(leagueManager.canGenerateEvents == false|| leagueManager.Week>1)
+        {
+            tutorialPanel.SetActive(false);
+        }
     }
 
     // Update is called once per frame
