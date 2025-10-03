@@ -140,6 +140,8 @@ public class MatchManager : MonoBehaviour
         {
             btn_spAttck.interactable = false;
         }
+        if(playerWithTheBall!=null)
+        print(playerWithTheBall.CurrentStamina + " Mine stamina");
     }
     // Update is called once per frame
     void FixedUpdate()
@@ -394,7 +396,7 @@ public class MatchManager : MonoBehaviour
                     yield break;
                 }
                 //print(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false) + " Is the cahnce of success");
-                _matchUI.SetScoringPercentage(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false).ToString());
+                _matchUI.SetScoringPercentage(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false).ToString() + "%");
                 uiManager.PlaybyPlayText("Wait for Player Action");
                 // Wait until player makes a choice
                 yield return new WaitUntil(() => _ChoosePass || _ChooseScoring || _ChooseToSpecialAtt);
@@ -1059,7 +1061,7 @@ public class MatchManager : MonoBehaviour
     //Stamina managers
     void ControlStamina(Team team)
     {
-        int staminaLoss = 5;
+        int staminaLoss = 15;
         for (int i = 0; i < 4; i++)
         {
             if (team.playersListRoster[i].HasTheBall)
@@ -1070,7 +1072,9 @@ public class MatchManager : MonoBehaviour
             {
                 team.playersListRoster[i].CurrentStamina -= staminaLoss;
             }
+            //print(team.playersListRoster[i].playerLastName + " " + team.playersListRoster[i].CurrentStamina);
         }
+        //_matchUI.UpdatePlayersActive();
     }
     void StaminaLossByDefender(Player player)
     {

@@ -3884,14 +3884,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.57254905}
+  m_Color: {r: 0.8113208, g: 0.8074938, b: 0.8074938, a: 0.57254905}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: da5eb2b2aefc6b945b41336e7e9d5124, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6b7710bf61db2df46bb7fa804e3b658a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6912,7 +6912,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 152}
+  m_AnchoredPosition: {x: 0, y: 157.5}
   m_SizeDelta: {x: 700, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &167542206
@@ -29798,8 +29798,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Padding: {x: 0, y: 0, z: 0, w: 0}
-  m_Softness: {x: 0, y: 0}
+  m_Padding: {x: 0, y: 1, z: 0, w: 0}
+  m_Softness: {x: 20, y: 15}
 --- !u!1 &835998036
 GameObject:
   m_ObjectHideFlags: 0
@@ -45165,8 +45165,12 @@ MonoBehaviour:
   - received the award of best player of the week! With
   - is the frontrunner for MVP so far! Scored
   text_newsInfo: {fileID: 99689612}
-  sprites_newsSprites: []
-  _animator_newsTransition: {fileID: 0}
+  sprites_newsSprites:
+  - {fileID: 21300000, guid: 6bd696f247e0f644ea9cf9c7d2b98617, type: 3}
+  - {fileID: 21300000, guid: 7a04aacba3419d84e8fcd0e4eada2172, type: 3}
+  - {fileID: 21300000, guid: 000256d1588132444a3a407e0530f02a, type: 3}
+  - {fileID: 21300000, guid: 0198f81695a8cff48be30c782169e229, type: 3}
+  _animator_newsTransition: {fileID: 1691297952}
   leagueHistoryPanel: {fileID: 0}
   recordsArea: {fileID: 0}
   awardsUpdatesArea: {fileID: 0}
@@ -47139,7 +47143,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 271b031d99705d94692e1e272a7c5e6b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9e0001debc6ed9e4f8917d92b8831e2a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -58479,6 +58483,8 @@ GameObject:
   - component: {fileID: 1691297950}
   - component: {fileID: 1691297949}
   - component: {fileID: 1691297951}
+  - component: {fileID: 1691297952}
+  - component: {fileID: 1691297953}
   m_Layer: 5
   m_Name: NewsArea
   m_TagString: Untagged
@@ -58561,6 +58567,41 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding: {x: 0, y: 0, z: 0, w: 0}
   m_Softness: {x: 20, y: 20}
+--- !u!95 &1691297952
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1691297947}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7ccee4ac4cbebcd4d9c7a7e6a251d4c9, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1691297953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1691297947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b08f9614017d8ec47a16ba921dc138fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  teamManager: {fileID: 1320771355}
+  image_news: {fileID: 1375200753}
 --- !u!1 &1693507034
 GameObject:
   m_ObjectHideFlags: 0
@@ -64658,8 +64699,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.0968, y: 0}
-  m_SizeDelta: {x: 780.4161, y: 150}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 780.4161, y: 145}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1870179457
 MonoBehaviour:
@@ -64674,7 +64715,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.9019608}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

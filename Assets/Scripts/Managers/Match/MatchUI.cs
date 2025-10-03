@@ -204,6 +204,7 @@ public class MatchUI : MonoBehaviour
             {
                 _activeHomePlayers.GetChild(i).GetChild(3).gameObject.SetActive(false);
             }
+            _activeHomePlayers.GetChild(i).GetChild(4).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].CurrentStamina.ToString();
         }
         for (int i = 0; i < 4; i++)
         {
@@ -219,6 +220,7 @@ public class MatchUI : MonoBehaviour
             {
                 _activeAwayPlayers.GetChild(i).GetChild(3).gameObject.SetActive(false);
             }
+            _activeAwayPlayers.GetChild(i).GetChild(4).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].CurrentStamina.ToString();
 
         }
         for (int i = 0; i < 4; i++)
@@ -226,7 +228,7 @@ public class MatchUI : MonoBehaviour
             _benchPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i+4].J_Number.ToString();
             _benchPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i + 4].PointsMatch.ToString();
         }
-
+        
     }
     void UpdateScore()
     {

@@ -74,7 +74,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] List<string> list_VoxEdgeNewsResults = new List<string>();
     [SerializeField] List<string> list_VoxelEdgePlayersNews = new List<string>();
     [SerializeField] TextMeshProUGUI text_newsInfo;
-    [SerializeField] List<Sprite> sprites_newsSprites = new List<Sprite>();
+    [SerializeField]public List<Sprite> sprites_newsSprites = new List<Sprite>();
     [SerializeField] Animator _animator_newsTransition;
 
     [Header("LeagueHistory")]
@@ -216,6 +216,7 @@ public class TeamManagerUI : MonoBehaviour
         {
             tutorialPanel.SetActive(false);
         }
+        StartCoroutine(NewsLoop(10f));
     }
 
     // Update is called once per frame
@@ -265,6 +266,22 @@ public class TeamManagerUI : MonoBehaviour
         string newsLine = List_VoxEdgeNewsLines[UnityEngine.Random.Range(0, List_VoxEdgeNewsLines.Count)];
         text_newsInfo.text = newsLine;
     }
+    public void PlayNewsTransition()
+    {
+        _animator_newsTransition.SetTrigger("On");
+    }
+    IEnumerator NewsLoop(float delay)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(delay);
+            PlayNewsTransition();
+            NewsUpdate();
+        }
+    }
+    /// <summary>
+    /// 
+    /// </summary>
     void SetTeamIcon()
     {
         Sprite sprite;
