@@ -104,8 +104,8 @@ public class Player : MonoBehaviour
         // Randomly select a name from the array
         playerFirstName = names[Random.Range(0, names.Length)];
         playerLastName = secondNames[Random.Range(0,secondNames.Length)];
-        Age = Random.Range(20, 30);
-        ImageCharacterPortrait = Random.Range(0, 7);
+        Age = Random.Range(20, 34);
+        //ImageCharacterPortrait = Random.Range(0, 7);
         ImageCharacterPortrait = Random.Range(0, 7);
         GenerateContract();
         //Debug.Log($"Generated Player: {firstName}, OVR: {ovr}");

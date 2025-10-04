@@ -10,7 +10,11 @@ public class MatchUI : MonoBehaviour
 {
     GameManager gameManager;
     MatchManager _matchManager;
+    LeagueManager leagueManager;
     Transform _debugText;
+    [Header("Tutorial")]
+    [SerializeField] GameObject panel_tutorialScreen;
+
     [Header("Starters")]
     [SerializeField] Transform HomeTeamActive_Starters;
     [SerializeField] Transform AwayTeamActive_Starters;
@@ -59,7 +63,8 @@ public class MatchUI : MonoBehaviour
     [Header("Percentages Area")]
     public GameObject percentagePanel;
     [SerializeField] TextMeshProUGUI text_shootPercentage;
-
+    [SerializeField] TextMeshProUGUI text_passPercentage;
+ 
     [Header("Post game")]
     public GameObject EndScreenStatsPanel;
     [SerializeField] Transform teamANames;
@@ -78,12 +83,21 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Animator _homeTeamAnimator;
     [SerializeField] Animator _awayTeamAnimator;
     [SerializeField] Animator _upgradePanel;
+    private void Awake()
+    {
+        leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
+        if (leagueManager.CanStartTutorial == false) panel_tutorialScreen.SetActive(false);
+        leagueManager.CanStartTutorial = false;
+    }
     // Start is called before the first frame update
     void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         _matchManager = GameObject.Find("MatchManager").GetComponent<MatchManager>();
         _substitutions = GameObject.Find("Subistitution").GetComponent<Substitutions>();
+        
+
+        
 
         btn_ReturnToTeamManagement = GameObject.Find("Advance to Team Management Screen Button").GetComponent<Button>();
         btn_ReturnToTeamManagement.onClick.AddListener(() => gameManager.ReturnToTeamManegement());
@@ -313,5 +327,9 @@ public class MatchUI : MonoBehaviour
     public void SetScoringPercentage(string perc)
     {
         text_shootPercentage.text = perc;
+    }
+    public void SetPassPercentage(string perc)
+    {
+        text_passPercentage.text = perc;
     }
 }

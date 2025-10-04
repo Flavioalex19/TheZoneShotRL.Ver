@@ -367,7 +367,7 @@ public class MatchManager : MonoBehaviour
                     {
                         playerDefending.StealsMatch++;
                         print(playerDefending.playerLastName + "Has " + playerDefending.StealsMatch + " Steals");
-                        StaminaLossByDefender(playerWithTheBall);
+                        //StaminaLossByDefender(playerWithTheBall);
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos() + " Loses the ball to " + playerDefending.playerLastName);
                         playerWithTheBall.HasTheBall = false;
                         yield return new WaitForSeconds(_actionTimer);
@@ -397,6 +397,7 @@ public class MatchManager : MonoBehaviour
                 }
                 //print(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false) + " Is the cahnce of success");
                 _matchUI.SetScoringPercentage(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false).ToString() + "%");
+                _matchUI.SetPassPercentage(GetPassingChance(false).ToString() + " %");
                 uiManager.PlaybyPlayText("Wait for Player Action");
                 // Wait until player makes a choice
                 yield return new WaitUntil(() => _ChoosePass || _ChooseScoring || _ChooseToSpecialAtt);
@@ -421,7 +422,7 @@ public class MatchManager : MonoBehaviour
                     else
                     {
                         playerDefending.StealsMatch++;
-                        StaminaLossByDefender(playerWithTheBall);
+                        //StaminaLossByDefender(playerWithTheBall);
                         print("Fail to pass by defender");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName +" " + _matchUI.LosesPos()  + " Loses the ball to " + playerDefending.playerLastName);
                         yield return new WaitForSeconds(_actionTimer);
@@ -686,7 +687,8 @@ public class MatchManager : MonoBehaviour
     }
     void SwitchPossession()
     {
-        ControlStamina(teamWithball);
+        ControlStamina(HomeTeam);
+        ControlStamina(AwayTeam);
         // Toggle team
         if (teamWithball == HomeTeam)
         {
@@ -1013,6 +1015,7 @@ public class MatchManager : MonoBehaviour
         specialAttkSuccess = Mathf.Clamp(specialAttkSuccess - riskPenalty, 0.05f, 0.95f);
         return specialAttkSuccess;
     }
+    //Percentages
     public float GetScoringChance(Player offense, Player defense, int zone, bool isAI = false)
     {
         float baseAccuracy = 0.7f; // default mid
@@ -1058,21 +1061,63 @@ public class MatchManager : MonoBehaviour
 
         return Mathf.Clamp01(baseAccuracy) * 100f; // retorna em %
     }
+    public float GetPassingChance(bool isAI = false)
+    {
+        float offenseScore = (playerWithTheBall.Awareness + playerWithTheBall.Consistency) / 2f;
+        float defenseScore = (playerDefending.Stealing + playerDefending.Guarding) / 2f;
+
+        // --- NOVO ---
+        if (teamWithball.hasHDefense)
+            defenseScore *= 1.1f; // +10% eficácia
+
+        float offenseNormalized = Mathf.Clamp((offenseScore - 30f) / (99f - 30f), 0f, 1f);
+        float defenseNormalized = Mathf.Clamp((defenseScore - 30f) / (99f - 30f), 0f, 1f);
+
+        float passSuccessChance = offenseNormalized / (offenseNormalized + defenseNormalized);
+
+        //return passSuccessChance;
+        // Apply AI coefficient only if AI
+        //return isAI ? passSuccessChance * ai_difficulty : passSuccessChance;
+        return Mathf.Clamp01(passSuccessChance) * 100;
+    }
     //Stamina managers
     void ControlStamina(Team team)
     {
-        int staminaLoss = 15;
+        int staminaLoss;
+        if (team.hasHDefense == true && team != teamWithball)
+        {
+            staminaLoss = 20;
+        }
+        else
+        {
+            staminaLoss = 15;
+        }
+        
         for (int i = 0; i < 4; i++)
         {
+            if (team.playersListRoster[i].Age < 25)
+            {
+                team.playersListRoster[i].CurrentStamina -= staminaLoss;
+            }
+            else if(team.playersListRoster[i].Age >= 25 && team.playersListRoster[i].Age < 30)
+            {
+                team.playersListRoster[i].CurrentStamina -= (staminaLoss + 5);
+            }
+            else
+            {
+                team.playersListRoster[i].CurrentStamina -= (staminaLoss + 10);
+            }
+            /*
             if (team.playersListRoster[i].HasTheBall)
             {
-                team.playersListRoster[i].CurrentStamina -= staminaLoss*2;
+                team.playersListRoster[i].CurrentStamina -= (staminaLoss +5);
             }
             else
             {
                 team.playersListRoster[i].CurrentStamina -= staminaLoss;
             }
-            //print(team.playersListRoster[i].playerLastName + " " + team.playersListRoster[i].CurrentStamina);
+            */
+                //print(team.playersListRoster[i].playerLastName + " " + team.playersListRoster[i].CurrentStamina);
         }
         //_matchUI.UpdatePlayersActive();
     }

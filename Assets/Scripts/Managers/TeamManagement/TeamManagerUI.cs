@@ -11,6 +11,9 @@ public class TeamManagerUI : MonoBehaviour
     LeagueManager leagueManager;
     MusicManager musicManager;
 
+    [Header("Intro")]
+    [SerializeField] TextMeshProUGUI _text_NameTeam;
+
     [Header("Schedule")]
     [SerializeField]GameObject _scheduleArea;
     [SerializeField] Transform _schedulePanelTextsArea;
@@ -111,6 +114,11 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] FreeAgentManager freeAgentManager;
     public bool canProgressWithWeek = false;
 
+    [Header("InfoArea")]
+    [SerializeField] GameObject panel_infoButtons;
+    [SerializeField] TextMeshProUGUI text_expiringContractsWarning;
+    [SerializeField] Animator animator_expiringContractBtn;
+
     [Header("UI")]
     [SerializeField]TextMeshProUGUI WeekText;
     [SerializeField] Image image_teamIcon;
@@ -134,7 +142,7 @@ public class TeamManagerUI : MonoBehaviour
         gameover_Btn.onClick.AddListener(() => gameManager.QuitAndClear());//Set Game over button
         //WeekText = GameObject.Find("Week Text").GetComponent<TextMeshProUGUI>();
 
-;
+;       
 
         
         musicManager.RestoreMutedAudioSources();
@@ -212,10 +220,14 @@ public class TeamManagerUI : MonoBehaviour
             //_freeAgents_panel.SetActive(false);
             print("Pass");
         }
-        if(leagueManager.canGenerateEvents == false|| leagueManager.Week>1)
+        //tutorialPanel
+        if(leagueManager.canGenerateEvents == false|| leagueManager.Week>1 || leagueManager.CanStartTutorial == false)
         {
             tutorialPanel.SetActive(false);
         }
+        //warningBtn
+        CallWarning();
+        
         StartCoroutine(NewsLoop(10f));
     }
 
@@ -655,6 +667,45 @@ public class TeamManagerUI : MonoBehaviour
     public void ValidateProgressWeek()
     {
         canProgressWithWeek = true;
+    }
+
+    //INfoButtons
+    public void CallWarning()
+    {
+        bool hasAExpiringContract = false;
+        for (int i = 0; i < gameManager.playerTeam.playersListRoster.Count; i++)
+        {
+            if (gameManager.playerTeam.playersListRoster[i].ContractYears == 1)
+            {
+                hasAExpiringContract = true;
+            }
+        }
+        if(hasAExpiringContract == true)
+        {
+            animator_expiringContractBtn.SetTrigger("On");
+        }
+    }
+    public void CheckFreeAgentsForWarning()
+    {
+        animator_expiringContractBtn.SetTrigger("Off");
+        string expiringContractPlayers = "";
+        bool hasExpiringContract = false;
+        for (int i = 0; i < gameManager.playerTeam.playersListRoster.Count; i++)
+        {
+            if (gameManager.playerTeam.playersListRoster[i].ContractYears == 1)
+            {
+                expiringContractPlayers += gameManager.playerTeam.playersListRoster[i].playerFirstName + " " + gameManager.playerTeam.playersListRoster[i].playerLastName + " ";
+                hasExpiringContract = true;
+            }
+        }
+        if (hasExpiringContract)
+        {
+            text_expiringContractsWarning.text = expiringContractPlayers;
+        }
+        else
+        {
+            text_expiringContractsWarning.text = "No expiring contracts";
+        }
     }
 
     //LeagueHistory
