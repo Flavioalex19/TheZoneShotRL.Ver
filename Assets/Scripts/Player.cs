@@ -106,7 +106,7 @@ public class Player : MonoBehaviour
         playerLastName = secondNames[Random.Range(0,secondNames.Length)];
         Age = Random.Range(20, 34);
         //ImageCharacterPortrait = Random.Range(0, 7);
-        ImageCharacterPortrait = Random.Range(0, 7);
+        ImageCharacterPortrait = Random.Range(0, 17);
         GenerateContract();
         //Debug.Log($"Generated Player: {firstName}, OVR: {ovr}");
     }

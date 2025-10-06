@@ -270,7 +270,7 @@ public class MatchUI : MonoBehaviour
     }
     public void WeekResults(int index, Team A, Team B)
     {
-        GamesResults.GetChild(index).GetComponent<TextMeshProUGUI>().text = A.TeamName + " " + A.Score.ToString() + " " + B.TeamName + " " + B.Score.ToString();
+        GamesResults.GetChild(index).GetComponent<TextMeshProUGUI>().text = A.TeamName + " " + A.Score.ToString() + " "+ " X " + B.Score.ToString() + " " + B.TeamName;
     }
     //Animatons calls
     public void MatchStartAnim()

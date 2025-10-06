@@ -271,6 +271,8 @@ public class MatchManager : MonoBehaviour
     }
     void ChoosePlayerToCarryBall()
     {
+        if(playerWithTheBall!=null) playerWithTheBall.HasTheBall = false;
+
         playerWithTheBall = null;
         int highestAwareness = int.MinValue;
 
@@ -689,6 +691,7 @@ public class MatchManager : MonoBehaviour
     {
         ControlStamina(HomeTeam);
         ControlStamina(AwayTeam);
+        playerWithTheBall = null;
         // Toggle team
         if (teamWithball == HomeTeam)
         {
@@ -1078,7 +1081,7 @@ public class MatchManager : MonoBehaviour
         //return passSuccessChance;
         // Apply AI coefficient only if AI
         //return isAI ? passSuccessChance * ai_difficulty : passSuccessChance;
-        return Mathf.Clamp01(passSuccessChance) * 100;
+        return Mathf.Round(Mathf.Clamp01(passSuccessChance) * 100);
     }
     //Stamina managers
     void ControlStamina(Team team)
@@ -1086,11 +1089,11 @@ public class MatchManager : MonoBehaviour
         int staminaLoss;
         if (team.hasHDefense == true && team != teamWithball)
         {
-            staminaLoss = 20;
+            staminaLoss = 10;
         }
         else
         {
-            staminaLoss = 15;
+            staminaLoss = 5;
         }
         
         for (int i = 0; i < 4; i++)
