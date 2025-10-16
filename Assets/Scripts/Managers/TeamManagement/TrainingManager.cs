@@ -36,16 +36,17 @@ public class TrainingManager : MonoBehaviour
     }
 
     
-    public void SetPlayerToTrainIndex(int index, TextMeshProUGUI playerChoosed, TextMeshProUGUI drillChoosed)
+    public void SetPlayerToTrainIndex(int index)
     {
         playerIndex = index;
-        playerChoosed.text = gameManager.playerTeam.playersListRoster[index].playerFirstName.ToString();
-        SetTraining(index, drillChoosed);
+        teamManagerUI._textPlayerSelected.text = gameManager.playerTeam.playersListRoster[index].playerFirstName.ToString() + " " + 
+            gameManager.playerTeam.playersListRoster[index].playerLastName.ToString();
+        //SetTraining(index, drillChoosed);
     }
 
-    void SetTraining(int playerIndex,TextMeshProUGUI drillChoosedText)
+    public void SetTraining(/*int playerIndex,TextMeshProUGUI drillChoosedText*/)
     {
-        
+        teamManagerUI._trainingResultPanel.SetActive(true);
 
         if (leagueManager.canTrain == true)
         {
@@ -83,7 +84,7 @@ public class TrainingManager : MonoBehaviour
                 case TrainingAttribute.Guarding: player.Guarding = Mathf.Min(player.Guarding + boost, 99); break;
             }
 
-            drillChoosedText.text = $"{player.playerFirstName} {player.playerLastName} - {label} +{boost} to {selectedTrainingAttribute}. Training session for this week is completed.";
+            teamManagerUI._textDrillSelected.text = $"{player.playerFirstName} {player.playerLastName} - {label} +{boost} to {selectedTrainingAttribute}. Training session for this week is completed.";
             teamManagerUI.UpdateAssistancePortrait();
             leagueManager.canTrain = false;
             player.UpdateOVR();
@@ -94,7 +95,7 @@ public class TrainingManager : MonoBehaviour
         }
         else
         {
-            drillChoosedText.text = "Training session for this week is completed";
+            teamManagerUI._textDrillSelected.text = "Training session for this week is completed";
         }
     }
     public void CheckIfTrainingIsCompleted()

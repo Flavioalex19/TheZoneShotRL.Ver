@@ -132,18 +132,18 @@ public class LeagueManager : MonoBehaviour
     {
         eventOptions.Add(new EventOption 
         { 
-            Index = 0, Description = "We have a sponsor to improve our helmets or gloves. Which one should we choose for our team?",
-            Choice1 = "Helmet, so we can be more aggressive in attack",
-            Choice2 = "Gloves, to improve our accuracy in attack",
+            Index = 0, Description = "Helix Dynamics, wants us to pick a focus for their next campaign.",
+            Choice1 = "Highlight our community engagement and teamwork." + " Strategy Level Up",
+            Choice2 = "Promote our dominance and winning mentality. " + "Gloves Level Up",
             Modifier = 1,
             eventType = EventType.Sponsor 
         });
         eventOptions.Add(new EventOption
         {
             Index = 1,
-            Description = "A new sponsor has come forward with proposals to improve our Pads or Shoes. Which should we choose?",
-            Choice1 = "Pads",
-            Choice2 = "Shoes",
+            Description = "NovaCore Industries is offering to upgrade our equipment. Which should we choose?",
+            Choice1 = "Advanced Visors for better vision and awareness." + " Helmet Level Up",
+            Choice2 = "Power Boots to improve speed and agility." + " Boots Level Up",
             Modifier = 1,
             eventType = EventType.Sponsor
         });
@@ -151,9 +151,9 @@ public class LeagueManager : MonoBehaviour
         {
             Index = 2,
             Modifier = 15,
-            Description = "Reporter: How do you project the rest of the season for your team?",
-            Choice1 = "The season has its ups and downs, but we think about doing our best for whatever comes." + "  Moral +15",
-            Choice2 = "We want to show everyone who we are, and to go mercilessly against our opponents." + " Fan Support +15",
+            Description = "Vox Media wants to interview your team captain about the recent victory. How should he respond?",
+            Choice1 = "Be humble and praise the team effort." + "  Moral +15",
+            Choice2 = "Show confidence and claim the team is unstoppable." + " Fan Support +15",
             eventType = EventType.Interview
 
 
@@ -162,9 +162,9 @@ public class LeagueManager : MonoBehaviour
         {
 
             Index = 3,
-            Description = "An unknown figure shows up at the training facility.I’ve seen how you run this team,they say, voice low. Want to hear something that'll give you the edge?",
-            Choice1 = "I’ll listen. What’s the catch?" + " Front Office +10",
-            Choice2= "No thanks. I run this clean." + " Moral +10",
+            Description = "Some players feel the team’s strategy is too old-fashioned. How should you address the group?",
+            Choice1 = "Stick to the current plan and emphasize discipline." + " Front Office +10",
+            Choice2= "Open the floor to new ideas and experiments." + " Moral +10",
             Modifier = 10,
             eventType = EventType.TeamMeeting
         
@@ -173,9 +173,9 @@ public class LeagueManager : MonoBehaviour
         {
 
             Index = 4,
-            Description = "New Email: You receive a strange email late at night.It seems that the email shows certain aspects of the opposing teams. Not only the players but their Front Offices.",
-            Choice1 = "Read the message and study it" + " Front Office +10",
-            Choice2 = "Ignore" + " Moral +10",
+            Description = "A young fan sent an email asking for advice on becoming a pro. How should you reply?",
+            Choice1 = "Encourage him and share some training tips." + " Fan Support +10",
+            Choice2 = "Politely redirect them to the team’s youth program." + " Front Office +10",
             Modifier = 10,
             eventType = EventType.ReplyToEmails
 
@@ -223,7 +223,7 @@ public class LeagueManager : MonoBehaviour
         int secondIndex;
         
         event1 = filteredEvents[Random.Range(0, filteredEvents.Count)];
-        print(event1.Index + " This is the index of the event chosen");
+        //print(event1.Index + " This is the index of the event chosen");
         //CREATE THE BUTTONS
         Transform EventsButtonsTransform = GameObject.Find("ButtonsEvent").transform;
         //TextMeshProUGUI eventTypeText = GameObject.Find("EventTypeText").GetComponent<TextMeshProUGUI>();
@@ -262,28 +262,26 @@ public class LeagueManager : MonoBehaviour
         switch (eventOption.Index)
         {
             case 0:
-                print(eventOption.Index + " " + eventOption.Description);
+                //print(eventOption.Index + " " + eventOption.Description);
                 if(indexOfChoice == 0)
                 {
-                    print("YES");
-                    gameManager.playerTeam._equipmentList[0].Level++;
+                    //print("YES");
+                    gameManager.playerTeam._equipmentList[4].Level++;
                 }
                 else
                 {
-                    print("YES");
-                    gameManager.playerTeam._equipmentList[1].Level++;
+                    //print("YES");
+                    gameManager.playerTeam._equipmentList[2].Level++;
                 }
                 break;
             case 1:
                 print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    print("YES");
-                    gameManager.playerTeam._equipmentList[2].Level++;
+                    gameManager.playerTeam._equipmentList[0].Level++;
                 }
                 else
                 {
-                    print("YES");
                     gameManager.playerTeam._equipmentList[3].Level++;
                 }
                 break; 
@@ -291,12 +289,10 @@ public class LeagueManager : MonoBehaviour
                 print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    print("YES");
                     gameManager.playerTeam.Moral+= eventOption.Modifier;
                 }
                 else
                 {
-                    print("YES");
                     gameManager.playerTeam.FansSupportPoints += eventOption.Modifier;
                 }
                 break;
@@ -304,38 +300,32 @@ public class LeagueManager : MonoBehaviour
                 print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    print("YES");
                     gameManager.playerTeam.FrontOfficePoints += eventOption.Modifier;
                 }
                 else
                 {
-                    print("YES");
                     gameManager.playerTeam.Moral += eventOption.Modifier;
                 }
                 break;
             case 4:
-                print(eventOption.Index + " " + eventOption.Description);
+                //print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    print("YES");
-                    gameManager.playerTeam.FrontOfficePoints += eventOption.Modifier;
+                    gameManager.playerTeam.FansSupportPoints += eventOption.Modifier;
                 }
                 else
                 {
-                    print("YES");
-                    gameManager.playerTeam.Moral += eventOption.Modifier;
+                    gameManager.playerTeam.FrontOfficePoints += eventOption.Modifier;
                 }
                 break;
             case 5:
                 print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    print("YES");
                     gameManager.playerTeam.FrontOfficePoints += eventOption.Modifier;
                 }
                 else
                 {
-                    print("YES");
                     gameManager.playerTeam.Moral += eventOption.Modifier;
                 }
                 break;
@@ -343,12 +333,10 @@ public class LeagueManager : MonoBehaviour
                 print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    print("YES");
                     gameManager.playerTeam.FansSupportPoints += eventOption.Modifier;
                 }
                 else
                 {
-                    print("YES");
                     gameManager.playerTeam.FrontOfficePoints += eventOption.Modifier;
                 }
                 break;

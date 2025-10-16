@@ -57,6 +57,7 @@ public class MatchManager : MonoBehaviour
     [SerializeField] public bool _ChooseToSpecialAtt;
     [SerializeField] Button btn_spAttck;
     public bool CanChooseAction = true;
+    public bool CanChooseDefenseAction = true;
     public int _sp_numberOfSPActions;
     #endregion
     //Ai variables
@@ -311,6 +312,7 @@ public class MatchManager : MonoBehaviour
         if(/*teamWithball == AwayTeam*/ teamWithball.IsPlayerTeam == false)
         {
             CanChooseAction = false;
+            CanChooseDefenseAction = true;
             ai_currentNumberOfPasses = ai_maxNumberOfPasses;
             
             while (true)
@@ -324,6 +326,8 @@ public class MatchManager : MonoBehaviour
                     yield return Scoring(playerWithTheBall,true);
                     yield break;
                 }
+                //Defense wait for choice
+
 
                 bool shouldPass = Random.Range(1, 4) < 3;//Change Later
 
@@ -382,6 +386,7 @@ public class MatchManager : MonoBehaviour
         }
         else if (/*teamWithball == HomeTeam*/ teamWithball.IsPlayerTeam)
         {
+            CanChooseDefenseAction = false;
             if (currentGamePossessons > 1)
             {
                 ResetChoices();
@@ -542,6 +547,11 @@ public class MatchManager : MonoBehaviour
     {
         _ChooseToSpecialAtt = true;
         CanChooseAction = false;
+    }
+    //Defense
+    public void ChooseTackle()
+    {
+
     }
     bool TryPassBall()
     {

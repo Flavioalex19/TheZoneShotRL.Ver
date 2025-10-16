@@ -74,6 +74,7 @@ public class Player : MonoBehaviour
     public bool IsStun = false;
     public int MaxStamina = 100;
     public int CurrentStamina;
+    public bool isInjury = false;
     #endregion
     private void Start()
     {

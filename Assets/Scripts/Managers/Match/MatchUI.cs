@@ -35,6 +35,7 @@ public class MatchUI : MonoBehaviour
 
     [Header("Action Button Area")]
     [SerializeField] GameObject _actionArea;
+    [SerializeField] GameObject _actionDefense;
 
     
     Substitutions _substitutions;
@@ -122,6 +123,14 @@ public class MatchUI : MonoBehaviour
         else
         {
             _actionArea.SetActive(false);
+        }
+        if (_matchManager.CanChooseDefenseAction)
+        {
+            //_actionDefense.SetActive(true);
+        }
+        else
+        {
+            //_actionDefense.SetActive(false);
         }
         //Debug Area
         if (GameObject.Find("DebugTextHome"))

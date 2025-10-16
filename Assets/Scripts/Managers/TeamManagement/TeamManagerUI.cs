@@ -51,15 +51,20 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField]GameObject _tradePanel;
     [SerializeField] Transform _trade_btn_PlayersFronControlledTeam;
     public GameObject TradeReceivePlayerArea;
+    [SerializeField] TextMeshProUGUI text_teamFrontOfficeGrade;
     [Header("Training")]
     //Training
     [SerializeField] TrainingManager trainingManager;
     [SerializeField] GameObject _trainingPanel;
     [SerializeField] Transform _training_btns;
-    [SerializeField] TextMeshProUGUI _textPlayerSelected;
-    [SerializeField] TextMeshProUGUI _textDrillSelected;
+    [SerializeField]public TextMeshProUGUI _textPlayerSelected;
+    [SerializeField]public TextMeshProUGUI _textDrillSelected;
     [SerializeField] Image _training_assistancePortrait;
     [SerializeField] Sprite _training_AssistanceSprite;
+    //public TextMeshProUGUI text_playerToTrain;
+    //public TextMeshProUGUI text_drill;
+    [SerializeField] public GameObject _trainingResultPanel;
+    [SerializeField] TextMeshProUGUI _text_TrainingGrade;
 
     [Header("Standings")]
     [SerializeField] GameObject _standingsPanel;
@@ -170,6 +175,7 @@ public class TeamManagerUI : MonoBehaviour
         _tradePanel.SetActive(false);
         //Training
         SetTrainingBtns();
+        _trainingResultPanel.SetActive(false);
         _trainingPanel.SetActive(false);
         //Schedule
         leagueManager.CreateStandings();
@@ -503,6 +509,29 @@ public class TeamManagerUI : MonoBehaviour
                 gameManager.playerTeam.playersListRoster[i].ovr.ToString();
         }
     }
+    public void SetTradeGrade()
+    {
+        if (gameManager.playerTeam.FrontOfficePoints > 10 && gameManager.playerTeam.FrontOfficePoints < 40)
+        {
+            text_teamFrontOfficeGrade.text = "C";
+            text_teamFrontOfficeGrade.color = Color.red;
+        }
+        else if(gameManager.playerTeam.FrontOfficePoints >= 40 && gameManager.playerTeam.FrontOfficePoints < 60)
+        {
+            text_teamFrontOfficeGrade.text = "B";
+            text_teamFrontOfficeGrade.color = new Color(1f, 0.5f, 0f);
+        }
+        else if(gameManager.playerTeam.FrontOfficePoints>= 60 && gameManager.playerTeam.FrontOfficePoints< 80)
+        {
+            text_teamFrontOfficeGrade.text = "A";
+            text_teamFrontOfficeGrade.color = new Color(0.5f, 1f, 0.5f);
+        }
+        else
+        {
+            text_teamFrontOfficeGrade.text = "S";
+            text_teamFrontOfficeGrade.color = new Color(0f, 0.8f, 0f);
+        }
+    }
     //Training
     public void SetTrainingBtns()
     {
@@ -511,12 +540,35 @@ public class TeamManagerUI : MonoBehaviour
             _training_btns.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].playerFirstName.ToString();
             _training_btns.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].ovr.ToString();
             int index = gameManager.playerTeam.playersListRoster.IndexOf(gameManager.playerTeam.playersListRoster[i]);
-            _training_btns.GetChild(i).GetComponent<Button>().onClick.AddListener(() => trainingManager.SetPlayerToTrainIndex(index, _textPlayerSelected, _textDrillSelected));
+            _training_btns.GetChild(i).GetComponent<Button>().onClick.AddListener(() => trainingManager.SetPlayerToTrainIndex(index/*, _textPlayerSelected, _textDrillSelected*/));
         }
     }
     public void UpdateAssistancePortrait()
     {
         _training_assistancePortrait.sprite = _training_AssistanceSprite;
+    }
+    public void SetTrainingGrade()
+    {
+        if (gameManager.playerTeam.FrontOfficePoints > 10 && gameManager.playerTeam.FrontOfficePoints < 40)
+        {
+            _text_TrainingGrade.text = "C";
+            _text_TrainingGrade.color = Color.red;
+        }
+        else if (gameManager.playerTeam.FrontOfficePoints >= 40 && gameManager.playerTeam.FrontOfficePoints < 60)
+        {
+            _text_TrainingGrade.text = "B";
+            _text_TrainingGrade.color = new Color(1f, 0.5f, 0f);
+        }
+        else if (gameManager.playerTeam.FrontOfficePoints >= 60 && gameManager.playerTeam.FrontOfficePoints < 80)
+        {
+            _text_TrainingGrade.text = "A";
+            _text_TrainingGrade.color = new Color(0.5f, 1f, 0.5f);
+        }
+        else
+        {
+            _text_TrainingGrade.text = "S";
+            _text_TrainingGrade.color = new Color(0f, 0.8f, 0f);
+        }
     }
     //Standings
     void PopulateStandings()
