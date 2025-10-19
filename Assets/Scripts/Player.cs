@@ -74,7 +74,7 @@ public class Player : MonoBehaviour
     public bool IsStun = false;
     public int MaxStamina = 100;
     public int CurrentStamina;
-    public bool isInjury = false;
+    public bool isInjured = false;
     #endregion
     private void Start()
     {
@@ -107,7 +107,7 @@ public class Player : MonoBehaviour
         playerLastName = secondNames[Random.Range(0,secondNames.Length)];
         Age = Random.Range(20, 34);
         //ImageCharacterPortrait = Random.Range(0, 7);
-        ImageCharacterPortrait = Random.Range(0, 17);
+        ImageCharacterPortrait = Random.Range(0, 21);
         GenerateContract();
         //Debug.Log($"Generated Player: {firstName}, OVR: {ovr}");
     }

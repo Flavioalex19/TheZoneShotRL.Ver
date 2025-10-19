@@ -126,11 +126,11 @@ public class MatchUI : MonoBehaviour
         }
         if (_matchManager.CanChooseDefenseAction)
         {
-            //_actionDefense.SetActive(true);
+            _actionDefense.SetActive(true);
         }
         else
         {
-            //_actionDefense.SetActive(false);
+            _actionDefense.SetActive(false);
         }
         //Debug Area
         if (GameObject.Find("DebugTextHome"))
@@ -228,6 +228,7 @@ public class MatchUI : MonoBehaviour
                 _activeHomePlayers.GetChild(i).GetChild(3).gameObject.SetActive(false);
             }
             _activeHomePlayers.GetChild(i).GetChild(4).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].CurrentStamina.ToString();
+            if(_matchManager.HomeTeam.playersListRoster[i].isInjured) _activeHomePlayers.GetChild(i).GetChild(6).gameObject.SetActive(true);
         }
         for (int i = 0; i < 4; i++)
         {

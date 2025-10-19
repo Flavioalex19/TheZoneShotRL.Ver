@@ -10,7 +10,7 @@ public class DraftUiManager : MonoBehaviour
     GameManager _gameManager;
     [SerializeField]Transform _currentOnTheClockTeamArea;
     [SerializeField]Transform _playersFromOnTheClockTeamArea;
-
+    [SerializeField] TextMeshProUGUI text_currentPlayersOnTeam;
     [SerializeField] Transform _playerBtnsAreaContent;
     // Start is called before the first frame update
     void Start()
@@ -30,7 +30,10 @@ public class DraftUiManager : MonoBehaviour
             if (_gameManager.leagueTeams[_gameManager.GetCurrentTeamIndex()].playersListRoster.Count > 0)
             {
                 _playersFromOnTheClockTeamArea.GetChild(i).GetComponent<TextMeshProUGUI>().text = 
-                    _gameManager.leagueTeams[_gameManager.GetCurrentTeamIndex()].playersListRoster[i].playerFirstName.ToString(); 
+                    _gameManager.leagueTeams[_gameManager.GetCurrentTeamIndex()].playersListRoster[i].playerFirstName.ToString() +
+                    " " +
+                    _gameManager.leagueTeams[_gameManager.GetCurrentTeamIndex()].playersListRoster[i].playerLastName.ToString(); 
+                text_currentPlayersOnTeam.text = _gameManager.leagueTeams[_gameManager.GetCurrentTeamIndex()].playersListRoster.Count.ToString();
             }
         }
 

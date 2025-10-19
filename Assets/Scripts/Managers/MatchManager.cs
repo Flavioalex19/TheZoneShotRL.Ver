@@ -58,12 +58,35 @@ public class MatchManager : MonoBehaviour
     [SerializeField] Button btn_spAttck;
     public bool CanChooseAction = true;
     public bool CanChooseDefenseAction = true;
+    public bool chooseDefenseTackle = false;
+    public bool chooseBlock = false;
+    public bool chooseInterception = false;
     public int _sp_numberOfSPActions;
     #endregion
     //Ai variables
     int ai_maxNumberOfPasses = 5;
     int ai_currentNumberOfPasses =0;
     float ai_difficulty = 0.75f;
+
+    //events
+
+    private List<string> eventsList = new List<string>()
+    {
+        "None",
+        "Player Injury",
+        "Cheerleader Event",
+        "Crowd Event",
+        "Mascot Event",
+        "Skill Power Event"
+    };
+    [Header("Events Variables")]
+    [SerializeField] TextMeshProUGUI textEvent;
+    [SerializeField] Image icon_EventIconImage;
+    [SerializeField] Sprite sprite_cheerleadersIcon;
+    [SerializeField] Sprite sprite_Injury;
+    [SerializeField] Sprite sprite_support;
+    [SerializeField] Sprite sprite_mascot;
+    [SerializeField] Sprite sprite_spSkillBuff;
 
     //UI Elemens test
 
@@ -87,6 +110,7 @@ public class MatchManager : MonoBehaviour
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
         _isOnSetupStage = true;
         playerTeamWin = false;
+        CanChooseDefenseAction = false;
         //Reset the teams to play
         for (int i = 0; i < manager.leagueTeams.Count; i++)
         {
@@ -123,11 +147,13 @@ public class MatchManager : MonoBehaviour
         {
             HomeTeam.playersListRoster[i].PointsMatch = 0;
             HomeTeam.playersListRoster[i].StealsMatch = 0;
+            HomeTeam.playersListRoster[i].isInjured = false;
         }
         for (int i = 0; i < AwayTeam.playersListRoster.Count; i++)
         {
             AwayTeam.playersListRoster[i].PointsMatch = 0;
             AwayTeam.playersListRoster[i].StealsMatch= 0;
+            AwayTeam.playersListRoster[i].isInjured= false;
         }
         CanChooseAction = false;
         _matchUI.SetSkillPints();
@@ -185,12 +211,14 @@ public class MatchManager : MonoBehaviour
             HomeTeam.playersListRoster[i].CurrentStamina = 100;
             HomeTeam.playersListRoster[i].PointsMatch = 0;
             HomeTeam.playersListRoster[i].StealsMatch = 0;
+            HomeTeam.playersListRoster[i].isInjured = false;
         }
         for (int i = 0;i < AwayTeam.playersListRoster.Count; i++) 
         {
             AwayTeam.playersListRoster[i].CurrentStamina = 100;
             AwayTeam.playersListRoster[i].PointsMatch = 0;
             AwayTeam.playersListRoster[i].StealsMatch = 0;
+            AwayTeam.playersListRoster[i].isInjured = false;
         }
         _matchUI.MatchStartAnim();
         while (currentGamePossessons > 0)
@@ -312,7 +340,7 @@ public class MatchManager : MonoBehaviour
         if(/*teamWithball == AwayTeam*/ teamWithball.IsPlayerTeam == false)
         {
             CanChooseAction = false;
-            CanChooseDefenseAction = true;
+            
             ai_currentNumberOfPasses = ai_maxNumberOfPasses;
             
             while (true)
@@ -326,8 +354,15 @@ public class MatchManager : MonoBehaviour
                     yield return Scoring(playerWithTheBall,true);
                     yield break;
                 }
-                //Defense wait for choice
-
+                if (HomeTeam.IsPlayerTeam)
+                {
+                    //Defense wait for choice
+                    CanChooseDefenseAction = true;
+                    yield return WaitForDefenseAction();
+                    CanChooseDefenseAction = false;
+                    chooseDefenseTackle = false;
+                }
+                
 
                 bool shouldPass = Random.Range(1, 4) < 3;//Change Later
 
@@ -342,6 +377,7 @@ public class MatchManager : MonoBehaviour
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         SelectDefender();
                         yield return new WaitForSeconds(_actionTimer);
+                        ResetDefensiveOptions();//Defensife oprions for the player
                         continue; // Keep the loop for multiple passes
                     }
                     else
@@ -352,6 +388,7 @@ public class MatchManager : MonoBehaviour
                         //uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         yield return new WaitForSeconds(_actionTimer);
+                        ResetDefensiveOptions();//Defensife oprions for the player
                         yield break;
                     }
                 }
@@ -367,6 +404,7 @@ public class MatchManager : MonoBehaviour
                     {
                         yield return Scoring(playerWithTheBall, true);
                         //ResetChoices();
+                        ResetDefensiveOptions();//Defensife oprions for the player
                         yield break;
                     }
                     else
@@ -377,6 +415,7 @@ public class MatchManager : MonoBehaviour
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos() + " Loses the ball to " + playerDefending.playerLastName);
                         playerWithTheBall.HasTheBall = false;
                         yield return new WaitForSeconds(_actionTimer);
+                        ResetDefensiveOptions();//Defensife oprions for the player
                         SwitchPossession();
                         yield break;
                     }
@@ -394,6 +433,7 @@ public class MatchManager : MonoBehaviour
             while (true)
             {
                 _matchUI.percentagePanel.SetActive(true);
+                MatchEvents();
                 //CanChooseAction = true;
                 if (currentGamePossessons <= 1)
                 {
@@ -549,9 +589,31 @@ public class MatchManager : MonoBehaviour
         CanChooseAction = false;
     }
     //Defense
+    IEnumerator WaitForDefenseAction()
+    {
+        yield return new WaitUntil(() => { return chooseDefenseTackle; });
+    }
     public void ChooseTackle()
     {
-
+        CanChooseDefenseAction = false;
+        chooseDefenseTackle = true;
+    }
+    public void ChooseBlock()
+    {
+        CanChooseDefenseAction = false;
+        chooseBlock = true;
+    }
+    public void ChooseInterception()
+    {
+        CanChooseDefenseAction = false;
+        chooseInterception = true;
+    }
+    public void ResetDefensiveOptions()
+    {
+        CanChooseDefenseAction = false;
+        chooseDefenseTackle = false;
+        chooseBlock = false;
+        chooseInterception = false;
     }
     bool TryPassBall()
     {
@@ -1026,6 +1088,8 @@ public class MatchManager : MonoBehaviour
         float scoreDifference = offenseNormalized - defenseNormalized;
         specialAttkSuccess = 1f / (1f + Mathf.Exp(-6f * scoreDifference));
         specialAttkSuccess = Mathf.Clamp(specialAttkSuccess - riskPenalty, 0.05f, 0.95f);
+        specialAttkSuccess *= Mathf.Clamp01((offenseScore - defenseScore + 20f) / 120f);
+        specialAttkSuccess = Mathf.Clamp(specialAttkSuccess, 0.1f, 0.85f);
         return specialAttkSuccess;
     }
     //Percentages
@@ -1072,7 +1136,7 @@ public class MatchManager : MonoBehaviour
 
         if (isAI) baseAccuracy *= ai_difficulty;
 
-        return Mathf.Clamp01(baseAccuracy) * 100f; // retorna em %
+        return Mathf.Round(Mathf.Clamp01(baseAccuracy) * 100f); // retorna em %
     }
     public float GetPassingChance(bool isAI = false)
     {
@@ -1111,6 +1175,7 @@ public class MatchManager : MonoBehaviour
             if (team.playersListRoster[i].Age < 25)
             {
                 team.playersListRoster[i].CurrentStamina -= staminaLoss;
+                
             }
             else if(team.playersListRoster[i].Age >= 25 && team.playersListRoster[i].Age < 30)
             {
@@ -1120,17 +1185,8 @@ public class MatchManager : MonoBehaviour
             {
                 team.playersListRoster[i].CurrentStamina -= (staminaLoss + 10);
             }
-            /*
-            if (team.playersListRoster[i].HasTheBall)
-            {
-                team.playersListRoster[i].CurrentStamina -= (staminaLoss +5);
-            }
-            else
-            {
-                team.playersListRoster[i].CurrentStamina -= staminaLoss;
-            }
-            */
-                //print(team.playersListRoster[i].playerLastName + " " + team.playersListRoster[i].CurrentStamina);
+            if (team.playersListRoster[i].CurrentStamina < 10) team.playersListRoster[i].CurrentStamina = 10;
+           
         }
         //_matchUI.UpdatePlayersActive();
     }
@@ -1211,5 +1267,82 @@ public class MatchManager : MonoBehaviour
     IEnumerator waitSecondsForAction()
     {
         yield return new WaitForSeconds(3f);
+    }
+    //Game EVENTS
+    private void MatchEvents()
+    {
+        bool canInjury = false;
+        if (Random.value > 0.3f)
+        {
+            textEvent.text = $" ";
+            return;
+        }
+            
+        int randomIndex = Random.Range(0, eventsList.Count);
+        string chosenEvent = eventsList[randomIndex];
+        
+        switch (chosenEvent)
+        {
+            case "None":
+                textEvent.text = $" ";
+                break;
+            case "Player Injury":
+                icon_EventIconImage.sprite = sprite_Injury;
+                ChooseInjuryPlayer(canInjury);
+                if(canInjury == true)
+                {
+                    textEvent.text = $"Event Triggered: {chosenEvent}";
+                }
+                else
+                {
+                    textEvent.text = " ";
+                }
+                
+                break;
+            case "Cheerleader Event":
+                icon_EventIconImage.sprite = sprite_cheerleadersIcon;
+                textEvent.text = $"Event Triggered: {chosenEvent}";
+                break;
+            case "Crowd Event":
+                icon_EventIconImage.sprite = sprite_support;
+                textEvent.text = $"Event Triggered: {chosenEvent}";
+                break;
+            case "Mascot Power Buff":
+                icon_EventIconImage.sprite = sprite_mascot;
+                textEvent.text = $"Event Triggered: {chosenEvent}";
+                break;
+            case "Skill Power Event":
+                icon_EventIconImage.sprite = sprite_spSkillBuff;
+                textEvent.text = $"Event Triggered: {chosenEvent}";
+                break;
+        }
+    }
+    //Injury
+    void ChooseInjuryPlayer(bool canInjury)
+    {
+        // Conta quantos já estão lesionados
+        int injuredCount = HomeTeam.playersListRoster.Count(p => p.isInjured);
+
+        // Se já houver 2 ou mais, cancela
+        if (injuredCount >= 2)
+        {
+            canInjury = false;
+            return;
+        }
+            
+
+        // Escolhe aleatoriamente um jogador não lesionado
+        List<Player> healthyPlayers = HomeTeam.playersListRoster
+            .Take(4)
+            .Where(p => !p.isInjured)
+            .ToList();
+
+        if (healthyPlayers.Count == 0)
+            return;
+
+        Player chosenPlayer = healthyPlayers[Random.Range(0, healthyPlayers.Count)];
+        chosenPlayer.isInjured = true;
+        canInjury = true;
+
     }
 }
