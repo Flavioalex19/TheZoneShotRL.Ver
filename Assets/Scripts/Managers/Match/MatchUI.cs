@@ -65,6 +65,11 @@ public class MatchUI : MonoBehaviour
     public GameObject percentagePanel;
     [SerializeField] TextMeshProUGUI text_shootPercentage;
     [SerializeField] TextMeshProUGUI text_passPercentage;
+
+    [Header("Events")]
+    [SerializeField] Animator animator_EventPanel;
+    [SerializeField] TextMeshProUGUI text_eventPanelEventDescrption;
+    [SerializeField] Image image_eventPanelIcon;
  
     [Header("Post game")]
     public GameObject EndScreenStatsPanel;
@@ -228,7 +233,9 @@ public class MatchUI : MonoBehaviour
                 _activeHomePlayers.GetChild(i).GetChild(3).gameObject.SetActive(false);
             }
             _activeHomePlayers.GetChild(i).GetChild(4).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].CurrentStamina.ToString();
+            //Activate injury icon
             if(_matchManager.HomeTeam.playersListRoster[i].isInjured) _activeHomePlayers.GetChild(i).GetChild(6).gameObject.SetActive(true);
+            else _activeHomePlayers.GetChild(i).GetChild(6).gameObject.SetActive(false);
         }
         for (int i = 0; i < 4; i++)
         {
@@ -251,6 +258,7 @@ public class MatchUI : MonoBehaviour
         {
             _benchPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i+4].J_Number.ToString();
             _benchPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i + 4].PointsMatch.ToString();
+            _matchManager.HomeTeam.playersListRoster[i + 4].HasTheBall = false;
         }
         
     }
@@ -341,5 +349,12 @@ public class MatchUI : MonoBehaviour
     public void SetPassPercentage(string perc)
     {
         text_passPercentage.text = perc;
+    }
+    //Events
+    public void CallEventPanel(string content, Sprite icon)
+    {
+        image_eventPanelIcon.sprite = icon;
+        text_eventPanelEventDescrption.text = content;
+        animator_EventPanel.SetTrigger("On");
     }
 }

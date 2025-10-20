@@ -615,7 +615,7 @@ public class TeamManagerUI : MonoBehaviour
         Sprite sprite = sprites[gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait];
         contract_selectePlayer.sprite = sprite;
         indexForPlayer = index;
-        newSalaryValue = 2;
+        newSalaryValue = gameManager.playerTeam.playersListRoster[index].ContractYears;
         newGamesValue = 2;
         contract_newContractValuesArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = newGamesValue.ToString();
         contract_newContractValuesArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = newSalaryValue.ToString();
