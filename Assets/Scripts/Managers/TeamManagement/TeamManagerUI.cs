@@ -124,6 +124,13 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_expiringContractsWarning;
     [SerializeField] Animator animator_expiringContractBtn;
 
+    [Header("PlayerEvents")]
+    [SerializeField] PlayerEventsManager playerEventsManager;
+    [SerializeField] GameObject panel_playerEventPanel;
+    [SerializeField] Button btn_playerEventButton0;
+    [SerializeField] Button btn_playerEventButton1;
+    [SerializeField] TextMeshProUGUI text_playerEventDescription;
+
     [Header("UI")]
     [SerializeField]TextMeshProUGUI WeekText;
     [SerializeField] Image image_teamIcon;
@@ -190,6 +197,13 @@ public class TeamManagerUI : MonoBehaviour
         contract_ContractPainel.SetActive(false);
         //News
         NewsUpdate();
+        //playerEvents
+        if (leagueManager.canGenerateEvents == false) panel_playerEventPanel.SetActive(false);
+        else 
+        {
+            panel_playerEventPanel.SetActive(true);
+            SetPlayerEvetPanel();
+        } 
         //End tESTING Screen
         _closeGameForTestersBtn.onClick.AddListener(() => gameManager.QuitAndClear());
         _EndBuildScreen.SetActive(false);
@@ -450,7 +464,8 @@ public class TeamManagerUI : MonoBehaviour
         careerStats.GetChild(2).GetComponent<TextMeshProUGUI>().text = player.CareerSteals.ToString();
         careerStats.GetChild(3).GetComponent<TextMeshProUGUI>().text = ((float)player.CareerSteals/(float)player.CareerGamesPlayed).ToString();
         careerStats.GetChild(4).GetComponent<TextMeshProUGUI>().text = player.CareerGamesPlayed.ToString();
-
+        if (player.bondPlayer != null) careerStats.GetChild(5).GetComponent<TextMeshProUGUI>().text = player.bondPlayer.playerFirstName + player.bondPlayer.playerLastName;
+        else careerStats.GetChild(5).GetComponent<TextMeshProUGUI>().text = "None";
 
     }
     void IconsUpdate(Player player)
@@ -759,7 +774,32 @@ public class TeamManagerUI : MonoBehaviour
             text_expiringContractsWarning.text = "No expiring contracts";
         }
     }
+    //PLayer Events
+    void SetPlayerEvetPanel()
+    {
+        text_playerEventDescription.text = playerEventsManager.eventChoosen.Description;
+        if (playerEventsManager.eventChoosen.PlayerEventType == PlayerEventsType.Bonds)
+        {
+            btn_playerEventButton0.onClick.AddListener(() =>playerEventsManager.CreateBond());
+            btn_playerEventButton0.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Bond:" + playerEventsManager.playerChoosen.playerFirstName +" " +
+                playerEventsManager.playerChoosen.playerLastName + " " + playerEventsManager.playerChoosen.ovr.ToString() + " && " + playerEventsManager.playerChoosen1.playerFirstName +
+                playerEventsManager.playerChoosen1.playerLastName + " " + playerEventsManager.playerChoosen1.ovr;
 
+            btn_playerEventButton1.onClick.AddListener(() => playerEventsManager.PlayersUpgrade());
+            btn_playerEventButton0.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = playerEventsManager.eventChoosen.Choice2;
+
+            //SAVE
+            
+
+        }
+        else if(playerEventsManager.eventChoosen.PlayerEventType == PlayerEventsType.Upgrade)
+        {
+            btn_playerEventButton0.onClick.AddListener(() => playerEventsManager.PlayersUpgrade());
+            btn_playerEventButton0.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = playerEventsManager.eventChoosen.Choice1;
+            btn_playerEventButton1.onClick.AddListener(() => playerEventsManager.BuffPlayers());
+            btn_playerEventButton1.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = playerEventsManager.eventChoosen.Choice2;
+        }
+    }
     //LeagueHistory
     public void LeagueHistory()
     {
@@ -773,5 +813,13 @@ public class TeamManagerUI : MonoBehaviour
             }
         }
         //TEAMHisotry
+    }
+    //SaveFunction
+    public void SaveAfterPlayerEvent()
+    {
+        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+        {
+            gameManager.saveSystem.SaveTeam(gameManager.leagueTeams[i]);
+        }
     }
 }

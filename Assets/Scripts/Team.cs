@@ -27,6 +27,8 @@ public class Team : MonoBehaviour
     public int Draws;
     public int SalaryCap = 100;
     public int CurrentSalary = 0;
+    public int TrainingPower = 0;
+    public int TradingPower = 0;
     HashSet<int> usedNumbers = new HashSet<int>();//Numbers on the jersey
 
     #endregion

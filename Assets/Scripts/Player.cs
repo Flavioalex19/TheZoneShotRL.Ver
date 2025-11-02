@@ -60,7 +60,9 @@ public class Player : MonoBehaviour
     public int CareerSteals = 0;
     public int CareerFieldGoalAttempted = 0;
     public int CareerFieldGoalMade = 0;
-    
+    //PlayerEvents/Team stats
+    public Player bondPlayer = null;
+    public int buff = 0;
     #endregion
     #endregion
     [SerializeField] public GameObject bt_DraftInfo;
@@ -109,6 +111,8 @@ public class Player : MonoBehaviour
         //ImageCharacterPortrait = Random.Range(0, 7);
         ImageCharacterPortrait = Random.Range(0, 21);
         GenerateContract();
+        buff = 0;
+        bondPlayer = null;
         //Debug.Log($"Generated Player: {firstName}, OVR: {ovr}");
     }
     void GenerateContract()

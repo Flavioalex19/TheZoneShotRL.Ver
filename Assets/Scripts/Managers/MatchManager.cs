@@ -66,7 +66,7 @@ public class MatchManager : MonoBehaviour
     //Ai variables
     int ai_maxNumberOfPasses = 5;
     int ai_currentNumberOfPasses =0;
-    float ai_difficulty = 0.75f;
+    float ai_difficulty = 1.75f;
 
     //events
 
@@ -284,6 +284,7 @@ public class MatchManager : MonoBehaviour
             HomeTeam.playersListRoster[i].CareerPoints += HomeTeam.playersListRoster[i].PointsMatch;
             HomeTeam.playersListRoster[i].CareerSteals += HomeTeam.playersListRoster[i].StealsMatch;
             HomeTeam.playersListRoster[i].CareerGamesPlayed++;
+            HomeTeam.playersListRoster[i].buff = 0;
         }
         for (int i = 0; i < AwayTeam.playersListRoster.Count; i++)
         {
@@ -1014,6 +1015,17 @@ public class MatchManager : MonoBehaviour
 
         float passSuccessChance = offenseNormalized / (offenseNormalized + defenseNormalized);
 
+        // --- ADIÇÃO: aplicar efeitos de buff e bond ---
+        if (playerWithTheBall.buff > 0)
+            passSuccessChance *= 1.10f; // +10%
+
+        if (playerWithTheBall.bondPlayer != null)
+        {
+            int bondIndex = teamWithball.playersListRoster.IndexOf(playerWithTheBall.bondPlayer);
+            if (bondIndex >= 0 && bondIndex < 4) // bond está entre os 4 primeiros
+                passSuccessChance *= 1.07f; // +7%
+        }
+
         //return passSuccessChance;
         // Apply AI coefficient only if AI
         return isAI ? passSuccessChance * ai_difficulty : passSuccessChance;
@@ -1079,6 +1091,18 @@ public class MatchManager : MonoBehaviour
             //case 3: baseAccuracy *= 0.60f; break;
         }
         if(playerWithTheBall.isInjured) baseAccuracy *= 0.60f;
+
+        // --- ADIÇÃO: aplicar efeitos de buff e bond ---
+        if (offense.buff > 0)
+            baseAccuracy *= 1.10f; // +10%
+
+        if (offense.bondPlayer != null)
+        {
+            int bondIndex = teamWithball.playersListRoster.IndexOf(offense.bondPlayer);
+            if (bondIndex >= 0 && bondIndex < 4) // bond está entre os 4 primeiros
+                baseAccuracy *= 1.07f; // +7%
+        }
+
         return isAI ? Mathf.Clamp01(baseAccuracy * (1f / ai_difficulty)) : Mathf.Clamp01(baseAccuracy);
     }
     float ActivateSpecialAttk()
@@ -1179,6 +1203,16 @@ public class MatchManager : MonoBehaviour
                                                   //case 3: baseAccuracy *= 0.60f; break;
         }
         if (playerWithTheBall.isInjured) baseAccuracy *= 0.60f;
+        // --- ADIÇÃO: aplicar efeitos de buff e bond ---
+        if (offense.buff > 0)
+            baseAccuracy *= 1.10f; // +10%
+
+        if (offense.bondPlayer != null)
+        {
+            int bondIndex = teamWithball.playersListRoster.IndexOf(offense.bondPlayer);
+            if (bondIndex >= 0 && bondIndex < 4) // bond está entre os 4 primeiros
+                baseAccuracy *= 1.07f; // +7%
+        }
 
         return Mathf.Round(Mathf.Clamp01(baseAccuracy) * 100f); // retorna em %
     }
@@ -1195,6 +1229,17 @@ public class MatchManager : MonoBehaviour
         float defenseNormalized = Mathf.Clamp((defenseScore - 30f) / (99f - 30f), 0f, 1f);
 
         float passSuccessChance = offenseNormalized / (offenseNormalized + defenseNormalized);
+
+        // --- ADIÇÃO: aplicar efeitos de buff e bond ---
+        if (playerWithTheBall.buff > 0)
+            passSuccessChance *= 1.10f; // +10%
+
+        if (playerWithTheBall.bondPlayer != null)
+        {
+            int bondIndex = teamWithball.playersListRoster.IndexOf(playerWithTheBall.bondPlayer);
+            if (bondIndex >= 0 && bondIndex < 4) // bond está entre os 4 primeiros
+                passSuccessChance *= 1.07f; // +7%
+        }
 
         //return passSuccessChance;
         // Apply AI coefficient only if AI

@@ -37,6 +37,8 @@ public class PlayerData
     public int c_steals;
     public int c_fieldGoal;
     public int c_fieldGoalsMade;
+    public int b_buff;
+    public Player p_bond;
     
 
     public PlayerData(Player player)
@@ -68,6 +70,8 @@ public class PlayerData
         c_steals = player.CareerSteals;
         c_fieldGoal = player.CareerFieldGoalAttempted;
         c_fieldGoalsMade = player.CareerFieldGoalMade;
+        b_buff = player.buff;
+        p_bond = player.bondPlayer;
         
         
     }
@@ -90,6 +94,8 @@ public class TeamData
     public int lost;
     public int draw;
     public int cap;
+    public int trainingP;
+    public int tradindP;
 
     public TeamData(Team team, LeagueManager leagueManager)
     {
@@ -102,6 +108,8 @@ public class TeamData
         lost = team.Loses;
         draw = team.Draws;
         cap = team.CurrentSalary;
+        trainingP = team.TrainingPower;
+        tradindP = team.TradingPower;
         foreach (Player player in team.playersListRoster)
         {
             playersListData.Add(new PlayerData(player));

@@ -1,4 +1,5 @@
 using DG.Tweening.Core.Easing;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -107,11 +108,11 @@ public class LeagueManager : MonoBehaviour
 
                 int buttonCount = Mathf.Min(ChoiceButtonsTransform.childCount, 2); // Ensure no out-of-range
 
-                EventType randomEvent0 = (EventType)Random.Range(0, System.Enum.GetValues(typeof(EventType)).Length);
+                EventType randomEvent0 = (EventType)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EventType)).Length);
                 EventType randomEvent1;
                 do
                 {
-                    randomEvent1 = (EventType)Random.Range(0, System.Enum.GetValues(typeof(EventType)).Length);
+                    randomEvent1 = (EventType)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EventType)).Length);
                 }
                 while (randomEvent1 == randomEvent0);
                 //Create the onclick event of the button to choose the event type
@@ -133,8 +134,10 @@ public class LeagueManager : MonoBehaviour
         eventOptions.Add(new EventOption 
         { 
             Index = 0, Description = "Helix Dynamics, wants us to pick a focus for their next campaign.",
-            Choice1 = "Highlight our community engagement and teamwork." + " Strategy Level Up",
-            Choice2 = "Promote our dominance and winning mentality. " + "Gloves Level Up",
+            Choice1 = "We will make a commercial showing the new equipment <color=#FFD700>Gloves LevelUp</color>",
+            Choice2 = "We will hold a training session open to the press to show off the new equipment. <color=#FFD700>Strategy LevelUp</color>",
+            btnIndex0 = 0,
+            btnIndex1 = 6,
             Modifier = 1,
             eventType = EventType.Sponsor 
         });
@@ -142,8 +145,10 @@ public class LeagueManager : MonoBehaviour
         {
             Index = 1,
             Description = "NovaCore Industries is offering to upgrade our equipment. Which should we choose?",
-            Choice1 = "Advanced Visors for better vision and awareness." + " Helmet Level Up",
-            Choice2 = "Power Boots to improve speed and agility." + " Boots Level Up",
+            Choice1 = "Advanced Visors for better vision and awareness. <color=#FFD700> Helmet Level Up</color>",
+            Choice2 = "Power Boots to improve speed and agility.<color=#FFD700> Boots Level Up</color>",
+            btnIndex0 = 4,
+            btnIndex1 = 0,
             Modifier = 1,
             eventType = EventType.Sponsor
         });
@@ -152,8 +157,8 @@ public class LeagueManager : MonoBehaviour
             Index = 2,
             Modifier = 15,
             Description = "Vox Media wants to interview your team captain about the recent victory. How should he respond?",
-            Choice1 = "Be humble and praise the team effort." + "  Moral +15",
-            Choice2 = "Show confidence and claim the team is unstoppable." + " Fan Support +15",
+            Choice1 = "Be humble and praise the team effort.<color=#FFD700> Moral +15 Up</color>  ",
+            Choice2 = "Show confidence and claim the team is unstoppable.<color=#FFD700>Fan Support +15 Up</color> ",
             eventType = EventType.Interview
 
 
@@ -163,8 +168,8 @@ public class LeagueManager : MonoBehaviour
 
             Index = 3,
             Description = "Some players feel the team’s strategy is too old-fashioned. How should you address the group?",
-            Choice1 = "Stick to the current plan and emphasize discipline." + " Front Office +10",
-            Choice2= "Open the floor to new ideas and experiments." + " Moral +10",
+            Choice1 = "Stick to the current plan and emphasize discipline.<color=#FFD700> FrontOffiece +10 Up</color>",
+            Choice2= "Open the floor to new ideas and experiments. <color=#FFD700> Moral +10 Up</color>",
             Modifier = 10,
             eventType = EventType.TeamMeeting
         
@@ -174,8 +179,8 @@ public class LeagueManager : MonoBehaviour
 
             Index = 4,
             Description = "A young fan sent an email asking for advice on becoming a pro. How should you reply?",
-            Choice1 = "Encourage him and share some training tips." + " Fan Support +10",
-            Choice2 = "Politely redirect them to the team’s youth program." + " Front Office +10",
+            Choice1 = "Encourage him and share some training tips. <color=#FFD700> FanSupport +10 Up</color>",
+            Choice2 = "Politely redirect them to the team’s youth program. <color=#FFD700> Front Office +10 Up</color>",
             Modifier = 10,
             eventType = EventType.ReplyToEmails
 
@@ -185,8 +190,8 @@ public class LeagueManager : MonoBehaviour
 
             Index = 5,
             Description = "You wake up feeling strange. There's no alert. No crisis. Just a feeling. Something’s off. You can’t shake it",
-            Choice1 = "Trust the feeling. Adjust the game plan." + "FrontOffice +10",
-            Choice2 = "Ignore it. Routine is everything" + " Moral +10",
+            Choice1 = "Trust the feeling. Adjust the game plan.<color=#FFD700> Front Office +10 Up</color>",
+            Choice2 = "Ignore it. Routine is everything <color=#FFD700> Moral +10 Up</color>",
             Modifier = 10,
             eventType = EventType.TeamMeeting
 
@@ -219,10 +224,10 @@ public class LeagueManager : MonoBehaviour
             }
                 
         }
-        int firstIndex = Random.Range(0, filteredEvents.Count);
+        int firstIndex = UnityEngine.Random.Range(0, filteredEvents.Count);
         int secondIndex;
         
-        event1 = filteredEvents[Random.Range(0, filteredEvents.Count)];
+        event1 = filteredEvents[UnityEngine.Random.Range(0, filteredEvents.Count)];
         //print(event1.Index + " This is the index of the event chosen");
         //CREATE THE BUTTONS
         Transform EventsButtonsTransform = GameObject.Find("ButtonsEvent").transform;
@@ -232,6 +237,9 @@ public class LeagueManager : MonoBehaviour
         EventsButtonsTransform.GetChild(1).GetComponent<Button>().onClick.AddListener(() => AddOnClick(event1, 1));
         EventsButtonsTransform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = event1.Choice1;
         EventsButtonsTransform.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = event1.Choice2;
+        List<Sprite> spriteList = new List<Sprite>(Resources.LoadAll<Sprite>("2D/UI/Team Management/WeekEventsButtons/Official"));
+        EventsButtonsTransform.GetChild(0).GetComponent<Image>().sprite = spriteList[0];
+        EventsButtonsTransform.GetChild(1).GetComponent<Image>().sprite = spriteList[1];
 
         GameObject.Find("EventText").GetComponent<TextMeshProUGUI>().text = event1.Description.ToString();
 
@@ -265,13 +273,11 @@ public class LeagueManager : MonoBehaviour
                 //print(eventOption.Index + " " + eventOption.Description);
                 if(indexOfChoice == 0)
                 {
-                    //print("YES");
-                    gameManager.playerTeam._equipmentList[4].Level++;
+                    gameManager.playerTeam._equipmentList[2].Level++;
                 }
                 else
                 {
-                    //print("YES");
-                    gameManager.playerTeam._equipmentList[2].Level++;
+                    gameManager.playerTeam._equipmentList[4].Level++;
                 }
                 break;
             case 1:
@@ -308,7 +314,6 @@ public class LeagueManager : MonoBehaviour
                 }
                 break;
             case 4:
-                //print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
                     gameManager.playerTeam.FansSupportPoints += eventOption.Modifier;
@@ -396,6 +401,8 @@ public class EventOption
     public string Description; // The text for the event option
     public string Choice1;
     public string Choice2;
+    public int btnIndex0;
+    public int btnIndex1;
     public int Modifier; // Example effect: morale boost or drop
     public EventType eventType;// Type of the event
     

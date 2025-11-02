@@ -51,6 +51,8 @@ public class SaveSystem : MonoBehaviour
             team.Draws = 0;
             team.Loses = 0;
             team.CurrentSalary = 0;
+            team.TradingPower = 0;
+            team.TrainingPower = 0;
 
             team.IsPlayerTeam = teamData.isPlayerControlled;
             team.Moral = teamData.teamMoral;
@@ -60,6 +62,8 @@ public class SaveSystem : MonoBehaviour
             team.Draws = teamData.draw;
             team.Loses = teamData.lost;
             team.CurrentSalary = teamData.cap;
+            team.TradingPower = teamData.tradindP;
+            team.TrainingPower = teamData.trainingP;
 
 
             
@@ -74,20 +78,7 @@ public class SaveSystem : MonoBehaviour
             {
                 foreach (EquipmentData equipData in teamData.equiList)
                 {
-                    /*
-                    Equipment newEquip = new Equipment
-                    {
-                        Index = equipData.indexNumber,
-                        Name = equipData.equipName,
-                        Level = equipData.lvl,
-                        ShotBoost = equipData.ShotB,
-                        InsBoost = equipData.InsB,
-                        MidBoost = equipData.MidB,
-                        OutBoost = equipData.OutB
-                    };
-                    team.GetEquipment().Add(newEquip);
-                    print("THS IS THE Equip" + " " + newEquip.Name + " Level:" + newEquip.Level);
-                    */
+                    
                     Equipment newEquip = new Equipment
                     {
                         Index = equipData.indexNumber,
@@ -156,6 +147,8 @@ public class SaveSystem : MonoBehaviour
                 newPlayer.CareerSteals = playerData.c_steals;
                 newPlayer.CareerFieldGoalAttempted = playerData.c_fieldGoal;
                 newPlayer.CareerFieldGoalMade = playerData.c_fieldGoalsMade;
+                newPlayer.buff = playerData.b_buff;
+                newPlayer.bondPlayer = playerData.p_bond;
                 team.playersListRoster.Add(newPlayer);
             }
 

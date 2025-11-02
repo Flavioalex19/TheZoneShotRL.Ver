@@ -98,22 +98,14 @@ public class GameManager : MonoBehaviour
             print("NO SAVE");
             for (int i = 0; i < leagueTeams.Count; i++)
             {
-                /*
-                if (leagueTeams[i].IsPlayerTeam)
-                {
-                    leagueTeams[i].Moral = 60;
-                    leagueTeams[i].FansSupportPoints = 20;
-                    leagueTeams[i].FrontOfficePoints = 50;
-                    leagueTeams[i].IsPlayerTeam = false;
-                    leagueTeams[i]._equipmentList.Clear();
-
-                }
-                */
+               
                 leagueTeams[i].Moral =leagueTeams[i].fixMoral;
                 leagueTeams[i].FansSupportPoints = leagueTeams[i].fixFans;
                 leagueTeams[i].FrontOfficePoints = leagueTeams[i].fixFrontOffice;
                 leagueTeams[i].IsPlayerTeam = false;
-                
+                leagueTeams[i].Wins = 0;
+                leagueTeams[i].Draws = 0;
+                leagueTeams[i].Loses = 0;
                 leagueTeams[i]._equipmentList.Clear();
                 
             }
