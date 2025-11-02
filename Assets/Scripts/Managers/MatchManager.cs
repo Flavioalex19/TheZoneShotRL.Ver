@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -245,7 +246,8 @@ public class MatchManager : MonoBehaviour
             // Step 3: Wait for final actions (e.g., scoring)
             yield return StartCoroutine(WaitForTimeOut());
 
-            currentGamePossessons--;
+            RestoreStaminaFromBench();
+            //currentGamePossessons--;
         }
 
         // End of match logic
@@ -361,21 +363,42 @@ public class MatchManager : MonoBehaviour
                     uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " must shoot due to low possessions!");
                     yield return new WaitForSeconds(_actionTimer);
                     yield return Scoring(playerWithTheBall,true);
+                    currentGamePossessons--;
                     yield break;
                 }
                 if (HomeTeam.IsPlayerTeam)
                 {
                     //Defense wait for choice
                     CanChooseDefenseAction = true;
+                    chooseDefenseTackle = false;
+                    chooseBlock = false;
+                    //Timeout
+                    if (_canCallTimeout == false)
+                    {
+                        yield return StartCoroutine(WaitForTimeOut());
+                        ChoosePlayerToCarryBall();
+                        yield break;
+                    }
                     yield return WaitForDefenseAction();
                     CanChooseDefenseAction = false;
-                    chooseDefenseTackle = false;
+                    //chooseDefenseTackle = false;
                 }
-                
 
-                bool shouldPass = Random.Range(1, 4) < 3;//Change Later
 
-                if (shouldPass && ai_currentNumberOfPasses > 0)
+                //bool shouldPass = Random.Range(1, 4) < 3;//Change Later
+                Team teamWithoutTheBall = null;
+                if(HomeTeam.IsPlayerTeam == false)
+                {
+                    if (HomeTeam.hasPossession) teamWithoutTheBall = AwayTeam;
+                    else teamWithoutTheBall = HomeTeam;
+                }
+                else
+                {
+                    teamWithoutTheBall = HomeTeam;
+                }
+                bool shoudScore = AI_ShouldTryToScore(teamWithball.Score, teamWithoutTheBall.Score, currentGamePossessons);
+
+                if (shoudScore==false && ai_currentNumberOfPasses > 0)
                 {
                     ai_currentNumberOfPasses--;
                     if (TryPassBall())
@@ -450,6 +473,7 @@ public class MatchManager : MonoBehaviour
                     uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " must shoot due to low possessions!");
                     yield return new WaitForSeconds(_actionTimer);
                     yield return Scoring(playerWithTheBall, false);
+                    currentGamePossessons--;
                     yield break;
                 }
                 //print(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false) + " Is the cahnce of success");
@@ -609,7 +633,7 @@ public class MatchManager : MonoBehaviour
     //Defense
     IEnumerator WaitForDefenseAction()
     {
-        yield return new WaitUntil(() => { return chooseDefenseTackle; });
+        yield return new WaitUntil(() => { return chooseDefenseTackle|| chooseBlock; });
     }
     public void ChooseTackle()
     {
@@ -759,12 +783,13 @@ public class MatchManager : MonoBehaviour
                 teamWithball.Score += 4;
             }
             uiManager.PlaybyPlayText(player.playerLastName + " Has Scored " + " " + player.PointsMatch);
+            
         }
         else
         {
             uiManager.PlaybyPlayText(player.playerLastName + " Missed");
         }
-
+        //currentGamePossessons--;
         playerWithTheBall.HasTheBall = false;
         yield return new WaitForSeconds(_actionTimer);
         player.CurrentZone = 0;
@@ -836,6 +861,7 @@ public class MatchManager : MonoBehaviour
     //Beat the defender and change zones
     bool TryBeatDefender(Player offense, Player defense, int zone, int bonus = 0)
     {
+        currentGamePossessons--;
         // Offense roll
         int offenseRoll = UnityEngine.Random.Range(1, 101)
                         + offense.Consistency
@@ -862,6 +888,8 @@ public class MatchManager : MonoBehaviour
         else
             return UnityEngine.Random.value < 0.4f;
         // 40% chance nothing happens, 60% chance juke succeeds
+
+        
     }
     int GetZoneValue(Player player, int zone)
     {
@@ -1285,6 +1313,16 @@ public class MatchManager : MonoBehaviour
         player.CurrentStamina-=staminaLoss;
 
     }
+    void RestoreStaminaFromBench()
+    {
+        for (int i = 4;i< HomeTeam.playersListRoster.Count; i++)
+        {
+            if(HomeTeam.playersListRoster[i].CurrentStamina < 90 )
+            HomeTeam.playersListRoster[i].CurrentStamina += 5;
+            if (AwayTeam.playersListRoster[i].CurrentStamina<90)
+            AwayTeam.playersListRoster[i].CurrentStamina += 5;
+        }
+    }
     //UpdateStatsAfter5Weeks
     public void ApplyFiveWeekTraining(Team team, int wins, int draws, int losses)
     {
@@ -1431,7 +1469,7 @@ public class MatchManager : MonoBehaviour
                 eventDescrition = " Fans are booing your team!!!";
                 break;
         }
-        _matchUI.CallEventPanel(eventDescrition, eventSprite);
+        _matchUI.CallEventPanel(eventDescrition, sprite_spSkillBuff);
     }
     //Injury
     bool ChooseInjuryPlayer()
@@ -1458,5 +1496,39 @@ public class MatchManager : MonoBehaviour
         chosenPlayer.isInjured = true;
 
         return true;
+    }
+    //Ai Eq to decision
+    bool AI_ShouldTryToScore(int aiScore, int opponentScore, int currentPossessions)
+    {
+        // Base neutra: 50% de chance de tentar pontuar
+        float chanceToScore = 0.5f;
+
+        // Diferença de placar (positivo = IA vencendo)
+        int scoreDiff = aiScore - opponentScore;
+
+        // Se estiver perdendo -> aumenta a vontade de pontuar
+        if (scoreDiff < 0)
+        {
+            // Cada ponto atrás aumenta 3% até um máximo de +30%
+            chanceToScore += Mathf.Clamp(Mathf.Abs(scoreDiff) * 0.03f, 0f, 0.3f);
+        }
+        // Se estiver ganhando -> tende a jogar mais seguro
+        else if (scoreDiff > 0)
+        {
+            // Cada ponto à frente reduz 2%, até um máximo de -20%
+            chanceToScore -= Mathf.Clamp(scoreDiff * 0.02f, 0f, 0.2f);
+        }
+
+        // Ajuste pela quantidade de posses restantes
+        if (currentPossessions <= GamePossesions/2)
+            chanceToScore += 0.2f; // urgência
+        else if (currentPossessions <= GamePossesions)
+            chanceToScore += 0.1f;
+
+        // Garante o limite entre 0 e 1
+        chanceToScore = Mathf.Clamp01(chanceToScore);
+
+        // Decide o resultado final
+        return UnityEngine.Random.value < chanceToScore;
     }
 }

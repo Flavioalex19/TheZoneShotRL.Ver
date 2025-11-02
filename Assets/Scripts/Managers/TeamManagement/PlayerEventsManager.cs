@@ -156,6 +156,22 @@ public class PlayerEventsManager : MonoBehaviour
 
         Debug.Log("Bond created: " + playerChoosen.playerFirstName + " <-> " + playerChoosen1.playerFirstName);
     }
+    public void ValidateBond(Player player, List<Player> teamPlayers)
+    {
+        // Se o jogador ou o bond estiverem nulos, não há nada pra verificar
+        if (player == null || player.bondPlayer == null)
+            return;
+
+        // Verifica se o bond ainda está na equipe
+        bool bondStillInTeam = teamPlayers.Contains(player.bondPlayer);
+
+        // Se o bond saiu do time, remove o vínculo
+        if (!bondStillInTeam)
+        {
+            Debug.Log($"{player.playerFirstName} lost bond — bond player left the team.");
+            player.bondPlayer = null;
+        }
+    }
     //Upgade
     public void PlayersUpgrade()
     {
