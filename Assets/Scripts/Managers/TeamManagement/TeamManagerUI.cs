@@ -213,7 +213,7 @@ public class TeamManagerUI : MonoBehaviour
             _EndBuildScreen.SetActive(true);
         }
 
-        leagueManager.CreateTeamSalary();
+        //leagueManager.CreateTeamSalary();
         UpdateTeamSalary();
 
         if (gameManager.playerTeam.Moral < 0) 
@@ -247,7 +247,7 @@ public class TeamManagerUI : MonoBehaviour
         }
         //warningBtn
         CallWarning();
-        
+        leagueManager.CreateTeamSalary();
         StartCoroutine(NewsLoop(10f));
     }
 
@@ -609,6 +609,7 @@ public class TeamManagerUI : MonoBehaviour
         {
             gameManager.playerTeam.CurrentSalary += gameManager.playerTeam.playersListRoster[i].Salary;
         }
+        leagueManager.CreateTeamSalary();
         _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
     }
     //Contracts 
@@ -782,6 +783,7 @@ public class TeamManagerUI : MonoBehaviour
         if (playerEventsManager.eventChoosen.PlayerEventType == PlayerEventsType.Bonds)
         {
             btn_playerEventButton0.onClick.AddListener(() =>playerEventsManager.CreateBond());
+            btn_playerEventButton0.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 10;
             btn_playerEventButton0.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Bond:" + playerEventsManager.playerChoosen.playerFirstName +" " +
                 playerEventsManager.playerChoosen.playerLastName + " " + playerEventsManager.playerChoosen.ovr.ToString() + " && " + playerEventsManager.playerChoosen1.playerFirstName +
                 playerEventsManager.playerChoosen1.playerLastName + " " + playerEventsManager.playerChoosen1.ovr;

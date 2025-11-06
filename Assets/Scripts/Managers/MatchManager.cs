@@ -164,6 +164,8 @@ public class MatchManager : MonoBehaviour
         CanChooseAction = false;
         _matchUI.SetSkillPints();
         //StartCoroutine(GameFlow());
+        //Testing
+        print(AwayTeam.playersListRoster.Count + "Number of player i the roster of the away team");
         StartCoroutine(RunMatchThenSimulate());
         //_matchUI.PostGameStats(HomeTeam, AwayTeam);
     }
@@ -246,7 +248,9 @@ public class MatchManager : MonoBehaviour
             // Step 3: Wait for final actions (e.g., scoring)
             yield return StartCoroutine(WaitForTimeOut());
 
-            RestoreStaminaFromBench();
+            //Restore stamina on the bench
+            if(currentGamePossessons>1) RestoreStaminaFromBench();
+
             //currentGamePossessons--;
         }
 
@@ -364,6 +368,18 @@ public class MatchManager : MonoBehaviour
                     yield return new WaitForSeconds(_actionTimer);
                     yield return Scoring(playerWithTheBall,true);
                     currentGamePossessons--;
+                    yield break;
+                }
+                else if (_canCallTimeout == false)
+                {
+                    yield return StartCoroutine(WaitForTimeOut());
+                    CheckAndSwapLowStaminaPlayers(AwayTeam);
+                    for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
+                    {
+                        HomeTeam.playersListRoster[i].HasTheBall = false;
+                        AwayTeam.playersListRoster[i].HasTheBall = false;
+                    }
+                    ChoosePlayerToCarryBall();
                     yield break;
                 }
                 if (HomeTeam.IsPlayerTeam)
@@ -602,6 +618,12 @@ public class MatchManager : MonoBehaviour
                 else if(_canCallTimeout == false)
                 {
                     yield return StartCoroutine(WaitForTimeOut());
+                    CheckAndSwapLowStaminaPlayers(AwayTeam);
+                    for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
+                    {
+                        HomeTeam.playersListRoster[i].HasTheBall = false;
+                        AwayTeam.playersListRoster[i].HasTheBall = false;
+                    }
                     ChoosePlayerToCarryBall();
                     yield break;
                 }
@@ -985,6 +1007,7 @@ public class MatchManager : MonoBehaviour
     }
     IEnumerator RunMatchThenSimulate()
     {
+        /*
         yield return StartCoroutine(SetupGameplan());
         yield return StartCoroutine(GameFlow());
         _matchUI.PostGameStats(HomeTeam, AwayTeam);
@@ -1001,7 +1024,26 @@ public class MatchManager : MonoBehaviour
         yield return StartCoroutine(LeagueWeekSimulation());
         //Enable progress button
         _matchUI.btn_ReturnToTeamManagement.gameObject.SetActive(true);
+        */
+        yield return StartCoroutine(SetupGameplan());
+        yield return StartCoroutine(GameFlow());
+        _matchUI.PostGameStats(HomeTeam, AwayTeam);
 
+        // run full week simulation FIRST (other teams)
+        yield return StartCoroutine(LeagueWeekSimulation());
+
+        // Now do the 3-week upgrade/animation (after simulations finished)
+        if (leagueManager.Week % 3 == 0)
+        {
+            ApplyFiveWeekTraining(manager.playerTeam, manager.playerTeam.Wins, manager.playerTeam.Draws, manager.playerTeam.Loses);
+            _matchUI.UpgradeTeamAnim();
+            // Wait properly for the animation/coroutine to finish
+            yield return StartCoroutine(waitSecondsForAction());
+        }
+
+        sfxManager.ResetVolume();
+        //Enable progress button
+        _matchUI.btn_ReturnToTeamManagement.gameObject.SetActive(true);
     }
 
     void ChangePosOfPlayerWithTheBall()
@@ -1043,7 +1085,7 @@ public class MatchManager : MonoBehaviour
 
         float passSuccessChance = offenseNormalized / (offenseNormalized + defenseNormalized);
 
-        // --- ADIÇÃO: aplicar efeitos de buff e bond ---
+        //Apply Buff and Bond
         if (playerWithTheBall.buff > 0)
             passSuccessChance *= 1.10f; // +10%
 
@@ -1053,8 +1095,20 @@ public class MatchManager : MonoBehaviour
             if (bondIndex >= 0 && bondIndex < 4) // bond está entre os 4 primeiros
                 passSuccessChance *= 1.07f; // +7%
         }
-
+        //Equipment slot bonus 
+        if (teamWithball._equipmentList != null && teamWithball._equipmentList.Count > 1)
+        {
+            int equipLevel = teamWithball._equipmentList[0].Level; // nível do equipamento no slot 1
+            if (equipLevel > 0)
+            {
+                float equipBonus = 1f + (equipLevel <= 2 ? equipLevel * 0.03f : 0.06f + (equipLevel - 2) * 0.05f);
+                passSuccessChance *= equipBonus;
+            }
+        }
         //return passSuccessChance;
+        // Se a defesa escolheu "tackle", fica 20% mais difícil de o passe dar certo
+        if (chooseDefenseTackle)
+            passSuccessChance *= 0.8f; // reduz 20%
         // Apply AI coefficient only if AI
         return isAI ? passSuccessChance * ai_difficulty : passSuccessChance;
     }
@@ -1130,8 +1184,24 @@ public class MatchManager : MonoBehaviour
             if (bondIndex >= 0 && bondIndex < 4) // bond está entre os 4 primeiros
                 baseAccuracy *= 1.07f; // +7%
         }
-
-        return isAI ? Mathf.Clamp01(baseAccuracy * (1f / ai_difficulty)) : Mathf.Clamp01(baseAccuracy);
+        //bônus Equipment
+        if (teamWithball._equipmentList != null && teamWithball._equipmentList.Count > 1)
+        {
+            int equipLevel = teamWithball._equipmentList[2].Level; // nível do equipamento no slot 1
+            if (equipLevel > 0)
+            {
+                float equipBonus = 1f + (equipLevel <= 2 ? equipLevel * 0.03f : 0.06f + (equipLevel - 2) * 0.05f);
+                baseAccuracy *= equipBonus;
+            }
+        }
+        if (chooseBlock)
+            baseAccuracy *= 0.8f; // reduz 20%
+        //return isAI ? Mathf.Clamp01(baseAccuracy * (1f / ai_difficulty)) : Mathf.Clamp01(baseAccuracy);
+        if (isAI)
+        {
+            baseAccuracy *= 1.45f; // IA arremessa 15% melhor
+        }
+        return Mathf.Clamp01(baseAccuracy);
     }
     float ActivateSpecialAttk()
     {
@@ -1180,6 +1250,7 @@ public class MatchManager : MonoBehaviour
         specialAttkSuccess = Mathf.Clamp(specialAttkSuccess, 0.1f, 0.85f);
         return specialAttkSuccess;
     }
+    //Chance succsefull defense choice
     //Percentages
     public float GetScoringChance(Player offense, Player defense, int zone, bool isAI = false)
     {
@@ -1319,8 +1390,12 @@ public class MatchManager : MonoBehaviour
         {
             if(HomeTeam.playersListRoster[i].CurrentStamina < 90 )
             HomeTeam.playersListRoster[i].CurrentStamina += 5;
-            if (AwayTeam.playersListRoster[i].CurrentStamina<90)
-            AwayTeam.playersListRoster[i].CurrentStamina += 5;
+            
+        }
+        for (int i = 0; i < AwayTeam.playersListRoster.Count; i++)
+        {
+            if (AwayTeam.playersListRoster[i].CurrentStamina < 90)
+                AwayTeam.playersListRoster[i].CurrentStamina += 5;
         }
     }
     //UpdateStatsAfter5Weeks
@@ -1400,6 +1475,7 @@ public class MatchManager : MonoBehaviour
     {
         Sprite eventSprite = null;
         bool canInjury = false;
+        /*
         float progress = (float)currentGamePossessons / GamePossesions; 
         float eventChance = Mathf.Lerp(0.2f, 1f, progress); 
         if (Random.value > eventChance)
@@ -1409,67 +1485,86 @@ public class MatchManager : MonoBehaviour
         }
 
         int randomIndex = Random.Range(0, eventsList.Count);
-        string chosenEvent = eventsList[randomIndex];
+        */
+        //TryTriggerGameEvent(currentGamePossessons,GamePossesions, eventsList,HomeTeam,AwayTeam);
+        /*
+        string chosenEvent = eventsList[TryTriggerGameEvent(currentGamePossessons, GamePossesions, eventsList, HomeTeam, AwayTeam)];
         string eventDescrition;
         eventDescrition = chosenEvent;
-
-        // clear txt and image
-        textEvent.text = "";
-        icon_EventIconImage.sprite = transparent;
-
-        switch (chosenEvent)
+        */
+        int eventIndex = TryTriggerGameEvent(currentGamePossessons, GamePossesions, eventsList, HomeTeam, AwayTeam);
+        print(eventIndex + "IST THE INDEX!!!!!!!!!!!!!!!");
+        // Se -1, nenhum evento deve ocorrer
+        if (eventIndex == -1)
         {
-            case "None":
-                textEvent.text = "";
-                eventSprite = transparent;
-                break;
-
-            case "Player Injury":
-                icon_EventIconImage.sprite = sprite_Injury;
-                canInjury = ChooseInjuryPlayer(); // create a parametrer for a string;
-                textEvent.text = canInjury
-                    ? $"Event Triggered: {chosenEvent}"
-                    : "";
-                break;
-
-            case "Cheerleader Event":
-                icon_EventIconImage.sprite = sprite_cheerleadersIcon;
-                textEvent.text = $"Event Triggered: {chosenEvent}";
-                eventSprite = sprite_cheerleadersIcon;
-                eventDescrition = "the cheerleaders delight the fans and the team";
-                momentum = 2;
-                break;
-
-            case "Crowd Event":
-                icon_EventIconImage.sprite = sprite_support;
-                textEvent.text = $"Event Triggered: {chosenEvent}";
-                eventSprite = sprite_support;
-                eventDescrition = "The fans are all steaming ahead with the team";
-                momentum = 2;
-                break;
-
-            case "Mascot Power Buff":
-                icon_EventIconImage.sprite = sprite_mascot;
-                textEvent.text = $"Event Triggered: {chosenEvent}";
-                eventSprite = sprite_mascot;
-                eventDescrition = "The mascot is distractiong your team";
-                momentum = 1;
-                break;
-
-            case "Skill Power Event":
-                icon_EventIconImage.sprite = sprite_spSkillBuff;
-                textEvent.text = $"Event Triggered: {chosenEvent}";
-                eventDescrition = "  The Sp Skill is fully loaded!"; 
-                eventSprite = sprite_spSkillBuff;
-                break;
-            case "Fans booing":
-                momentum = 1;
-                textEvent.text = $"Event Triggered: {chosenEvent}";
-                icon_EventIconImage.sprite = sprite_negativeEffect;
-                eventDescrition = " Fans are booing your team!!!";
-                break;
+            textEvent.text = "";
+            icon_EventIconImage.sprite = transparent;
+            return;
         }
-        _matchUI.CallEventPanel(eventDescrition, sprite_spSkillBuff);
+        else
+        {
+            string chosenEvent = eventsList[eventIndex];
+            string eventDescrition = chosenEvent;
+
+            // clear txt and image
+            textEvent.text = "";
+            icon_EventIconImage.sprite = transparent;
+
+            switch (chosenEvent)
+            {
+                case "None":
+                    textEvent.text = "";
+                    eventSprite = transparent;
+                    break;
+
+                case "Player Injury":
+                    icon_EventIconImage.sprite = sprite_Injury;
+                    canInjury = ChooseInjuryPlayer(); // create a parametrer for a string;
+                    textEvent.text = canInjury
+                        ? $"Event Triggered: {chosenEvent}"
+                        : "";
+                    break;
+
+                case "Cheerleader Event":
+                    icon_EventIconImage.sprite = sprite_cheerleadersIcon;
+                    textEvent.text = $"Event Triggered: {chosenEvent}";
+                    eventSprite = sprite_cheerleadersIcon;
+                    eventDescrition = "the cheerleaders delight the fans and the team";
+                    momentum = 2;
+                    break;
+
+                case "Crowd Event":
+                    icon_EventIconImage.sprite = sprite_support;
+                    textEvent.text = $"Event Triggered: {chosenEvent}";
+                    eventSprite = sprite_support;
+                    eventDescrition = "The fans are all steaming ahead with the team";
+                    momentum = 2;
+                    break;
+
+                case "Mascot Power Buff":
+                    icon_EventIconImage.sprite = sprite_mascot;
+                    textEvent.text = $"Event Triggered: {chosenEvent}";
+                    eventSprite = sprite_mascot;
+                    eventDescrition = "The mascot is distractiong your team";
+                    momentum = 1;
+                    break;
+
+                case "Skill Power Event":
+                    icon_EventIconImage.sprite = sprite_spSkillBuff;
+                    textEvent.text = $"Event Triggered: {chosenEvent}";
+                    eventDescrition = "  The Sp Skill is fully loaded!";
+                    eventSprite = sprite_spSkillBuff;
+                    break;
+                case "Fans booing":
+                    momentum = 1;
+                    textEvent.text = $"Event Triggered: {chosenEvent}";
+                    icon_EventIconImage.sprite = sprite_negativeEffect;
+                    eventDescrition = " Fans are booing your team!!!";
+                    break;
+            }
+            _matchUI.CallEventPanel(eventDescrition, sprite_spSkillBuff);
+        }
+        
     }
     //Injury
     bool ChooseInjuryPlayer()
@@ -1496,6 +1591,53 @@ public class MatchManager : MonoBehaviour
         chosenPlayer.isInjured = true;
 
         return true;
+    }
+    int TryTriggerGameEvent(int currentGamePossessions, int totalGamePossessions, List<string> eventsList, Team homeTeam, Team awayTeam)
+    {
+        if (currentGamePossessions > totalGamePossessions * (2f / 3f))
+            return -1;
+
+        // Progresso da partida (0 = início, 1 = fim)
+        float progress = 1f - ((float)currentGamePossessions / totalGamePossessions);
+
+        // Chance de evento aumenta conforme o jogo avança
+        float eventChance = Mathf.Lerp(0.2f, 1f, progress);
+
+        // Sorteio para decidir se haverá evento nesta posse
+        if (Random.value > eventChance)
+            return -1;
+
+        List<int> validEvents = new List<int>();
+
+        // Verifica se há jogadores cansados (stamina < 60)
+        bool lowStaminaExists = homeTeam.playersListRoster.Any(p => p.CurrentStamina < 60) ||
+                                awayTeam.playersListRoster.Any(p => p.CurrentStamina < 60);
+        if (lowStaminaExists)
+            validEvents.AddRange(new int[] { 0, 1 });
+
+        // Verifica diferença de pontos (8 ou mais)
+        int scoreDiff = Mathf.Abs(homeTeam.Score - awayTeam.Score);
+        if (scoreDiff >= 8)
+            validEvents.AddRange(new int[] { 2, 3, 4 });
+
+        // Se nenhuma condição foi satisfeita, adiciona os eventos restantes
+        if (validEvents.Count == 0)
+        {
+            for (int i = 5; i < eventsList.Count; i++)
+                validEvents.Add(i);
+        }
+
+        // Proteção extra: se a lista estiver vazia, não dispara evento
+        if (validEvents.Count == 0)
+            return -1;
+
+        // Escolhe aleatoriamente um evento válido
+        int randomEventIndex = validEvents[UnityEngine.Random.Range(0, validEvents.Count)];
+
+        // Log de depuração opcional
+        // Debug.Log($"[EVENT DEBUG] Possession: {currentGamePossessions}, Chosen Event Index: {randomEventIndex}");
+
+        return randomEventIndex;
     }
     //Ai Eq to decision
     bool AI_ShouldTryToScore(int aiScore, int opponentScore, int currentPossessions)
@@ -1530,5 +1672,33 @@ public class MatchManager : MonoBehaviour
 
         // Decide o resultado final
         return UnityEngine.Random.value < chanceToScore;
+    }
+    private void CheckAndSwapLowStaminaPlayers(Team aiTeam)
+    {
+        // Garante que há pelo menos 5 jogadores
+        if (aiTeam.playersListRoster == null || aiTeam.playersListRoster.Count < 5)
+            return;
+
+        for (int i = 0; i < 4; i++) // verifica os titulares (0–3)
+        {
+            Player starter = aiTeam.playersListRoster[i];
+            if (starter.CurrentStamina < 50f)
+            {
+                // Procura reserva com stamina > 50
+                for (int j = 4; j < aiTeam.playersListRoster.Count; j++)
+                {
+                    Player bench = aiTeam.playersListRoster[j];
+                    if (bench.CurrentStamina > 50f)
+                    {
+                        // Faz a troca de posição
+                        aiTeam.playersListRoster[i] = bench;
+                        aiTeam.playersListRoster[j] = starter;
+
+                        //Debug.Log($"[AI Substitution] {starter.p_name} substituted by {bench.p_name} due to low stamina.");
+                        break; // sai do loop interno (troca feita)
+                    }
+                }
+            }
+        }
     }
 }
