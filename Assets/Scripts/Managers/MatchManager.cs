@@ -32,7 +32,7 @@ public class MatchManager : MonoBehaviour
     public Team HomeTeam;
     public Team AwayTeam;
     [SerializeField] public Team teamWithball;
-    [SerializeField] Player playerWithTheBall;
+    [SerializeField] public Player playerWithTheBall;
     [SerializeField] Player playerDefending;
     bool playerTeamWin = false;
 
@@ -82,17 +82,16 @@ public class MatchManager : MonoBehaviour
         "Fans booing"
     };
     [Header("Events Variables")]
-    [SerializeField] TextMeshProUGUI textEvent;
-    [SerializeField] Image icon_EventIconImage;
-    [SerializeField] Sprite transparent;
-    [SerializeField] Sprite sprite_cheerleadersIcon;
-    [SerializeField] Sprite sprite_Injury;
-    [SerializeField] Sprite sprite_support;
-    [SerializeField] Sprite sprite_mascot;
-    [SerializeField] Sprite sprite_spSkillBuff;
-    [SerializeField] Sprite sprite_negativeEffect;
-    [SerializeField]int momentum = 0;
+    
+    
 
+    [Header("Cards Variables")]
+    [SerializeField] Transform cardsFolder;
+    public Transform cards_cardsUsedFolder;
+    public Transform cards_handCards;
+    public int mod_Attk = 0;
+    public int mod_Def = 0;
+    public int momentum = 0;
     //UI Elemens test
 
     [Header("Debugs")]
@@ -474,7 +473,7 @@ public class MatchManager : MonoBehaviour
         else if (/*teamWithball == HomeTeam*/ teamWithball.IsPlayerTeam)
         {
             CanChooseDefenseAction = false;
-            MatchEvents();
+            //MatchEvents();
             if (currentGamePossessons > 1)
             {
                 ResetChoices();
@@ -784,7 +783,7 @@ public class MatchManager : MonoBehaviour
 
         print(teamMomentum + " is the teamMomentum" + teamWithball.TeamName);
 
-        bool hasScored = Random.Range(0f, 1f) < ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, teamMomentum,isAI);
+        bool hasScored = Random.Range(0f, 1f) < ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, teamMomentum);
         //print(hasScored + " is the result of Shooting");
 
         if (hasScored)
@@ -1071,7 +1070,7 @@ public class MatchManager : MonoBehaviour
         //print(playerWithTheBall.playerFirstName + " is hte guy with the ball");
     }
     //Equations
-    float PassEquation(bool isAI = false)
+    float PassEquation()
     {
         float offenseScore = (playerWithTheBall.Awareness + playerWithTheBall.Consistency) / 2f;
         float defenseScore = (playerDefending.Stealing + playerDefending.Guarding) / 2f;
@@ -1109,10 +1108,13 @@ public class MatchManager : MonoBehaviour
         // Se a defesa escolheu "tackle", fica 20% mais difícil de o passe dar certo
         if (chooseDefenseTackle)
             passSuccessChance *= 0.8f; // reduz 20%
-        // Apply AI coefficient only if AI
-        return isAI ? passSuccessChance * ai_difficulty : passSuccessChance;
+                                       // Apply AI coefficient only if AI
+        if (!teamWithball.IsPlayerTeam)
+            passSuccessChance *= ai_difficulty;
+
+        return passSuccessChance;
     }
-    float ScoringEquation(Player offense, Player defense, int zone, int momentumModifier,bool isAI = false)
+    float ScoringEquation(Player offense, Player defense, int zone, int momentumModifier)
     {
         // 1. Base Zone Accuracy
         float baseAccuracy = 0.7f; // default mid
@@ -1197,10 +1199,11 @@ public class MatchManager : MonoBehaviour
         if (chooseBlock)
             baseAccuracy *= 0.8f; // reduz 20%
         //return isAI ? Mathf.Clamp01(baseAccuracy * (1f / ai_difficulty)) : Mathf.Clamp01(baseAccuracy);
-        if (isAI)
+        if (!teamWithball.IsPlayerTeam)
         {
-            baseAccuracy *= 1.45f; // IA arremessa 15% melhor
+            baseAccuracy *= 1.45f; // IA arremessa 45% melhor
         }
+
         return Mathf.Clamp01(baseAccuracy);
     }
     float ActivateSpecialAttk()
@@ -1471,101 +1474,7 @@ public class MatchManager : MonoBehaviour
         yield return new WaitForSeconds(3f);
     }
     //Game EVENTS
-    private void MatchEvents()
-    {
-        Sprite eventSprite = null;
-        bool canInjury = false;
-        /*
-        float progress = (float)currentGamePossessons / GamePossesions; 
-        float eventChance = Mathf.Lerp(0.2f, 1f, progress); 
-        if (Random.value > eventChance)
-        {
-            textEvent.text = " ";
-            return;
-        }
-
-        int randomIndex = Random.Range(0, eventsList.Count);
-        */
-        //TryTriggerGameEvent(currentGamePossessons,GamePossesions, eventsList,HomeTeam,AwayTeam);
-        /*
-        string chosenEvent = eventsList[TryTriggerGameEvent(currentGamePossessons, GamePossesions, eventsList, HomeTeam, AwayTeam)];
-        string eventDescrition;
-        eventDescrition = chosenEvent;
-        */
-        int eventIndex = TryTriggerGameEvent(currentGamePossessons, GamePossesions, eventsList, HomeTeam, AwayTeam);
-        print(eventIndex + "IST THE INDEX!!!!!!!!!!!!!!!");
-        // Se -1, nenhum evento deve ocorrer
-        if (eventIndex == -1)
-        {
-            textEvent.text = "";
-            icon_EventIconImage.sprite = transparent;
-            return;
-        }
-        else
-        {
-            string chosenEvent = eventsList[eventIndex];
-            string eventDescrition = chosenEvent;
-
-            // clear txt and image
-            textEvent.text = "";
-            icon_EventIconImage.sprite = transparent;
-
-            switch (chosenEvent)
-            {
-                case "None":
-                    textEvent.text = "";
-                    eventSprite = transparent;
-                    break;
-
-                case "Player Injury":
-                    icon_EventIconImage.sprite = sprite_Injury;
-                    canInjury = ChooseInjuryPlayer(); // create a parametrer for a string;
-                    textEvent.text = canInjury
-                        ? $"Event Triggered: {chosenEvent}"
-                        : "";
-                    break;
-
-                case "Cheerleader Event":
-                    icon_EventIconImage.sprite = sprite_cheerleadersIcon;
-                    textEvent.text = $"Event Triggered: {chosenEvent}";
-                    eventSprite = sprite_cheerleadersIcon;
-                    eventDescrition = "the cheerleaders delight the fans and the team";
-                    momentum = 2;
-                    break;
-
-                case "Crowd Event":
-                    icon_EventIconImage.sprite = sprite_support;
-                    textEvent.text = $"Event Triggered: {chosenEvent}";
-                    eventSprite = sprite_support;
-                    eventDescrition = "The fans are all steaming ahead with the team";
-                    momentum = 2;
-                    break;
-
-                case "Mascot Power Buff":
-                    icon_EventIconImage.sprite = sprite_mascot;
-                    textEvent.text = $"Event Triggered: {chosenEvent}";
-                    eventSprite = sprite_mascot;
-                    eventDescrition = "The mascot is distractiong your team";
-                    momentum = 1;
-                    break;
-
-                case "Skill Power Event":
-                    icon_EventIconImage.sprite = sprite_spSkillBuff;
-                    textEvent.text = $"Event Triggered: {chosenEvent}";
-                    eventDescrition = "  The Sp Skill is fully loaded!";
-                    eventSprite = sprite_spSkillBuff;
-                    break;
-                case "Fans booing":
-                    momentum = 1;
-                    textEvent.text = $"Event Triggered: {chosenEvent}";
-                    icon_EventIconImage.sprite = sprite_negativeEffect;
-                    eventDescrition = " Fans are booing your team!!!";
-                    break;
-            }
-            _matchUI.CallEventPanel(eventDescrition, sprite_spSkillBuff);
-        }
-        
-    }
+    
     //Injury
     bool ChooseInjuryPlayer()
     {

@@ -609,7 +609,7 @@ public class TeamManagerUI : MonoBehaviour
         {
             gameManager.playerTeam.CurrentSalary += gameManager.playerTeam.playersListRoster[i].Salary;
         }
-        leagueManager.CreateTeamSalary();
+        //leagueManager.CreateTeamSalary();
         _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
     }
     //Contracts 
@@ -672,11 +672,18 @@ public class TeamManagerUI : MonoBehaviour
         }
         
         ContractButtonsUpdate();
-        UpdateTeamSalary();
+        gameManager.playerTeam.CurrentSalary = 0;
+        for (int i = 0; i < gameManager.playerTeam.playersListRoster.Count; i++)
+        {
+            gameManager.playerTeam.CurrentSalary += gameManager.playerTeam.playersListRoster[i].Salary;
+        }
+        _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
+        //UpdateTeamSalary();
 
     }
     public bool TryExtendContract(Team team, Player player, int salaryProposed, int gamesProposed)
     {
+        if (salaryProposed < player.Salary) return false;
         // Base demand: higher personality = tougher negotiation
         float baseDemand = player.Salary * (1f + (player.Personality - 1) * 0.1f);
 
