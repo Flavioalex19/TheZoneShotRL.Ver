@@ -92,6 +92,7 @@ public class MatchManager : MonoBehaviour
     public int mod_Attk = 0;
     public int mod_Def = 0;
     public int momentum = 0;
+    public bool canUseCards = true;
     //UI Elemens test
 
     [Header("Debugs")]
@@ -221,6 +222,8 @@ public class MatchManager : MonoBehaviour
             HomeTeam.playersListRoster[i].StealsMatch = 0;
             HomeTeam.playersListRoster[i].isInjured = false;
             HomeTeam.playersListRoster[i].HasTheBall = false;
+            HomeTeam.playersListRoster[i].statBuff = 0;
+            HomeTeam.playersListRoster[i].statDefBuff = 0;
         }
         for (int i = 0;i < AwayTeam.playersListRoster.Count; i++) 
         {
@@ -229,6 +232,8 @@ public class MatchManager : MonoBehaviour
             AwayTeam.playersListRoster[i].StealsMatch = 0;
             AwayTeam.playersListRoster[i].isInjured = false;
             AwayTeam.playersListRoster[i].HasTheBall = false;
+            AwayTeam.playersListRoster[i].statBuff= 0;
+            AwayTeam.playersListRoster[i].statDefBuff = 0;
         }
         _matchUI.MatchStartAnim();
         while (currentGamePossessons > 0)
@@ -473,6 +478,7 @@ public class MatchManager : MonoBehaviour
         else if (/*teamWithball == HomeTeam*/ teamWithball.IsPlayerTeam)
         {
             CanChooseDefenseAction = false;
+            CreateHand();
             //MatchEvents();
             if (currentGamePossessons > 1)
             {
@@ -1609,5 +1615,40 @@ public class MatchManager : MonoBehaviour
                 }
             }
         }
+    }
+    //Cards
+    public void CreateHand()
+    {
+        canUseCards = true;
+        // no avaliable cards do draw
+        if (cardsFolder.childCount < 3)
+        {
+            Debug.LogWarning("Não há cards suficientes no cardsFolder para criar a mão.");
+            return;
+        }
+
+        // clear hand
+        while (cards_handCards.childCount > 0)
+        {
+            Transform card = cards_handCards.GetChild(0);
+            card.SetParent(cards_cardsUsedFolder);
+            card.localScale = Vector3.one;
+            card.localPosition = Vector3.zero;
+            card.localRotation = Quaternion.identity;
+        }
+
+        // choose cards
+        for (int i = 0; i < 3; i++)
+        {
+            int randomIndex = Random.Range(0, cardsFolder.childCount);
+            Transform chosenCard = cardsFolder.GetChild(randomIndex);
+
+            chosenCard.SetParent(cards_handCards);
+            chosenCard.localScale = Vector3.one;
+            chosenCard.localPosition = Vector3.zero;
+            chosenCard.localRotation = Quaternion.identity;
+        }
+
+        Debug.Log("Nova mão criada com 3 cards!");
     }
 }

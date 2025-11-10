@@ -84,6 +84,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_newsInfo;
     [SerializeField]public List<Sprite> sprites_newsSprites = new List<Sprite>();
     [SerializeField] Animator _animator_newsTransition;
+    [SerializeField] GameObject panel_newsPanel;
 
     [Header("LeagueHistory")]
     [SerializeField] GameObject leagueHistoryPanel;
@@ -105,6 +106,9 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI contract_CurrentPlayerSalary;
     [SerializeField] TextMeshProUGUI contract_playerName;
     [SerializeField] Image contract_selectePlayer;
+    [SerializeField] Image image_assistance;
+    [SerializeField] Sprite sprite_AssistanceHappy;
+    [SerializeField] Sprite sprite_AssistanceFail;
     int newGamesValue;
     int newSalaryValue;
     int indexForPlayer;
@@ -130,6 +134,13 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Button btn_playerEventButton0;
     [SerializeField] Button btn_playerEventButton1;
     [SerializeField] TextMeshProUGUI text_playerEventDescription;
+
+    [Header("AssistancePanel")]
+    [SerializeField] GameObject assiatncePanel;
+    [SerializeField] TextMeshProUGUI text_TaskArea;
+    [SerializeField] TextMeshProUGUI text_btn_toggle;
+    [SerializeField] GameObject panel_assisyanceWarning;
+
 
     [Header("UI")]
     [SerializeField]TextMeshProUGUI WeekText;
@@ -204,6 +215,10 @@ public class TeamManagerUI : MonoBehaviour
             panel_playerEventPanel.SetActive(true);
             SetPlayerEvetPanel();
         } 
+        //AssistancePanel
+        SetAssistancePanel();
+        assiatncePanel.SetActive(false);
+        //ToogleNewsAndAssistancePanel();
         //End tESTING Screen
         _closeGameForTestersBtn.onClick.AddListener(() => gameManager.QuitAndClear());
         _EndBuildScreen.SetActive(false);
@@ -653,11 +668,13 @@ public class TeamManagerUI : MonoBehaviour
                     gameManager.playerTeam.playersListRoster[indexForPlayer].ContractYears += newGamesValue;
                     gameManager.playerTeam.playersListRoster[indexForPlayer].Salary = newSalaryValue;
                     contract_resultNegotiationText.text = "Good Job Boss!" + gameManager.playerTeam.playersListRoster[indexForPlayer].playerLastName + " for " + gameManager.playerTeam.playersListRoster[indexForPlayer].ContractYears;
+                    image_assistance.sprite = sprite_AssistanceHappy;
                 }
                 else
                 {
                     contract_resultNegotiationText.text = "Damn! We can't come to an agreement with " + gameManager.playerTeam.playersListRoster[indexForPlayer].playerLastName + ". " +
                         "Maybe he needs some time to think...";
+                    image_assistance.sprite = sprite_AssistanceFail;
                 }
                 leagueManager.canNegociateContract = false;
             }
@@ -679,7 +696,7 @@ public class TeamManagerUI : MonoBehaviour
         }
         _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
         //UpdateTeamSalary();
-
+        SaveAfterPlayerEvent();
     }
     public bool TryExtendContract(Team team, Player player, int salaryProposed, int gamesProposed)
     {
@@ -808,6 +825,32 @@ public class TeamManagerUI : MonoBehaviour
             btn_playerEventButton0.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = playerEventsManager.eventChoosen.Choice1;
             btn_playerEventButton1.onClick.AddListener(() => playerEventsManager.BuffPlayers());
             btn_playerEventButton1.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = playerEventsManager.eventChoosen.Choice2;
+        }
+    }
+    //Assiatance panel
+    public void SetAssistancePanel()
+    {
+        string result = " ";
+
+        if (leagueManager.canTrain) result += "<color=#3AB0FF> - Training is avaliable for this week\n</color>";
+        if (leagueManager.canTrade) result += "\n<color=#FFD700> - We can trade this week, boss!</color>\n";
+        if (leagueManager.canNegociateContract) result += "\n<color=#90EE90> - We can choose a player to negotiate a contract extension</color>";
+
+        text_TaskArea.text = result;
+        
+    }
+    public void ToogleNewsAndAssistancePanel()
+    {
+        panel_newsPanel.SetActive(!panel_newsPanel.activeSelf);
+        assiatncePanel.SetActive(!assiatncePanel.activeSelf);
+        if (assiatncePanel.activeInHierarchy)
+        {
+            SetAssistancePanel();
+            text_btn_toggle.text = "<color=#3AB0FF>News</color>";
+        }
+        else
+        {
+            text_btn_toggle.text = "<color=#FFD700>Tasks</color>";
         }
     }
     //LeagueHistory

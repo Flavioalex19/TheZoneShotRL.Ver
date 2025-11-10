@@ -70,7 +70,10 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Animator animator_EventPanel;
     [SerializeField] TextMeshProUGUI text_eventPanelEventDescrption;
     [SerializeField] Image image_eventPanelIcon;
- 
+
+    [Header("Casrds")]
+    [SerializeField] Animator animator_HandCards;
+
     [Header("Post game")]
     public GameObject EndScreenStatsPanel;
     [SerializeField] Transform teamANames;
@@ -356,5 +359,10 @@ public class MatchUI : MonoBehaviour
         image_eventPanelIcon.sprite = icon;
         text_eventPanelEventDescrption.text = content;
         animator_EventPanel.SetTrigger("On");
+    }
+    //Cards
+    public void UpdateCardsHand()
+    {
+        animator_HandCards.SetBool("On", _matchManager.canUseCards);
     }
 }
