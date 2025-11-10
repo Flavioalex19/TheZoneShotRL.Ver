@@ -787,7 +787,8 @@ public class TeamManagerUI : MonoBehaviour
         {
             if (gameManager.playerTeam.playersListRoster[i].ContractYears == 1)
             {
-                expiringContractPlayers += gameManager.playerTeam.playersListRoster[i].playerFirstName + " " + gameManager.playerTeam.playersListRoster[i].playerLastName + " ";
+                expiringContractPlayers += gameManager.playerTeam.playersListRoster[i].playerFirstName + " " +
+                    gameManager.playerTeam.playersListRoster[i].playerLastName + " " + gameManager.playerTeam.playersListRoster[i].ovr.ToString() + " \n";
                 hasExpiringContract = true;
             }
         }
@@ -836,6 +837,7 @@ public class TeamManagerUI : MonoBehaviour
         if (leagueManager.canTrade) result += "\n<color=#FFD700> - We can trade this week, boss!</color>\n";
         if (leagueManager.canNegociateContract) result += "\n<color=#90EE90> - We can choose a player to negotiate a contract extension</color>";
 
+        if (result == " ") result = "No tasks remaining for the week";
         text_TaskArea.text = result;
         
     }
