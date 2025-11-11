@@ -808,16 +808,16 @@ public class TeamManagerUI : MonoBehaviour
         if (playerEventsManager.eventChoosen.PlayerEventType == PlayerEventsType.Bonds)
         {
             btn_playerEventButton0.onClick.AddListener(() =>playerEventsManager.CreateBond());
-            btn_playerEventButton0.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 10;
+            btn_playerEventButton0.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 20;
             btn_playerEventButton0.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Bond:" + playerEventsManager.playerChoosen.playerFirstName +" " +
                 playerEventsManager.playerChoosen.playerLastName + " " + playerEventsManager.playerChoosen.ovr.ToString() + " && " + playerEventsManager.playerChoosen1.playerFirstName +
                 playerEventsManager.playerChoosen1.playerLastName + " " + playerEventsManager.playerChoosen1.ovr;
 
             btn_playerEventButton1.onClick.AddListener(() => playerEventsManager.PlayersUpgrade());
-            btn_playerEventButton0.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = playerEventsManager.eventChoosen.Choice2;
+            btn_playerEventButton1.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = playerEventsManager.eventChoosen.Choice2;
 
             //SAVE
-            
+
 
         }
         else if(playerEventsManager.eventChoosen.PlayerEventType == PlayerEventsType.Upgrade)
