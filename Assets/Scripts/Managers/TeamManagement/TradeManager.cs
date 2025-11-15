@@ -61,7 +61,7 @@ public class TradeManager : MonoBehaviour
         // Normalize and map front office points to OVR range (60 to 99)
         float normalized = (_gameManager.playerTeam.FrontOfficePoints - 20f) / 80f;
         int maxOVR = Mathf.RoundToInt(Mathf.Lerp(60f, 99f, normalized));
-
+        /*
         for (int i = 0; i < TradeTeam.playersListRoster.Count; i++)
         {
             if (TradeTeam.playersListRoster[i].ovr <= maxOVR)
@@ -69,6 +69,32 @@ public class TradeManager : MonoBehaviour
                 _playerToReceive = TradeTeam.playersListRoster.IndexOf(TradeTeam.playersListRoster[i]);
                 print(TradeTeam.playersListRoster[i].playerLastName + TradeTeam.playersListRoster[i].ovr + "This is the player avalible for trade");
             }
+        }
+        */
+        int bestIndex = -1;
+        int bestOVR = -1;
+
+        for (int i = 0; i < TradeTeam.playersListRoster.Count; i++)
+        {
+            int currentOVR = TradeTeam.playersListRoster[i].ovr;
+
+            // busca o jogador com o maior OVR possível, sem ultrapassar o limite
+            if (currentOVR <= maxOVR && currentOVR > bestOVR)
+            {
+                bestOVR = currentOVR;
+                bestIndex = i;
+            }
+        }
+
+        if (bestIndex != -1)
+        {
+            _playerToReceive = bestIndex;
+            print(TradeTeam.playersListRoster[_playerToReceive].playerLastName + " " +
+                  TradeTeam.playersListRoster[_playerToReceive].ovr + " - This is the player available for trade");
+        }
+        else
+        {
+            print("No valid player found for trade.");
         }
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = TradeTeam.playersListRoster[_playerToReceive].playerFirstName.ToString() +
             " " + TradeTeam.playersListRoster[_playerToReceive].playerLastName.ToString();

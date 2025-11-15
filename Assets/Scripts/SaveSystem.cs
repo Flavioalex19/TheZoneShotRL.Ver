@@ -53,6 +53,10 @@ public class SaveSystem : MonoBehaviour
             team.CurrentSalary = 0;
             team.TradingPower = 0;
             team.TrainingPower = 0;
+            team.isR4 = false;
+            team.isR8 = false;
+            team.isFinalist = false;
+            team.isChampion = false;
 
             team.IsPlayerTeam = teamData.isPlayerControlled;
             team.Moral = teamData.teamMoral;
@@ -64,7 +68,10 @@ public class SaveSystem : MonoBehaviour
             team.CurrentSalary = teamData.cap;
             team.TradingPower = teamData.tradindP;
             team.TrainingPower = teamData.trainingP;
-
+            team.isR4 = teamData.isTop4;
+            team.isR8 = teamData.isTop8;
+            team.isFinalist = teamData.FinalTeam;
+            team.isChampion = teamData.Champion;
 
             
 
@@ -175,6 +182,31 @@ public class SaveSystem : MonoBehaviour
                     leagueManager.canTrain = teamData.leagueData.canTrainPlayer;
                     leagueManager.CanStartTutorial = teamData.leagueData.canStartTutorial;
                     leagueManager.canNegociateContract = teamData.leagueData.canNegociateContract;
+                    leagueManager.isOnR4 = teamData.leagueData.isr4;
+                    leagueManager.isOnR8 = teamData.leagueData.isr8;
+                    leagueManager.isOnFinals = teamData.leagueData.isFinal;
+
+                    //PLayoffs lists
+                    leagueManager.List_R8Teams.Clear();
+                    foreach (string name in leagueManagerData.R8Names)
+                    {
+                        Team t = FindTeamByName(name);
+                        if (t != null) leagueManager.List_R8Teams.Add(t);
+                    }
+
+                    leagueManager.List_R4Teams.Clear();
+                    foreach (string name in leagueManagerData.R4Names)
+                    {
+                        Team t = FindTeamByName(name);
+                        if (t != null) leagueManager.List_R4Teams.Add(t);
+                    }
+
+                    leagueManager.List_Finalist.Clear();
+                    foreach (string name in leagueManagerData.FinalNames)
+                    {
+                        Team t = FindTeamByName(name);
+                        if (t != null) leagueManager.List_Finalist.Add(t);
+                    }
                 }
             }
 
@@ -205,6 +237,10 @@ public class SaveSystem : MonoBehaviour
             team.Wins = 0;
             team.Loses = 0;
             team.Draws = 0;
+            team.isR8 = false;
+            team.isR4 = false;
+            team.isFinalist = false;
+            team.isChampion = false;
             
             File.Delete(filePath);
             Debug.Log($"Save file for team {teamName} has been deleted.");

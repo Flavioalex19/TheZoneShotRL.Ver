@@ -36,7 +36,7 @@ public class Player : MonoBehaviour
     [SerializeField] public string playerFirstName;
     [SerializeField] public string playerLastName;
     public int Age;
-    [SerializeField] public float ovr;
+    [SerializeField] public int ovr;
     public int Shooting;
     public int Inside;
     public int Mid;
@@ -123,22 +123,22 @@ public class Player : MonoBehaviour
         if(ovr>= 40 && ovr <= 50)
         {
             ContractYears = 4;
-            Salary = 2;
+            Salary = UnityEngine.Random.Range(2,5);
         }
         else if(ovr > 50 && ovr <= 60)
         {
             ContractYears = 4;
-            Salary = 4;
+            Salary = UnityEngine.Random.Range(4, 8);
         }
         else if (ovr > 60 && ovr <= 70)
         {
-            ContractYears = 5;
+            ContractYears = UnityEngine.Random.Range(5, 9);
             Salary = 6;
         }
         else if (ovr > 70 && ovr <= 80)
         {
             ContractYears = 4;
-            Salary = 8;
+            Salary = UnityEngine.Random.Range(8, 12);
         }
         else if (ovr > 80 && ovr <= 90)
         {
@@ -148,7 +148,7 @@ public class Player : MonoBehaviour
         else if (ovr > 90)
         {
             ContractYears = 2;
-            Salary = 12;
+            Salary = 15;
         }
     }
     public void UpdateOVR()

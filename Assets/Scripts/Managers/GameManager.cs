@@ -14,7 +14,8 @@ public class GameManager : MonoBehaviour
         MainMenu,
         Draft,
         TeamManagement,
-        Match
+        Match,
+        PLayoffs
     }
 
     public GameMode mode;
@@ -301,6 +302,7 @@ public class GameManager : MonoBehaviour
         newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().SetSprite();
         newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().playerName = player.playerLastName;
         newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().playerAge = player.Age.ToString();
+        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().playerSalary = player.Salary.ToString();
 
         Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
         switch (player.Personality)
@@ -417,6 +419,11 @@ public class GameManager : MonoBehaviour
     {
         mode = GameMode.Match;
         SceneManager.LoadScene("Match");
+    }
+    public void GoToPlayoffs()
+    {
+        mode = GameMode.PLayoffs;
+        SceneManager.LoadScene("Playoffs");
     }
     public void ReturnToTeamManegement()
     {

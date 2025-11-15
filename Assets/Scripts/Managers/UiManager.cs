@@ -297,7 +297,7 @@ public class UiManager : MonoBehaviour
             if (matchButton != null && matchButton.activeInHierarchy)
             {
                 btn_AdvanceToMatch = matchButton;
-                btn_AdvanceToMatch.GetComponent<Button>().onClick.AddListener(() => /*gameManager.GoToMatch()*/AdvanceToMatch());
+                //btn_AdvanceToMatch.GetComponent<Button>().onClick.AddListener(() => /*gameManager.GoToMatch()*/AdvanceToMatch());
                 hasbeenCreatedTheBtn = true;
             }
             else
@@ -321,7 +321,7 @@ public class UiManager : MonoBehaviour
         }
     }
     #endregion
-
+    /*
     public void AdvanceToMatch()
     {
 
@@ -348,7 +348,7 @@ public class UiManager : MonoBehaviour
 
 
     }
-    
+    */
     #endregion
     #region Match 
     public void PlaybyPlayText(string textContent)

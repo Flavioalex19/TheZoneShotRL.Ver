@@ -225,7 +225,11 @@ public class TeamManagerUI : MonoBehaviour
         SetTeamIcon();
         if (leagueManager.Week > gameManager.leagueTeams.Count - 1)
         {
-            _EndBuildScreen.SetActive(true);
+            //_EndBuildScreen.SetActive(true);
+            if(leagueManager.isOnFinals == false && leagueManager.isOnR4== true)leagueManager.isOnFinals = true;
+            //if(leagueManager.isOnR4 == true) leagueManager.isOnR4 = true;//remove later
+            if(leagueManager.isOnR8==false)leagueManager.isOnR8 = true;
+
         }
 
         //leagueManager.CreateTeamSalary();
@@ -263,6 +267,10 @@ public class TeamManagerUI : MonoBehaviour
         //warningBtn
         CallWarning();
         leagueManager.CreateTeamSalary();
+        //Update the current Week text
+        if (leagueManager.Week > gameManager.leagueTeams.Count - 1) WeekText.text = "Playoffs"; 
+        else WeekText.text = leagueManager.Week.ToString();
+
         StartCoroutine(NewsLoop(10f));
     }
 
@@ -270,7 +278,7 @@ public class TeamManagerUI : MonoBehaviour
     void Update()
     {
         //Update the current Week text
-        WeekText.text = leagueManager.Week.ToString();
+        //WeekText.text = leagueManager.Week.ToString();
         
         if(leagueManager.canGenerateEvents == false && leagueManager.canStartANewWeek == false)
         {
@@ -281,7 +289,7 @@ public class TeamManagerUI : MonoBehaviour
         teamStatsTextsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.Moral.ToString();
         if (GameObject.Find("Week Text"))
         {
-            GameObject.Find("Week Text").GetComponent<TextMeshProUGUI>().text = leagueManager.Week.ToString();
+            //GameObject.Find("Week Text").GetComponent<TextMeshProUGUI>().text = leagueManager.Week.ToString();
         }
         //Team Moral/FrontOffice/FansSupport
         if (GameObject.Find("MoralePointsText"))
@@ -302,7 +310,7 @@ public class TeamManagerUI : MonoBehaviour
         }
 
         //end build
-        if (leagueManager.Week > gameManager.leagueTeams.Count - 1)
+        if (leagueManager.Week > gameManager.leagueTeams.Count - 1 && leagueManager.isOnR4)
         {
             _EndBuildScreen.SetActive(true);
         }
@@ -406,12 +414,20 @@ public class TeamManagerUI : MonoBehaviour
         {
             currentWeek = leagueManager.Week -1;
         }
-        awayTeamName = gameManager.playerTeam._schedule[currentWeek].TeamName;
-        print(awayTeamName + "NEXT OPP");
-        sprite1 = Resources.Load<Sprite>("2D/Team Logos/" + awayTeamName);
-        Image image = _advBtn.transform.GetChild(2).GetComponent<Image>();
-        image.sprite = sprite1;
-        _awayteamImage.sprite = sprite1;
+        if(leagueManager.Week > gameManager.leagueTeams.Count - 1)
+        {
+            //wait
+        }
+        else
+        {
+            awayTeamName = gameManager.playerTeam._schedule[currentWeek].TeamName;
+            print(awayTeamName + "NEXT OPP");
+            sprite1 = Resources.Load<Sprite>("2D/Team Logos/" + awayTeamName);
+            Image image = _advBtn.transform.GetChild(2).GetComponent<Image>();
+            image.sprite = sprite1;
+            _awayteamImage.sprite = sprite1;
+        }
+        
 
     }
     //TeamRoster
@@ -661,7 +677,9 @@ public class TeamManagerUI : MonoBehaviour
         if(leagueManager.canNegociateContract == true)
         {
             if (gameManager.playerTeam.playersListRoster[indexForPlayer].ContractYears < 5 ||
-            (gameManager.playerTeam.playersListRoster[indexForPlayer].Salary + newSalaryValue) + gameManager.playerTeam.CurrentSalary < gameManager.playerTeam.SalaryCap)
+        (newSalaryValue + gameManager.playerTeam.CurrentSalary -
+        gameManager.playerTeam.playersListRoster[indexForPlayer].Salary)
+        < gameManager.playerTeam.SalaryCap)
             {
                 if (TryExtendContract(gameManager.playerTeam, gameManager.playerTeam.playersListRoster[indexForPlayer], newSalaryValue, newGamesValue))
                 {

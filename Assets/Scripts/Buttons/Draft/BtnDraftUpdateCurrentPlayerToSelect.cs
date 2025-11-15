@@ -12,11 +12,13 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
 
     public string playerAge;
     public string playerName;
+    public string playerSalary;
 
     Sprite sprite;
     Image playerPortrait;
     TextMeshProUGUI text_playerName;
     TextMeshProUGUI text_PlayerAge;
+    TextMeshProUGUI text_PlayerSalary;
     GameManager gameManager;
     // Start is called before the first frame update
     void Start()
@@ -28,6 +30,7 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
 
             text_playerName = GameObject.Find("Text_PlayerName").GetComponent<TextMeshProUGUI>();
             text_PlayerAge = GameObject.Find("Text_PlayerAge").GetComponent<TextMeshProUGUI>();
+            text_PlayerSalary = GameObject.Find("TextSalary").GetComponent<TextMeshProUGUI>();
         }
         
 
@@ -45,6 +48,7 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
             playerPortrait.sprite = sprite;
             text_PlayerAge.text = playerAge;
             text_playerName.text = playerName;
+            text_PlayerSalary.text = playerSalary;
         }
             
     }

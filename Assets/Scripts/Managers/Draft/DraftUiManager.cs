@@ -12,6 +12,7 @@ public class DraftUiManager : MonoBehaviour
     [SerializeField]Transform _playersFromOnTheClockTeamArea;
     [SerializeField] TextMeshProUGUI text_currentPlayersOnTeam;
     [SerializeField] Transform _playerBtnsAreaContent;
+    [SerializeField] TextMeshProUGUI text_currentTeamSalary;
     // Start is called before the first frame update
     void Start()
     {
@@ -42,6 +43,8 @@ public class DraftUiManager : MonoBehaviour
             Transform selectedBtn = GetRandomChild();
             InvokeButtonClick(selectedBtn.GetComponent<Button>());
         }
+
+        
     }
     public Transform GetRandomChild()
     {

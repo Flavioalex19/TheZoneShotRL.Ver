@@ -48,6 +48,11 @@ public class Team : MonoBehaviour
     public bool isOnDefenseBonus = false;
     public bool hasHDefense = false;
     #endregion
+    //Placement+Playoffs
+    public bool isR8 = false;
+    public bool isR4 = false;
+    public bool isFinalist = false;
+    public bool isChampion = false;//indicates if you clear the game with this team;
     private void Awake()
     {
        

@@ -31,8 +31,20 @@ public class LeagueManager : MonoBehaviour
     public bool canTrain = true;
 
     public bool canNegociateContract;
-
+    //Tutorial
     public bool CanStartTutorial = true;
+
+
+    //Playoffs
+    public bool isOnR8 = false;
+    public bool isOnR4 = false;
+    public bool isOnFinals = false;
+    public List<Team> List_R8Teams = new List<Team>();
+    public List<string> List_R8Names = new List<string>();
+    public List<Team> List_R4Teams = new List<Team>();
+    public List<Team> List_R4Names = new List<Team>();
+    public List<Team> List_Finalist = new List<Team>();
+    public List<Team> List_FinalistName = new List<Team>();
 
     GameManager gameManager;
     UiManager uiManager;

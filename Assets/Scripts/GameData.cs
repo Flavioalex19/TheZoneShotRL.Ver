@@ -24,7 +24,7 @@ public class PlayerData
     public int cosis;
     public int control;
     public int pos;
-    public float ovr;
+    public int ovr;
     public int awn;
     public int yearsC;
     public int salaryPlayer;
@@ -96,6 +96,10 @@ public class TeamData
     public int cap;
     public int trainingP;
     public int tradindP;
+    public bool isTop8;
+    public bool isTop4;
+    public bool FinalTeam;
+    public bool Champion;
 
     public TeamData(Team team, LeagueManager leagueManager)
     {
@@ -110,6 +114,10 @@ public class TeamData
         cap = team.CurrentSalary;
         trainingP = team.TrainingPower;
         tradindP = team.TradingPower;
+        isTop8 = team.isR8;
+        isTop4 = team.isR4;
+        FinalTeam = team.isFinalist;
+        Champion = team.isChampion;
         foreach (Player player in team.playersListRoster)
         {
             playersListData.Add(new PlayerData(player));
@@ -164,6 +172,16 @@ public class LeagueManagerData
     public bool canTrainPlayer;
     public bool canStartTutorial;
     public bool canNegociateContract;
+    public bool isr8;
+    public bool isr4;
+    public bool isFinal;
+    public List<Team> R8;
+    public List<Team> R4;
+    public List<Team> FinalList;
+    public List<string> R8Names;
+    public List<string> R4Names;
+    public List<string> FinalNames;
+
     public LeagueManagerData(LeagueManager leagueManager)
     {
         weekNumber = leagueManager.Week;
@@ -173,5 +191,9 @@ public class LeagueManagerData
         canTrainPlayer = leagueManager.canTrain;
         canStartTutorial = leagueManager.CanStartTutorial;
         canNegociateContract = leagueManager.canNegociateContract;
+
+        R8Names = leagueManager.List_R8Teams.Select(t => t.TeamName).ToList();
+        R4Names = leagueManager.List_R4Teams.Select(t => t.TeamName).ToList();
+        FinalNames = leagueManager.List_Finalist.Select(t => t.TeamName).ToList();
     }
 }
