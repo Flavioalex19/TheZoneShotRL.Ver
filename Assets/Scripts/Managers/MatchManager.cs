@@ -286,6 +286,46 @@ public class MatchManager : MonoBehaviour
             AwayTeam.Draws++;
             if (HomeTeam.IsPlayerTeam) { _matchUI.ActivateVictoryDefeat("Draw"); }
         }
+        //stats increment
+        if (HomeTeam.IsPlayerTeam)
+        {
+            // OFFICE  Front Office Points
+            if (HomeTeam.OfficeLvl >= 0)
+            {
+                float bonus = 5f * (1f + HomeTeam.OfficeLvl * 0.5f);
+                HomeTeam.FrontOfficePoints += Mathf.RoundToInt(bonus);
+            }
+
+            // FINANCES  Salary Cap
+            if (HomeTeam.FinancesLvl >= 0)
+            {
+                float bonus = 2f * (1f + HomeTeam.FinancesLvl * 0.5f);
+                HomeTeam.SalaryCap += Mathf.RoundToInt(bonus);
+            }
+
+            // MARKETING  Fan Support
+            if (HomeTeam.MarketingLvl >= 0)
+            {
+                float bonus = 5f * (1f + HomeTeam.MarketingLvl * 0.5f);
+                HomeTeam.FansSupportPoints += Mathf.RoundToInt(bonus);
+            }
+
+            // ARENA  Morale
+            if (HomeTeam.ArenaLvl >= 0)
+            {
+                float bonus = 5f * (1f + HomeTeam.ArenaLvl * 0.5f);
+                HomeTeam.Moral += Mathf.RoundToInt(bonus);
+                HomeTeam.Moral = Mathf.Clamp(HomeTeam.Moral, 0, 100);
+            }
+
+            // MEDICAL  Effort / Stamina / Recovery bonus
+            if (HomeTeam.MedicalLvl >= 0)
+            {
+                float bonus = 10f * (1f + HomeTeam.MedicalLvl * 0.5f);
+                HomeTeam.EffortPoints += Mathf.RoundToInt(bonus);
+            }
+
+        }
         HomeTeam.HasPlayed = true;
         AwayTeam.HasPlayed = true;
         //Set career stats

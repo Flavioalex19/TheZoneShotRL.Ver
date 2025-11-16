@@ -52,6 +52,9 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Transform _trade_btn_PlayersFronControlledTeam;
     public GameObject TradeReceivePlayerArea;
     [SerializeField] TextMeshProUGUI text_teamFrontOfficeGrade;
+    [SerializeField] TextMeshProUGUI text_tradeResult;
+    [SerializeField] GameObject panel_tradeResult;
+    [SerializeField] TextMeshProUGUI text_currentFrontOfficePoints;
     [Header("Training")]
     //Training
     [SerializeField] TrainingManager trainingManager;
@@ -127,6 +130,14 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] GameObject panel_infoButtons;
     [SerializeField] TextMeshProUGUI text_expiringContractsWarning;
     [SerializeField] Animator animator_expiringContractBtn;
+
+    [Header("Facilities")]
+    [SerializeField] TextMeshProUGUI text_facilitiesOfficeLvl;
+    [SerializeField] TextMeshProUGUI text_facilitiesFinancesLvl;
+    [SerializeField] TextMeshProUGUI text_facilitiesMarketingLvl;
+    [SerializeField] TextMeshProUGUI text_facilitiesTeamEquipsLvl;
+    [SerializeField] TextMeshProUGUI text_facilitiesArenaLvl;
+    [SerializeField] TextMeshProUGUI text_facilitiesMedicalLvl;
 
     [Header("PlayerEvents")]
     [SerializeField] PlayerEventsManager playerEventsManager;
@@ -209,12 +220,14 @@ public class TeamManagerUI : MonoBehaviour
         //News
         NewsUpdate();
         //playerEvents
+        /*
         if (leagueManager.canGenerateEvents == false) panel_playerEventPanel.SetActive(false);
         else 
         {
             panel_playerEventPanel.SetActive(true);
             SetPlayerEvetPanel();
         } 
+        */
         //AssistancePanel
         SetAssistancePanel();
         assiatncePanel.SetActive(false);
@@ -304,16 +317,31 @@ public class TeamManagerUI : MonoBehaviour
         {
             GameObject.Find("FanSupportPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FansSupportPoints.ToString();
         }
+        if (GameObject.Find("EffortPointsText"))
+        {
+            GameObject.Find("EffortPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.EffortPoints.ToString();
+        }
         for (int i = 0; i < equipAreaText.childCount; i++)
         {
             equipAreaText.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam._equipmentList[i].Level.ToString();
         }
-
+        UpdateFacilities();
         //end build
         if (leagueManager.Week > gameManager.leagueTeams.Count - 1 && leagueManager.isOnR4)
         {
             _EndBuildScreen.SetActive(true);
         }
+    }
+    //Facilities
+    void UpdateFacilities()
+    {
+        text_facilitiesOfficeLvl.text = "Office LVL:" + gameManager.playerTeam.OfficeLvl.ToString();
+        text_facilitiesFinancesLvl.text = "Finances LVL:" + gameManager.playerTeam.FinancesLvl.ToString();
+        text_facilitiesMarketingLvl.text = "Marketing LVL:" + gameManager.playerTeam.MarketingLvl.ToString();
+        text_facilitiesTeamEquipsLvl.text = "Equipments LVL:" + gameManager.playerTeam.TeamEquipmentLvl.ToString();
+        text_facilitiesArenaLvl.text = "Arena LVL:" + gameManager.playerTeam.ArenaLvl.ToString();
+        text_facilitiesMedicalLvl.text = "Med LVL:" + gameManager.playerTeam.MedicalLvl.ToString();
+
     }
     //News
     void NewsUpdate()
@@ -388,6 +416,8 @@ public class TeamManagerUI : MonoBehaviour
         leagueManager.IncreaseWeek();
         leagueManager.CreateStandings();
     }
+    
+    
     //Advance Button Update the elements
     public void AdvButtonUpdate()
     {
@@ -538,6 +568,7 @@ public class TeamManagerUI : MonoBehaviour
         {
             _tradePanel.SetActive(true);
             SetTheTradingBtns();
+            
         }
     }
     public void SetTheTradingBtns()
@@ -545,8 +576,7 @@ public class TeamManagerUI : MonoBehaviour
         for (int i = 0; i < _trade_btn_PlayersFronControlledTeam.childCount; i++)
         {
             _trade_btn_PlayersFronControlledTeam.GetChild(i).GetComponent<Btn_TradeBtn>().player = gameManager.playerTeam.playersListRoster[i];
-            print(gameManager.playerTeam.playersListRoster[i] + "player on the trade btn" + gameManager.playerTeam.playersListRoster[i].playerLastName);
-            //_trade_btn_PlayersFronControlledTeam.GetChild(i).GetComponent<Button>().onClick.AddListener(() => tradeManager.SetPlayerToTrade(gameManager.playerTeam.playersListRoster.IndexOf(gameManager.playerTeam.playersListRoster[i])));
+            //print(gameManager.playerTeam.playersListRoster[i] + "player on the trade btn" + gameManager.playerTeam.playersListRoster[i].playerLastName);
             int index = gameManager.playerTeam.playersListRoster.IndexOf(gameManager.playerTeam.playersListRoster[i]);
             _trade_btn_PlayersFronControlledTeam.GetChild(i).GetComponent<Button>().onClick.AddListener(() => tradeManager.SetPlayerToTrade(index));
 
@@ -558,26 +588,17 @@ public class TeamManagerUI : MonoBehaviour
     }
     public void SetTradeGrade()
     {
-        if (gameManager.playerTeam.FrontOfficePoints > 10 && gameManager.playerTeam.FrontOfficePoints < 40)
-        {
-            text_teamFrontOfficeGrade.text = "C";
-            text_teamFrontOfficeGrade.color = Color.red;
-        }
-        else if(gameManager.playerTeam.FrontOfficePoints >= 40 && gameManager.playerTeam.FrontOfficePoints < 60)
-        {
-            text_teamFrontOfficeGrade.text = "B";
-            text_teamFrontOfficeGrade.color = new Color(1f, 0.5f, 0f);
-        }
-        else if(gameManager.playerTeam.FrontOfficePoints>= 60 && gameManager.playerTeam.FrontOfficePoints< 80)
-        {
-            text_teamFrontOfficeGrade.text = "A";
-            text_teamFrontOfficeGrade.color = new Color(0.5f, 1f, 0.5f);
-        }
-        else
-        {
-            text_teamFrontOfficeGrade.text = "S";
-            text_teamFrontOfficeGrade.color = new Color(0f, 0.8f, 0f);
-        }
+        //print("To setTradeValue");
+        //if(tradeManager.TradeTeam !=null ) tradeManager.CalculateTradeCost(tradeManager.TradeTeam.playersListRoster[tradeManager._playerToReceive]);
+        text_teamFrontOfficeGrade.text = tradeManager.tradeCost.ToString();
+        text_currentFrontOfficePoints.text = gameManager.playerTeam.FrontOfficePoints.ToString();
+
+
+    }
+    public void SetTradeResultText(string result)
+    {
+        panel_tradeResult.SetActive(true);
+        text_tradeResult.text = result;
     }
     //Training
     public void SetTrainingBtns()
@@ -596,26 +617,8 @@ public class TeamManagerUI : MonoBehaviour
     }
     public void SetTrainingGrade()
     {
-        if (gameManager.playerTeam.FrontOfficePoints > 10 && gameManager.playerTeam.FrontOfficePoints < 40)
-        {
-            _text_TrainingGrade.text = "C";
-            _text_TrainingGrade.color = Color.red;
-        }
-        else if (gameManager.playerTeam.FrontOfficePoints >= 40 && gameManager.playerTeam.FrontOfficePoints < 60)
-        {
-            _text_TrainingGrade.text = "B";
-            _text_TrainingGrade.color = new Color(1f, 0.5f, 0f);
-        }
-        else if (gameManager.playerTeam.FrontOfficePoints >= 60 && gameManager.playerTeam.FrontOfficePoints < 80)
-        {
-            _text_TrainingGrade.text = "A";
-            _text_TrainingGrade.color = new Color(0.5f, 1f, 0.5f);
-        }
-        else
-        {
-            _text_TrainingGrade.text = "S";
-            _text_TrainingGrade.color = new Color(0f, 0.8f, 0f);
-        }
+        _text_TrainingGrade.text = gameManager.playerTeam.FrontOfficePoints.ToString();
+        
     }
     //Standings
     void PopulateStandings()
@@ -671,11 +674,12 @@ public class TeamManagerUI : MonoBehaviour
 
 
     }
-    public void ContractDiscussion()
+    public void ContractDiscussion(int weight)
     {
         contract_asstancePanel.SetActive(true);
         if(leagueManager.canNegociateContract == true)
         {
+            /*
             if (gameManager.playerTeam.playersListRoster[indexForPlayer].ContractYears < 5 ||
         (newSalaryValue + gameManager.playerTeam.CurrentSalary -
         gameManager.playerTeam.playersListRoster[indexForPlayer].Salary)
@@ -700,6 +704,64 @@ public class TeamManagerUI : MonoBehaviour
             {
                 contract_resultNegotiationText.text = "Boss, we can't extend his contract for now.";
             }
+            */
+            int salaryIncrease = 0;
+            int gamesIncrease = 0;
+
+            switch (weight)
+            {
+                case 0:                     // Oferta ruim
+                    salaryIncrease = UnityEngine.Random.Range(2, 6);
+                    gamesIncrease = 2;
+                    break;
+
+                case 1:                     // Oferta média
+                    salaryIncrease = UnityEngine.Random.Range(6, 9);
+                    gamesIncrease = 4;
+                    break;
+
+                case 2:                     // Melhor oferta
+                    salaryIncrease = UnityEngine.Random.Range(9, 13);
+                    gamesIncrease = 6;
+                    break;
+            }
+            Player p = gameManager.playerTeam.playersListRoster[indexForPlayer];
+
+            // Calcula o salário projetado após a mudança
+            int projectedSalary = gameManager.playerTeam.CurrentSalary
+                - p.Salary
+                + (p.Salary + salaryIncrease);
+
+            // Verifica limite de contrato + salary cap
+            if (p.ContractYears < 5 && projectedSalary < gameManager.playerTeam.SalaryCap)
+            {
+                if (TryExtendContract(gameManager.playerTeam, p, newSalaryValue, newGamesValue, weight))
+                {
+                    p.ContractYears += gamesIncrease;
+                    p.Salary += salaryIncrease;
+
+                    contract_resultNegotiationText.text =
+                        "Good Job Boss! " + p.playerLastName + " for " + p.ContractYears;
+
+                    image_assistance.sprite = sprite_AssistanceHappy;
+
+                }
+                else
+                {
+                    contract_resultNegotiationText.text =
+                        "Damn! We can't come to an agreement with " + p.playerLastName +
+                        ". Maybe he needs some time to think...";
+
+                    image_assistance.sprite = sprite_AssistanceFail;
+                }
+
+                leagueManager.canNegociateContract = false;
+            }
+            else
+            {
+                contract_resultNegotiationText.text =
+                    "Boss, we can't extend his contract for now.";
+            }
         }
         else
         {
@@ -716,8 +778,9 @@ public class TeamManagerUI : MonoBehaviour
         //UpdateTeamSalary();
         SaveAfterPlayerEvent();
     }
-    public bool TryExtendContract(Team team, Player player, int salaryProposed, int gamesProposed)
+    public bool TryExtendContract(Team team, Player player, int salaryProposed, int gamesProposed,int weight)
     {
+        /*
         if (salaryProposed < player.Salary) return false;
         // Base demand: higher personality = tougher negotiation
         float baseDemand = player.Salary * (1f + (player.Personality - 1) * 0.1f);
@@ -741,6 +804,21 @@ public class TeamManagerUI : MonoBehaviour
         acceptanceChance = Mathf.Clamp01(acceptanceChance);
 
         return UnityEngine.Random.value < acceptanceChance;
+        */
+        // Não aceitar propostas menores que o salário atual
+        if (salaryProposed < player.Salary)
+            return false;
+
+        float chance = 0.5f; // fallback padrão
+
+        switch (weight)
+        {
+            case 0: chance = 0.30f; break;   // Oferta ruim - menor chance
+            case 1: chance = 0.50f; break;   // Média
+            case 2: chance = 0.60f; break;   // Melhor oferta - maior chance
+        }
+
+        return UnityEngine.Random.value < chance;
     }
     public void AddOrDecreaseContractGamesGamesValue(bool isAdding)
     {

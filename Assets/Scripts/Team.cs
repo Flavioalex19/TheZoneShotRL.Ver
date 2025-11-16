@@ -22,13 +22,19 @@ public class Team : MonoBehaviour
     public int Moral;
     public int FrontOfficePoints;
     public int FansSupportPoints;
+    public int EffortPoints;
     public int Wins;
     public int Loses;
     public int Draws;
+    public int SalaryCapReset = 100;
     public int SalaryCap = 100;
     public int CurrentSalary = 0;
-    public int TrainingPower = 0;
-    public int TradingPower = 0;
+    public int OfficeLvl = 0;
+    public int FinancesLvl = 0;
+    public int MarketingLvl = 0;
+    public int TeamEquipmentLvl = 0;
+    public int ArenaLvl = 0;
+    public int MedicalLvl = 0;
     HashSet<int> usedNumbers = new HashSet<int>();//Numbers on the jersey
 
     #endregion
@@ -36,6 +42,8 @@ public class Team : MonoBehaviour
     public int fixMoral;
     public int fixFans;
     public int fixFrontOffice;
+    public int fixFansSupport;
+    public int fixEffort;
     //Atrributes
     [SerializeField]public string Description;
     public string CoachName;

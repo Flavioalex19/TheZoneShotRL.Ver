@@ -12,9 +12,11 @@ public class TradeManager : MonoBehaviour
     Team _playerTeam;
     [SerializeField] TeamManagerUI _teamManagerUI;
     public Team TradeTeam;
+    public int tradeCost = 0;
     [SerializeField]int _playerToTradeIndex;
     public int _playerToReceive;
     [SerializeField] TextMeshProUGUI _trade_currentPlayerToTrade;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +36,7 @@ public class TradeManager : MonoBehaviour
             //_trade_currentPlayerToTrade.text = _playerTeam.playersListRoster[_playerToTradeIndex].playerLastName.ToString();
             FindTeamToTrade();
             FindPlayerForTrade();
+            
         }
         else
         {
@@ -61,16 +64,7 @@ public class TradeManager : MonoBehaviour
         // Normalize and map front office points to OVR range (60 to 99)
         float normalized = (_gameManager.playerTeam.FrontOfficePoints - 20f) / 80f;
         int maxOVR = Mathf.RoundToInt(Mathf.Lerp(60f, 99f, normalized));
-        /*
-        for (int i = 0; i < TradeTeam.playersListRoster.Count; i++)
-        {
-            if (TradeTeam.playersListRoster[i].ovr <= maxOVR)
-            {
-                _playerToReceive = TradeTeam.playersListRoster.IndexOf(TradeTeam.playersListRoster[i]);
-                print(TradeTeam.playersListRoster[i].playerLastName + TradeTeam.playersListRoster[i].ovr + "This is the player avalible for trade");
-            }
-        }
-        */
+        
         int bestIndex = -1;
         int bestOVR = -1;
 
@@ -106,6 +100,9 @@ public class TradeManager : MonoBehaviour
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(5).GetComponent<TextMeshProUGUI>().text = attName0;
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(6).GetComponent<TextMeshProUGUI>().text = attName1;
 
+        CalculateTradeCost(TradeTeam.playersListRoster[_playerToReceive]);
+        _teamManagerUI.SetTradeGrade();
+
 
     }
     public (string attr1Name, int attr1Value, string attr2Name, int attr2Value) GetAttributeValuesForStyle(TeamStyle style, Player player)
@@ -134,16 +131,65 @@ public class TradeManager : MonoBehaviour
         // Swap
         TeamA[playerAIndex] = PlayerB;
         TeamB[playerBIndex] = PlayerA;
+
+        
+        //_gameManager.playerTeam.FrontOfficePoints -= CalculateTradeCost(PlayerB);
     }
     public void Trade()
     {
-        SwapPlayersBetweenTeams(_gameManager.playerTeam.playersListRoster, _playerToTradeIndex, TradeTeam.playersListRoster, _playerToReceive);
-        int _currentTeamIndex = _gameManager.leagueTeams.IndexOf(_gameManager.playerTeam);
-        _teamManagerUI.TeamRoster();
-        _teamManagerUI.SetTheTradingBtns();
-        _leagueManager.canTrade = false;
-        _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "";
-        _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
-        _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "";
+        if (_gameManager.playerTeam.FrontOfficePoints >= tradeCost && _leagueManager.canTrade == true)
+        {
+            // allow trade
+            SwapPlayersBetweenTeams(_gameManager.playerTeam.playersListRoster, _playerToTradeIndex, TradeTeam.playersListRoster, _playerToReceive);
+            int _currentTeamIndex = _gameManager.leagueTeams.IndexOf(_gameManager.playerTeam);
+            _teamManagerUI.TeamRoster();
+            _teamManagerUI.SetTheTradingBtns();
+            _leagueManager.canTrade = false;
+            _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "";
+            _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
+            _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "";
+
+            _teamManagerUI.SetTradeResultText("Good job Boss! A new player arrived");
+            _gameManager.playerTeam.FrontOfficePoints-=tradeCost;
+        }
+        else
+        {
+            // vtol trade
+            _teamManagerUI.SetTradeResultText("No enough points boss! E cannot trade for this player");
+        }
+        
+        
+    }
+    public int CalculateTradeCost(Player p)
+    {
+        int cost = 0;
+
+        // Lista dos atributos do jogador
+        int[] stats = new int[]
+        {
+        p.Shooting, p.Inside, p.Mid, p.Outside, p.Awareness,
+        p.Defending, p.Guarding, p.Stealing, p.Juking,
+        p.Consistency, p.Control, p.Positioning
+        };
+
+        // Conta quantos atributos são >= 80
+        int highStats = 0;
+        for (int i = 0; i < stats.Length; i++)
+        {
+            if (stats[i] >= 80)
+                highStats++;
+        }
+
+        // Custo base por atributo acima de 80
+        // (Ajuste se quiser mais/menos impacto)
+        int costPerStat = 10;
+
+        cost = highStats * costPerStat;
+
+        // Nunca ultrapassar 80
+        cost = Mathf.Min(cost, 80);
+        //print(cost + " This is the vos of the trade!!!!!!!!!!!!!!!!!!!!");
+        tradeCost = cost;
+        return tradeCost;
     }
 }

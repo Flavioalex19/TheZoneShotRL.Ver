@@ -145,33 +145,33 @@ public class LeagueManager : MonoBehaviour
     {
         eventOptions.Add(new EventOption 
         { 
-            Index = 0, Description = "Helix Dynamics, wants us to pick a focus for their next campaign.",
-            Choice1 = "We will make a commercial showing the new equipment <color=#FFD700>Gloves LevelUp</color>",
-            Choice2 = "We will hold a training session open to the press to show off the new equipment. <color=#FFD700>Strategy LevelUp</color>",
+            Index = 0, Description = "Boss, local TV wants a quick hit before the match. Respond in a more humorous way or straight tactics?",
+            Choice1 = "Fun & Relatable <color=#FFD700>Marketing +1</color>",
+            Choice2 = "Pro & Tactical <color=#FFD700>Office +1</color>",
             btnIndex0 = 0,
             btnIndex1 = 6,
             Modifier = 1,
-            eventType = EventType.Sponsor 
+            eventType = EventType.Interview 
         });
         eventOptions.Add(new EventOption
         {
             Index = 1,
-            Description = "NovaCore Industries is offering to upgrade our equipment. Which should we choose?",
-            Choice1 = "Advanced Visors for better vision and awareness. <color=#FFD700> Helmet Level Up</color>",
-            Choice2 = "Power Boots to improve speed and agility.<color=#FFD700> Boots Level Up</color>",
+            Description = "City council just emailed a one-time youth grant. Take it and shout it out, or funnel it to the stadium?",
+            Choice1 = "Accept & Promote Locally <color=#FFD700>Marketing +1</color>",
+            Choice2 = "Redirect to Facility Upgrade <color=#FFD700>Arena +1</color>",
             btnIndex0 = 4,
             btnIndex1 = 0,
             Modifier = 1,
-            eventType = EventType.Sponsor
+            eventType = EventType.ReplyToEmails
         });
         eventOptions.Add(new EventOption
         {
             Index = 2,
-            Modifier = 15,
-            Description = "Vox Media wants to interview your team captain about the recent victory. How should he respond?",
-            Choice1 = "Be humble and praise the team effort.<color=#FFD700> Moral +15 Up</color>  ",
-            Choice2 = "Show confidence and claim the team is unstoppable.<color=#FFD700>Fan Support +15 Up</color> ",
-            eventType = EventType.Interview
+            Modifier = 1,
+            Description = "Players are voting on locker room upgrades. Smart tech or recovery pods?",
+            Choice1 = "Smart Lockers & Charging Stations <color=#FFD700>Team Equipment +1</color>",
+            Choice2 = "Better Recovery Pods <color=#FFD700>MedCare +1</color>",
+            eventType = EventType.TeamMeeting
 
 
         }) ;
@@ -179,44 +179,66 @@ public class LeagueManager : MonoBehaviour
         {
 
             Index = 3,
-            Description = "Some players feel the team’s strategy is too old-fashioned. How should you address the group?",
-            Choice1 = "Stick to the current plan and emphasize discipline.<color=#FFD700> FrontOffiece +10 Up</color>",
-            Choice2= "Open the floor to new ideas and experiments. <color=#FFD700> Moral +10 Up</color>",
-            Modifier = 10,
-            eventType = EventType.TeamMeeting
+            Description = "Energy drink brand on the line—standard cash deal or premium with player product?",
+            Choice1 = "Standard Deal + Cash <color=#FFD700>Finances +1</color>",
+            Choice2= "Premium Deal + Product for Players <color=#FFD700>Team Equipment +1</color>",
+            Modifier = 1,
+            eventType = EventType.Sponsor
         
         });
         eventOptions.Add(new EventOption
         {
 
             Index = 4,
-            Description = "A young fan sent an email asking for advice on becoming a pro. How should you reply?",
-            Choice1 = "Encourage him and share some training tips. <color=#FFD700> FanSupport +10 Up</color>",
-            Choice2 = "Politely redirect them to the team’s youth program. <color=#FFD700> Front Office +10 Up</color>",
-            Modifier = 10,
-            eventType = EventType.ReplyToEmails
+            Description = "Vox media in a podcast is asking what the team needs most. Med staff or fan support?",
+            Choice1 = "We need better medical support <color=#FFD700>MedCare +1</color>",
+            Choice2 = "Fan experience comes first <color=#FFD700>Arena +1</color>",
+            Modifier = 1,
+            eventType = EventType.Interview
 
         });
         eventOptions.Add(new EventOption
         {
 
             Index = 5,
-            Description = "You wake up feeling strange. There's no alert. No crisis. Just a feeling. Something’s off. You can’t shake it",
-            Choice1 = "Trust the feeling. Adjust the game plan.<color=#FFD700> Front Office +10 Up</color>",
-            Choice2 = "Ignore it. Routine is everything <color=#FFD700> Moral +10 Up</color>",
-            Modifier = 10,
-            eventType = EventType.TeamMeeting
+            Description = "Helix cell is offering bulk gear discount—expires today. Stock up or lock in future credit?",
+            Choice1 = "Stock Up Now <color=#FFD700>Team Equipment +1</color>",
+            Choice2 = "Negotiate for Future Credit <color=#FFD700>Finances +1</color>",
+            Modifier = 1,
+            eventType = EventType.Sponsor
 
         });
         eventOptions.Add(new EventOption
         {
 
             Index = 6,
-            Description = "Reporter: The fans are... passionate this year. How much do their eyes weigh on you?",
-            Choice1 = "We feel it. That energy drives us every night.",
-            Choice2 = "We stay focused inside the lines. Everything else is just noise.",
-            Modifier = 10,
-            eventType = EventType.Interview
+            Description = "Bank wants to fund a new VIP area. Luxury skybox or family zone?",
+            Choice1 = "Luxury Skybox <color=#FFD700>Arena +1</color>",
+            Choice2 = "Family Zone with Kids Area <color=#FFD700>Marketing +1</color>",
+            Modifier = 1,
+            eventType = EventType.TeamMeeting
+
+        });
+        eventOptions.Add(new EventOption
+        {
+
+            Index = 7,
+            Description = "Maintenance found extra space under the stands. Physio suite or merch shop?",
+            Choice1 = "Convert to Physio Suite <color=#FFD700>MedCare +1</color>",
+            Choice2 = "Add Merch Pop-Up Shop <color=#FFD700>Marketing +1</color>",
+            Modifier = 1,
+            eventType = EventType.ReplyToEmails
+
+        });
+        eventOptions.Add(new EventOption
+        {
+
+            Index = 8,
+            Description = "HyperMetrics XY is offering free analytics—if we upgrade servers. Take it or sell access?",
+            Choice1 = "Take the Suite + Upgrade Servers <color=#FFD700>Office +1</color>",
+            Choice2 = "Sell the Suite Access to League <color=#FFD700>Finances +1</color>",
+            Modifier = 1,
+            eventType = EventType.Sponsor
 
         });
 

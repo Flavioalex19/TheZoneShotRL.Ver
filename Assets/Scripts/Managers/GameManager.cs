@@ -103,6 +103,7 @@ public class GameManager : MonoBehaviour
                 leagueTeams[i].Moral =leagueTeams[i].fixMoral;
                 leagueTeams[i].FansSupportPoints = leagueTeams[i].fixFans;
                 leagueTeams[i].FrontOfficePoints = leagueTeams[i].fixFrontOffice;
+                leagueTeams[i].EffortPoints = leagueTeams[i].fixEffort;
                 leagueTeams[i].IsPlayerTeam = false;
                 leagueTeams[i].Wins = 0;
                 leagueTeams[i].Draws = 0;
