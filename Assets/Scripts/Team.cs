@@ -55,6 +55,8 @@ public class Team : MonoBehaviour
     public int Score = 0;
     public bool isOnDefenseBonus = false;
     public bool hasHDefense = false;
+    public int Dbuff = 0;
+    public int OBuff = 0;
     #endregion
     //Placement+Playoffs
     public bool isR8 = false;

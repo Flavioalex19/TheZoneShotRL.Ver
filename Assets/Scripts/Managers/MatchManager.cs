@@ -398,6 +398,7 @@ public class MatchManager : MonoBehaviour
     {
         if(/*teamWithball == AwayTeam*/ teamWithball.IsPlayerTeam == false)
         {
+            
             CanChooseAction = false;
             
             ai_currentNumberOfPasses = ai_maxNumberOfPasses;
@@ -1078,14 +1079,20 @@ public class MatchManager : MonoBehaviour
         yield return StartCoroutine(LeagueWeekSimulation());
 
         // Now do the 3-week upgrade/animation (after simulations finished)
-        if (leagueManager.Week % 3 == 0)
+        if (leagueManager.Week % 4 == 0)
         {
             ApplyFiveWeekTraining(manager.playerTeam, manager.playerTeam.Wins, manager.playerTeam.Draws, manager.playerTeam.Loses);
             _matchUI.UpgradeTeamAnim();
             // Wait properly for the animation/coroutine to finish
             yield return StartCoroutine(waitSecondsForAction());
         }
-
+        for (int i = 0; i < manager.leagueTeams.Count; i++)
+        {
+            if (manager.leagueTeams[i]!= manager.playerTeam)
+            {
+                ApplyFiveWeekTraining(manager.leagueTeams[i], manager.leagueTeams[i].Wins, manager.leagueTeams[i].Draws, manager.leagueTeams[i].Loses);
+            }
+        }
         sfxManager.ResetVolume();
         //Enable progress button
         _matchUI.btn_ReturnToTeamManagement.gameObject.SetActive(true);
@@ -1140,16 +1147,7 @@ public class MatchManager : MonoBehaviour
             if (bondIndex >= 0 && bondIndex < 4) // bond está entre os 4 primeiros
                 passSuccessChance *= 1.07f; // +7%
         }
-        //Equipment slot bonus 
-        if (teamWithball._equipmentList != null && teamWithball._equipmentList.Count > 1)
-        {
-            int equipLevel = teamWithball._equipmentList[0].Level; // nível do equipamento no slot 1
-            if (equipLevel > 0)
-            {
-                float equipBonus = 1f + (equipLevel <= 2 ? equipLevel * 0.03f : 0.06f + (equipLevel - 2) * 0.05f);
-                passSuccessChance *= equipBonus;
-            }
-        }
+        
         //return passSuccessChance;
         // Se a defesa escolheu "tackle", fica 20% mais difícil de o passe dar certo
         if (chooseDefenseTackle)
@@ -1232,16 +1230,7 @@ public class MatchManager : MonoBehaviour
             if (bondIndex >= 0 && bondIndex < 4) // bond está entre os 4 primeiros
                 baseAccuracy *= 1.07f; // +7%
         }
-        //bônus Equipment
-        if (teamWithball._equipmentList != null && teamWithball._equipmentList.Count > 1)
-        {
-            int equipLevel = teamWithball._equipmentList[2].Level; // nível do equipamento no slot 1
-            if (equipLevel > 0)
-            {
-                float equipBonus = 1f + (equipLevel <= 2 ? equipLevel * 0.03f : 0.06f + (equipLevel - 2) * 0.05f);
-                baseAccuracy *= equipBonus;
-            }
-        }
+        
         if (chooseBlock)
             baseAccuracy *= 0.8f; // reduz 20%
         //return isAI ? Mathf.Clamp01(baseAccuracy * (1f / ai_difficulty)) : Mathf.Clamp01(baseAccuracy);
@@ -1303,31 +1292,38 @@ public class MatchManager : MonoBehaviour
     //Percentages
     public float GetScoringChance(Player offense, Player defense, int zone, bool isAI = false)
     {
+        // 1. Base Zone Accuracy
         float baseAccuracy = 0.7f; // default mid
         switch (zone)
         {
-            case 0: baseAccuracy = 0.64f; break;
-            case 1: baseAccuracy = 0.70f; break;
-            case 2: baseAccuracy = 0.75f; break;
+            case 0: baseAccuracy = 0.64f; break; // Outside
+            case 1: baseAccuracy = 0.70f; break; // Mid
+            case 2: baseAccuracy = 0.75f; break; // Inside
         }
 
+        // 2. Offense Value (X)
         int offenseValue =
-            UnityEngine.Random.Range(1, 101) +
+            UnityEngine.Random.Range(1, 101) +  // variance
             offense.Consistency +
             offense.Control +
             offense.Shooting +
             GetZoneValue(offense, zone) +
-            UnityEngine.Random.Range(-10, 26);
+            UnityEngine.Random.Range(-10, 26); // bonus
 
+        // 3. Defense Value (Y)
         int defenseValue =
-            UnityEngine.Random.Range(1, 101) +
+            UnityEngine.Random.Range(1, 101) +  // variance
             defense.Consistency +
             defense.Guarding +
             defense.Stealing +
             GetZoneValue(defense, zone);
 
+        if (teamWithball.hasHDefense)
+            defenseValue = (int)(defenseValue * 1.1f); // +10% eficácia
+
         int Z = offenseValue - defenseValue;
 
+        // 4. Modify accuracy based on result
         if (Z >= 300 && Z <= 356) baseAccuracy += 0.18f;
         else if (Z >= 200 && Z <= 299) baseAccuracy += 0.15f;
         else if (Z >= 150 && Z <= 199) baseAccuracy += 0.12f;
@@ -1336,21 +1332,20 @@ public class MatchManager : MonoBehaviour
         else if (Z >= 0 && Z <= 49) baseAccuracy += 0f;
         else if (Z >= -50 && Z <= -1) baseAccuracy -= 0.06f;
         else if (Z >= -100 && Z <= -51) baseAccuracy -= 0.12f;
-        else if (Z <= -101 && Z >= -356) return 0f;
+        else if (Z <= -101 && Z >= -356) return 0f; // Block
 
-        // stamina factor
+        // 5. Stamina factor (0 = sempre erra, 100 = bônus)
         float staminaFactor = offense.CurrentStamina / 100f;
-        baseAccuracy *= staminaFactor;
-
-        if (isAI) baseAccuracy *= ai_difficulty;
-        switch (momentum)
-        {
-            case 0: break; // neutro, sem impacto
-            case 1: baseAccuracy *= 0.95f; break; // mais difícil (~-5%)
-            case 2: baseAccuracy *= 1.05f; break; // mais fácil (~+5%)
-                                                  //case 3: baseAccuracy *= 0.60f; break;
-        }
+        float staminaBonus = 1f + (offense.CurrentStamina / 500f); // até +20% no máximo
+        baseAccuracy *= staminaFactor * staminaBonus;
+        // 5. Clamp result between 0%–100%
+        //return Mathf.Clamp01(baseAccuracy);
+        // Apply AI coefficient only if AI
+        //return isAI ? Mathf.Clamp01(baseAccuracy * ai_difficulty) : Mathf.Clamp01(baseAccuracy);
+        // 6. Apply subtle momentum modifier
+        
         if (playerWithTheBall.isInjured) baseAccuracy *= 0.60f;
+
         // --- ADIÇÃO: aplicar efeitos de buff e bond ---
         if (offense.buff > 0)
             baseAccuracy *= 1.10f; // +10%
@@ -1360,6 +1355,14 @@ public class MatchManager : MonoBehaviour
             int bondIndex = teamWithball.playersListRoster.IndexOf(offense.bondPlayer);
             if (bondIndex >= 0 && bondIndex < 4) // bond está entre os 4 primeiros
                 baseAccuracy *= 1.07f; // +7%
+        }
+
+        if (chooseBlock)
+            baseAccuracy *= 0.8f; // reduz 20%
+        //return isAI ? Mathf.Clamp01(baseAccuracy * (1f / ai_difficulty)) : Mathf.Clamp01(baseAccuracy);
+        if (!teamWithball.IsPlayerTeam)
+        {
+            baseAccuracy *= 1.45f; // IA arremessa 45% melhor
         }
 
         return Mathf.Round(Mathf.Clamp01(baseAccuracy) * 100f); // retorna em %
@@ -1378,7 +1381,7 @@ public class MatchManager : MonoBehaviour
 
         float passSuccessChance = offenseNormalized / (offenseNormalized + defenseNormalized);
 
-        // --- ADIÇÃO: aplicar efeitos de buff e bond ---
+        //Apply Buff and Bond
         if (playerWithTheBall.buff > 0)
             passSuccessChance *= 1.10f; // +10%
 
@@ -1388,6 +1391,14 @@ public class MatchManager : MonoBehaviour
             if (bondIndex >= 0 && bondIndex < 4) // bond está entre os 4 primeiros
                 passSuccessChance *= 1.07f; // +7%
         }
+
+        //return passSuccessChance;
+        // Se a defesa escolheu "tackle", fica 20% mais difícil de o passe dar certo
+        if (chooseDefenseTackle)
+            passSuccessChance *= 0.8f; // reduz 20%
+                                       // Apply AI coefficient only if AI
+        if (!teamWithball.IsPlayerTeam)
+            passSuccessChance *= ai_difficulty;
 
         //return passSuccessChance;
         // Apply AI coefficient only if AI
@@ -1453,9 +1464,7 @@ public class MatchManager : MonoBehaviour
         // Performance factor: team success influences growth
         float performanceFactor = (wins * 1.5f + draws * 0.5f - losses * 0.5f);
 
-        // Equipment factor
-        int equipmentLevel = team._equipmentList[4].Level; // Assuming this is an int
-        float equipmentBonus = 1f + (equipmentLevel * 0.1f); // +10% per level
+        
 
         foreach (Player player in team.playersListRoster)
         {
@@ -1489,7 +1498,7 @@ public class MatchManager : MonoBehaviour
             int growthValue = UnityEngine.Random.Range(growthMin, growthMax + 1);
 
             // Scale with performance + equipment
-            growthValue = Mathf.RoundToInt(growthValue * performanceFactor * equipmentBonus);
+            growthValue = Mathf.RoundToInt(growthValue * performanceFactor);
 
             // Keep it realistic
             growthValue = Mathf.Clamp(growthValue, 0, 5);
@@ -1508,7 +1517,7 @@ public class MatchManager : MonoBehaviour
             player.Outside = Mathf.Min(99, player.Outside + growthValue);
             player.Positioning = Mathf.Min(99, player.Positioning + growthValue);
 
-
+            player.UpdateOVR();
         }
     }
     public void ChangeTeamDefenseStyle(bool style)

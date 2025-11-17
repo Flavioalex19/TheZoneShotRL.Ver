@@ -14,6 +14,11 @@ public class TeamManagerUI : MonoBehaviour
     [Header("Intro")]
     [SerializeField] TextMeshProUGUI _text_NameTeam;
 
+    [Header("MainButtons")]
+    [SerializeField] Animator _animator_trade;
+    [SerializeField] Animator _animator_training;
+    [SerializeField] Animator _animator_contract;
+
     [Header("Schedule")]
     [SerializeField]GameObject _scheduleArea;
     [SerializeField] Transform _schedulePanelTextsArea;
@@ -238,11 +243,12 @@ public class TeamManagerUI : MonoBehaviour
         SetTeamIcon();
         if (leagueManager.Week > gameManager.leagueTeams.Count - 1)
         {
-            //_EndBuildScreen.SetActive(true);
+            _EndBuildScreen.SetActive(true);
+            /*
             if(leagueManager.isOnFinals == false && leagueManager.isOnR4== true)leagueManager.isOnFinals = true;
             //if(leagueManager.isOnR4 == true) leagueManager.isOnR4 = true;//remove later
             if(leagueManager.isOnR8==false)leagueManager.isOnR8 = true;
-
+            */
         }
 
         //leagueManager.CreateTeamSalary();
@@ -283,6 +289,8 @@ public class TeamManagerUI : MonoBehaviour
         //Update the current Week text
         if (leagueManager.Week > gameManager.leagueTeams.Count - 1) WeekText.text = "Playoffs"; 
         else WeekText.text = leagueManager.Week.ToString();
+
+       
 
         StartCoroutine(NewsLoop(10f));
     }
@@ -326,6 +334,10 @@ public class TeamManagerUI : MonoBehaviour
             equipAreaText.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam._equipmentList[i].Level.ToString();
         }
         UpdateFacilities();
+        //BtnsAnimations
+        _animator_trade.SetBool("On", leagueManager.canTrade);
+        _animator_training.SetBool("On", leagueManager.canTrain);
+        _animator_contract.SetBool("On", leagueManager.canNegociateContract);
         //end build
         if (leagueManager.Week > gameManager.leagueTeams.Count - 1 && leagueManager.isOnR4)
         {
@@ -343,6 +355,8 @@ public class TeamManagerUI : MonoBehaviour
         text_facilitiesMedicalLvl.text = "Med LVL:" + gameManager.playerTeam.MedicalLvl.ToString();
 
     }
+    //Btn Animations
+    
     //News
     void NewsUpdate()
     {

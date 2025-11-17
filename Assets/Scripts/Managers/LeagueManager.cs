@@ -307,76 +307,96 @@ public class LeagueManager : MonoBehaviour
                 //print(eventOption.Index + " " + eventOption.Description);
                 if(indexOfChoice == 0)
                 {
-                    gameManager.playerTeam._equipmentList[2].Level++;
+                    gameManager.playerTeam.MarketingLvl++;
                 }
                 else
                 {
-                    gameManager.playerTeam._equipmentList[4].Level++;
+                    gameManager.playerTeam.OfficeLvl++;
                 }
                 break;
             case 1:
                 print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    gameManager.playerTeam._equipmentList[0].Level++;
+                    gameManager.playerTeam.MarketingLvl++;
                 }
                 else
                 {
-                    gameManager.playerTeam._equipmentList[3].Level++;
+                    gameManager.playerTeam.ArenaLvl++;
                 }
                 break; 
             case 2:
                 print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    gameManager.playerTeam.Moral+= eventOption.Modifier;
+                    gameManager.playerTeam.TeamEquipmentLvl++;
                 }
                 else
                 {
-                    gameManager.playerTeam.FansSupportPoints += eventOption.Modifier;
+                    gameManager.playerTeam.MedicalLvl++;
                 }
                 break;
             case 3:
                 print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    gameManager.playerTeam.FrontOfficePoints += eventOption.Modifier;
+                    gameManager.playerTeam.FinancesLvl++;
                 }
                 else
                 {
-                    gameManager.playerTeam.Moral += eventOption.Modifier;
+                    gameManager.playerTeam.TeamEquipmentLvl++;
                 }
                 break;
             case 4:
                 if (indexOfChoice == 0)
                 {
-                    gameManager.playerTeam.FansSupportPoints += eventOption.Modifier;
+                    gameManager.playerTeam.MedicalLvl++;
                 }
                 else
                 {
-                    gameManager.playerTeam.FrontOfficePoints += eventOption.Modifier;
+                    gameManager.playerTeam.ArenaLvl++;
                 }
                 break;
             case 5:
                 print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    gameManager.playerTeam.FrontOfficePoints += eventOption.Modifier;
+                    gameManager.playerTeam.TeamEquipmentLvl++;
                 }
                 else
                 {
-                    gameManager.playerTeam.Moral += eventOption.Modifier;
+                    gameManager.playerTeam.FinancesLvl++;
                 }
                 break;
             case 6:
                 print(eventOption.Index + " " + eventOption.Description);
                 if (indexOfChoice == 0)
                 {
-                    gameManager.playerTeam.FansSupportPoints += eventOption.Modifier;
+                    gameManager.playerTeam.ArenaLvl++;
                 }
                 else
                 {
-                    gameManager.playerTeam.FrontOfficePoints += eventOption.Modifier;
+                    gameManager.playerTeam.MarketingLvl++;
+                }
+                break;
+            case 7:
+                if (indexOfChoice == 0)
+                {
+                    gameManager.playerTeam.MedicalLvl++;
+                }
+                else
+                {
+                    gameManager.playerTeam.MarketingLvl++;
+                }
+                break;
+            case 8:
+                if (indexOfChoice == 0)
+                {
+                    gameManager.playerTeam.OfficeLvl++;
+                }
+                else
+                {
+                    gameManager.playerTeam.FinancesLvl++;
                 }
                 break;
             default:

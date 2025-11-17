@@ -2341,6 +2341,15 @@ MonoBehaviour:
   canTrain: 1
   canNegociateContract: 0
   CanStartTutorial: 1
+  isOnR8: 0
+  isOnR4: 0
+  isOnFinals: 0
+  List_R8Teams: []
+  List_R8Names: []
+  List_R4Teams: []
+  List_R4Names: []
+  List_Finalist: []
+  List_FinalistName: []
 --- !u!1 &1048069919
 GameObject:
   m_ObjectHideFlags: 0
@@ -2727,7 +2736,7 @@ PrefabInstance:
       objectReference: {fileID: 7670340910797544326, guid: b9c439e9a7bf0334d8bdff84654cdb1f, type: 3}
     - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
       propertyPath: leagueTeams.Array.size
-      value: 10
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
       propertyPath: leagueTeams.Array.data[2]
@@ -2761,6 +2770,22 @@ PrefabInstance:
       propertyPath: leagueTeams.Array.data[9]
       value: 
       objectReference: {fileID: 3756884860746625187, guid: 2c2d398b473427a4fa58ad949dcca53a, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: leagueTeams.Array.data[10]
+      value: 
+      objectReference: {fileID: 2506644486509712687, guid: 7f6393af04da79f46b700bcf2a5293f8, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: leagueTeams.Array.data[11]
+      value: 
+      objectReference: {fileID: 4249980956442338357, guid: ffa18768f7943954a9e04d1391c1e593, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: leagueTeams.Array.data[12]
+      value: 
+      objectReference: {fileID: 5572551497414634707, guid: d93adf236e0522e4787b7ce4d63ae0a7, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: leagueTeams.Array.data[13]
+      value: 
+      objectReference: {fileID: 2052997404638072686, guid: 81faef22108b39b4a92e23bfe75d3884, type: 3}
     - target: {fileID: 3227278085919532099, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3081,7 +3106,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Welcome to version V0.4 (Beta)!
+  m_text: 'Welcome to version V0.5 (Beta)!
 
     We hope you have fun and help us
     make this game a success!
@@ -5134,7 +5159,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5346972075224712809, guid: 5aaba02b63188c74aac36df80b815a84, type: 3}
       propertyPath: m_text
-      value: 'v0.4(Beta)
+      value: 'v0.5(Beta)
 
 
 '
