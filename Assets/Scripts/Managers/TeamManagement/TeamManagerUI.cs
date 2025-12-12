@@ -191,7 +191,7 @@ public class TeamManagerUI : MonoBehaviour
 
         #region AdvanceButton
         //AdvanceButton
-        AdvButtonUpdate();
+        //AdvButtonUpdate();
         #endregion
         _scheduleArea.SetActive(false);
         
@@ -211,6 +211,7 @@ public class TeamManagerUI : MonoBehaviour
         SetTrainingBtns();
         _trainingResultPanel.SetActive(false);
         _trainingPanel.SetActive(false);
+        SetTrainingGrade();
         //Schedule
         leagueManager.CreateStandings();
         PopulateStandings();
@@ -277,6 +278,11 @@ public class TeamManagerUI : MonoBehaviour
 
             //_freeAgents_panel.SetActive(false);
             print("Pass");
+            //UpdateTeamSalary();
+            for (int i = 0; i < gameManager.playerTeam.playersListRoster.Count; i++)
+            {
+                gameManager.playerTeam.CurrentSalary += gameManager.playerTeam.playersListRoster[i].Salary;
+            }
         }
         //tutorialPanel
         if(leagueManager.canGenerateEvents == false|| leagueManager.Week>1 || leagueManager.CanStartTutorial == false)
@@ -287,10 +293,10 @@ public class TeamManagerUI : MonoBehaviour
         CallWarning();
         leagueManager.CreateTeamSalary();
         //Update the current Week text
-        if (leagueManager.Week > gameManager.leagueTeams.Count - 1) WeekText.text = "Playoffs"; 
-        else WeekText.text = leagueManager.Week.ToString();
-
-       
+        WeekText.text = leagueManager.Week.ToString();
+        if (leagueManager.Week > gameManager.leagueTeams.Count - 1) WeekText.text = "Playoffs";
+        //else WeekText.text = leagueManager.Week.ToString();
+        AdvButtonUpdate();
 
         StartCoroutine(NewsLoop(10f));
     }
@@ -339,7 +345,7 @@ public class TeamManagerUI : MonoBehaviour
         _animator_training.SetBool("On", leagueManager.canTrain);
         _animator_contract.SetBool("On", leagueManager.canNegociateContract);
         //end build
-        if (leagueManager.Week > gameManager.leagueTeams.Count - 1 && leagueManager.isOnR4)
+        if (leagueManager.Week > gameManager.leagueTeams.Count - 1/* && leagueManager.isOnR8*/)
         {
             _EndBuildScreen.SetActive(true);
         }
@@ -427,8 +433,10 @@ public class TeamManagerUI : MonoBehaviour
     }
     public void UpdateWeek()
     {
+        print("Hre is increasing teh week");
         leagueManager.IncreaseWeek();
         leagueManager.CreateStandings();
+        WeekText.text = leagueManager.Week.ToString();
     }
     
     
@@ -470,6 +478,7 @@ public class TeamManagerUI : MonoBehaviour
             Image image = _advBtn.transform.GetChild(2).GetComponent<Image>();
             image.sprite = sprite1;
             _awayteamImage.sprite = sprite1;
+            //WeekText.text = currentWeek.ToString();
         }
         
 
@@ -829,7 +838,7 @@ public class TeamManagerUI : MonoBehaviour
         {
             case 0: chance = 0.30f; break;   // Oferta ruim - menor chance
             case 1: chance = 0.50f; break;   // Média
-            case 2: chance = 0.60f; break;   // Melhor oferta - maior chance
+            case 2: chance = 0.75f; break;   // Melhor oferta - maior chance
         }
 
         return UnityEngine.Random.value < chance;

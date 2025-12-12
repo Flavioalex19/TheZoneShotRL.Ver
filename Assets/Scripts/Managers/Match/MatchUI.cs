@@ -74,6 +74,15 @@ public class MatchUI : MonoBehaviour
     [Header("Casrds")]
     [SerializeField] Animator animator_HandCards;
 
+    [Header("OffensivePanel")]
+    [SerializeField] GameObject panel_OffensivePanel;
+    [SerializeField] Transform transform_statsArea;
+    [SerializeField] Transform transform_gameStatsArea;
+    [SerializeField] Transform transform_ActiveHomePlayers;
+    [SerializeField] TextMeshProUGUI text_playerWithTheBallName;
+    //debub
+    public string playernameWithBall;
+
     [Header("Post game")]
     public GameObject EndScreenStatsPanel;
     [SerializeField] Transform teamANames;
@@ -194,7 +203,12 @@ public class MatchUI : MonoBehaviour
             _timeOutBenchPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = "OVR " + _matchManager.HomeTeam.playersListRoster[i + 4].ovr.ToString();
             _timeOutBenchPlayers.GetChild(i).GetChild(2).GetChild(0).GetComponent<Image>().fillAmount = (float)_matchManager.HomeTeam.playersListRoster[i + 4].CurrentStamina / (float)_matchManager.HomeTeam.playersListRoster[i + 4].MaxStamina;
         }
+        for (int i = 0; i < 4; i++)
+        {
+            transform_ActiveHomePlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerLastName.ToString();
+        }
         
+
     }
     //texts for plays functions
     public string ReceiveBallText()
@@ -262,6 +276,14 @@ public class MatchUI : MonoBehaviour
             _benchPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i+4].J_Number.ToString();
             _benchPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i + 4].PointsMatch.ToString();
             _matchManager.HomeTeam.playersListRoster[i + 4].HasTheBall = false;
+        }
+        //Offensive Panel
+        if (_matchManager.playerWithTheBall != null)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                transform_ActiveHomePlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerLastName.ToString();
+            }
         }
         
     }
@@ -364,5 +386,50 @@ public class MatchUI : MonoBehaviour
     public void UpdateCardsHand()
     {
         animator_HandCards.SetBool("On", _matchManager.canUseCards);
+    }
+    //OffensivePanel
+    public void OffesnivePanelOnOff(bool isOn)
+    {
+        panel_OffensivePanel.SetActive(isOn);
+    }
+    public void PlayerWithBallButtonsOnOff()
+    {
+        print("Check btns");
+        print("playerWithTheBall = " + _matchManager.playerWithTheBall.playerLastName);
+        for (int i = 0; i < 4; i++)
+        {
+            if (_matchManager.HomeTeam.playersListRoster[i] == _matchManager.playerWithTheBall)
+            {
+                transform_ActiveHomePlayers.GetChild(i).GetChild(7).gameObject.SetActive(true);
+                transform_ActiveHomePlayers.GetChild(i).GetChild(5).gameObject.SetActive(true);
+                transform_ActiveHomePlayers.GetChild(i).GetChild(3).gameObject.SetActive(true);
+            }
+            else
+            {
+                transform_ActiveHomePlayers.GetChild(i).GetChild(7).gameObject.SetActive(false);
+                transform_ActiveHomePlayers.GetChild(i).GetChild(5).gameObject.SetActive(false);
+                transform_ActiveHomePlayers.GetChild(i).GetChild(3).gameObject.SetActive(false);
+            }
+            print(_matchManager.HomeTeam.playersListRoster[i].playerLastName + " this is his zone: " + _matchManager.HomeTeam.playersListRoster[i].CurrentZone);
+        }
+
+    }
+    public void UpdatePlayerPlacements()
+    {
+        print("Check position");
+        for (int i = 0; i < 4; i++)
+        {
+            if (_matchManager.HomeTeam.playersListRoster[i].CurrentZone > 0)
+            {
+                print("PLay is zoned(UPDATE) " + _matchManager.HomeTeam.playersListRoster[i].playerLastName);
+                transform_ActiveHomePlayers.GetChild(i).position = 
+                    transform_ActiveHomePlayers.GetChild(i).GetChild(6).GetChild(_matchManager.HomeTeam.playersListRoster[i].CurrentZone).position;
+            }
+            else
+            {
+                transform_ActiveHomePlayers.GetChild(i).position =
+                   transform_ActiveHomePlayers.GetChild(i).GetChild(6).GetChild(0).position;
+            }
+        }
     }
 }

@@ -103,7 +103,7 @@ public class TrainingManager : MonoBehaviour
             if (effort == 1) maxBoost = 2;
             else if (effort == 2) maxBoost = 4;
 
-            int boost = Random.Range(1, maxBoost + 1);
+            int boost = Random.Range(maxBoost, maxBoost + 1);
             // ---------------------------------
 
             selectedTrainingAttribute = (TrainingAttribute)Random.Range(0,
@@ -133,7 +133,7 @@ public class TrainingManager : MonoBehaviour
 
             teamManagerUI.UpdateAssistancePortrait();
             leagueManager.canTrain = false;
-
+            teamManagerUI.SetTrainingGrade();
             player.UpdateOVR();
             gameManager.playerTeam.EffortPoints -= cost;
 

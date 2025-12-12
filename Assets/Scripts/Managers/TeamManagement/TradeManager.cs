@@ -182,7 +182,7 @@ public class TradeManager : MonoBehaviour
 
         // Custo base por atributo acima de 80
         // (Ajuste se quiser mais/menos impacto)
-        int costPerStat = 10;
+        int costPerStat = 5;
 
         cost = highStats * costPerStat;
 

@@ -56,6 +56,8 @@ public class MatchManager : MonoBehaviour
     [SerializeField]public bool _ChoosePass;
     [SerializeField]public bool _ChooseScoring;
     [SerializeField] public bool _ChooseToSpecialAtt;
+    [SerializeField] public bool _ChooseBeatDefender;
+    public int passPlayerIndex;
     [SerializeField] Button btn_spAttck;
     public bool CanChooseAction = true;
     public bool CanChooseDefenseAction = true;
@@ -93,6 +95,7 @@ public class MatchManager : MonoBehaviour
     public int mod_Def = 0;
     public int momentum = 0;
     public bool canUseCards = true;
+    [SerializeField] GameObject cardsPanel;
     //UI Elemens test
 
     [Header("Debugs")]
@@ -398,7 +401,7 @@ public class MatchManager : MonoBehaviour
     {
         if(/*teamWithball == AwayTeam*/ teamWithball.IsPlayerTeam == false)
         {
-            
+            _matchUI.OffesnivePanelOnOff(false);
             CanChooseAction = false;
             
             ai_currentNumberOfPasses = ai_maxNumberOfPasses;
@@ -518,9 +521,13 @@ public class MatchManager : MonoBehaviour
         }
         else if (/*teamWithball == HomeTeam*/ teamWithball.IsPlayerTeam)
         {
+            //_matchUI.OffesnivePanelOnOff(true);
             CanChooseDefenseAction = false;
             CreateHand();
-            //MatchEvents();
+            ResetPostions();
+            _matchUI.PlayerWithBallButtonsOnOff();
+            //Turn the actck panle on
+          
             if (currentGamePossessons > 1)
             {
                 ResetChoices();
@@ -538,6 +545,7 @@ public class MatchManager : MonoBehaviour
                     currentGamePossessons--;
                     yield break;
                 }
+                _matchUI.OffesnivePanelOnOff(true);
                 //print(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false) + " Is the cahnce of success");
                 _matchUI.SetScoringPercentage(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false).ToString() + "%");
                 _matchUI.SetPassPercentage(GetPassingChance(false).ToString() + " %");
@@ -545,7 +553,7 @@ public class MatchManager : MonoBehaviour
                 //Timeout call
                 //yield return StartCoroutine(WaitForTimeOut());
                 // Wait until player makes a choice
-                yield return new WaitUntil(() => _ChoosePass || _ChooseScoring || _ChooseToSpecialAtt || _canCallTimeout == false);
+                yield return new WaitUntil(() => _ChoosePass || _ChooseScoring || _ChooseToSpecialAtt || _ChooseBeatDefender ||_canCallTimeout == false);
 
                 if (_ChooseScoring)
                 {
@@ -557,6 +565,11 @@ public class MatchManager : MonoBehaviour
                     //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
                     uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ShootingText());
                     yield return new WaitForSeconds(_actionTimer);
+                    //yield return Scoring(playerWithTheBall, false);!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    yield return ToScore(playerWithTheBall,playerDefending, HomeTeam);
+                    //ResetChoices();
+                    yield break;
+                    /*
                     ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if (TryBeatDefender(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone))
                     {
@@ -586,7 +599,7 @@ public class MatchManager : MonoBehaviour
                     _ChoosePass = false;
                     _matchUI.ActionPanelAnim(0, "Passing");
                     yield return new WaitForSeconds(_actionTimer);
-                    if (TryPassBall())
+                    if (/*TryPassBall()*/ MakePassToTeammate(passPlayerIndex))
                     {
                         yield return new WaitForSeconds(_actionTimer);
                         //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
@@ -602,6 +615,7 @@ public class MatchManager : MonoBehaviour
                         playerWithTheBall.HasTheBall = false;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
+                        _matchUI.OffesnivePanelOnOff(false);
                         //uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         yield return new WaitForSeconds(_actionTimer);
@@ -661,6 +675,28 @@ public class MatchManager : MonoBehaviour
                     
 
                 }
+                else if (_ChooseBeatDefender)
+                {
+                    if (TryBeatDefenderAdvanceZone(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone))
+                    {
+                        yield return new WaitForSeconds(_actionTimer);
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + "Pass the defender");
+                        SelectDefender();
+                        yield return new WaitForSeconds(_actionTimer);
+                        ResetChoices();
+                        continue;
+                    }
+                    else
+                    {
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos());
+                        yield return new WaitForSeconds(_actionTimer);
+                        playerWithTheBall.HasTheBall = false;
+                        SwitchPossession();
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
+                        yield return new WaitForSeconds(_actionTimer);
+                        yield break;
+                    }
+                }
                 else if(_canCallTimeout == false)
                 {
                     yield return StartCoroutine(WaitForTimeOut());
@@ -681,6 +717,7 @@ public class MatchManager : MonoBehaviour
         _ChoosePass = false;
         _ChooseScoring = false;
         _ChooseToSpecialAtt = false;
+        _ChooseBeatDefender = false;
         CanChooseAction = true;
     }
     public void GetChoosePass()
@@ -692,6 +729,11 @@ public class MatchManager : MonoBehaviour
     {
         _ChooseScoring = true;
         CanChooseAction = false;
+    }
+    public void GetChooseBeatDefender()
+    {
+        _ChooseBeatDefender = true;
+        CanChooseAction= false;
     }
     public void UseSpecialAttk()
     {
@@ -828,7 +870,7 @@ public class MatchManager : MonoBehaviour
         if (teamWithball == HomeTeam) teamMomentum = momentum;
         else teamMomentum = 0;
 
-        print(teamMomentum + " is the teamMomentum" + teamWithball.TeamName);
+        //print(teamMomentum + " is the teamMomentum" + teamWithball.TeamName);
 
         bool hasScored = Random.Range(0f, 1f) < ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, teamMomentum);
         //print(hasScored + " is the result of Shooting");
@@ -901,7 +943,7 @@ public class MatchManager : MonoBehaviour
         ChoosePlayerToCarryBall();
         SelectDefender();
         if(HomeTeam.IsPlayerTeam)_matchUI.ChangePos(HomeTeam);
-
+        
     }
     void SelectDefender()
     {
@@ -1698,6 +1740,160 @@ public class MatchManager : MonoBehaviour
             chosenCard.localRotation = Quaternion.identity;
         }
 
-        Debug.Log("Nova mão criada com 3 cards!");
+        //Debug.Log("Nova mão criada com 3 cards!");
     }
+    #region Offense and Otpions
+    void ResetPostions()
+    {
+        for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
+        {
+            HomeTeam.playersListRoster[i].CurrentZone = 0;
+        }
+    }
+    //Offensive Panel And Options
+    bool MakePassToTeammate(int receiverIndex)
+    {
+        // Falha no passe?
+        if (Random.Range(0f, 1f) > PassEquation())
+        {
+            uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos());
+            playerWithTheBall.HasTheBall = false;
+            playerWithTheBall.CurrentZone = 0;
+            return false;
+        }
+
+        // Verifica se o index é válido
+        if (receiverIndex < 0 || receiverIndex >= teamWithball.playersListRoster.Count)
+        {
+            Debug.LogWarning("Receiver index out of range!");
+            return false;
+        }
+
+        Player receiver = teamWithball.playersListRoster[receiverIndex];
+
+        // Verifica se não está passando para ele mesmo ou para alguém que já está com a bola
+        if (receiver == playerWithTheBall || receiver.HasTheBall)
+        {
+            Debug.LogWarning("Invalid receiver for the pass.");
+            return false;
+        }
+
+        // Transfere a bola
+        playerWithTheBall.HasTheBall = false;
+        receiver.HasTheBall = true;
+        playerWithTheBall = receiver;
+        ResetPostions();
+        _matchUI.UpdatePlayerPlacements();
+        _matchUI.PlayerWithBallButtonsOnOff();
+        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " receives the pass.");
+        return true;
+    }
+    public void ChooseIndexToPass(int index)
+    {
+        passPlayerIndex = index;
+    }
+    bool TryBeatDefenderAdvanceZone(Player offense, Player defense, int zone, int bonus = 0)
+    {
+        //print("Juke");
+        currentGamePossessons--;
+
+        int offenseRoll = UnityEngine.Random.Range(1, 101)
+                         + offense.Consistency
+                         + offense.Control
+                         + offense.Juking
+                         + GetZoneValue(offense, zone)
+                         + UnityEngine.Random.Range(-5, 15)
+                         + bonus;
+
+        int defenseRoll = UnityEngine.Random.Range(1, 101)
+                         + defense.Consistency
+                         + defense.Guarding
+                         + defense.Stealing
+                         + GetZoneValue(defense, zone);
+
+        int difference = offenseRoll - defenseRoll;
+
+        bool success;
+
+        if (difference > 20)
+            success = true;
+        else if (difference < -20)
+            success = false;
+        else
+            success = UnityEngine.Random.value < 0.6f;
+
+        if (!success)
+        {
+            print("Failed juke");
+            offense.CurrentZone = 0;
+            return false;
+        }
+            
+
+        // ------------------------------------
+        // AVANÇAR UMA ZONA
+        // ------------------------------------
+        if (zone < 2)
+            zone++;     // avança 1 casa
+        else
+            zone = 2;   // mantém no limite máximo
+
+        offense.CurrentZone = zone;
+        _matchUI.UpdatePlayerPlacements();
+        print(offense.playerLastName + " and the zone is " + offense.CurrentZone);
+        return true;
+    }
+    public IEnumerator ToScore(Player playerWithTheBall, Player playerDefending, Team teamWithBall)
+    {
+        int zone = playerWithTheBall.CurrentZone;
+
+        uiManager.PlaybyPlayText(
+            playerWithTheBall.playerLastName + " takes a shot from zone " + zone
+        );
+
+        yield return new WaitForSeconds(_actionTimer);
+
+        // Momentum apenas para o time da casa
+        int teamMomentum = (teamWithBall == HomeTeam) ? momentum : 0;
+
+        bool hasScored = Random.Range(0f, 1f) <
+            ScoringEquation(playerWithTheBall, playerDefending, zone, teamMomentum);
+
+        if (hasScored)
+        {
+            if (zone == 0)
+            {
+                playerWithTheBall.PointsMatch += 6;
+                teamWithBall.Score += 6;
+            }
+            else if (zone == 1)
+            {
+                playerWithTheBall.PointsMatch += 5;
+                teamWithBall.Score += 5;
+            }
+            else
+            {
+                playerWithTheBall.PointsMatch += 4;
+                teamWithBall.Score += 4;
+            }
+
+            uiManager.PlaybyPlayText(
+                playerWithTheBall.playerLastName + " scored! Total: " + playerWithTheBall.PointsMatch
+            );
+        }
+        else
+        {
+            uiManager.PlaybyPlayText(
+                playerWithTheBall.playerLastName + " missed!"
+            );
+        }
+
+        yield return new WaitForSeconds(_actionTimer);
+
+        // Se quiser resetar a zona após o chute, deixe isso ativado
+        playerWithTheBall.CurrentZone = 0;
+        SwitchPossession();
+        // NÃO troca posse — apenas termina
+    }
+    #endregion
 }
