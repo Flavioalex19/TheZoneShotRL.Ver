@@ -524,10 +524,11 @@ public class MatchManager : MonoBehaviour
             //_matchUI.OffesnivePanelOnOff(true);
             CanChooseDefenseAction = false;
             CreateHand();
+            _matchUI.UpdateCardsHand();
             ResetPostions();
             _matchUI.PlayerWithBallButtonsOnOff();
             //Turn the actck panle on
-          
+
             if (currentGamePossessons > 1)
             {
                 ResetChoices();

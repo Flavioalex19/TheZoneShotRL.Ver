@@ -207,8 +207,8 @@ public class MatchUI : MonoBehaviour
         {
             transform_ActiveHomePlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerLastName.ToString();
         }
-        
 
+        //UpdateOffensiveStats();
     }
     //texts for plays functions
     public string ReceiveBallText()
@@ -280,12 +280,27 @@ public class MatchUI : MonoBehaviour
         //Offensive Panel
         if (_matchManager.playerWithTheBall != null)
         {
+            
             for (int i = 0; i < 4; i++)
             {
                 transform_ActiveHomePlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerLastName.ToString();
             }
         }
         
+    }
+    public void UpdateOffensiveStats()
+    {
+        print("UpdateStats");
+        text_playerWithTheBallName.text = _matchManager.playerWithTheBall.playerFirstName + " " + _matchManager.playerWithTheBall.playerLastName;
+        //Current game stats
+        transform_gameStatsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.PointsMatch.ToString();
+        transform_gameStatsArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.StealsMatch.ToString();
+        transform_gameStatsArea.GetChild(2).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.CurrentStamina.ToString();
+        //player with the ball stats
+        transform_statsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.Shooting.ToString();
+        transform_statsArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.Inside.ToString();
+        transform_statsArea.GetChild(2).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.Mid.ToString();
+        transform_statsArea.GetChild(3).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.Outside.ToString();
     }
     void UpdateScore()
     {
@@ -390,12 +405,19 @@ public class MatchUI : MonoBehaviour
     //OffensivePanel
     public void OffesnivePanelOnOff(bool isOn)
     {
+        print("Here");
         panel_OffensivePanel.SetActive(isOn);
+        UpdateOffensiveStats();
+    }
+    public void CallAnim()
+    {
+        //UpdateCardsHand();
+
     }
     public void PlayerWithBallButtonsOnOff()
     {
-        print("Check btns");
-        print("playerWithTheBall = " + _matchManager.playerWithTheBall.playerLastName);
+        //print("Check btns");
+        //print("playerWithTheBall = " + _matchManager.playerWithTheBall.playerLastName);
         for (int i = 0; i < 4; i++)
         {
             if (_matchManager.HomeTeam.playersListRoster[i] == _matchManager.playerWithTheBall)
