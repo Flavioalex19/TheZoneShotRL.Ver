@@ -640,7 +640,7 @@ public class TeamManagerUI : MonoBehaviour
     }
     public void SetTrainingGrade()
     {
-        _text_TrainingGrade.text = gameManager.playerTeam.FrontOfficePoints.ToString();
+        _text_TrainingGrade.text = gameManager.playerTeam.EffortPoints.ToString();
         
     }
     //Standings
@@ -702,32 +702,7 @@ public class TeamManagerUI : MonoBehaviour
         contract_asstancePanel.SetActive(true);
         if(leagueManager.canNegociateContract == true)
         {
-            /*
-            if (gameManager.playerTeam.playersListRoster[indexForPlayer].ContractYears < 5 ||
-        (newSalaryValue + gameManager.playerTeam.CurrentSalary -
-        gameManager.playerTeam.playersListRoster[indexForPlayer].Salary)
-        < gameManager.playerTeam.SalaryCap)
-            {
-                if (TryExtendContract(gameManager.playerTeam, gameManager.playerTeam.playersListRoster[indexForPlayer], newSalaryValue, newGamesValue))
-                {
-                    gameManager.playerTeam.playersListRoster[indexForPlayer].ContractYears += newGamesValue;
-                    gameManager.playerTeam.playersListRoster[indexForPlayer].Salary = newSalaryValue;
-                    contract_resultNegotiationText.text = "Good Job Boss!" + gameManager.playerTeam.playersListRoster[indexForPlayer].playerLastName + " for " + gameManager.playerTeam.playersListRoster[indexForPlayer].ContractYears;
-                    image_assistance.sprite = sprite_AssistanceHappy;
-                }
-                else
-                {
-                    contract_resultNegotiationText.text = "Damn! We can't come to an agreement with " + gameManager.playerTeam.playersListRoster[indexForPlayer].playerLastName + ". " +
-                        "Maybe he needs some time to think...";
-                    image_assistance.sprite = sprite_AssistanceFail;
-                }
-                leagueManager.canNegociateContract = false;
-            }
-            else
-            {
-                contract_resultNegotiationText.text = "Boss, we can't extend his contract for now.";
-            }
-            */
+            
             int salaryIncrease = 0;
             int gamesIncrease = 0;
 
@@ -751,14 +726,13 @@ public class TeamManagerUI : MonoBehaviour
             Player p = gameManager.playerTeam.playersListRoster[indexForPlayer];
 
             // Calcula o salário projetado após a mudança
-            int projectedSalary = gameManager.playerTeam.CurrentSalary
-                - p.Salary
-                + (p.Salary + salaryIncrease);
+            int projectedSalary = gameManager.playerTeam.CurrentSalary + salaryIncrease;
 
             // Verifica limite de contrato + salary cap
             if (p.ContractYears < 5 && projectedSalary < gameManager.playerTeam.SalaryCap)
             {
-                if (TryExtendContract(gameManager.playerTeam, p, newSalaryValue, newGamesValue, weight))
+                if (/*TryExtendContract(gameManager.playerTeam, p, newSalaryValue, newGamesValue, weight)*/
+                    TryExtendContract(gameManager.playerTeam,p,p.Salary + salaryIncrease,p.ContractYears + gamesIncrease,weight))
                 {
                     p.ContractYears += gamesIncrease;
                     p.Salary += salaryIncrease;
@@ -836,9 +810,9 @@ public class TeamManagerUI : MonoBehaviour
 
         switch (weight)
         {
-            case 0: chance = 0.30f; break;   // Oferta ruim - menor chance
-            case 1: chance = 0.50f; break;   // Média
-            case 2: chance = 0.75f; break;   // Melhor oferta - maior chance
+            case 0: chance = 0.50f; break;   // Oferta ruim - menor chance
+            case 1: chance = 0.70f; break;   // Média
+            case 2: chance = 0.85f; break;   // Melhor oferta - maior chance
         }
 
         return UnityEngine.Random.value < chance;

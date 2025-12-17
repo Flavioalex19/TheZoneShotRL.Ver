@@ -523,8 +523,13 @@ public class MatchManager : MonoBehaviour
         {
             //_matchUI.OffesnivePanelOnOff(true);
             CanChooseDefenseAction = false;
-            CreateHand();
-            _matchUI.UpdateCardsHand();
+            //verify if has cards on deck
+            if (cardsFolder.childCount > 3)
+            {
+                CreateHand();
+                _matchUI.UpdateCardsHand();
+            }
+            
             ResetPostions();
             _matchUI.PlayerWithBallButtonsOnOff();
             //Turn the actck panle on
