@@ -81,12 +81,15 @@ public class GameManager : MonoBehaviour
         //Loadng teams
         if (IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
         {
+            //Loadleague 
+            saveSystem.LoadLeague();
             // Load the saved team
             //saveSystem.LoadTeam(team);OLD!!!!!!!!!!!!!!!!!!!!!!!!!!
             for (int i = 0; i < leagueTeams.Count; i++)
             {
                 //print("TIME TO LOAD");
-                saveSystem.LoadTeam(leagueTeams[i],playerPrefab);
+                //saveSystem.LoadTeam(leagueTeams[i],playerPrefab);
+                saveSystem.LoadTeamInfo(leagueTeams[i], playerPrefab);
                 if (leagueTeams[i].IsPlayerTeam)playerTeam = leagueTeams[i];
                 //print(playerTeam + "THIS IS THE PLAYER!!!!!");
             }

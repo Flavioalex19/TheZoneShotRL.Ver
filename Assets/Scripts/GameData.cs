@@ -201,6 +201,9 @@ public class LeagueManagerData
         canTrainPlayer = leagueManager.canTrain;
         canStartTutorial = leagueManager.CanStartTutorial;
         canNegociateContract = leagueManager.canNegociateContract;
+        isr8 = leagueManager.isOnR8;
+        isr4 = leagueManager.isOnR4;
+        isFinal = leagueManager.isOnFinals;
 
         R8Names = leagueManager.List_R8Teams.Select(t => t.TeamName).ToList();
         R4Names = leagueManager.List_R4Teams.Select(t => t.TeamName).ToList();

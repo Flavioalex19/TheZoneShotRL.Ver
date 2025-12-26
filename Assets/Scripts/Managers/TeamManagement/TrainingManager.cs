@@ -137,9 +137,11 @@ public class TrainingManager : MonoBehaviour
             player.UpdateOVR();
             gameManager.playerTeam.EffortPoints -= cost;
 
+            gameManager.saveSystem.SaveLeague();
             for (int i = 0; i < gameManager.leagueTeams.Count; i++)
             {
-                gameManager.saveSystem.SaveTeam(gameManager.leagueTeams[i]);
+                //gameManager.saveSystem.SaveTeam(gameManager.leagueTeams[i]);
+                gameManager.saveSystem.SaveTeamInfo(gameManager.leagueTeams[i]);
             }
         }
         else

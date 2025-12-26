@@ -14,6 +14,10 @@ public class TeamManagerUI : MonoBehaviour
     [Header("Intro")]
     [SerializeField] TextMeshProUGUI _text_NameTeam;
 
+    [Header("Events Panel")]
+    [SerializeField] GameObject _panelEventsTypes;
+    [SerializeField] GameObject _panelEventsChoices;
+
     [Header("MainButtons")]
     [SerializeField] Animator _animator_trade;
     [SerializeField] Animator _animator_training;
@@ -187,7 +191,7 @@ public class TeamManagerUI : MonoBehaviour
         musicManager.RestoreMutedAudioSources();
         
         //EquipmentUI
-        EquipUI();
+        //EquipUI();
 
         #region AdvanceButton
         //AdvanceButton
@@ -265,6 +269,17 @@ public class TeamManagerUI : MonoBehaviour
             gameover_Btn.gameObject.SetActive(false);
         }
 
+        if(leagueManager.canGenerateEvents == true)
+        {
+            _panelEventsChoices.SetActive(true);
+            _panelEventsTypes.SetActive(true);
+            
+        }
+        else
+        {
+            _panelEventsChoices.SetActive(false);
+            _panelEventsTypes.SetActive(false);
+        }
 
         //FreeAgents if necessary
         _freeAgents_panel.SetActive(false);
@@ -335,10 +350,12 @@ public class TeamManagerUI : MonoBehaviour
         {
             GameObject.Find("EffortPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.EffortPoints.ToString();
         }
+        /*
         for (int i = 0; i < equipAreaText.childCount; i++)
         {
             equipAreaText.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam._equipmentList[i].Level.ToString();
         }
+        */
         UpdateFacilities();
         //BtnsAnimations
         _animator_trade.SetBool("On", leagueManager.canTrade);
@@ -967,7 +984,7 @@ public class TeamManagerUI : MonoBehaviour
     {
         for (int i = 0; i < gameManager.leagueTeams.Count; i++)
         {
-            gameManager.saveSystem.SaveTeam(gameManager.leagueTeams[i]);
+            //gameManager.saveSystem.SaveTeam(gameManager.leagueTeams[i]);
         }
     }
 }

@@ -46,6 +46,7 @@ public class LeagueManager : MonoBehaviour
     public List<Team> List_Finalist = new List<Team>();
     public List<Team> List_FinalistName = new List<Team>();
 
+
     GameManager gameManager;
     UiManager uiManager;
 
@@ -404,9 +405,11 @@ public class LeagueManager : MonoBehaviour
         }
 
         //gameManager.saveSystem.SaveTeam(_playerTeam);//This could change!
+        gameManager.saveSystem.SaveLeague();
         for (int i = 0; i < gameManager.leagueTeams.Count; i++)
         {
-            gameManager.saveSystem.SaveTeam(gameManager.leagueTeams[i]);
+            //gameManager.saveSystem.SaveTeam(gameManager.leagueTeams[i]);
+            gameManager.saveSystem.SaveTeamInfo(gameManager.leagueTeams[i]);
         }
         eventOptions.Clear(); // Clear only after usage
         

@@ -15,6 +15,7 @@ public class SaveSystem : MonoBehaviour
     }
 
     // Save team data as JSON file
+    /*
     public void SaveTeam(Team team)
     {
         LeagueManager leagueManager = FindObjectOfType<LeagueManager>();
@@ -24,14 +25,38 @@ public class SaveSystem : MonoBehaviour
         string json = JsonUtility.ToJson(teamData, true);
         string filePath = GetSavePath(team.TeamName);
 
-        //Debug.Log($"Saving {team._equipmentList.Count} equipment items for {team.TeamName}");
         // Write the JSON data to a file
         File.WriteAllText(filePath, json);
 
         //Debug.Log($"Team {team.name} saved to {filePath}");
     }
+    */
+    public void SaveTeamInfo(Team team)
+    {
+        LeagueManager leagueManager = FindObjectOfType<LeagueManager>();
+        TeamData teamData = new TeamData(team,leagueManager);
 
+        string json = JsonUtility.ToJson(teamData, true);
+        string filePath = GetSavePath(team.TeamName);
+
+        File.WriteAllText(filePath, json);
+    }
+    public void SaveLeague()
+    {
+        LeagueManager leagueManager = FindObjectOfType<LeagueManager>();
+
+        LeagueManagerData data = new LeagueManagerData(leagueManager);
+
+        string path = Path.Combine(
+            Application.persistentDataPath,
+            "leagueData.json"
+        );
+
+        string json = JsonUtility.ToJson(data, true);
+        File.WriteAllText(path, json);
+    }
     // Load team data from JSON file
+    /*
     public void LoadTeam(Team team, GameObject playerPrefab)
     {
         
@@ -88,7 +113,7 @@ public class SaveSystem : MonoBehaviour
             team.ClearAllPlayers();
             if (team.IsPlayerTeam) print("THS IS THE PLAYERS TEAM" + " " + team.TeamName);
             //Load Equipment
-            if (team.IsPlayerTeam /*&& teamData.equiList != null && teamData.equiList.Count > 0/*&& teamData.equiList != null*/)
+            if (team.IsPlayerTeam )
             {
                 foreach (EquipmentData equipData in teamData.equiList)
                 {
@@ -103,9 +128,6 @@ public class SaveSystem : MonoBehaviour
                         MidBoost = equipData.MidB,
                         OutBoost = equipData.OutB
                     };
-                    //team.GetEquipment().Add(newEquip);
-                    //team._equipmentList.Add(newEquip);
-                    //Debug.Log("Loaded Equip: " + newEquip.Name + " Level: " + newEquip.Level);
                     if (!team._equipmentList.Exists(e => e.Index == newEquip.Index))
                     {
                         team._equipmentList.Add(newEquip);
@@ -130,7 +152,7 @@ public class SaveSystem : MonoBehaviour
             //Load Players
             foreach (PlayerData playerData in teamData.playersListData)
             {
-                GameObject playerGO = /*new GameObject("Player_" + playerData.firstName)*/Instantiate(playerPrefab);
+                GameObject playerGO = Instantiate(playerPrefab);
                 //Player newPlayer = new GameObject().AddComponent<Player>();
                 Player newPlayer = playerGO.AddComponent<Player>();
 
@@ -227,7 +249,145 @@ public class SaveSystem : MonoBehaviour
         }
         
     }
+    */
+    public void LoadLeague()
+    {
+        string path = Path.Combine(
+            Application.persistentDataPath,
+            "leagueData.json"
+        );
 
+        if (!File.Exists(path)) return;
+
+        string json = File.ReadAllText(path);
+        LeagueManagerData data = JsonUtility.FromJson<LeagueManagerData>(json);
+
+        LeagueManager lm = FindObjectOfType<LeagueManager>();
+
+        lm.Week = data.weekNumber;
+        lm.canGenerateEvents = data.canGenEvent;
+        lm.canStartANewWeek = data.canStartANewWeek;
+        lm.canTrade = data.canTradePlayers;
+        lm.canTrain = data.canTrainPlayer;
+        lm.CanStartTutorial = data.canStartTutorial;
+        lm.canNegociateContract = data.canNegociateContract;
+
+        lm.isOnR8 = data.isr8;
+        lm.isOnR4 = data.isr4;
+        lm.isOnFinals = data.isFinal;
+
+        // ---------- PLAYOFFS ----------
+        lm.List_R8Teams.Clear();
+        foreach (string name in data.R8Names)
+        {
+            Team t = FindTeamByName(name);
+            if (t != null) lm.List_R8Teams.Add(t);
+        }
+
+        lm.List_R4Teams.Clear();
+        foreach (string name in data.R4Names)
+        {
+            Team t = FindTeamByName(name);
+            if (t != null) lm.List_R4Teams.Add(t);
+        }
+
+        lm.List_Finalist.Clear();
+        foreach (string name in data.FinalNames)
+        {
+            Team t = FindTeamByName(name);
+            if (t != null) lm.List_Finalist.Add(t);
+        }
+    }
+    public void LoadTeamInfo(Team team, GameObject playerPrefab)
+    {
+        string filePath = GetSavePath(team.TeamName);
+        if (!File.Exists(filePath)) return;
+
+        string json = File.ReadAllText(filePath);
+        TeamData teamData = JsonUtility.FromJson<TeamData>(json);
+
+        // ---------- RESET ----------
+        team.playersListRoster.Clear();
+        team._equipmentList.Clear();
+        team.ClearAllPlayers();
+
+        team.IsPlayerTeam = teamData.isPlayerControlled;
+        team.Moral = teamData.teamMoral;
+        team.FrontOfficePoints = teamData.teamFrontOffice;
+        team.FansSupportPoints = teamData.teamFansSupport;
+        team.EffortPoints = teamData.teamEffort;
+
+        team.Wins = teamData.win;
+        team.Draws = teamData.draw;
+        team.Loses = teamData.lost;
+
+        team.CurrentSalary = teamData.cap;
+
+        team.OfficeLvl = teamData.offices;
+        team.FinancesLvl = teamData.finances;
+        team.MarketingLvl = teamData.market;
+        team.TeamEquipmentLvl = teamData.equip;
+        team.ArenaLvl = teamData.arena;
+        team.MedicalLvl = teamData.medical;
+
+        team.isR8 = teamData.isTop8;
+        team.isR4 = teamData.isTop4;
+        team.isFinalist = teamData.FinalTeam;
+        team.isChampion = teamData.Champion;
+
+        // ---------- LOAD DOS JOGADORES ----------
+        foreach (PlayerData pd in teamData.playersListData)
+        {
+            GameObject go = Instantiate(playerPrefab);
+            Player p = go.AddComponent<Player>();
+
+            p.playerFirstName = pd.firstName;
+            p.playerLastName = pd.secondName;
+            p.Age = pd.playerAge;
+            p.ovr = pd.ovr;
+
+            p.Shooting = pd.shooting;
+            p.Inside = pd.inside;
+            p.Mid = pd.mid;
+            p.Outside = pd.outside;
+
+            p.Defending = pd.defend;
+            p.Guarding = pd.guard;
+            p.Stealing = pd.steal;
+
+            p.Awareness = pd.awn;
+            p.Juking = pd.juk;
+            p.Consistency = pd.cosis;
+            p.Control = pd.control;
+            p.Positioning = pd.pos;
+
+            p.ContractYears = pd.yearsC;
+            p.Salary = pd.salaryPlayer;
+
+            p.Personality = pd.persona;
+            p.ImageCharacterPortrait = pd.imageIndex;
+            p.J_Number = pd.jNum;
+
+            p.Zone = pd.zone;
+            p.CurrentZone = 0;
+
+            p.CareerGamesPlayed = pd.c_gamesPlayed;
+            p.CareerPoints = pd.c_pointsMade;
+            p.CareerSteals = pd.c_steals;
+
+            // AQUI O JOGADOR ENTRA NO TIME 
+            team.playersListRoster.Add(p);
+        }
+
+        // ---------- LOAD DO SCHEDULE ----------
+        team._schedule.Clear();
+        foreach (string teamName in teamData.scheduleTeamNames)
+        {
+            Team opp = FindTeamByName(teamName);
+            if (opp != null && opp != team)
+                team._schedule.Add(opp);
+        }
+    }
     // Clear saved data by deleting the JSON file
     public void ClearSave(string teamName, Team team)
     {
