@@ -130,14 +130,29 @@ public class MatchManager : MonoBehaviour
         currentGamePossessons = GamePossesions;
 
         HomeTeam = manager.playerTeam;
-
-        for (int i = 0; i < manager.leagueTeams.Count; i++)
+        if (leagueManager.isOnR8)
         {
-            if (manager.leagueTeams[i] == manager.playerTeam._schedule[leagueManager.Week-1])
+            AwayTeam = leagueManager.List_R8Teams[1];
+        }
+        else if (leagueManager.isOnR4)
+        {
+            AwayTeam = leagueManager.List_R4Teams[1];
+        }
+        else if (leagueManager.isOnFinals)
+        {
+            AwayTeam = leagueManager.List_Finalist[1];
+        }
+        else
+        {
+            for (int i = 0; i < manager.leagueTeams.Count; i++)
             {
-                AwayTeam = manager.leagueTeams[i];
+                if (manager.leagueTeams[i] == manager.playerTeam._schedule[leagueManager.Week - 1])
+                {
+                    AwayTeam = manager.leagueTeams[i];
+                }
             }
         }
+        
         //AwayTeam = HomeTeam._schedule[leagueManager.Week - 1];
         _actionTimer = _actionTimerReset;
         _matchUI.SetTheTeamTextForTheMatch();
@@ -270,7 +285,27 @@ public class MatchManager : MonoBehaviour
             HomeTeam.Moral += 15;
             HomeTeam.Wins++;
             AwayTeam.Loses++;
-            if (HomeTeam.IsPlayerTeam) { _matchUI.ActivateVictoryDefeat("Victory"); }
+            if (HomeTeam.IsPlayerTeam) 
+            { 
+                _matchUI.ActivateVictoryDefeat("Victory");
+                if (leagueManager.isOnR8 && leagueManager.isOnR4 == false && leagueManager.isOnFinals == false)
+                {
+                    leagueManager.isOnR4 = true;
+                    leagueManager.List_R4Teams.Add(HomeTeam);
+                    //leagueManager.isOnR8 = false;
+                }
+                else if (leagueManager.isOnR4 && leagueManager.isOnR8 == true && leagueManager.isOnFinals == false)
+                {
+                    leagueManager.isOnFinals = true;
+                    leagueManager.List_Finalist.Add(HomeTeam);
+                }
+                else if (leagueManager.isOnR4 && leagueManager.isOnR8 == true && leagueManager.isOnFinals)
+                {
+                    //player team tema a varaivel win
+                    HomeTeam.isChampion = true;
+                    leagueManager.isGameOver = true;
+                }
+            }
             
         }
         else if (HomeTeam.Score < AwayTeam.Score)
@@ -280,6 +315,11 @@ public class MatchManager : MonoBehaviour
             HomeTeam.Loses++;
             AwayTeam.Wins++;
             if (HomeTeam.IsPlayerTeam) { _matchUI.ActivateVictoryDefeat("Defeat"); }
+            if (leagueManager.isOnR8|| leagueManager.isOnR4 || leagueManager.isOnFinals)
+            {
+                leagueManager.isGameOver = true;
+                //leagueManager.isOnR8 = false;
+            }
         }
         else
         {
@@ -410,6 +450,14 @@ public class MatchManager : MonoBehaviour
             {
                 _matchUI.percentagePanel.SetActive(false);
                 CanChooseAction = false;
+                if ((leagueManager.isOnR8 == true || leagueManager.isOnR4 == true || leagueManager.isOnFinals == true)&& currentGamePossessons <=1)
+                {
+                    if (HomeTeam.Score == AwayTeam.Score)
+                    {
+                        currentGamePossessons++;
+                    }
+                }
+
                 if (currentGamePossessons <= 1)
                 {
                     uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " must shoot due to low possessions!");
@@ -543,6 +591,13 @@ public class MatchManager : MonoBehaviour
                 _matchUI.percentagePanel.SetActive(true);
                 //MatchEvents();
                 //CanChooseAction = true;
+                if ((leagueManager.isOnR8 == true || leagueManager.isOnR4 == true || leagueManager.isOnFinals == true) && currentGamePossessons <= 1)
+                {
+                    if (HomeTeam.Score == AwayTeam.Score)
+                    {
+                        currentGamePossessons++;
+                    }
+                }
                 if (currentGamePossessons <= 1)
                 {
                     uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " must shoot due to low possessions!");
@@ -555,6 +610,7 @@ public class MatchManager : MonoBehaviour
                 //print(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false) + " Is the cahnce of success");
                 _matchUI.SetScoringPercentage(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false).ToString() + "%");
                 _matchUI.SetPassPercentage(GetPassingChance(false).ToString() + " %");
+                //_matchUI.SetJukePercentage();
                 uiManager.PlaybyPlayText("Wait for Player Action");
                 //Timeout call
                 //yield return StartCoroutine(WaitForTimeOut());
@@ -1099,32 +1155,76 @@ public class MatchManager : MonoBehaviour
         yield return null;
 
     }
+    public IEnumerator SimulatePlayoffRound()
+    {
+        List<Team> sourceList = null;
+        List<Team> targetList = null;
+
+        if (leagueManager.isOnR8 && leagueManager.isOnR4)
+        {
+            sourceList = leagueManager.List_R8Teams;
+            targetList = leagueManager.List_R4Teams;
+        }
+        else if (leagueManager.isOnR4 && leagueManager.isOnR8)
+        {
+            sourceList = leagueManager.List_R4Teams;
+            targetList = leagueManager.List_Finalist;
+        }
+        else
+        {
+            yield break;
+        }
+
+        targetList.Clear();
+
+        while (sourceList.Any(t => !t.HasPlayed))
+        {
+            Team teamA = sourceList.First(t => !t.HasPlayed);
+            Team teamB = sourceList
+                .First(t => !t.HasPlayed && t != teamA);
+
+            // Setup básico
+            HomeTeam = teamA;
+            AwayTeam = teamB;
+
+            teamA.Score = 0;
+            teamB.Score = 0;
+
+            teamA.HasPlayed = true;
+            teamB.HasPlayed = true;
+
+            Debug.Log($"[PLAYOFF ROUND] {teamA.TeamName} vs {teamB.TeamName}");
+
+            yield return StartCoroutine(GameFlow());
+
+            Team winner = teamA.Score >= teamB.Score ? teamA : teamB;
+            targetList.Add(winner);
+        }
+
+        // Reset HasPlayed para o próximo uso
+        foreach (Team t in sourceList)
+            t.HasPlayed = false;
+    }
+
     IEnumerator RunMatchThenSimulate()
     {
-        /*
-        yield return StartCoroutine(SetupGameplan());
-        yield return StartCoroutine(GameFlow());
-        _matchUI.PostGameStats(HomeTeam, AwayTeam);
-        //Do only for yur team-cahnge if  the others need after 3 games
-        if (leagueManager.Week % 3 == 0) 
-        {
-            ApplyFiveWeekTraining(manager.playerTeam, manager.playerTeam.Wins, manager.playerTeam.Draws, manager.playerTeam.Loses);
-            _matchUI.UpgradeTeamAnim();
-            //Wait for seconds
-            StartCoroutine(waitSecondsForAction());
-            
-        }
-        sfxManager.ResetVolume();
-        yield return StartCoroutine(LeagueWeekSimulation());
-        //Enable progress button
-        _matchUI.btn_ReturnToTeamManagement.gameObject.SetActive(true);
-        */
+        
         yield return StartCoroutine(SetupGameplan());
         yield return StartCoroutine(GameFlow());
         _matchUI.PostGameStats(HomeTeam, AwayTeam);
 
         // run full week simulation FIRST (other teams)
-        yield return StartCoroutine(LeagueWeekSimulation());
+        //yield return StartCoroutine(LeagueWeekSimulation());
+        if (leagueManager.isOnR8 || leagueManager.isOnR4)
+        {
+            // Estamos nos playoffs  simula APENAS o round atual
+            yield return StartCoroutine(SimulatePlayoffRound());
+        }
+        else
+        {
+            // Temporada regular  simulação normal da semana
+            yield return StartCoroutine(LeagueWeekSimulation());
+        }
 
         // Now do the 3-week upgrade/animation (after simulations finished)
         if (leagueManager.Week % 4 == 0)
@@ -1452,6 +1552,10 @@ public class MatchManager : MonoBehaviour
         // Apply AI coefficient only if AI
         //return isAI ? passSuccessChance * ai_difficulty : passSuccessChance;
         return Mathf.Round(Mathf.Clamp01(passSuccessChance) * 100);
+    }
+    void JukePercentageOff()
+    {
+        
     }
     //Stamina managers
     void ControlStamina(Team team)

@@ -104,7 +104,7 @@ public class TeamData
     public bool isTop8;
     public bool isTop4;
     public bool FinalTeam;
-    public bool Champion;
+    public bool WinC;
 
     public TeamData(Team team, LeagueManager leagueManager)
     {
@@ -127,7 +127,7 @@ public class TeamData
         isTop8 = team.isR8;
         isTop4 = team.isR4;
         FinalTeam = team.isFinalist;
-        Champion = team.isChampion;
+        WinC = team.isChampion;
         foreach (Player player in team.playersListRoster)
         {
             playersListData.Add(new PlayerData(player));
@@ -185,12 +185,15 @@ public class LeagueManagerData
     public bool isr8;
     public bool isr4;
     public bool isFinal;
+    public bool isGO;
     public List<Team> R8;
     public List<Team> R4;
     public List<Team> FinalList;
     public List<string> R8Names;
     public List<string> R4Names;
     public List<string> FinalNames;
+    public bool canStartNewRun;
+
 
     public LeagueManagerData(LeagueManager leagueManager)
     {
@@ -204,6 +207,8 @@ public class LeagueManagerData
         isr8 = leagueManager.isOnR8;
         isr4 = leagueManager.isOnR4;
         isFinal = leagueManager.isOnFinals;
+        isGO = leagueManager.isGameOver;
+        canStartNewRun = leagueManager.CanStartANewRun;
 
         R8Names = leagueManager.List_R8Teams.Select(t => t.TeamName).ToList();
         R4Names = leagueManager.List_R4Teams.Select(t => t.TeamName).ToList();

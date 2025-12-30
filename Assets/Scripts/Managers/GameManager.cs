@@ -1,3 +1,4 @@
+using DG.Tweening.Core.Easing;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -150,6 +151,8 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < leagueTeams.Count; i++)
             {
                 saveSystem.ClearSave(leagueTeams[i].TeamName, leagueTeams[i]);
+                saveSystem.ResetLeagueData();
+                saveSystem.ResetForNewLeagueRun();
                 print("Clear");
             }
             Application.Quit();
@@ -372,6 +375,7 @@ public class GameManager : MonoBehaviour
 
             // Change mode and scene---THIA COULD BE A BUTTON!!!!!!!!!!!!!!!!
             mode = GameMode.TeamManagement;
+            leagueManager.CanStartANewRun = false;
             SceneManager.LoadScene("MyTeamScreen");
         }
         
@@ -405,7 +409,7 @@ public class GameManager : MonoBehaviour
             yield return null; // Wait a frame instead of freezing
         }
 
-        if (IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
+        if (/*IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName)*/leagueManager.CanStartANewRun == false)
         {
             mode = GameMode.TeamManagement;
             SceneManager.LoadScene("MyTeamScreen");
@@ -437,6 +441,7 @@ public class GameManager : MonoBehaviour
         leagueTeams[0].Score = 0;
         leagueTeams[1].Score = 0;
         uiManager.hasbeenCreatedTheBtn = false;
+        if (leagueManager.Week >= leagueTeams.Count-1) leagueManager.isOnR8 = true;
         //leagueManager.canStartANewWeek = true;
         SceneManager.LoadScene("MyTeamScreen");
     }
@@ -461,6 +466,16 @@ public class GameManager : MonoBehaviour
             saveSystem.ClearSave(leagueTeams[i].TeamName, leagueTeams[i]);
         }
         Application.Quit();
+    }
+    public void ResetRunTeams()
+    {
+        for (int i = 0; i < leagueTeams.Count; i++)
+        {
+            saveSystem.ClearSave(leagueTeams[i].TeamName, leagueTeams[i]);
+            saveSystem.ResetLeagueData();
+            leagueManager.isGameOver = false;
+            SceneManager.LoadScene("Title");
+        }
     }
     public void QuitApp()
     {

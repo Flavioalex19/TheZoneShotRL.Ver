@@ -1,3 +1,4 @@
+using DG.Tweening.Core.Easing;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -271,10 +272,12 @@ public class SaveSystem : MonoBehaviour
         lm.canTrain = data.canTrainPlayer;
         lm.CanStartTutorial = data.canStartTutorial;
         lm.canNegociateContract = data.canNegociateContract;
+        lm.isGameOver = data.isGO;
 
         lm.isOnR8 = data.isr8;
         lm.isOnR4 = data.isr4;
         lm.isOnFinals = data.isFinal;
+        lm.CanStartANewRun = data.canStartNewRun;
 
         // ---------- PLAYOFFS ----------
         lm.List_R8Teams.Clear();
@@ -333,7 +336,7 @@ public class SaveSystem : MonoBehaviour
         team.isR8 = teamData.isTop8;
         team.isR4 = teamData.isTop4;
         team.isFinalist = teamData.FinalTeam;
-        team.isChampion = teamData.Champion;
+        team.isChampion = teamData.WinC;
 
         // ---------- LOAD DOS JOGADORES ----------
         foreach (PlayerData pd in teamData.playersListData)
@@ -422,6 +425,66 @@ public class SaveSystem : MonoBehaviour
         else
         {
             Debug.LogError($"No save file found for team {teamName} to delete.");
+        }
+    }
+    public void ResetLeagueData()
+    {
+        LeagueManager leagueManager = FindObjectOfType<LeagueManager>();
+
+
+        if (leagueManager == null)
+        {
+            Debug.LogError("LeagueManager not found.");
+            return;
+        }
+
+        // --------- RESET DE PROGRESSO DA LIGA ---------
+        leagueManager.Week = 1;
+
+        leagueManager.canGenerateEvents = true;
+        leagueManager.canStartANewWeek = true;
+        leagueManager.canTrade = true;
+        leagueManager.canTrain = true;
+        leagueManager.canNegociateContract = true;
+
+        leagueManager.isOnR8 = false;
+        leagueManager.isOnR4 = false;
+        leagueManager.isOnFinals = false;
+        
+
+        // --------- RESET DE PLAYOFFS ---------
+        leagueManager.List_R8Teams.Clear();
+        leagueManager.List_R4Teams.Clear();
+        leagueManager.List_Finalist.Clear();
+
+        leagueManager.List_R8Names.Clear();
+        leagueManager.List_R4Names.Clear();
+        //leagueManager.List_FinalNames.Clear();
+
+        
+
+        Debug.Log("League data reset and saved successfully.");
+    }
+    public void ResetForNewLeagueRun()
+    {
+        LeagueManager leagueManager = FindObjectOfType<LeagueManager>();
+        GameManager gameManager = FindObjectOfType<GameManager>();
+
+        if (leagueManager == null)
+        {
+            Debug.LogError("LeagueManager not found.");
+            return;
+        }
+        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+        {
+            gameManager.leagueTeams[i].isChampion = false;
+        }
+        leagueManager.isGameOver = false;
+        leagueManager.CanStartANewRun = true;
+        gameManager.saveSystem.SaveLeague();
+        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+        {
+            gameManager.saveSystem.ClearSave(gameManager.leagueTeams[i].TeamName, gameManager.leagueTeams[i]);
         }
     }
     public void ClearAllSaves()

@@ -65,6 +65,10 @@ public class MatchUI : MonoBehaviour
     public GameObject percentagePanel;
     [SerializeField] TextMeshProUGUI text_shootPercentage;
     [SerializeField] TextMeshProUGUI text_passPercentage;
+    [SerializeField] TextMeshProUGUI text_offensiveScorePercentage;
+    [SerializeField] TextMeshProUGUI text_offensivePassPercentage;
+    [SerializeField] TextMeshProUGUI text_offensiveJukePercentage;
+    [SerializeField] TextMeshProUGUI text_offensiveSpPercentage;
 
     [Header("Events")]
     [SerializeField] Animator animator_EventPanel;
@@ -385,10 +389,20 @@ public class MatchUI : MonoBehaviour
     public void SetScoringPercentage(string perc)
     {
         text_shootPercentage.text = perc;
+        text_offensiveScorePercentage.text = perc;
     }
     public void SetPassPercentage(string perc)
     {
         text_passPercentage.text = perc;
+        text_offensivePassPercentage.text = perc; 
+    }
+    public void SetJukePercentage(string perc)
+    {
+        text_offensiveJukePercentage.text = perc;
+    }
+    public void SetSpPercentage(string perc)
+    {
+        text_offensiveSpPercentage.text = perc;
     }
     //Events
     public void CallEventPanel(string content, Sprite icon)

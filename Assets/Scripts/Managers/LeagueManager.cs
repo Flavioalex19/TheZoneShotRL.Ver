@@ -34,6 +34,8 @@ public class LeagueManager : MonoBehaviour
     //Tutorial
     public bool CanStartTutorial = true;
 
+    public bool isGameOver = false;
+    public bool CanStartANewRun = true;
 
     //Playoffs
     public bool isOnR8 = false;

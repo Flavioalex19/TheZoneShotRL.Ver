@@ -23,9 +23,9 @@ public class PlayerEventsManager : MonoBehaviour
         playerChoosen = null;
         playerChoosen1 = null ;
         buffedPlayerd = null;
-        CreatePlayerEvent();
-        ChoosePlayerEvent();
-        if (eventChoosen.PlayerEventType == PlayerEventsType.Bonds) ChooseBondPlayers(gameManager.playerTeam.playersListRoster);
+        //CreatePlayerEvent();
+        //ChoosePlayerEvent();
+        //if (eventChoosen.PlayerEventType == PlayerEventsType.Bonds) ChooseBondPlayers(gameManager.playerTeam.playersListRoster);
     }
     private void Start()
     {

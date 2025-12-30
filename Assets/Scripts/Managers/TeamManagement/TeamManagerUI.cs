@@ -1,3 +1,4 @@
+using DG.Tweening.Core.Easing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -165,7 +166,9 @@ public class TeamManagerUI : MonoBehaviour
     [Header("UI")]
     [SerializeField]TextMeshProUGUI WeekText;
     [SerializeField] Image image_teamIcon;
+    [SerializeField] GameObject _playoffsAdvBtn;
     GameObject _advBtn;//to Advance Button Elements
+    
 
     [SerializeField] GameObject tutorialPanel;
 
@@ -182,7 +185,7 @@ public class TeamManagerUI : MonoBehaviour
         //_schedulePanelTextsArea = GameObject.Find("ScheduleSeasonTexts").transform;
         ScheduleUpdated();
         _advBtn = GameObject.Find("Advance Button");
-        gameover_Btn.onClick.AddListener(() => gameManager.QuitAndClear());//Set Game over button
+        //gameover_Btn.onClick.AddListener(() => gameManager.QuitAndClear());//Set Game over button
         //WeekText = GameObject.Find("Week Text").GetComponent<TextMeshProUGUI>();
 
 ;       
@@ -243,17 +246,20 @@ public class TeamManagerUI : MonoBehaviour
         assiatncePanel.SetActive(false);
         //ToogleNewsAndAssistancePanel();
         //End tESTING Screen
-        _closeGameForTestersBtn.onClick.AddListener(() => gameManager.QuitAndClear());
+        //_closeGameForTestersBtn.onClick.AddListener(() => gameManager.QuitAndClear());
         _EndBuildScreen.SetActive(false);
         SetTeamIcon();
         if (leagueManager.Week > gameManager.leagueTeams.Count - 1)
         {
-            _EndBuildScreen.SetActive(true);
+            //_EndBuildScreen.SetActive(true);
             /*
             if(leagueManager.isOnFinals == false && leagueManager.isOnR4== true)leagueManager.isOnFinals = true;
             //if(leagueManager.isOnR4 == true) leagueManager.isOnR4 = true;//remove later
             if(leagueManager.isOnR8==false)leagueManager.isOnR8 = true;
             */
+            _playoffsAdvBtn.SetActive(true);
+            if(leagueManager.isOnR8==false)leagueManager.isOnR8 = true;
+            gameManager.saveSystem.SaveLeague();
         }
 
         //leagueManager.CreateTeamSalary();
@@ -263,6 +269,7 @@ public class TeamManagerUI : MonoBehaviour
         {
             gameoverPanel.SetTrigger("On");
             gameover_Btn.gameObject.SetActive(true);
+            //reset gamestate
         }
         else
         {
@@ -313,7 +320,32 @@ public class TeamManagerUI : MonoBehaviour
         //else WeekText.text = leagueManager.Week.ToString();
         AdvButtonUpdate();
 
-        StartCoroutine(NewsLoop(10f));
+        //end build/playoffs
+        if (leagueManager.Week > gameManager.leagueTeams.Count - 1 || leagueManager.isOnR8 == true/* && leagueManager.isOnR8*/)
+        {
+            //_EndBuildScreen.SetActive(true);
+            _playoffsAdvBtn.SetActive(true);
+            if (leagueManager.isOnR8 == false) leagueManager.isOnR8 = true;
+            gameManager.saveSystem.SaveLeague();
+            _playoffsAdvBtn.GetComponent<Button>().onClick.AddListener(() => gameManager.GoToPlayoffs());//mudar isso para criar uma função aqui qeu chame uma animação e depois chame a função go to playoffs
+        }
+        else
+        {
+            _playoffsAdvBtn.SetActive(false);
+        }
+        //Lose run
+        if (leagueManager.isGameOver)
+        {
+            //setactive end run screen
+            _EndBuildScreen.SetActive(true);
+            //gameover_Btn.gameObject.SetActive(true);
+            //set the button to reset the game over bool from leaguemanager and return to tile screen, for now
+            _closeGameForTestersBtn.onClick.AddListener(() => ResetRun());
+            _closeGameForTestersBtn.onClick.AddListener(() => gameManager.ResetRunTeams());
+            _closeGameForTestersBtn.onClick.AddListener(() => gameManager.saveSystem.ResetForNewLeagueRun());
+            
+        }
+        //StartCoroutine(NewsLoop(10f));
     }
 
     // Update is called once per frame
@@ -361,11 +393,25 @@ public class TeamManagerUI : MonoBehaviour
         _animator_trade.SetBool("On", leagueManager.canTrade);
         _animator_training.SetBool("On", leagueManager.canTrain);
         _animator_contract.SetBool("On", leagueManager.canNegociateContract);
-        //end build
-        if (leagueManager.Week > gameManager.leagueTeams.Count - 1/* && leagueManager.isOnR8*/)
+        
+    }
+    //GameOverReset
+    public void ResetRun()
+    {
+        leagueManager.isGameOver = false;
+        leagueManager.CanStartANewRun = true;
+        gameManager.saveSystem.SaveLeague();
+        //loadscene
+        //reset teams
+        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
         {
-            _EndBuildScreen.SetActive(true);
+            gameManager.saveSystem.ClearSave(gameManager.leagueTeams[i].TeamName, gameManager.leagueTeams[i]);
         }
+        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+        {
+            gameManager.saveSystem.SaveTeamInfo(gameManager.leagueTeams[i]);
+        }
+            
     }
     //Facilities
     void UpdateFacilities()
@@ -978,6 +1024,15 @@ public class TeamManagerUI : MonoBehaviour
             }
         }
         //TEAMHisotry
+    }
+    //ProceedtoPlaypffs
+    void AdvanceToPlayoffs()
+    {
+
+    }
+    IEnumerator WaitAnimation()
+    {
+        yield return null;
     }
     //SaveFunction
     public void SaveAfterPlayerEvent()
