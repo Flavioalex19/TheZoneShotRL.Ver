@@ -277,7 +277,17 @@ public class GameManager : MonoBehaviour
             // Access the Player component and set the attributes
             Player newPlayer = playerObject.GetComponent<Player>();
             newPlayer.GenerateRandomPlayer(); // Randomize the player's name and overall rating
-            GeneratePlayerDraftButton(newPlayer);//NEW!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            /*
+            if(UnityEngine.Random.value <= 0.9f)
+            {
+                newPlayer.GeneratePlayerLvl0();
+            }
+            else
+            {
+                newPlayer.GeneratePlayerLvl4();
+            }
+            */
+            GeneratePlayerDraftButton(newPlayer);
             
         }
     }
@@ -401,7 +411,7 @@ public class GameManager : MonoBehaviour
             animator.SetTrigger("Go");
         }
 
-        float timer = 3f;
+        float timer = 2f;
         while (timer > 0)
         {
             introManager.ChangeStageTransitionTextIntro();

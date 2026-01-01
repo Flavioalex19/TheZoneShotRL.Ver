@@ -118,16 +118,75 @@ public class Player : MonoBehaviour
         bondPlayer = null;
         //Debug.Log($"Generated Player: {firstName}, OVR: {ovr}");
     }
+    //Generate player with ovr from 50-75
+    public void GeneratePlayerLvl0()
+    {
+        // Random OVR between 60 and 79
+        Shooting = Random.Range(55, 75);
+        Inside = Random.Range(55, 75);
+        Mid = Random.Range(55, 75);
+        Outside = Random.Range(55, 75);
+        Awareness = Random.Range(55, 75);
+        Defending = Random.Range(55, 75);
+        Guarding = Random.Range(55, 75);
+        Stealing = Random.Range(55, 75);
+        Juking = Random.Range(55, 75);
+        Consistency = Random.Range(55, 75);
+        Control = Random.Range(55, 75);
+        Positioning = Random.Range(55, 75);
+        ovr = (Shooting + Inside + Mid + Outside + Awareness + Defending + Guarding + Stealing + Juking + Consistency + Control + Positioning) / 12;
+        Personality = Random.Range(1, 5);
+        Zone = Random.Range(0, 2);
+        //firstName = ((PlayerNames)Random.Range(0, System.Enum.GetValues(typeof(PlayerNames)).Length)).ToString(); // Random name from enum
+        // Randomly select a name from the array
+        playerFirstName = names[Random.Range(0, names.Length)];
+        playerLastName = secondNames[Random.Range(0, secondNames.Length)];
+        Age = Random.Range(20, 34);
+        //ImageCharacterPortrait = Random.Range(0, 7);
+        ImageCharacterPortrait = Random.Range(0, 21);
+        GenerateContract();
+        buff = 0;
+        bondPlayer = null;
+    }
+    public void GeneratePlayerLvl4()
+    {
+        // Random OVR between 60 and 79
+        Shooting = Random.Range(75, 90);
+        Inside = Random.Range(75, 90);
+        Mid = Random.Range(75, 90);
+        Outside = Random.Range(75, 90);
+        Awareness = Random.Range(75, 90);
+        Defending = Random.Range(75, 90);
+        Guarding = Random.Range(75, 90);
+        Stealing = Random.Range(75, 90);
+        Juking = Random.Range(75, 90);
+        Consistency = Random.Range(75, 90);
+        Control = Random.Range(75, 90);
+        Positioning = Random.Range(75, 90);
+        ovr = (Shooting + Inside + Mid + Outside + Awareness + Defending + Guarding + Stealing + Juking + Consistency + Control + Positioning) / 12;
+        Personality = Random.Range(1, 5);
+        Zone = Random.Range(0, 2);
+        //firstName = ((PlayerNames)Random.Range(0, System.Enum.GetValues(typeof(PlayerNames)).Length)).ToString(); // Random name from enum
+        // Randomly select a name from the array
+        playerFirstName = names[Random.Range(0, names.Length)];
+        playerLastName = secondNames[Random.Range(0, secondNames.Length)];
+        Age = Random.Range(20, 34);
+        //ImageCharacterPortrait = Random.Range(0, 7);
+        ImageCharacterPortrait = Random.Range(0, 21);
+        GenerateContract();
+        buff = 0;
+        bondPlayer = null;
+    }
     void GenerateContract()
     {
         if(ovr>= 40 && ovr <= 50)
         {
-            ContractYears = 4;
+            ContractYears = 6;
             Salary = UnityEngine.Random.Range(2,5);
         }
         else if(ovr > 50 && ovr <= 60)
         {
-            ContractYears = 4;
+            ContractYears = 6;
             Salary = UnityEngine.Random.Range(4, 8);
         }
         else if (ovr > 60 && ovr <= 70)

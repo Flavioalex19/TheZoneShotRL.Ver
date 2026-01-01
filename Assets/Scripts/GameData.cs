@@ -193,6 +193,11 @@ public class LeagueManagerData
     public List<string> R4Names;
     public List<string> FinalNames;
     public bool canStartNewRun;
+    public bool draftLvl1;
+    public bool draftLvl2;
+    public bool draftLvl3;
+    public bool spPlayer0;
+    public bool spPlayer1;
 
 
     public LeagueManagerData(LeagueManager leagueManager)
@@ -209,6 +214,12 @@ public class LeagueManagerData
         isFinal = leagueManager.isOnFinals;
         isGO = leagueManager.isGameOver;
         canStartNewRun = leagueManager.CanStartANewRun;
+
+        draftLvl1 = leagueManager.CanDraftlvl1;
+        draftLvl2 = leagueManager.CanDraftlvl2;
+        draftLvl3 = leagueManager.CanDraftlvl3;
+        spPlayer0 = leagueManager.CanDrafSpPlayer0;
+        spPlayer1 = leagueManager.CanDraftSpPlayer1;
 
         R8Names = leagueManager.List_R8Teams.Select(t => t.TeamName).ToList();
         R4Names = leagueManager.List_R4Teams.Select(t => t.TeamName).ToList();

@@ -44,4 +44,8 @@ public class TeamSelectionManager : MonoBehaviour
         SceneManager.LoadScene("Draft");//no transition
 
     }
+    public void ClearCurrentSelectedTeamText()
+    {
+        _debugCurrentTeam.text = " ";
+    }
 }

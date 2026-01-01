@@ -279,6 +279,12 @@ public class SaveSystem : MonoBehaviour
         lm.isOnFinals = data.isFinal;
         lm.CanStartANewRun = data.canStartNewRun;
 
+        lm.CanDraftlvl1 = data.draftLvl1;
+        lm.CanDraftlvl2 = data.draftLvl2;
+        lm.CanDraftlvl3 = data.draftLvl3;
+        lm.CanDraftSpPlayer1 = data.spPlayer1;
+        lm.CanDrafSpPlayer0 = data.spPlayer0;
+
         // ---------- PLAYOFFS ----------
         lm.List_R8Teams.Clear();
         foreach (string name in data.R8Names)
@@ -424,7 +430,7 @@ public class SaveSystem : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"No save file found for team {teamName} to delete.");
+            //Debug.LogError($"No save file found for team {teamName} to delete.");
         }
     }
     public void ResetLeagueData()
@@ -486,6 +492,22 @@ public class SaveSystem : MonoBehaviour
         {
             gameManager.saveSystem.ClearSave(gameManager.leagueTeams[i].TeamName, gameManager.leagueTeams[i]);
         }
+    }
+    public void ResetLeagueHistory()
+    {
+        LeagueManager leagueManager = FindObjectOfType<LeagueManager>();
+        GameManager gameManager = FindObjectOfType<GameManager>();
+
+        leagueManager.CanDraftlvl1 = false;
+        leagueManager.CanDraftlvl2 = false;
+        leagueManager.CanDraftlvl3 = false;
+        leagueManager.CanDrafSpPlayer0 = false;
+        leagueManager.CanDraftSpPlayer1 = false;
+        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+        {
+            gameManager.leagueTeams[i].isChampion = false;
+        }
+
     }
     public void ClearAllSaves()
     {

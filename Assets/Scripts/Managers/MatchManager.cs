@@ -152,7 +152,7 @@ public class MatchManager : MonoBehaviour
                 }
             }
         }
-        
+        _matchUI.TeamImagesUpdate();
         //AwayTeam = HomeTeam._schedule[leagueManager.Week - 1];
         _actionTimer = _actionTimerReset;
         _matchUI.SetTheTeamTextForTheMatch();
@@ -185,6 +185,14 @@ public class MatchManager : MonoBehaviour
         //Testing
         print(AwayTeam.playersListRoster.Count + "Number of player i the roster of the away team");
         StartCoroutine(RunMatchThenSimulate());
+
+        if (leagueManager.isOnR8)
+        {
+            if(leagueManager.isOnR4 == false)
+            {
+                //leagueManager.isOnR4 = true;
+            }
+                    }
         //_matchUI.PostGameStats(HomeTeam, AwayTeam);
     }
     private void Update()
@@ -256,7 +264,6 @@ public class MatchManager : MonoBehaviour
         _matchUI.MatchStartAnim();
         while (currentGamePossessons > 0)
         {
-            
             // Step 1: Choose the player to carry the ball
             ChoosePlayerToCarryBall();
             match = MatchStates.Possesion;
@@ -272,8 +279,15 @@ public class MatchManager : MonoBehaviour
 
             //Restore stamina on the bench
             if(currentGamePossessons>1) RestoreStaminaFromBench();
-
             //currentGamePossessons--;
+
+            if ((leagueManager.isOnR8 == true || leagueManager.isOnR4 == true || leagueManager.isOnFinals == true) && currentGamePossessons <= 1)
+            {
+                if (HomeTeam.Score == AwayTeam.Score)
+                {
+                    currentGamePossessons++;
+                }
+            }
         }
 
         // End of match logic
@@ -290,20 +304,21 @@ public class MatchManager : MonoBehaviour
                 _matchUI.ActivateVictoryDefeat("Victory");
                 if (leagueManager.isOnR8 && leagueManager.isOnR4 == false && leagueManager.isOnFinals == false)
                 {
-                    leagueManager.isOnR4 = true;
+                    //leagueManager.isOnR4 = true;
+                    print("Pass to R4!!!!!!!!!!!!!!!!!!!");
                     leagueManager.List_R4Teams.Add(HomeTeam);
                     //leagueManager.isOnR8 = false;
                 }
                 else if (leagueManager.isOnR4 && leagueManager.isOnR8 == true && leagueManager.isOnFinals == false)
                 {
-                    leagueManager.isOnFinals = true;
+                    //leagueManager.isOnFinals = true;
                     leagueManager.List_Finalist.Add(HomeTeam);
                 }
                 else if (leagueManager.isOnR4 && leagueManager.isOnR8 == true && leagueManager.isOnFinals)
                 {
                     //player team tema a varaivel win
                     HomeTeam.isChampion = true;
-                    leagueManager.isGameOver = true;
+                    //leagueManager.isGameOver = true;
                 }
             }
             
@@ -396,7 +411,6 @@ public class MatchManager : MonoBehaviour
         }
         yield return new WaitForSeconds(3f);
         _matchUI.EndScreenStatsPanel.SetActive(true);
-        
         //_matchUI.PostGameStats(HomeTeam, AwayTeam);///////////////////////////////////////////////
         //yield return StartCoroutine(LeagueWeekSimulation());
     }
@@ -572,11 +586,7 @@ public class MatchManager : MonoBehaviour
             //_matchUI.OffesnivePanelOnOff(true);
             CanChooseDefenseAction = false;
             //verify if has cards on deck
-            if (cardsFolder.childCount > 3)
-            {
-                CreateHand();
-                _matchUI.UpdateCardsHand();
-            }
+           
             
             ResetPostions();
             _matchUI.PlayerWithBallButtonsOnOff();
@@ -589,6 +599,7 @@ public class MatchManager : MonoBehaviour
             while (true)
             {
                 _matchUI.percentagePanel.SetActive(true);
+                _matchUI.PlayerWithTheBallOff();
                 //MatchEvents();
                 //CanChooseAction = true;
                 if ((leagueManager.isOnR8 == true || leagueManager.isOnR4 == true || leagueManager.isOnFinals == true) && currentGamePossessons <= 1)
@@ -605,6 +616,11 @@ public class MatchManager : MonoBehaviour
                     yield return Scoring(playerWithTheBall, false);
                     currentGamePossessons--;
                     yield break;
+                }
+                if (cardsFolder.childCount > 3)
+                {
+                    CreateHand();
+                    _matchUI.UpdateCardsHand();
                 }
                 _matchUI.OffesnivePanelOnOff(true);
                 //print(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false) + " Is the cahnce of success");
@@ -983,6 +999,7 @@ public class MatchManager : MonoBehaviour
     }
     void SwitchPossession()
     {
+        _matchUI.OffesnivePanelOnOff(false);
         ControlStamina(HomeTeam);
         ControlStamina(AwayTeam);
         playerWithTheBall = null;
@@ -1160,12 +1177,14 @@ public class MatchManager : MonoBehaviour
         List<Team> sourceList = null;
         List<Team> targetList = null;
 
-        if (leagueManager.isOnR8 && leagueManager.isOnR4)
+        // Define round atual
+        if (leagueManager.isOnR8 && !leagueManager.isOnR4)
         {
+            print("Quarters!!!!!!!!!!!!!!!!!");
             sourceList = leagueManager.List_R8Teams;
             targetList = leagueManager.List_R4Teams;
         }
-        else if (leagueManager.isOnR4 && leagueManager.isOnR8)
+        else if (leagueManager.isOnR4 && !leagueManager.isOnFinals)
         {
             sourceList = leagueManager.List_R4Teams;
             targetList = leagueManager.List_Finalist;
@@ -1175,35 +1194,64 @@ public class MatchManager : MonoBehaviour
             yield break;
         }
 
-        targetList.Clear();
+        //targetList.Clear();
 
+        int gameIndex = 0;
+
+        // Enquanto houver times que ainda não jogaram neste round
         while (sourceList.Any(t => !t.HasPlayed))
         {
-            Team teamA = sourceList.First(t => !t.HasPlayed);
-            Team teamB = sourceList
-                .First(t => !t.HasPlayed && t != teamA);
+            // Pega o próximo par (ordem da lista)
+            var unplayed = sourceList.Where(t => !t.HasPlayed).ToList();
+            Team teamA = unplayed[0];
+            Team teamB = unplayed[1];
 
-            // Setup básico
+            Debug.Log($"[PLAYOFF] Match {gameIndex}: {teamA.TeamName} vs {teamB.TeamName}");
+
+            // ===== SETUP COMPLETO (igual temporada regular) =====
             HomeTeam = teamA;
             AwayTeam = teamB;
+            teamWithball = HomeTeam;
+            _actionTimer = 0f;
+            currentGamePossessons = GamePossesions;
 
-            teamA.Score = 0;
-            teamB.Score = 0;
+            teamA.Score = teamB.Score = 0;
+            teamA.HasPlayed = teamB.HasPlayed = true;
+            teamA.isOnDefenseBonus = teamB.isOnDefenseBonus = false;
 
-            teamA.HasPlayed = true;
-            teamB.HasPlayed = true;
+            foreach (Player p in teamA.playersListRoster)
+            {
+                p.PointsMatch = 0;
+                p.StealsMatch = 0;
+            }
 
-            Debug.Log($"[PLAYOFF ROUND] {teamA.TeamName} vs {teamB.TeamName}");
+            foreach (Player p in teamB.playersListRoster)
+            {
+                p.PointsMatch = 0;
+                p.StealsMatch = 0;
+            }
+            // ================================================
 
+            // Simula o jogo
             yield return StartCoroutine(GameFlow());
 
+            // UI (mesmo método da temporada regular)
+            _matchUI.WeekResults(gameIndex, teamA, teamB);
+
+            // Define vencedor e avança
             Team winner = teamA.Score >= teamB.Score ? teamA : teamB;
             targetList.Add(winner);
+
+            gameIndex++;
         }
 
-        // Reset HasPlayed para o próximo uso
+        // Reset para o próximo round
         foreach (Team t in sourceList)
             t.HasPlayed = false;
+
+        if(leagueManager.isOnR4== false)leagueManager.isOnR4 = true;
+        else leagueManager.isOnFinals = true;
+        manager.saveSystem.SaveLeague();
     }
 
     IEnumerator RunMatchThenSimulate()
@@ -1217,6 +1265,7 @@ public class MatchManager : MonoBehaviour
         //yield return StartCoroutine(LeagueWeekSimulation());
         if (leagueManager.isOnR8 || leagueManager.isOnR4)
         {
+            print("We are in the playoffs");
             // Estamos nos playoffs  simula APENAS o round atual
             yield return StartCoroutine(SimulatePlayoffRound());
         }
@@ -1238,7 +1287,7 @@ public class MatchManager : MonoBehaviour
         {
             if (manager.leagueTeams[i]!= manager.playerTeam)
             {
-                ApplyFiveWeekTraining(manager.leagueTeams[i], manager.leagueTeams[i].Wins, manager.leagueTeams[i].Draws, manager.leagueTeams[i].Loses);
+                //ApplyFiveWeekTraining(manager.leagueTeams[i], manager.leagueTeams[i].Wins, manager.leagueTeams[i].Draws, manager.leagueTeams[i].Loses);
             }
         }
         sfxManager.ResetVolume();
@@ -1905,7 +1954,7 @@ public class MatchManager : MonoBehaviour
     bool TryBeatDefenderAdvanceZone(Player offense, Player defense, int zone, int bonus = 0)
     {
         //print("Juke");
-        currentGamePossessons--;
+        //currentGamePossessons--;
 
         int offenseRoll = UnityEngine.Random.Range(1, 101)
                          + offense.Consistency
@@ -1986,7 +2035,7 @@ public class MatchManager : MonoBehaviour
                 playerWithTheBall.PointsMatch += 4;
                 teamWithBall.Score += 4;
             }
-
+            currentGamePossessons--;
             uiManager.PlaybyPlayText(
                 playerWithTheBall.playerLastName + " scored! Total: " + playerWithTheBall.PointsMatch
             );
@@ -2006,4 +2055,8 @@ public class MatchManager : MonoBehaviour
         // NÃO troca posse — apenas termina
     }
     #endregion
+    public void Matchpoint()
+    {
+        HomeTeam.Score += 50;
+    }
 }

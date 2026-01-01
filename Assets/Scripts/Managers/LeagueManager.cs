@@ -48,6 +48,14 @@ public class LeagueManager : MonoBehaviour
     public List<Team> List_Finalist = new List<Team>();
     public List<Team> List_FinalistName = new List<Team>();
 
+    //leagueProgession
+    [Header("LeagueProgression")]
+    public bool CanDraftlvl1 = false;
+    public bool CanDraftlvl2 = false;
+    public bool CanDraftlvl3 = false;
+    public bool CanDrafSpPlayer0 = false;
+    public bool CanDraftSpPlayer1 = false;
+
 
     GameManager gameManager;
     UiManager uiManager;

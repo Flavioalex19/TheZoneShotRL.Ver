@@ -29,9 +29,11 @@ public class MatchUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI _homeTeamName;
     [SerializeField] TextMeshProUGUI _awatTeamName;
 
-    [Header("Scorebord text")]
+    [Header("Scorebord")]
     [SerializeField] TextMeshProUGUI _text_ScoreBoardHomeTeam;
     [SerializeField] TextMeshProUGUI _text_ScoreBoardAwayTeam;
+    [SerializeField] Image _homeTeamImage;
+    [SerializeField] Image _awayTeamImage;
 
     [Header("Action Button Area")]
     [SerializeField] GameObject _actionArea;
@@ -210,7 +212,11 @@ public class MatchUI : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             transform_ActiveHomePlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerLastName.ToString();
+            transform_ActiveHomePlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].PointsMatch.ToString();
+            transform_ActiveHomePlayers.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].J_Number.ToString();
+             
         }
+
 
         //UpdateOffensiveStats();
     }
@@ -230,7 +236,10 @@ public class MatchUI : MonoBehaviour
         gameAction = list_LosesBall[Random.Range(0, list_LosesBall.Count)];
         return gameAction;
     }
-    
+    public void PlayerWithTheBallOff()
+    {
+        text_playerWithTheBallName.text = _matchManager.playerWithTheBall.playerFirstName + " " + _matchManager.playerWithTheBall.playerLastName;
+    }
     //Scoreboards
     public void SetTheTeamTextForTheMatch()
     {
@@ -467,5 +476,18 @@ public class MatchUI : MonoBehaviour
                    transform_ActiveHomePlayers.GetChild(i).GetChild(6).GetChild(0).position;
             }
         }
+    }
+    public void TeamImagesUpdate()
+    {
+        Sprite sprite = null;
+        string teamName;
+        teamName = _matchManager.HomeTeam.TeamName;
+        sprite = Resources.Load<Sprite>("2D/Team Logos/" + teamName);
+        _homeTeamImage.sprite = sprite;
+        Sprite sprite1;
+        string teamName1;
+        teamName1 = _matchManager.AwayTeam.TeamName;
+        sprite1 = Resources.Load<Sprite>("2D/Team Logos/" + teamName1);
+        _awayTeamImage.sprite = sprite1;
     }
 }

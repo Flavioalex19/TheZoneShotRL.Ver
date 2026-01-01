@@ -2341,6 +2341,8 @@ MonoBehaviour:
   canTrain: 1
   canNegociateContract: 0
   CanStartTutorial: 1
+  isGameOver: 0
+  CanStartANewRun: 1
   isOnR8: 0
   isOnR4: 0
   isOnFinals: 0
@@ -5185,10 +5187,18 @@ PrefabInstance:
       propertyPath: m_text
       value: Game On!
       objectReference: {fileID: 0}
+    - target: {fileID: 1273323334582235077, guid: f82df41960cbb764186f101b510a3429, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 16777215
+      objectReference: {fileID: 0}
+    - target: {fileID: 1890953526851240121, guid: f82df41960cbb764186f101b510a3429, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3560078363112964691, guid: f82df41960cbb764186f101b510a3429, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 8164b415da70f4340b4bcbc6091487af, type: 3}
+      objectReference: {fileID: 21300000, guid: 4fefcbfe5d5b13c40b7ae68dafb7c2e0, type: 3}
     - target: {fileID: 3560078363112964691, guid: f82df41960cbb764186f101b510a3429, type: 3}
       propertyPath: m_Color.b
       value: 1
@@ -5284,6 +5294,10 @@ PrefabInstance:
     - target: {fileID: 8576539228501752664, guid: f82df41960cbb764186f101b510a3429, type: 3}
       propertyPath: m_SizeDelta.x
       value: 700
+      objectReference: {fileID: 0}
+    - target: {fileID: 8623293798796189435, guid: f82df41960cbb764186f101b510a3429, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8701833957609624471, guid: f82df41960cbb764186f101b510a3429, type: 3}
       propertyPath: m_Name

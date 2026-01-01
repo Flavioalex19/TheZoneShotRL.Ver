@@ -168,6 +168,14 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Image image_teamIcon;
     [SerializeField] GameObject _playoffsAdvBtn;
     GameObject _advBtn;//to Advance Button Elements
+
+    [Header("Menu Animations")]
+    [SerializeField] Animator animator_SchedulePanel;
+    [SerializeField] Animator animator_TeamPanel;
+    [SerializeField] Animator animator_TradingPanel;
+    [SerializeField] Animator animator_TrainingPanel;
+    [SerializeField] Animator animator_ContractsPanel;
+    [SerializeField] Animator animator_StandingsPanel;
     
 
     [SerializeField] GameObject tutorialPanel;
@@ -1024,6 +1032,32 @@ public class TeamManagerUI : MonoBehaviour
             }
         }
         //TEAMHisotry
+    }
+    //Menu Animations
+    public void ScheduleMenu(bool On)
+    {
+        animator_SchedulePanel.SetBool("On",On);
+    }
+    public void TeamPanelAnim(bool On)
+    {
+        animator_TeamPanel.SetBool("On", On);
+    }
+    public bool IsPlayerTeamInTop8()
+    {
+        LeagueManager leagueManager = FindObjectOfType<LeagueManager>();
+
+        if (leagueManager == null || leagueManager.Standings == null)
+            return false;
+
+        int limit = Mathf.Min(8, leagueManager.Standings.Count);
+
+        for (int i = 0; i < limit; i++)
+        {
+            if (leagueManager.Standings[i].IsPlayerTeam)
+                return true;
+        }
+
+        return false;
     }
     //ProceedtoPlaypffs
     void AdvanceToPlayoffs()
