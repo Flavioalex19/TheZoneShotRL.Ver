@@ -121,7 +121,7 @@ public class LeagueManager : MonoBehaviour
         
         if (/*GameObject.Find("ChoicesForTheWeek") */gameManager.mode == GameManager.GameMode.TeamManagement/*&& canStartANewWeek == true*/)
         {
-            if(canStartANewWeek == true)
+            if(canStartANewWeek == true && CanStartANewRun == false)
             {
                 canTrain = true;
                 canTrade = true;

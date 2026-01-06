@@ -483,7 +483,7 @@ public class SaveSystem : MonoBehaviour
         }
         for (int i = 0; i < gameManager.leagueTeams.Count; i++)
         {
-            gameManager.leagueTeams[i].isChampion = false;
+            //gameManager.leagueTeams[i].isChampion = false;
         }
         leagueManager.isGameOver = false;
         leagueManager.CanStartANewRun = true;
@@ -492,6 +492,59 @@ public class SaveSystem : MonoBehaviour
         {
             gameManager.saveSystem.ClearSave(gameManager.leagueTeams[i].TeamName, gameManager.leagueTeams[i]);
         }
+        //SaveLeague();
+    }
+
+    public void ResetForNewRun()
+    {
+        LeagueManager leagueManager = FindObjectOfType<LeagueManager>();
+        GameManager gameManager = FindObjectOfType<GameManager>();
+
+        if (leagueManager == null || gameManager == null)
+        {
+            Debug.LogError("Managers not found.");
+            return;
+        }
+
+        // -------- RESET DA LIGA --------
+        //leagueManager.Week = 1;
+
+        leagueManager.isGameOver = false;
+        leagueManager.CanStartANewRun = false;
+
+        leagueManager.isOnR8 = false;
+        leagueManager.isOnR4 = false;
+        leagueManager.isOnFinals = false;
+
+        leagueManager.canGenerateEvents = true;
+        leagueManager.canStartANewWeek = true;
+        leagueManager.canTrade = true;
+        leagueManager.canTrain = true;
+        leagueManager.canNegociateContract = true;
+
+        // -------- RESET DOS PLAYOFFS --------
+        leagueManager.List_R8Teams.Clear();
+        leagueManager.List_R4Teams.Clear();
+        leagueManager.List_Finalist.Clear();
+
+
+        // -------- RESET DOS TIMES --------
+        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+        {
+            Team team = gameManager.leagueTeams[i];
+
+            //team.isChampion = false;
+            team.isR8 = false;
+            team.isR4 = false;
+            team.isFinalist = false;
+
+            gameManager.saveSystem.ClearSave(team.TeamName, team);
+        }
+
+        // -------- SALVA O ESTADO LIMPO --------
+        gameManager.saveSystem.SaveLeague();
+
+        Debug.Log("New League Run reset completed successfully.");
     }
     public void ResetLeagueHistory()
     {

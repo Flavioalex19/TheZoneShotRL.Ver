@@ -2352,6 +2352,11 @@ MonoBehaviour:
   List_R4Names: []
   List_Finalist: []
   List_FinalistName: []
+  CanDraftlvl1: 0
+  CanDraftlvl2: 0
+  CanDraftlvl3: 0
+  CanDrafSpPlayer0: 0
+  CanDraftSpPlayer1: 0
 --- !u!1 &1048069919
 GameObject:
   m_ObjectHideFlags: 0
@@ -3490,19 +3495,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1440400635}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1134318978}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: AdvanceToDraft
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1440400635
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4167,6 +4160,7 @@ MonoBehaviour:
   _introAnimator: {fileID: 1653759811}
   _teamText: {fileID: 8380688848450410344}
   _gameManager: {fileID: 1134318978}
+  btn_career: {fileID: 1440400634}
 --- !u!1 &1900543012
 GameObject:
   m_ObjectHideFlags: 0

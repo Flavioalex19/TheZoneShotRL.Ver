@@ -265,9 +265,17 @@ public class TeamManagerUI : MonoBehaviour
             //if(leagueManager.isOnR4 == true) leagueManager.isOnR4 = true;//remove later
             if(leagueManager.isOnR8==false)leagueManager.isOnR8 = true;
             */
-            _playoffsAdvBtn.SetActive(true);
-            if(leagueManager.isOnR8==false)leagueManager.isOnR8 = true;
-            gameManager.saveSystem.SaveLeague();
+            if (IsPlayerTeamInTop8())
+            {
+                _playoffsAdvBtn.SetActive(true);
+                if (leagueManager.isOnR8 == false) leagueManager.isOnR8 = true;
+                gameManager.saveSystem.SaveLeague();
+            }
+            else
+            {
+                leagueManager.isGameOver = true;
+            }
+            
         }
 
         //leagueManager.CreateTeamSalary();
@@ -307,7 +315,7 @@ public class TeamManagerUI : MonoBehaviour
             StartCoroutine(ProgressWithWeek());
 
             //_freeAgents_panel.SetActive(false);
-            print("Pass");
+            //print("Pass");
             //UpdateTeamSalary();
             for (int i = 0; i < gameManager.playerTeam.playersListRoster.Count; i++)
             {
@@ -328,7 +336,7 @@ public class TeamManagerUI : MonoBehaviour
         //else WeekText.text = leagueManager.Week.ToString();
         AdvButtonUpdate();
 
-        //end build/playoffs
+        //playoffs
         if (leagueManager.Week > gameManager.leagueTeams.Count - 1 || leagueManager.isOnR8 == true/* && leagueManager.isOnR8*/)
         {
             //_EndBuildScreen.SetActive(true);
@@ -342,17 +350,18 @@ public class TeamManagerUI : MonoBehaviour
             _playoffsAdvBtn.SetActive(false);
         }
         //Lose run
-        if (leagueManager.isGameOver)
+        if (leagueManager.isGameOver|| leagueManager.CanStartANewRun == true)
         {
             //setactive end run screen
             _EndBuildScreen.SetActive(true);
             //gameover_Btn.gameObject.SetActive(true);
             //set the button to reset the game over bool from leaguemanager and return to tile screen, for now
             _closeGameForTestersBtn.onClick.AddListener(() => ResetRun());
-            _closeGameForTestersBtn.onClick.AddListener(() => gameManager.ResetRunTeams());
-            _closeGameForTestersBtn.onClick.AddListener(() => gameManager.saveSystem.ResetForNewLeagueRun());
+            //_closeGameForTestersBtn.onClick.AddListener(() => gameManager.ResetRunTeams());
+            //_closeGameForTestersBtn.onClick.AddListener(() => gameManager.saveSystem.ResetForNewLeagueRun());
             
         }
+        
         //StartCoroutine(NewsLoop(10f));
     }
 
@@ -406,6 +415,9 @@ public class TeamManagerUI : MonoBehaviour
     //GameOverReset
     public void ResetRun()
     {
+        leagueManager.CanStartANewRun = true;
+        gameManager.ResetRunTeams();
+        /*
         leagueManager.isGameOver = false;
         leagueManager.CanStartANewRun = true;
         gameManager.saveSystem.SaveLeague();
@@ -419,7 +431,9 @@ public class TeamManagerUI : MonoBehaviour
         {
             gameManager.saveSystem.SaveTeamInfo(gameManager.leagueTeams[i]);
         }
-            
+        */
+
+
     }
     //Facilities
     void UpdateFacilities()

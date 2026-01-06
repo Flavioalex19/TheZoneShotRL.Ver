@@ -214,6 +214,7 @@ public class MatchUI : MonoBehaviour
             transform_ActiveHomePlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerLastName.ToString();
             transform_ActiveHomePlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].PointsMatch.ToString();
             transform_ActiveHomePlayers.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].J_Number.ToString();
+            
              
         }
 
@@ -466,7 +467,7 @@ public class MatchUI : MonoBehaviour
         {
             if (_matchManager.HomeTeam.playersListRoster[i].CurrentZone > 0)
             {
-                print("PLay is zoned(UPDATE) " + _matchManager.HomeTeam.playersListRoster[i].playerLastName);
+                //print("PLay is zoned(UPDATE) " + _matchManager.HomeTeam.playersListRoster[i].playerLastName);
                 transform_ActiveHomePlayers.GetChild(i).position = 
                     transform_ActiveHomePlayers.GetChild(i).GetChild(6).GetChild(_matchManager.HomeTeam.playersListRoster[i].CurrentZone).position;
             }
@@ -474,6 +475,10 @@ public class MatchUI : MonoBehaviour
             {
                 transform_ActiveHomePlayers.GetChild(i).position =
                    transform_ActiveHomePlayers.GetChild(i).GetChild(6).GetChild(0).position;
+            }
+            if(_matchManager.HomeTeam.playersListRoster[i].CurrentZone > 1)
+            {
+                transform_ActiveHomePlayers.GetChild(i).GetChild(7).GetChild(2).gameObject.SetActive(false);
             }
         }
     }

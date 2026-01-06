@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class IntroManager : MonoBehaviour
 {
@@ -10,11 +11,13 @@ public class IntroManager : MonoBehaviour
     [SerializeField] Animator _introAnimator;
     [SerializeField] TextMeshProUGUI _teamText;
     [SerializeField] GameManager _gameManager;
+    [SerializeField] Button btn_career;
     // Start is called before the first frame update
     void Start()
     {
         _canProgressToMainMenu = false;
         _canPressEnter = false;
+        btn_career.onClick.AddListener(() => _gameManager.AdvanceToDraft());
         StartCoroutine(ProgressToMainMenu());
         
         

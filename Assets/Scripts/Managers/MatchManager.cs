@@ -130,15 +130,15 @@ public class MatchManager : MonoBehaviour
         currentGamePossessons = GamePossesions;
 
         HomeTeam = manager.playerTeam;
-        if (leagueManager.isOnR8)
+        if (leagueManager.isOnR8 && leagueManager.isOnR4 == false)
         {
             AwayTeam = leagueManager.List_R8Teams[1];
         }
-        else if (leagueManager.isOnR4)
+        else if (leagueManager.isOnR4 && leagueManager.isOnR8 == true && leagueManager.isOnFinals == false)
         {
             AwayTeam = leagueManager.List_R4Teams[1];
         }
-        else if (leagueManager.isOnFinals)
+        else if (leagueManager.isOnFinals && leagueManager.isOnR4 && leagueManager.isOnR8 == true)
         {
             AwayTeam = leagueManager.List_Finalist[1];
         }
@@ -318,6 +318,7 @@ public class MatchManager : MonoBehaviour
                 {
                     //player team tema a varaivel win
                     HomeTeam.isChampion = true;
+                    leagueManager.CanStartANewRun = true;
                     //leagueManager.isGameOver = true;
                 }
             }
@@ -329,12 +330,16 @@ public class MatchManager : MonoBehaviour
             AwayTeam.Moral += 15;
             HomeTeam.Loses++;
             AwayTeam.Wins++;
-            if (HomeTeam.IsPlayerTeam) { _matchUI.ActivateVictoryDefeat("Defeat"); }
-            if (leagueManager.isOnR8|| leagueManager.isOnR4 || leagueManager.isOnFinals)
-            {
-                leagueManager.isGameOver = true;
-                //leagueManager.isOnR8 = false;
+            if (HomeTeam.IsPlayerTeam) 
+            { 
+                _matchUI.ActivateVictoryDefeat("Defeat");
+                if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
+                {
+                    leagueManager.isGameOver = true;
+                    //leagueManager.isOnR8 = false;
+                }
             }
+            
         }
         else
         {
@@ -595,6 +600,11 @@ public class MatchManager : MonoBehaviour
             if (currentGamePossessons > 1)
             {
                 ResetChoices();
+                if (cardsFolder.childCount > 3)
+                {
+                    CreateHand();
+                    _matchUI.UpdateCardsHand();
+                }
             }   
             while (true)
             {
@@ -617,11 +627,7 @@ public class MatchManager : MonoBehaviour
                     currentGamePossessons--;
                     yield break;
                 }
-                if (cardsFolder.childCount > 3)
-                {
-                    CreateHand();
-                    _matchUI.UpdateCardsHand();
-                }
+                //old cards creations!!!!!!!!!!!!!!!!!!!!!
                 _matchUI.OffesnivePanelOnOff(true);
                 //print(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false) + " Is the cahnce of success");
                 _matchUI.SetScoringPercentage(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false).ToString() + "%");
@@ -957,8 +963,8 @@ public class MatchManager : MonoBehaviour
         {
             if (player.CurrentZone == 0)
             {
-                player.PointsMatch += 6;
-                teamWithball.Score += 6;
+                player.PointsMatch += 4;
+                teamWithball.Score += 4;
             }
             else if (player.CurrentZone == 1)
             {
@@ -967,8 +973,8 @@ public class MatchManager : MonoBehaviour
             }
             else
             {
-                player.PointsMatch += 4;
-                teamWithball.Score += 4;
+                player.PointsMatch += 6;
+                teamWithball.Score += 6;
             }
             uiManager.PlaybyPlayText(player.playerLastName + " Has Scored " + " " + player.PointsMatch);
             
@@ -2022,8 +2028,8 @@ public class MatchManager : MonoBehaviour
         {
             if (zone == 0)
             {
-                playerWithTheBall.PointsMatch += 6;
-                teamWithBall.Score += 6;
+                playerWithTheBall.PointsMatch += 4;
+                teamWithBall.Score += 4;
             }
             else if (zone == 1)
             {
@@ -2032,8 +2038,8 @@ public class MatchManager : MonoBehaviour
             }
             else
             {
-                playerWithTheBall.PointsMatch += 4;
-                teamWithBall.Score += 4;
+                playerWithTheBall.PointsMatch += 6;
+                teamWithBall.Score += 6;
             }
             currentGamePossessons--;
             uiManager.PlaybyPlayText(

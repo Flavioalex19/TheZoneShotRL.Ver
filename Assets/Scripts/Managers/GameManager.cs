@@ -427,8 +427,13 @@ public class GameManager : MonoBehaviour
         else
         {
             //mode = GameMode.Draft;
+            saveSystem.ResetForNewRun();
             SceneManager.LoadScene("TeamSelection");
         }
+    }
+    public void ToTitleScreen()
+    {
+        SceneManager.LoadScene("Title");
     }
     #endregion
 
@@ -484,8 +489,9 @@ public class GameManager : MonoBehaviour
             saveSystem.ClearSave(leagueTeams[i].TeamName, leagueTeams[i]);
             saveSystem.ResetLeagueData();
             leagueManager.isGameOver = false;
-            SceneManager.LoadScene("Title");
+            
         }
+        SceneManager.LoadScene("Title");
     }
     public void QuitApp()
     {
