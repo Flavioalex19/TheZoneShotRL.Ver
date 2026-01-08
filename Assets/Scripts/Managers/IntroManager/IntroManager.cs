@@ -15,6 +15,7 @@ public class IntroManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         _canProgressToMainMenu = false;
         _canPressEnter = false;
         btn_career.onClick.AddListener(() => _gameManager.AdvanceToDraft());

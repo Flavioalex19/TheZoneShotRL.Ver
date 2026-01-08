@@ -1944,6 +1944,8 @@ public class MatchManager : MonoBehaviour
         }
 
         // Transfere a bola
+        playerWithTheBall.CurrentZone = 0;
+        receiver.CurrentZone = 0;
         playerWithTheBall.HasTheBall = false;
         receiver.HasTheBall = true;
         playerWithTheBall = receiver;

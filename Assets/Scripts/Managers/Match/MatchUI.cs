@@ -86,6 +86,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Transform transform_gameStatsArea;
     [SerializeField] Transform transform_ActiveHomePlayers;
     [SerializeField] TextMeshProUGUI text_playerWithTheBallName;
+    [SerializeField] Transform transform_playersZones;
     //debub
     public string playernameWithBall;
 
@@ -462,19 +463,24 @@ public class MatchUI : MonoBehaviour
     }
     public void UpdatePlayerPlacements()
     {
-        print("Check position");
+        //print("Check position");
         for (int i = 0; i < 4; i++)
         {
             if (_matchManager.HomeTeam.playersListRoster[i].CurrentZone > 0)
             {
                 //print("PLay is zoned(UPDATE) " + _matchManager.HomeTeam.playersListRoster[i].playerLastName);
+                /*
                 transform_ActiveHomePlayers.GetChild(i).position = 
                     transform_ActiveHomePlayers.GetChild(i).GetChild(6).GetChild(_matchManager.HomeTeam.playersListRoster[i].CurrentZone).position;
+                */
+                transform_ActiveHomePlayers.GetChild(i).position =
+                    transform_playersZones.GetChild(i).GetChild(0).GetChild(_matchManager.HomeTeam.playersListRoster[i].CurrentZone).position;
             }
             else
             {
                 transform_ActiveHomePlayers.GetChild(i).position =
-                   transform_ActiveHomePlayers.GetChild(i).GetChild(6).GetChild(0).position;
+                   /*transform_ActiveHomePlayers.GetChild(i).GetChild(6).GetChild(0).position;*/
+                   transform_playersZones.GetChild(i).GetChild(0).GetChild(_matchManager.HomeTeam.playersListRoster[i].CurrentZone).position;
             }
             if(_matchManager.HomeTeam.playersListRoster[i].CurrentZone > 1)
             {

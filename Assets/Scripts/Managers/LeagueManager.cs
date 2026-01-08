@@ -30,7 +30,7 @@ public class LeagueManager : MonoBehaviour
 
     public bool canTrain = true;
 
-    public bool canNegociateContract;
+    public bool canNegociateContract = true;
     //Tutorial
     public bool CanStartTutorial = true;
 

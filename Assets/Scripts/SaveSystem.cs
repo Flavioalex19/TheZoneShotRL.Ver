@@ -445,7 +445,7 @@ public class SaveSystem : MonoBehaviour
         }
 
         // --------- RESET DE PROGRESSO DA LIGA ---------
-        leagueManager.Week = 1;
+        leagueManager.Week = 0;
 
         leagueManager.canGenerateEvents = true;
         leagueManager.canStartANewWeek = true;
@@ -494,7 +494,7 @@ public class SaveSystem : MonoBehaviour
         }
         //SaveLeague();
     }
-
+    /*
     public void ResetForNewRun()
     {
         LeagueManager leagueManager = FindObjectOfType<LeagueManager>();
@@ -546,6 +546,7 @@ public class SaveSystem : MonoBehaviour
 
         Debug.Log("New League Run reset completed successfully.");
     }
+    */
     public void ResetLeagueHistory()
     {
         LeagueManager leagueManager = FindObjectOfType<LeagueManager>();

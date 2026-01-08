@@ -386,6 +386,8 @@ public class GameManager : MonoBehaviour
             // Change mode and scene---THIA COULD BE A BUTTON!!!!!!!!!!!!!!!!
             mode = GameMode.TeamManagement;
             leagueManager.CanStartANewRun = false;
+            leagueManager.canGenerateEvents = true;
+            leagueManager.canStartANewWeek = true;
             SceneManager.LoadScene("MyTeamScreen");
         }
         
@@ -403,7 +405,7 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator AdvanceToDraftRoutine()
     {
-        
+        introManager = GameObject.FindObjectOfType<IntroManager>().GetComponent<IntroManager>();
         if (GameObject.Find("TransitionSequence"))
         {
             Animator animator = GameObject.Find("TransitionSequence").GetComponent<Animator>();
@@ -418,16 +420,42 @@ public class GameManager : MonoBehaviour
             timer -= Time.deltaTime;
             yield return null; // Wait a frame instead of freezing
         }
-
+        if (leagueManager.CanStartANewRun)
+        {
+            saveSystem.ResetForNewLeagueRun();
+            saveSystem.ResetLeagueData();
+        }
         if (/*IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName)*/leagueManager.CanStartANewRun == false)
         {
             mode = GameMode.TeamManagement;
+            //mode = GameMode.TeamManagement;
             SceneManager.LoadScene("MyTeamScreen");
         }
         else
         {
             //mode = GameMode.Draft;
-            saveSystem.ResetForNewRun();
+            //saveSystem.ResetForNewRun();
+            leagueManager.canGenerateEvents = true;
+            //reset teams
+            for (int i = 0; i < leagueTeams.Count; i++)
+            {
+                leagueTeams[i].playersListRoster.Clear();
+                leagueTeams[i].Moral = leagueTeams[i].fixMoral;
+                leagueTeams[i].FrontOfficePoints = leagueTeams[i].fixFrontOffice;
+                leagueTeams[i].FansSupportPoints = leagueTeams[i].fixFansSupport;
+                leagueTeams[i].EffortPoints = leagueTeams[i].fixEffort;
+                leagueTeams[i].Wins = 0;
+                leagueTeams[i].Loses = 0;
+                leagueTeams[i].Draws = 0;
+                leagueTeams[i].OfficeLvl = 0;
+                leagueTeams[i].MedicalLvl = 0;
+                leagueTeams[i].ArenaLvl = 0;
+                leagueTeams[i].FinancesLvl = 0;
+                leagueTeams[i].MarketingLvl = 0;
+                leagueTeams[i].TeamEquipmentLvl = 0;
+                
+
+            }
             SceneManager.LoadScene("TeamSelection");
         }
     }

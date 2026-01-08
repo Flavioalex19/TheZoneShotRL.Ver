@@ -41,6 +41,7 @@ public class TeamSelectionManager : MonoBehaviour
         selectedTeam.CreateEquips();
         _gameManager.mode = GameManager.GameMode.Draft;
         _gameManager.ScheduleCreation(_gameManager.leagueTeams);
+        _gameManager.mode = GameManager.GameMode.Draft;
         SceneManager.LoadScene("Draft");//no transition
 
     }

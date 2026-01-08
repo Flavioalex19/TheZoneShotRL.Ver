@@ -357,8 +357,8 @@ public class TeamManagerUI : MonoBehaviour
             //gameover_Btn.gameObject.SetActive(true);
             //set the button to reset the game over bool from leaguemanager and return to tile screen, for now
             _closeGameForTestersBtn.onClick.AddListener(() => ResetRun());
-            //_closeGameForTestersBtn.onClick.AddListener(() => gameManager.ResetRunTeams());
-            //_closeGameForTestersBtn.onClick.AddListener(() => gameManager.saveSystem.ResetForNewLeagueRun());
+            _closeGameForTestersBtn.onClick.AddListener(() => gameManager.ResetRunTeams());
+            _closeGameForTestersBtn.onClick.AddListener(() => gameManager.saveSystem.ResetForNewLeagueRun());
             
         }
         
@@ -377,35 +377,40 @@ public class TeamManagerUI : MonoBehaviour
         }
         //testing area
         //TODO- AT THE START CREATE A VARIABLE FOR THE TEAM CONTROLLERD BY THE PLAYER!!!!!
-        teamStatsTextsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.Moral.ToString();
-        if (GameObject.Find("Week Text"))
+        //teamStatsTextsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.Moral.ToString();
+        if(gameManager.mode == GameManager.GameMode.TeamManagement && leagueManager.canStartANewWeek == false)
         {
-            //GameObject.Find("Week Text").GetComponent<TextMeshProUGUI>().text = leagueManager.Week.ToString();
+            if (GameObject.Find("Week Text"))
+            {
+                //GameObject.Find("Week Text").GetComponent<TextMeshProUGUI>().text = leagueManager.Week.ToString();
+            }
+            //Team Moral/FrontOffice/FansSupport
+            if (GameObject.Find("MoralePointsText"))
+            {
+                GameObject.Find("MoralePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.Moral.ToString();
+            }
+            if (GameObject.Find("FrontOfficePointsText"))
+            {
+                GameObject.Find("FrontOfficePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FrontOfficePoints.ToString();
+            }
+            if (GameObject.Find("FanSupportPointsText"))
+            {
+                GameObject.Find("FanSupportPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FansSupportPoints.ToString();
+            }
+            if (GameObject.Find("EffortPointsText"))
+            {
+                GameObject.Find("EffortPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.EffortPoints.ToString();
+            }
+            UpdateFacilities();
         }
-        //Team Moral/FrontOffice/FansSupport
-        if (GameObject.Find("MoralePointsText"))
-        {
-            GameObject.Find("MoralePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.Moral.ToString();
-        }
-        if (GameObject.Find("FrontOfficePointsText"))
-        {
-            GameObject.Find("FrontOfficePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FrontOfficePoints.ToString();
-        }
-        if (GameObject.Find("FanSupportPointsText"))
-        {
-            GameObject.Find("FanSupportPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FansSupportPoints.ToString();
-        }
-        if (GameObject.Find("EffortPointsText"))
-        {
-            GameObject.Find("EffortPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.EffortPoints.ToString();
-        }
+        
         /*
         for (int i = 0; i < equipAreaText.childCount; i++)
         {
             equipAreaText.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam._equipmentList[i].Level.ToString();
         }
         */
-        UpdateFacilities();
+        
         //BtnsAnimations
         _animator_trade.SetBool("On", leagueManager.canTrade);
         _animator_training.SetBool("On", leagueManager.canTrain);
@@ -416,8 +421,10 @@ public class TeamManagerUI : MonoBehaviour
     public void ResetRun()
     {
         leagueManager.CanStartANewRun = true;
-        gameManager.ResetRunTeams();
-        /*
+        //gameManager.ResetRunTeams();
+        gameManager.playerTeam = null;
+        
+
         leagueManager.isGameOver = false;
         leagueManager.CanStartANewRun = true;
         gameManager.saveSystem.SaveLeague();
@@ -431,8 +438,8 @@ public class TeamManagerUI : MonoBehaviour
         {
             gameManager.saveSystem.SaveTeamInfo(gameManager.leagueTeams[i]);
         }
-        */
-
+        
+        
 
     }
     //Facilities
@@ -1055,6 +1062,14 @@ public class TeamManagerUI : MonoBehaviour
     public void TeamPanelAnim(bool On)
     {
         animator_TeamPanel.SetBool("On", On);
+    }
+    public void TradePanelAnimation(bool On)
+    {
+        animator_TradingPanel.SetBool("On", On);
+    }
+    public void TrainingPanelAnim(bool On)
+    {
+        animator_TrainingPanel.SetBool("On", On);
     }
     public bool IsPlayerTeamInTop8()
     {

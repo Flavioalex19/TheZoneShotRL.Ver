@@ -63,6 +63,7 @@ MonoBehaviour:
   Wins: 0
   Loses: 1
   Draws: 0
+  SalaryCapReset: 100
   SalaryCap: 100
   CurrentSalary: 281
   OfficeLvl: 0
@@ -70,14 +71,17 @@ MonoBehaviour:
   MarketingLvl: 0
   TeamEquipmentLvl: 0
   ArenaLvl: 0
+  MedicalLvl: 0
   fixMoral: 30
   fixFans: 60
   fixFrontOffice: 60
-  fixFansSupport: 0
+  fixFansSupport: 30
   fixEffort: 50
-  Description: 'A team that represents the most famous city in the world! We''re
-    sensational, incredible, spectacular, and we emulate what this land is all about.
-    Multiple champions throughout ZoneShot''s history! '
+  Description: With multiple championships already in Zone Shot's short history,
+    everyone acknowledges the New York Owls as a dominant presence. The only tradition
+    this city cares about... is winning! While always looking to put together the
+    next super team, they are not afraid to make a big trade. Players here might
+    have big expectations on them, but they are a part of an ever growing dynasty.
   CoachName: Fred Malone
   _schedule:
   - {fileID: 9142570226746684108, guid: 50a9d2ac7b6a1fc429b16d6db742e672, type: 3}
@@ -95,6 +99,8 @@ MonoBehaviour:
   Score: 0
   isOnDefenseBonus: 0
   hasHDefense: 0
+  Dbuff: 0
+  OBuff: 0
   isR8: 0
   isR4: 0
   isFinalist: 0
