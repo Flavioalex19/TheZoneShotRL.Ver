@@ -434,6 +434,9 @@ GameObject:
   - component: {fileID: 7420445451370585593}
   - component: {fileID: 4939737294277477682}
   - component: {fileID: 8369195869656600385}
+  - component: {fileID: 2901398555643250122}
+  - component: {fileID: 4090805053550590652}
+  - component: {fileID: 5343112406192559934}
   m_Layer: 5
   m_Name: AssistanceFacilityPortrait
   m_TagString: Untagged
@@ -504,7 +507,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.8962264, g: 0.89199895, b: 0.89199895, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 1, g: 1, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -523,7 +526,60 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 5343112406192559934}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2901398555643250122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8635743128711873530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b98bad35bf9d66740b0d8085877ee991, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprite_offSprite: {fileID: 21300000, guid: ddc235f94f357a440b3c378f02aa87a3, type: 3}
+  sprite_onSprite: {fileID: 21300000, guid: 757ce24cfed4a8a4a8e6b6289632cec0, type: 3}
+  image: {fileID: 7909912401504512325}
+--- !u!222 &4090805053550590652
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8635743128711873530}
+  m_CullTransparentMesh: 1
+--- !u!114 &5343112406192559934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8635743128711873530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 271b031d99705d94692e1e272a7c5e6b, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
