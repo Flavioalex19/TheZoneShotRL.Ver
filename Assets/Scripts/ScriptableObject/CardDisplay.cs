@@ -59,71 +59,14 @@ public class CardDisplay : MonoBehaviour
         switch (card.cardStyle)
         {
             case CardStyle.Defense:
-                if(card.cardType == "Common")
-                {
-                    matchManager.playerWithTheBall.statDefBuff = card.modifyValue;
-                }
-                else if(card.cardType == "Bronze")
-                {
-                    matchManager.playerWithTheBall.statDefBuff = card.modifyValue;
-                }
-                else if (card.cardType == "Silver")
-                {
-                    for (int i = 0; i < 4; i++)
-                    {
-                        matchManager.HomeTeam.playersListRoster[i].statDefBuff = card.modifyValue;
-                    }
-                }
-                else if (card.cardType == "Gold")
-                {
-                    for (int i = 0; i < 4; i++)
-                    {
-                        matchManager.HomeTeam.playersListRoster[i].statDefBuff = card.modifyValue;
-                    }
-                }
+                
                 break;
             case CardStyle.Attack:
-                if (card.cardType == "Common")
-                {
-                    matchManager.playerWithTheBall.statBuff = card.modifyValue;
-
-                }
-                else if (card.cardType == "Bronze")
-                {
-                    matchManager.playerWithTheBall.statBuff = card.modifyValue;
-                }
-                else if (card.cardType == "Silver")
-                {
-                    for (int i = 0; i < 4; i++)
-                    {
-                        matchManager.HomeTeam.playersListRoster[i].statBuff = card.modifyValue;
-                    }
-                }
-                else if (card.cardType == "Gold")
-                {
-                    for (int i = 0; i < 4; i++)
-                    {
-                        matchManager.HomeTeam.playersListRoster[i].statBuff = card.modifyValue;
-                    }
-                }
+                matchManager.playerWithTheBall.statBuff = card.modifyValue;
+                
                 break;
             case CardStyle.Player:
-                if (card.cardType == "Common")
-                {
-
-                }
-                else if (card.cardType == "Bronze")
-                {
-
-                }
-                else if (card.cardType == "Silver")
-                {
-
-                }
-                else if (card.cardType == "Gold")
-                {
-
-                }
+               
                 break;
             case CardStyle.Stamina:
                 for (int i = 0; i < matchManager.teamWithball.playersListRoster.Count; i++)

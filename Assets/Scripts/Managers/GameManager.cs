@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
     UiManager uiManager;
     [SerializeField] IntroManager introManager;
 
-    GridLayoutGroup glg_draftNames;
+    public GridLayoutGroup glg_draftNames;
     int currentTeamIndex = 0;
 
     int count = 0;//testing the transition to onli create ince time the players
@@ -173,7 +173,7 @@ public class GameManager : MonoBehaviour
                     glg_draftNames = GameObject.Find("DraftContent").GetComponent<GridLayoutGroup>();
                     if (count < 1)
                     {
-                        GeneratePlayers(leagueTeams.Count * 8);
+                        //GeneratePlayers(leagueTeams.Count * 8);
                         count++;
                     }
                 }
@@ -310,6 +310,19 @@ public class GameManager : MonoBehaviour
     }
     public void GeneratePlayerDraftButton(Player player)
     {
+        Debug.Log("player.bt_DraftInfo: " + (player.bt_DraftInfo == null ? "NULL!" : "OK"));
+        Debug.Log("glg_draftNames: " + (glg_draftNames == null ? "NULL!" : "OK"));
+
+        if (player.bt_DraftInfo == null)
+        {
+            Debug.LogError("bt_DraftInfo está null! Verifica o prefab do Player.");
+            return;
+        }
+        if (glg_draftNames == null)
+        {
+            Debug.LogError("glg_draftNames está null no GameManager! Verifica o Inspector.");
+            return;
+        }
         GameObject newButton = Instantiate(player.bt_DraftInfo,glg_draftNames.transform, false);
         newButton.GetComponent<Button>().onClick.AddListener(() => AddPlayerToTeam(player, newButton.GetComponent<Button>()));
         newButton.GetComponent<Button>().transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = player.playerFirstName.ToString();

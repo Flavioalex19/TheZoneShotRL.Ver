@@ -316,6 +316,11 @@ public class MatchUI : MonoBehaviour
         transform_statsArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.Inside.ToString();
         transform_statsArea.GetChild(2).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.Mid.ToString();
         transform_statsArea.GetChild(3).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.Outside.ToString();
+        transform_statsArea.GetChild(4).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.Awareness.ToString();
+        transform_statsArea.GetChild(5).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.Juking.ToString();
+        transform_statsArea.GetChild(6).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.Control.ToString();
+        transform_statsArea.GetChild(7).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.Consistency.ToString();
+        transform_statsArea.GetChild(8).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.Positioning.ToString();
     }
     void UpdateScore()
     {
@@ -485,6 +490,10 @@ public class MatchUI : MonoBehaviour
             if(_matchManager.HomeTeam.playersListRoster[i].CurrentZone > 1)
             {
                 transform_ActiveHomePlayers.GetChild(i).GetChild(7).GetChild(2).gameObject.SetActive(false);
+            }
+            else
+            {
+                transform_ActiveHomePlayers.GetChild(i).GetChild(7).GetChild(2).gameObject.SetActive(true);
             }
         }
     }

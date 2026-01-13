@@ -464,7 +464,13 @@ public class MatchManager : MonoBehaviour
             CanChooseAction = false;
             
             ai_currentNumberOfPasses = ai_maxNumberOfPasses;
-            
+
+            for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
+            {
+                HomeTeam.playersListRoster[i].CurrentZone = 0;
+            }
+            _matchUI.UpdatePlayerPlacements();
+
             while (true)
             {
                 _matchUI.percentagePanel.SetActive(false);

@@ -13,17 +13,29 @@ public class DraftUiManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_currentPlayersOnTeam;
     [SerializeField] Transform _playerBtnsAreaContent;
     [SerializeField] TextMeshProUGUI text_currentTeamSalary;
+
+    [SerializeField] GridLayoutGroup glg_draftNames;
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        _gameManager.glg_draftNames = glg_draftNames;
+        glg_draftNames = GameObject.Find("DraftContent").GetComponent<GridLayoutGroup>();
+
+        int count = 0;
+        if (count < 1)
+        {
+            _gameManager.GeneratePlayers(_gameManager.leagueTeams.Count * 8);
+            count++;
+        }
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        _currentOnTheClockTeamArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = _gameManager.leagueTeams[_gameManager.GetCurrentTeamIndex()].TeamName.ToString();
+        //_currentOnTheClockTeamArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = _gameManager.leagueTeams[_gameManager.GetCurrentTeamIndex()].TeamName.ToString();
 
         //print(_gameManager.leagueTeams[0].playersListRoster.Count + " Team B" + _gameManager.leagueTeams[1].playersListRoster.Count);
         for (int i = 0; i < _gameManager.leagueTeams[_gameManager.GetCurrentTeamIndex()].playersListRoster.Count; i++)
