@@ -601,6 +601,7 @@ public class MatchManager : MonoBehaviour
             
             ResetPostions();
             _matchUI.PlayerWithBallButtonsOnOff();
+            
             //Turn the actck panle on
 
             if (currentGamePossessons > 1)
@@ -616,6 +617,8 @@ public class MatchManager : MonoBehaviour
             {
                 _matchUI.percentagePanel.SetActive(true);
                 _matchUI.PlayerWithTheBallOff();
+                _matchUI.PlayerWithBallButtonsOnOff();
+                _matchUI.UpdatePlayerPlacements();
                 //MatchEvents();
                 //CanChooseAction = true;
                 if ((leagueManager.isOnR8 == true || leagueManager.isOnR4 == true || leagueManager.isOnFinals == true) && currentGamePossessons <= 1)
@@ -1961,6 +1964,7 @@ public class MatchManager : MonoBehaviour
         ResetPostions();
         _matchUI.UpdatePlayerPlacements();
         _matchUI.PlayerWithBallButtonsOnOff();
+        _matchUI.TurnOffPlayerButtons();
         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " receives the pass.");
         return true;
     }
@@ -2016,7 +2020,8 @@ public class MatchManager : MonoBehaviour
 
         offense.CurrentZone = zone;
         _matchUI.UpdatePlayerPlacements();
-        print(offense.playerLastName + " and the zone is " + offense.CurrentZone);
+        _matchUI.TurnOffPlayerButtons();
+        //print(offense.playerLastName + " and the zone is " + offense.CurrentZone);
         return true;
     }
     public IEnumerator ToScore(Player playerWithTheBall, Player playerDefending, Team teamWithBall)
@@ -2068,6 +2073,7 @@ public class MatchManager : MonoBehaviour
 
         // Se quiser resetar a zona após o chute, deixe isso ativado
         playerWithTheBall.CurrentZone = 0;
+        _matchUI.TurnOffPlayerButtons();
         SwitchPossession();
         // NÃO troca posse — apenas termina
     }

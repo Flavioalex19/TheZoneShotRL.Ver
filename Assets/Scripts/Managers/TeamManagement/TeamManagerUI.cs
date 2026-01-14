@@ -19,6 +19,11 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] GameObject _panelEventsTypes;
     [SerializeField] GameObject _panelEventsChoices;
 
+    [Header("Facility Elelements")]
+    [SerializeField] TextMeshProUGUI text_assistanceFacilityDescription;
+    [SerializeField] TextMeshProUGUI text_facilityEffects;
+    [SerializeField] Image _imageAssistanceFacilityImage;
+
     [Header("MainButtons")]
     [SerializeField] Animator _animator_trade;
     [SerializeField] Animator _animator_training;
@@ -196,8 +201,8 @@ public class TeamManagerUI : MonoBehaviour
         //gameover_Btn.onClick.AddListener(() => gameManager.QuitAndClear());//Set Game over button
         //WeekText = GameObject.Find("Week Text").GetComponent<TextMeshProUGUI>();
 
-;       
-
+;
+        _text_NameTeam.text = gameManager.playerTeam.TeamName;
         
         musicManager.RestoreMutedAudioSources();
         
@@ -1088,6 +1093,13 @@ public class TeamManagerUI : MonoBehaviour
         }
 
         return false;
+    }
+    //update facility panel
+    public void FacilityPanelInfoUpdate(string content, string effect, Sprite sprite)
+    {
+        _imageAssistanceFacilityImage.sprite = sprite;
+        text_facilityEffects.text = effect;
+        text_assistanceFacilityDescription.text = content;
     }
     //ProceedtoPlaypffs
     void AdvanceToPlayoffs()

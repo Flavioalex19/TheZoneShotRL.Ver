@@ -9,10 +9,16 @@ public class Btn_AssistanceFacility : MonoBehaviour, IPointerEnterHandler, IPoin
     [SerializeField] Sprite sprite_offSprite;
     [SerializeField] Sprite sprite_onSprite;
     [SerializeField] Image image;
+    Button btn_AssistanceInfo;
+    GameObject panel_facilityInfo;
+    [SerializeField] string assistanceDescription;
+    [SerializeField] string facilityEffects;
+
+    TeamManagerUI teamManagerUI;
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        print("IN");
+        //print("IN");
         image.sprite = sprite_onSprite;
     }
     public void OnPointerExit(PointerEventData eventData)
@@ -24,7 +30,9 @@ public class Btn_AssistanceFacility : MonoBehaviour, IPointerEnterHandler, IPoin
     // Start is called before the first frame update
     void Start()
     {
-        
+        teamManagerUI = GameObject.Find("TeamManagerUI").GetComponent<TeamManagerUI>();
+        btn_AssistanceInfo = GetComponent<Button>();
+        btn_AssistanceInfo.onClick.AddListener(() => teamManagerUI.FacilityPanelInfoUpdate(assistanceDescription, facilityEffects, sprite_offSprite));
     }
 
     // Update is called once per frame
