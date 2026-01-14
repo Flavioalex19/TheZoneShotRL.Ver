@@ -284,6 +284,11 @@ public class SaveSystem : MonoBehaviour
         lm.CanDraftlvl3 = data.draftLvl3;
         lm.CanDraftSpPlayer1 = data.spPlayer1;
         lm.CanDrafSpPlayer0 = data.spPlayer0;
+        lm.CanDraftSpPlayer2 = data.spPlayer2;
+        lm.CanDraftSpPlayer3 = data.spPlayer3;
+        lm.CanDraftSpPlayer4 = data.spPlayer4;
+        lm.FacilitieBonus0 = data.fBonus0;
+        lm.FacilitieBonus1 = data.fBonus1;
 
         // ---------- PLAYOFFS ----------
         lm.List_R8Teams.Clear();
@@ -557,6 +562,11 @@ public class SaveSystem : MonoBehaviour
         leagueManager.CanDraftlvl3 = false;
         leagueManager.CanDrafSpPlayer0 = false;
         leagueManager.CanDraftSpPlayer1 = false;
+        leagueManager.CanDraftSpPlayer2 = false;
+        leagueManager.CanDraftSpPlayer3 = false;
+        leagueManager.CanDraftSpPlayer4 = false;
+        leagueManager.FacilitieBonus0 = false;
+        leagueManager.FacilitieBonus1 = false;
         for (int i = 0; i < gameManager.leagueTeams.Count; i++)
         {
             gameManager.leagueTeams[i].isChampion = false;

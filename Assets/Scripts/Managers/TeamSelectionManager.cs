@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class TeamSelectionManager : MonoBehaviour
 {
     GameManager _gameManager;
+    LeagueManager _leagueManager;
     public TextMeshProUGUI TeamInfo;
     public TextMeshProUGUI TeamStyle;
     public TextMeshProUGUI TeamCoach;
@@ -20,6 +21,7 @@ public class TeamSelectionManager : MonoBehaviour
     void Start()
     {
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        _leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
     }
 
     public void SetPlayerTeam(Team team)
@@ -36,6 +38,8 @@ public class TeamSelectionManager : MonoBehaviour
     }
     public void AdvanceToDraft()
     {
+        //do a check if the bonus is valid
+
         selectedTeam = _gameManager.playerTeam;
         selectedTeam.ActivatePlayerTeam();
         selectedTeam.CreateEquips();

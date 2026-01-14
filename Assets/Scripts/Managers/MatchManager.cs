@@ -800,7 +800,9 @@ public class MatchManager : MonoBehaviour
                     yield break;
                 }
             }
+            
         }
+        
     }
     void ResetChoices()
     {
@@ -1495,6 +1497,7 @@ public class MatchManager : MonoBehaviour
         specialAttkSuccess = Mathf.Clamp(specialAttkSuccess - riskPenalty, 0.05f, 0.95f);
         specialAttkSuccess *= Mathf.Clamp01((offenseScore - defenseScore + 20f) / 120f);
         specialAttkSuccess = Mathf.Clamp(specialAttkSuccess, 0.1f, 0.85f);
+        currentGamePossessons--;
         return specialAttkSuccess;
     }
     //Chance succsefull defense choice

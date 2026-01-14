@@ -87,6 +87,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Transform transform_ActiveHomePlayers;
     [SerializeField] TextMeshProUGUI text_playerWithTheBallName;
     [SerializeField] Transform transform_playersZones;
+    [SerializeField] Transform transform_ActiveAwayPlayers;
     //debub
     public string playernameWithBall;
 
@@ -212,11 +213,15 @@ public class MatchUI : MonoBehaviour
         }
         for (int i = 0; i < 4; i++)
         {
+            //HomeTeams
             transform_ActiveHomePlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerLastName.ToString();
             transform_ActiveHomePlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].PointsMatch.ToString();
             transform_ActiveHomePlayers.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].J_Number.ToString();
-            
-             
+            //AwayTeams
+            transform_ActiveAwayPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].J_Number.ToString();
+            transform_ActiveAwayPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].playerLastName.ToString();
+
+
         }
 
 
@@ -462,7 +467,7 @@ public class MatchUI : MonoBehaviour
                 transform_ActiveHomePlayers.GetChild(i).GetChild(5).gameObject.SetActive(false);
                 transform_ActiveHomePlayers.GetChild(i).GetChild(3).gameObject.SetActive(false);
             }
-            print(_matchManager.HomeTeam.playersListRoster[i].playerLastName + " this is his zone: " + _matchManager.HomeTeam.playersListRoster[i].CurrentZone);
+            //print(_matchManager.HomeTeam.playersListRoster[i].playerLastName + " this is his zone: " + _matchManager.HomeTeam.playersListRoster[i].CurrentZone);
         }
 
     }
@@ -495,6 +500,15 @@ public class MatchUI : MonoBehaviour
             {
                 transform_ActiveHomePlayers.GetChild(i).GetChild(7).GetChild(2).gameObject.SetActive(true);
             }
+        }
+    }
+    public void TurnOffPlayerButtons()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            transform_ActiveHomePlayers.GetChild(i).GetChild(7).gameObject.SetActive(false);
+            transform_ActiveHomePlayers.GetChild(i).GetChild(5).gameObject.SetActive(false);
+            transform_ActiveHomePlayers.GetChild(i).GetChild(3).gameObject.SetActive(false);
         }
     }
     public void TeamImagesUpdate()

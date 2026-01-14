@@ -55,6 +55,11 @@ public class LeagueManager : MonoBehaviour
     public bool CanDraftlvl3 = false;
     public bool CanDrafSpPlayer0 = false;
     public bool CanDraftSpPlayer1 = false;
+    public bool CanDraftSpPlayer2 = false;
+    public bool CanDraftSpPlayer3 = false;
+    public bool CanDraftSpPlayer4 = false;
+    public bool FacilitieBonus0 = false;
+    public bool FacilitieBonus1 = false;
 
 
     GameManager gameManager;

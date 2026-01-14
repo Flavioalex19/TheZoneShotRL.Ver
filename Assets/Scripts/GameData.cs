@@ -198,6 +198,12 @@ public class LeagueManagerData
     public bool draftLvl3;
     public bool spPlayer0;
     public bool spPlayer1;
+    public bool spPlayer2;
+    public bool spPlayer3;
+    public bool spPlayer4;
+    public bool fBonus0;
+    public bool fBonus1;
+    //public bool fBonus2;
 
 
     public LeagueManagerData(LeagueManager leagueManager)
@@ -220,6 +226,11 @@ public class LeagueManagerData
         draftLvl3 = leagueManager.CanDraftlvl3;
         spPlayer0 = leagueManager.CanDrafSpPlayer0;
         spPlayer1 = leagueManager.CanDraftSpPlayer1;
+        spPlayer2 = leagueManager.CanDraftlvl2;
+        spPlayer3 = leagueManager.CanDraftSpPlayer3;
+        spPlayer4 = leagueManager.CanDraftSpPlayer4;
+        fBonus0 = leagueManager.FacilitieBonus0;
+        fBonus1 = leagueManager.FacilitieBonus1;
 
         R8Names = leagueManager.List_R8Teams.Select(t => t.TeamName).ToList();
         R4Names = leagueManager.List_R4Teams.Select(t => t.TeamName).ToList();

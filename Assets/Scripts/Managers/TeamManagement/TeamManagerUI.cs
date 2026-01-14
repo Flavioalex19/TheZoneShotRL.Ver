@@ -322,6 +322,7 @@ public class TeamManagerUI : MonoBehaviour
                 gameManager.playerTeam.CurrentSalary += gameManager.playerTeam.playersListRoster[i].Salary;
             }
         }
+        UpdateTeamSalary();
         //tutorialPanel
         if(leagueManager.canGenerateEvents == false|| leagueManager.Week>1 || leagueManager.CanStartTutorial == false)
         {
