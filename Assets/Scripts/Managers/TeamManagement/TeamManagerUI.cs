@@ -647,8 +647,10 @@ public class TeamManagerUI : MonoBehaviour
         careerStats.GetChild(3).GetComponent<TextMeshProUGUI>().text = ((float)player.CareerSteals/(float)player.CareerGamesPlayed).ToString();
         careerStats.GetChild(4).GetComponent<TextMeshProUGUI>().text = player.CareerGamesPlayed.ToString();
         playerEventsManager.ValidateBond(player, gameManager.playerTeam.playersListRoster);
+        /*
         if (player.bondPlayer != null) careerStats.GetChild(5).GetComponent<TextMeshProUGUI>().text = player.bondPlayer.playerFirstName + player.bondPlayer.playerLastName;
         else careerStats.GetChild(5).GetComponent<TextMeshProUGUI>().text = "None";
+        */
 
     }
     void IconsUpdate(Player player)

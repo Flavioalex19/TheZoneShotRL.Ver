@@ -14,6 +14,15 @@ public class btnTeamSelection : MonoBehaviour, IPointerEnterHandler
     private void Start()
     {
        _teamSelectManager = GameObject.Find("TeamSelectionManager").GetComponent<TeamSelectionManager>();
+
+        if (team.isChampion)
+        {
+            transform.GetChild(1).gameObject.SetActive(true);
+        }
+        else
+        {
+            transform.GetChild(1).gameObject.SetActive(false);
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)

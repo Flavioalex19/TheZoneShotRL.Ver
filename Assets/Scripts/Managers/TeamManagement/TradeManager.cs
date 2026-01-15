@@ -40,7 +40,7 @@ public class TradeManager : MonoBehaviour
         }
         else
         {
-            print("Out of trades");
+            //print("Out of trades");
         }
         
     }
@@ -83,12 +83,12 @@ public class TradeManager : MonoBehaviour
         if (bestIndex != -1)
         {
             _playerToReceive = bestIndex;
-            print(TradeTeam.playersListRoster[_playerToReceive].playerLastName + " " +
-                  TradeTeam.playersListRoster[_playerToReceive].ovr + " - This is the player available for trade");
+            //print(TradeTeam.playersListRoster[_playerToReceive].playerLastName + " " +
+                  //TradeTeam.playersListRoster[_playerToReceive].ovr + " - This is the player available for trade");
         }
         else
         {
-            print("No valid player found for trade.");
+            //print("No valid player found for trade.");
         }
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = TradeTeam.playersListRoster[_playerToReceive].playerFirstName.ToString() +
             " " + TradeTeam.playersListRoster[_playerToReceive].playerLastName.ToString();

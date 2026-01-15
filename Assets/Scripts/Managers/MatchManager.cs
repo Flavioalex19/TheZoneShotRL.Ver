@@ -698,6 +698,7 @@ public class MatchManager : MonoBehaviour
                         //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         SelectDefender();
+                        _matchUI.ResultActionPanel("S");
                         yield return new WaitForSeconds(_actionTimer);
                         ResetChoices();
                         continue;
@@ -709,6 +710,7 @@ public class MatchManager : MonoBehaviour
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
                         _matchUI.OffesnivePanelOnOff(false);
+                        _matchUI.ResultActionPanel("F");
                         //uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         yield return new WaitForSeconds(_actionTimer);
@@ -751,7 +753,7 @@ public class MatchManager : MonoBehaviour
                             default: break;
                         }
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + "has scored!");
-                        
+                        _matchUI.ResultActionPanel("S");
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
                         yield break;
@@ -760,7 +762,7 @@ public class MatchManager : MonoBehaviour
                     {
                         //Change this later for a list of string for a fail event
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + "Fail to use special team trait");
-                        
+                        _matchUI.ResultActionPanel("F");
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
                         yield break;
@@ -775,6 +777,7 @@ public class MatchManager : MonoBehaviour
                         yield return new WaitForSeconds(_actionTimer);
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + "Pass the defender");
                         SelectDefender();
+                        _matchUI.ResultActionPanel("S");
                         yield return new WaitForSeconds(_actionTimer);
                         ResetChoices();
                         continue;
@@ -784,6 +787,7 @@ public class MatchManager : MonoBehaviour
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos());
                         yield return new WaitForSeconds(_actionTimer);
                         playerWithTheBall.HasTheBall = false;
+                        _matchUI.ResultActionPanel("F");
                         SwitchPossession();
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         yield return new WaitForSeconds(_actionTimer);
@@ -2061,12 +2065,14 @@ public class MatchManager : MonoBehaviour
             uiManager.PlaybyPlayText(
                 playerWithTheBall.playerLastName + " scored! Total: " + playerWithTheBall.PointsMatch
             );
+            _matchUI.ResultActionPanel("S");
         }
         else
         {
             uiManager.PlaybyPlayText(
                 playerWithTheBall.playerLastName + " missed!"
             );
+            _matchUI.ResultActionPanel("F");
         }
 
         yield return new WaitForSeconds(_actionTimer);

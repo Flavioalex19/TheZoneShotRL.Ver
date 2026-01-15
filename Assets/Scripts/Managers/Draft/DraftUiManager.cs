@@ -43,9 +43,9 @@ public class DraftUiManager : MonoBehaviour
             if (_gameManager.leagueTeams[_gameManager.GetCurrentTeamIndex()].playersListRoster.Count > 0)
             {
                 _playersFromOnTheClockTeamArea.GetChild(i).GetComponent<TextMeshProUGUI>().text = 
-                    _gameManager.leagueTeams[_gameManager.GetCurrentTeamIndex()].playersListRoster[i].playerFirstName.ToString() +
+                    _gameManager.playerTeam/*leagueTeams[_gameManager.GetCurrentTeamIndex()]*/.playersListRoster[i].playerFirstName.ToString() +
                     " " +
-                    _gameManager.leagueTeams[_gameManager.GetCurrentTeamIndex()].playersListRoster[i].playerLastName.ToString(); 
+                    _gameManager.playerTeam/*leagueTeams[_gameManager.GetCurrentTeamIndex()]*/.playersListRoster[i].playerLastName.ToString(); 
                 text_currentPlayersOnTeam.text = _gameManager.leagueTeams[_gameManager.GetCurrentTeamIndex()].playersListRoster.Count.ToString();
             }
         }

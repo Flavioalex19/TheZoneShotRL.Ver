@@ -109,6 +109,9 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Animator _homeTeamAnimator;
     [SerializeField] Animator _awayTeamAnimator;
     [SerializeField] Animator _upgradePanel;
+
+    [Header("ResultActionPanel")]
+    [SerializeField] Animator _animatorResultPanel;
     private void Awake()
     {
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
@@ -391,6 +394,10 @@ public class MatchUI : MonoBehaviour
         sprite = sprites[index];
         image_actionPanel.sprite = sprite;
         text_actionNameText.text = actionName;
+    }
+    public void ResultActionPanel(string triggerName)
+    {
+        _animatorResultPanel.SetTrigger(triggerName);
     }
     public void ActivateVictoryDefeat(string endText)
     {
