@@ -408,13 +408,13 @@ public class MatchManager : MonoBehaviour
         //Reduce the contract for the players
         if (HomeTeam.IsPlayerTeam)
         {
-            print("Count Team");
+            //print("Count Team");
             for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
             {
                 HomeTeam.playersListRoster[i].ContractYears--;
             }
         }
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(5f);
         _matchUI.EndScreenStatsPanel.SetActive(true);
         //_matchUI.PostGameStats(HomeTeam, AwayTeam);///////////////////////////////////////////////
         //yield return StartCoroutine(LeagueWeekSimulation());

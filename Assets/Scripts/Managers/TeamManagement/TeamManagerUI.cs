@@ -22,6 +22,8 @@ public class TeamManagerUI : MonoBehaviour
     [Header("Facility Elelements")]
     [SerializeField] TextMeshProUGUI text_assistanceFacilityDescription;
     [SerializeField] TextMeshProUGUI text_facilityEffects;
+    [SerializeField] TextMeshProUGUI text_facilityEffects1;
+    [SerializeField] TextMeshProUGUI text_facilityEffects2;
     [SerializeField] Image _imageAssistanceFacilityImage;
 
     [Header("MainButtons")]
@@ -70,6 +72,8 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_tradeResult;
     [SerializeField] GameObject panel_tradeResult;
     [SerializeField] TextMeshProUGUI text_currentFrontOfficePoints;
+    [SerializeField] Image image_playerToTrade;
+    [SerializeField] Image image_playerTeam;
     [Header("Training")]
     //Training
     [SerializeField] TrainingManager trainingManager;
@@ -698,6 +702,7 @@ public class TeamManagerUI : MonoBehaviour
     {
         for (int i = 0; i < _trade_btn_PlayersFronControlledTeam.childCount; i++)
         {
+            
             _trade_btn_PlayersFronControlledTeam.GetChild(i).GetComponent<Btn_TradeBtn>().player = gameManager.playerTeam.playersListRoster[i];
             //print(gameManager.playerTeam.playersListRoster[i] + "player on the trade btn" + gameManager.playerTeam.playersListRoster[i].playerLastName);
             int index = gameManager.playerTeam.playersListRoster.IndexOf(gameManager.playerTeam.playersListRoster[i]);
@@ -707,6 +712,8 @@ public class TeamManagerUI : MonoBehaviour
                 gameManager.playerTeam.playersListRoster[i].playerFirstName.ToString();
             _trade_btn_PlayersFronControlledTeam.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text =
                 gameManager.playerTeam.playersListRoster[i].ovr.ToString();
+            
+            
         }
     }
     public void SetTradeGrade()
@@ -722,6 +729,18 @@ public class TeamManagerUI : MonoBehaviour
     {
         panel_tradeResult.SetActive(true);
         text_tradeResult.text = result;
+       
+    }
+    public void SetPlayersTradeImages(Player playerTeam, Player tradePlayer)
+    {
+        //Sprite alteration/update
+        Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
+
+        Sprite sprite = sprites[playerTeam.ImageCharacterPortrait];
+        image_playerTeam.sprite = sprite;
+
+        sprite = sprites[tradePlayer.ImageCharacterPortrait];
+        image_playerToTrade.sprite = sprite;
     }
     //Training
     public void SetTrainingBtns()
@@ -1097,11 +1116,13 @@ public class TeamManagerUI : MonoBehaviour
         return false;
     }
     //update facility panel
-    public void FacilityPanelInfoUpdate(string content, string effect, Sprite sprite)
+    public void FacilityPanelInfoUpdate(string content, string effect, string effect1, string effect2,Sprite sprite)
     {
         _imageAssistanceFacilityImage.sprite = sprite;
         text_facilityEffects.text = effect;
         text_assistanceFacilityDescription.text = content;
+        text_facilityEffects1.text = effect1;
+        text_facilityEffects2.text = effect2;
     }
     //ProceedtoPlaypffs
     void AdvanceToPlayoffs()

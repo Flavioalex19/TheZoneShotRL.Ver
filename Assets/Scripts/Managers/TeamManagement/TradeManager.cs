@@ -16,7 +16,13 @@ public class TradeManager : MonoBehaviour
     [SerializeField]int _playerToTradeIndex;
     public int _playerToReceive;
     [SerializeField] TextMeshProUGUI _trade_currentPlayerToTrade;
-    
+
+    private void Awake()
+    {
+        _playerToTradeIndex = -1;
+        _playerToReceive = -1;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,10 +36,18 @@ public class TradeManager : MonoBehaviour
     public void SetPlayerToTrade(int playerIndex)
     {
         _trade_currentPlayerToTrade = GameObject.Find("TPT").GetComponent<TextMeshProUGUI>();
+
         if (_leagueManager.canTrade == true)
         {
+            // === NOVO: bloqueia re-roll se for o mesmo jogador já selecionado ===
+            if (_playerToTradeIndex == playerIndex)
+            {
+                // Já está selecionado  evita exploit de spam/re-roll
+                return;
+            }
+            // ==============================================================
+
             _playerToTradeIndex = playerIndex;
-            //_trade_currentPlayerToTrade.text = _playerTeam.playersListRoster[_playerToTradeIndex].playerLastName.ToString();
             FindTeamToTrade();
             FindPlayerForTrade();
             
@@ -42,7 +56,7 @@ public class TradeManager : MonoBehaviour
         {
             //print("Out of trades");
         }
-        
+
     }
     void FindTeamToTrade()
     {
@@ -83,12 +97,41 @@ public class TradeManager : MonoBehaviour
         if (bestIndex != -1)
         {
             _playerToReceive = bestIndex;
-            //print(TradeTeam.playersListRoster[_playerToReceive].playerLastName + " " +
-                  //TradeTeam.playersListRoster[_playerToReceive].ovr + " - This is the player available for trade");
+
+            // Preenche UI só se encontrou jogador válido
+            _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
+                TradeTeam.playersListRoster[_playerToReceive].playerFirstName + " " +
+                TradeTeam.playersListRoster[_playerToReceive].playerLastName;
+
+            _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text =
+                TradeTeam.playersListRoster[_playerToReceive].ovr.ToString();
+
+            _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text =
+                TradeTeam.TeamName;
+
+            (attName0, att0, attName1, att1) = GetAttributeValuesForStyle(_gameManager.playerTeam._teamStyle, TradeTeam.playersListRoster[_playerToReceive]);
+
+            _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = att0.ToString();
+            _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text = att1.ToString();
+            _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(5).GetComponent<TextMeshProUGUI>().text = attName0;
+            _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(6).GetComponent<TextMeshProUGUI>().text = attName1;
+
+            CalculateTradeCost(TradeTeam.playersListRoster[_playerToReceive]);
+            _teamManagerUI.SetTradeGrade();
         }
         else
         {
-            //print("No valid player found for trade.");
+            // Nenhum jogador encontrado  limpa UI e avisa
+            _teamManagerUI.SetTradeResultText("No suitable player available for trade with current Front Office points.");
+
+            // Limpa área de recebimento
+            for (int i = 0; i < 7; i++)
+            {
+                _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = "";
+            }
+
+            tradeCost = 0;
+            _teamManagerUI.SetTradeGrade(); // opcional: reseta grade
         }
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = TradeTeam.playersListRoster[_playerToReceive].playerFirstName.ToString() +
             " " + TradeTeam.playersListRoster[_playerToReceive].playerLastName.ToString();
@@ -102,7 +145,7 @@ public class TradeManager : MonoBehaviour
 
         CalculateTradeCost(TradeTeam.playersListRoster[_playerToReceive]);
         _teamManagerUI.SetTradeGrade();
-
+        _teamManagerUI.SetPlayersTradeImages(_gameManager.playerTeam.playersListRoster[_playerToTradeIndex], TradeTeam.playersListRoster[_playerToReceive]);
 
     }
     public (string attr1Name, int attr1Value, string attr2Name, int attr2Value) GetAttributeValuesForStyle(TeamStyle style, Player player)
@@ -137,6 +180,7 @@ public class TradeManager : MonoBehaviour
     }
     public void Trade()
     {
+        /*
         if (_gameManager.playerTeam.FrontOfficePoints >= tradeCost && _leagueManager.canTrade == true)
         {
             // allow trade
@@ -157,8 +201,67 @@ public class TradeManager : MonoBehaviour
             // vtol trade
             _teamManagerUI.SetTradeResultText("No enough points boss! E cannot trade for this player");
         }
-        
-        
+        */
+        // Proteção extra: se não encontrou jogador válido
+        if (_playerToReceive == -1)
+        {
+            _teamManagerUI.SetTradeResultText("No player selected for trade.");
+            return;
+        }
+
+        if (_leagueManager.canTrade == false)
+        {
+            _teamManagerUI.SetTradeResultText("You already made a trade this turn.");
+            return;
+        }
+
+        // === NOVO: chance de trade gratuita baseada no Front Office Level ===
+        int finalCost = tradeCost;
+        int frontOfficeLevel = _gameManager.playerTeam.OfficeLvl; // ajuste o nome do campo se for diferente (ex: FrontOfficeLvl, offideLvl, etc.)
+        float freeChance = (frontOfficeLevel / 7f) * 0.45f; // 0% (lvl 0) até 45% (lvl 7)
+
+        bool isFreeTrade = UnityEngine.Random.value < freeChance;
+
+        if (isFreeTrade)
+        {
+            finalCost = 0;
+        }
+        // ==============================================================
+
+        if (_gameManager.playerTeam.FrontOfficePoints >= finalCost)
+        {
+            // Executa a troca
+            SwapPlayersBetweenTeams(_gameManager.playerTeam.playersListRoster, _playerToTradeIndex, TradeTeam.playersListRoster, _playerToReceive);
+
+            int _currentTeamIndex = _gameManager.leagueTeams.IndexOf(_gameManager.playerTeam);
+            _teamManagerUI.TeamRoster();
+            _teamManagerUI.SetTheTradingBtns();
+            _leagueManager.canTrade = false;
+
+            // Subtrai pontos (0 se for free)
+            _gameManager.playerTeam.FrontOfficePoints -= finalCost;
+
+            // Mensagem de sucesso
+            if (isFreeTrade)
+            {
+                _teamManagerUI.SetTradeResultText("Amazing! Front Office pulled strings — this trade was FREE!");
+            }
+            else
+            {
+                _teamManagerUI.SetTradeResultText("Good job Boss! A new player arrived.");
+            }
+
+            // Limpa área de troca
+            for (int i = 0; i < 7; i++)
+            {
+                _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = "";
+            }
+        }
+        else
+        {
+            _teamManagerUI.SetTradeResultText("Not enough Front Office points for this trade.");
+        }
+
     }
     public int CalculateTradeCost(Player p)
     {
