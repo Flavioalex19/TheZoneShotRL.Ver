@@ -464,6 +464,14 @@ public class LeagueManager : MonoBehaviour
         }
 
     }
+    //Reset
+    public void ResetLeagueHistoryMode()
+    {
+        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+        {
+            gameManager.leagueTeams[i].isChampion = false;
+        }
+    }
     
 }
 [System.Serializable]

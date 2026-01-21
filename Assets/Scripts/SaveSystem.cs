@@ -421,7 +421,7 @@ public class SaveSystem : MonoBehaviour
             team.isR8 = false;
             team.isR4 = false;
             team.isFinalist = false;
-            team.isChampion = false;
+            //team.isChampion = false;
             team.OfficeLvl = 0;
             team.FinancesLvl = 0;
             team.MarketingLvl = 0;

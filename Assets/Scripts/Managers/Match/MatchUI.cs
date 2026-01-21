@@ -103,6 +103,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Transform GamesResults;
     [SerializeField] TextMeshProUGUI text_Victory_Defeat;
     [SerializeField] GameObject panel_victory_defeat;
+    [SerializeField] public Animator anim_victoryCircle;
     [SerializeField] Button advbtn;
 
     [Header("Animators")]
@@ -403,6 +404,7 @@ public class MatchUI : MonoBehaviour
     {
         panel_victory_defeat.SetActive(true);
         text_Victory_Defeat.text = endText;
+        
     }
     public void SetSkillPints()
     {

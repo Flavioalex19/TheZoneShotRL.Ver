@@ -349,6 +349,9 @@ public class MatchManager : MonoBehaviour
             AwayTeam.Draws++;
             if (HomeTeam.IsPlayerTeam) { _matchUI.ActivateVictoryDefeat("Draw"); }
         }
+        
+        yield return new WaitForSeconds(2f);
+        _matchUI.anim_victoryCircle.SetTrigger("Go");
         //stats increment
         if (HomeTeam.IsPlayerTeam)
         {

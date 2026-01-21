@@ -11,14 +11,18 @@ public class IntroManager : MonoBehaviour
     [SerializeField] Animator _introAnimator;
     [SerializeField] TextMeshProUGUI _teamText;
     [SerializeField] GameManager _gameManager;
+    LeagueManager leagueManager;
     [SerializeField] Button btn_career;
+    [SerializeField] Button btn_resetLeague;
     // Start is called before the first frame update
     void Start()
     {
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
         _canProgressToMainMenu = false;
         _canPressEnter = false;
         btn_career.onClick.AddListener(() => _gameManager.AdvanceToDraft());
+        btn_resetLeague.onClick.AddListener(() => leagueManager.ResetLeagueHistoryMode());
         StartCoroutine(ProgressToMainMenu());
         
         

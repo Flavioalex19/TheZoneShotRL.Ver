@@ -53,6 +53,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Image _image_PersonalityImage;
     [SerializeField] Image _image_playerStyle;
     [SerializeField] TextMeshProUGUI _text_playerNUmber;
+    [SerializeField] TextMeshProUGUI text_playerAge;
     [SerializeField] GameObject careerStatsArea;
     [SerializeField] Transform careerStats;
     Player currentPlayer;
@@ -83,6 +84,9 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField]public TextMeshProUGUI _textDrillSelected;
     [SerializeField] Image _training_assistancePortrait;
     [SerializeField] Sprite _training_AssistanceSprite;
+    [SerializeField] public Image image_currentPlayerPortraitToTrain;
+    [SerializeField] public TextMeshProUGUI text_trainingType;
+    
     //public TextMeshProUGUI text_playerToTrain;
     //public TextMeshProUGUI text_drill;
     [SerializeField] public GameObject _trainingResultPanel;
@@ -624,6 +628,7 @@ public class TeamManagerUI : MonoBehaviour
         _text_playerInfoStats.GetChild(10).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Control.ToString();
         _text_playerInfoStats.GetChild(11).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Positioning.ToString();
         _text_playerNUmber.text = gameManager.playerTeam.playersListRoster[index].J_Number.ToString();
+        text_playerAge.text = gameManager.playerTeam.playersListRoster[index].Age.ToString();
 
         //Sprite alteration/update
         Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
@@ -747,8 +752,11 @@ public class TeamManagerUI : MonoBehaviour
     {
         for (int i = 0; i < _training_btns.childCount; i++)
         {
-            _training_btns.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].playerFirstName.ToString();
+            _training_btns.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].playerFirstName.ToString()+ " " +
+                gameManager.playerTeam.playersListRoster[i].playerLastName.ToString();
             _training_btns.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].ovr.ToString();
+            _training_btns.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].Age.ToString();
+            _training_btns.GetChild(i).GetChild(3).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].ContractYears.ToString();
             int index = gameManager.playerTeam.playersListRoster.IndexOf(gameManager.playerTeam.playersListRoster[i]);
             _training_btns.GetChild(i).GetComponent<Button>().onClick.AddListener(() => trainingManager.SetPlayerToTrainIndex(index/*, _textPlayerSelected, _textDrillSelected*/));
         }
@@ -897,30 +905,6 @@ public class TeamManagerUI : MonoBehaviour
     public bool TryExtendContract(Team team, Player player, int salaryProposed, int gamesProposed,int weight)
     {
         /*
-        if (salaryProposed < player.Salary) return false;
-        // Base demand: higher personality = tougher negotiation
-        float baseDemand = player.Salary * (1f + (player.Personality - 1) * 0.1f);
-
-        // Adjust with front office (good management lowers demand)
-        baseDemand *= 1f - (team.FrontOfficePoints / 200f);
-
-        // Fan support adds pressure (more fans = higher chance of accept)
-        float fanFactor = 1f + (team.FansSupportPoints / 300f);
-
-        // Compare proposed salary vs demand
-        float salaryScore = (float)salaryProposed / baseDemand;
-
-        // Game years factor: if offering longer than remaining, good; shorter is worse
-        float contractFactor = (gamesProposed >= player.ContractYears) ? 1.1f : 0.9f;
-
-        // Final acceptance chance
-        float acceptanceChance = salaryScore * contractFactor * fanFactor;
-
-        // Clamp
-        acceptanceChance = Mathf.Clamp01(acceptanceChance);
-
-        return UnityEngine.Random.value < acceptanceChance;
-        */
         // Não aceitar propostas menores que o salário atual
         if (salaryProposed < player.Salary)
             return false;
@@ -934,7 +918,37 @@ public class TeamManagerUI : MonoBehaviour
             case 2: chance = 0.85f; break;   // Melhor oferta - maior chance
         }
 
-        return UnityEngine.Random.value < chance;
+        return UnityEngine.Random.value < chance;*/
+        // Não aceitar propostas menores que o salário atual
+        if (salaryProposed < player.Salary)
+            return false;
+
+        // === NOVA LÓGICA DE CHANCE COM FATORES ===
+        float baseChance = weight switch
+        {
+            0 => 0.50f,  // Oferta ruim
+            1 => 0.70f,  // Oferta média
+            2 => 0.85f,  // Oferta boa
+            _ => 0.50f
+        };
+
+        // Personality: 1 (fácil)  multiplier 1.0; 5 (difícil)  multiplier 0.6
+        float personalityMultiplier = 1f - (player.Personality - 1) * 0.1f;
+
+        // FinancesLevel: 0  multiplier 1.0; 7  multiplier 1.5 (ajuda bastante)
+        // Confirme o nome exato do campo (ex: FinancesLevel, FinancesLvl, etc.)
+        float financesMultiplier = 1f + (team.FinancesLvl / 7f) * 0.5f;
+
+        // Chance final combinada
+        float finalChance = baseChance * personalityMultiplier * financesMultiplier;
+
+        // Clamp pra nunca ser impossível ou garantido
+        finalChance = Mathf.Clamp(finalChance, 0.1f, 0.95f);
+
+        // Debug opcional pra testar (comente depois)
+        // Debug.Log($"Contract chance: base={baseChance}, personalityMult={personalityMultiplier}, financesMult={financesMultiplier}, final={finalChance}");
+
+        return UnityEngine.Random.value < finalChance;
     }
     public void AddOrDecreaseContractGamesGamesValue(bool isAdding)
     {
