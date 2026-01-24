@@ -31,7 +31,7 @@ public class IntroManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)&& _canPressEnter == true)
+        if ((Input.anyKeyDown || Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2) )&& _canPressEnter == true)
         {
             _canProgressToMainMenu=true;
         }

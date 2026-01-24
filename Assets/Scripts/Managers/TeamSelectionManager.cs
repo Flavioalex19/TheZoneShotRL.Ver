@@ -15,6 +15,7 @@ public class TeamSelectionManager : MonoBehaviour
     public Image CurrentTeamIcon;
     public Transform _teamStatsArea;
     [SerializeField] TextMeshProUGUI _debugCurrentTeam;
+    [SerializeField] TextMeshProUGUI _text_selectedTeamOnConfirmation;
 
     [SerializeField] Team selectedTeam;
     // Start is called before the first frame update
@@ -35,6 +36,7 @@ public class TeamSelectionManager : MonoBehaviour
         //SceneManager.LoadScene("Draft");//no transition
 
         _debugCurrentTeam.text = _gameManager.playerTeam.TeamName;
+        _text_selectedTeamOnConfirmation.text = _gameManager.playerTeam.TeamName;
     }
     public void AdvanceToDraft()
     {

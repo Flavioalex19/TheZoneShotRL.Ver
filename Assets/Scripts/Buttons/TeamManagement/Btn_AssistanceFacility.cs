@@ -15,6 +15,7 @@ public class Btn_AssistanceFacility : MonoBehaviour, IPointerEnterHandler, IPoin
     [SerializeField] string facilityEffects;
     [SerializeField] string facilityEffect1;
     [SerializeField] string facilityEffect2;
+    Animator animator;
 
     TeamManagerUI teamManagerUI;
 
@@ -22,10 +23,12 @@ public class Btn_AssistanceFacility : MonoBehaviour, IPointerEnterHandler, IPoin
     {
         //print("IN");
         image.sprite = sprite_onSprite;
+        animator.SetBool("On", true);
     }
     public void OnPointerExit(PointerEventData eventData)
     {
         image.sprite = sprite_offSprite;
+        animator.SetBool("On", false);
     }
 
 
@@ -33,6 +36,7 @@ public class Btn_AssistanceFacility : MonoBehaviour, IPointerEnterHandler, IPoin
     void Start()
     {
         teamManagerUI = GameObject.Find("TeamManagerUI").GetComponent<TeamManagerUI>();
+        animator = GetComponent<Animator>();
         btn_AssistanceInfo = GetComponent<Button>();
         btn_AssistanceInfo.onClick.AddListener(() => teamManagerUI.FacilityPanelInfoUpdate(assistanceDescription, facilityEffects,facilityEffect1, facilityEffect2 ,sprite_offSprite));
     }

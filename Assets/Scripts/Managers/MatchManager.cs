@@ -644,6 +644,8 @@ public class MatchManager : MonoBehaviour
                 //print(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false) + " Is the cahnce of success");
                 _matchUI.SetScoringPercentage(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false).ToString() + "%");
                 _matchUI.SetPassPercentage(GetPassingChance(false).ToString() + " %");
+                _matchUI.SetJukePercentage(GetBeatDefenderSuccessProbability(playerWithTheBall, playerDefending,playerWithTheBall.CurrentZone).ToString() + "%");
+                _matchUI.SetSpPercentage(GetSpAttackPercentage().ToString() + "%");
                 //_matchUI.SetJukePercentage();
                 uiManager.PlaybyPlayText("Wait for Player Action");
                 //Timeout call
@@ -701,7 +703,7 @@ public class MatchManager : MonoBehaviour
                         //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         SelectDefender();
-                        _matchUI.ResultActionPanel("S");
+                        _matchUI.ResultActionPanel("S",1);
                         yield return new WaitForSeconds(_actionTimer);
                         ResetChoices();
                         continue;
@@ -713,7 +715,7 @@ public class MatchManager : MonoBehaviour
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
                         _matchUI.OffesnivePanelOnOff(false);
-                        _matchUI.ResultActionPanel("F");
+                        _matchUI.ResultActionPanel("F", 1);
                         //uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         yield return new WaitForSeconds(_actionTimer);
@@ -756,7 +758,7 @@ public class MatchManager : MonoBehaviour
                             default: break;
                         }
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + "has scored!");
-                        _matchUI.ResultActionPanel("S");
+                        _matchUI.ResultActionPanel("S",0);
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
                         yield break;
@@ -765,7 +767,7 @@ public class MatchManager : MonoBehaviour
                     {
                         //Change this later for a list of string for a fail event
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + "Fail to use special team trait");
-                        _matchUI.ResultActionPanel("F");
+                        _matchUI.ResultActionPanel("F",0);
                         yield return new WaitForSeconds(_actionTimer);
                         SwitchPossession();
                         yield break;
@@ -780,7 +782,7 @@ public class MatchManager : MonoBehaviour
                         yield return new WaitForSeconds(_actionTimer);
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + "Pass the defender");
                         SelectDefender();
-                        _matchUI.ResultActionPanel("S");
+                        _matchUI.ResultActionPanel("S",2);
                         yield return new WaitForSeconds(_actionTimer);
                         ResetChoices();
                         continue;
@@ -790,7 +792,7 @@ public class MatchManager : MonoBehaviour
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos());
                         yield return new WaitForSeconds(_actionTimer);
                         playerWithTheBall.HasTheBall = false;
-                        _matchUI.ResultActionPanel("F");
+                        _matchUI.ResultActionPanel("F",2);
                         SwitchPossession();
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         yield return new WaitForSeconds(_actionTimer);
@@ -1464,6 +1466,7 @@ public class MatchManager : MonoBehaviour
     }
     float ActivateSpecialAttk()
     {
+        /*
         float specialAttkSuccess = 0f;
         float offenseScore;
         float defenseScore;
@@ -1507,6 +1510,92 @@ public class MatchManager : MonoBehaviour
         specialAttkSuccess = Mathf.Clamp(specialAttkSuccess - riskPenalty, 0.05f, 0.95f);
         specialAttkSuccess *= Mathf.Clamp01((offenseScore - defenseScore + 20f) / 120f);
         specialAttkSuccess = Mathf.Clamp(specialAttkSuccess, 0.1f, 0.85f);
+        currentGamePossessons--;
+        return specialAttkSuccess;
+        */
+        float specialAttkSuccess = 0f;
+        float offenseScore = 0f;
+        float defenseScore = 0f;
+        float offenseNormalized;
+        float defenseNormalized;
+
+        // Normalize fanSupport (0 to 100) to a 0–1 range
+        float fanSupportNormalized = Mathf.Clamp(teamWithball.FansSupportPoints / 100f, 0f, 1f);
+
+        // Dynamic risk penalty: ranges from 0.4 (fanSupport=0) to 0.1 (fanSupport=100)
+        float riskPenalty = 0.4f - (0.3f * fanSupportNormalized);
+
+        // === OFENSIVE SCORE: média dos 2 atributos principais do TeamStyle ===
+        // === DEFENSIVE SCORE: usa atributos defensivos genéricos (Defending, Guarding, Stealing, Awareness) 
+        //     – média de 4 pra ser consistente em todos os styles (defesa não varia por style no teu pedido) ===
+        defenseScore = (playerDefending.Defending
+                      + playerDefending.Guarding
+                      + playerDefending.Stealing
+                      + playerDefending.Awareness) / 4f;
+
+        switch (teamWithball._teamStyle)
+        {
+            case TeamStyle.Normal:
+                // Normal: sem bônus especial – usa atributos equilibrados (média geral de ataque)
+                offenseScore = (playerWithTheBall.Shooting
+                              + playerWithTheBall.Juking
+                              + playerWithTheBall.Control
+                              + playerWithTheBall.Positioning) / 4f;
+                break;
+
+            case TeamStyle.Brawler:
+                offenseScore = (playerWithTheBall.Guarding + playerWithTheBall.Defending) / 2f;
+                break;
+
+            case TeamStyle.HyperDribbler:
+                offenseScore = (playerWithTheBall.Control + playerWithTheBall.Juking) / 2f;
+                break;
+
+            case TeamStyle.PhaseDash:
+                offenseScore = (playerWithTheBall.Juking + playerWithTheBall.Awareness) / 2f;
+                break;
+
+            case TeamStyle.RailShot:
+                offenseScore = (playerWithTheBall.Shooting + playerWithTheBall.Positioning) / 2f;
+                break;
+
+            case TeamStyle.FutureSight:
+                offenseScore = (playerWithTheBall.Awareness + playerWithTheBall.Positioning) / 2f;
+                break;
+
+            case TeamStyle.PerfectPlay:
+                offenseScore = (playerWithTheBall.Positioning + playerWithTheBall.Control) / 2f;
+                break;
+
+            case TeamStyle.ShowTime:
+                offenseScore = (playerWithTheBall.Consistency + playerWithTheBall.Positioning) / 2f;
+                break;
+
+            case TeamStyle.CloneAttack:
+                offenseScore = (playerWithTheBall.Shooting + playerWithTheBall.Juking) / 2f;
+                break;
+
+            default:
+                return 0f; // Falha total se style indefinido ou não suportado
+        }
+
+        // Normalize scores (atributos vão até 99, média máxima ~99)
+        offenseNormalized = Mathf.Clamp(offenseScore / 99f, 0f, 1f);
+        defenseNormalized = Mathf.Clamp(defenseScore / 99f, 0f, 1f);
+
+        // Sigmoid-based formula for volatility
+        float scoreDifference = offenseNormalized - defenseNormalized;
+        specialAttkSuccess = 1f / (1f + Mathf.Exp(-6f * scoreDifference));
+
+        // Aplica penalty de risco (fan support ajuda a reduzir)
+        specialAttkSuccess = Mathf.Clamp(specialAttkSuccess - riskPenalty, 0.05f, 0.95f);
+
+        // Multiplicador final baseado na diferença bruta (mantido do original, ajustado levemente pra escala)
+        specialAttkSuccess *= Mathf.Clamp01((offenseScore - defenseScore + 20f) / 120f);
+
+        // Clamp final pra manter tensão (nunca 0% ou 100%)
+        specialAttkSuccess = Mathf.Clamp(specialAttkSuccess, 0.1f, 0.85f);
+
         currentGamePossessons--;
         return specialAttkSuccess;
     }
@@ -1627,9 +1716,133 @@ public class MatchManager : MonoBehaviour
         //return isAI ? passSuccessChance * ai_difficulty : passSuccessChance;
         return Mathf.Round(Mathf.Clamp01(passSuccessChance) * 100);
     }
-    void JukePercentageOff()
+    public float GetBeatDefenderSuccessProbability(Player offense, Player defense, int zone, int bonus = 0)
     {
-        
+        // Calcula partes fixas (sem randoms)
+        float fixedOff = offense.Consistency
+                         + offense.Control
+                         + offense.Juking
+                         + GetZoneValue(offense, zone)
+                         + bonus;
+
+        float fixedDef = defense.Consistency
+                         + defense.Guarding
+                         + defense.Stealing
+                         + GetZoneValue(defense, zone);
+
+        // Médias dos randoms:
+        // Roll base: +50.5 nos dois  cancela
+        // Bonus offense (-5 a 14): média +4.5
+        float avgDiff = fixedOff + 4.5f - fixedDef;
+
+        // Estimativa da probabilidade baseada na lógica original
+        float probability;
+        if (avgDiff > 20)
+        {
+            probability = 1f; // quase garantido
+        }
+        else if (avgDiff < -20)
+        {
+            probability = 0f; // quase impossível
+        }
+        else
+        {
+            // No range -20 a 20: centra em 60%, inclina linear pra 20%-100%
+            probability = 0.6f + (avgDiff / 40f) * 0.4f;
+        }
+
+        // Clamp final (nunca abaixo de 5% ou acima de 95% pra manter tensão)
+        probability = Mathf.Clamp(probability, 0.05f, 0.95f);
+
+        return probability; // ex: 0.75 = 75% chance
+    }
+    public float GetSpAttackPercentage()
+    {
+        float specialAttkSuccess = 0f;
+        float offenseScore = 0f;
+        float defenseScore = 0f;
+        float offenseNormalized;
+        float defenseNormalized;
+
+        // Normalize fanSupport (0 to 100) to a 0–1 range
+        float fanSupportNormalized = Mathf.Clamp(teamWithball.FansSupportPoints / 100f, 0f, 1f);
+
+        // Dynamic risk penalty: ranges from 0.4 (fanSupport=0) to 0.1 (fanSupport=100)
+        float riskPenalty = 0.4f - (0.3f * fanSupportNormalized);
+
+        // === OFENSIVE SCORE: média dos 2 atributos principais do TeamStyle ===
+        // === DEFENSIVE SCORE: usa atributos defensivos genéricos (Defending, Guarding, Stealing, Awareness) 
+        //     – média de 4 pra ser consistente em todos os styles (defesa não varia por style no teu pedido) ===
+        defenseScore = (playerDefending.Defending
+                      + playerDefending.Guarding
+                      + playerDefending.Stealing
+                      + playerDefending.Awareness) / 4f;
+
+        switch (teamWithball._teamStyle)
+        {
+            case TeamStyle.Normal:
+                // Normal: sem bônus especial – usa atributos equilibrados (média geral de ataque)
+                offenseScore = (playerWithTheBall.Shooting
+                              + playerWithTheBall.Juking
+                              + playerWithTheBall.Control
+                              + playerWithTheBall.Positioning) / 4f;
+                break;
+
+            case TeamStyle.Brawler:
+                offenseScore = (playerWithTheBall.Guarding + playerWithTheBall.Defending) / 2f;
+                break;
+
+            case TeamStyle.HyperDribbler:
+                offenseScore = (playerWithTheBall.Control + playerWithTheBall.Juking) / 2f;
+                break;
+
+            case TeamStyle.PhaseDash:
+                offenseScore = (playerWithTheBall.Juking + playerWithTheBall.Awareness) / 2f;
+                break;
+
+            case TeamStyle.RailShot:
+                offenseScore = (playerWithTheBall.Shooting + playerWithTheBall.Positioning) / 2f;
+                break;
+
+            case TeamStyle.FutureSight:
+                offenseScore = (playerWithTheBall.Awareness + playerWithTheBall.Positioning) / 2f;
+                break;
+
+            case TeamStyle.PerfectPlay:
+                offenseScore = (playerWithTheBall.Positioning + playerWithTheBall.Control) / 2f;
+                break;
+
+            case TeamStyle.ShowTime:
+                offenseScore = (playerWithTheBall.Consistency + playerWithTheBall.Positioning) / 2f;
+                break;
+
+            case TeamStyle.CloneAttack:
+                offenseScore = (playerWithTheBall.Shooting + playerWithTheBall.Juking) / 2f;
+                break;
+
+            default:
+                return 0f; // Falha total se style indefinido ou não suportado
+        }
+
+        // Normalize scores (atributos vão até 99, média máxima ~99)
+        offenseNormalized = Mathf.Clamp(offenseScore / 99f, 0f, 1f);
+        defenseNormalized = Mathf.Clamp(defenseScore / 99f, 0f, 1f);
+
+        // Sigmoid-based formula for volatility
+        float scoreDifference = offenseNormalized - defenseNormalized;
+        specialAttkSuccess = 1f / (1f + Mathf.Exp(-6f * scoreDifference));
+
+        // Aplica penalty de risco (fan support ajuda a reduzir)
+        specialAttkSuccess = Mathf.Clamp(specialAttkSuccess - riskPenalty, 0.05f, 0.95f);
+
+        // Multiplicador final baseado na diferença bruta (mantido do original, ajustado levemente pra escala)
+        specialAttkSuccess *= Mathf.Clamp01((offenseScore - defenseScore + 20f) / 120f);
+
+        // Clamp final pra manter tensão (nunca 0% ou 100%)
+        specialAttkSuccess = Mathf.Clamp(specialAttkSuccess, 0.1f, 0.85f);
+
+        currentGamePossessons--;
+        return specialAttkSuccess;
     }
     //Stamina managers
     void ControlStamina(Team team)
@@ -2068,14 +2281,14 @@ public class MatchManager : MonoBehaviour
             uiManager.PlaybyPlayText(
                 playerWithTheBall.playerLastName + " scored! Total: " + playerWithTheBall.PointsMatch
             );
-            _matchUI.ResultActionPanel("S");
+            _matchUI.ResultActionPanel("S",0);
         }
         else
         {
             uiManager.PlaybyPlayText(
                 playerWithTheBall.playerLastName + " missed!"
             );
-            _matchUI.ResultActionPanel("F");
+            _matchUI.ResultActionPanel("F",0);
         }
 
         yield return new WaitForSeconds(_actionTimer);

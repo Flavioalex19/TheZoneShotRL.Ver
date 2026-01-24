@@ -9,7 +9,12 @@ public enum TeamStyle
     Brawler,
     HyperDribbler,
     PhaseDash,
-    RailShot
+    RailShot,
+    FutureSight,
+    PerfectPlay,
+    ShowTime,
+    CloneAttack
+
 }
 public class Team : MonoBehaviour
 {

@@ -180,6 +180,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField]TextMeshProUGUI WeekText;
     [SerializeField] Image image_teamIcon;
     [SerializeField] GameObject _playoffsAdvBtn;
+    [SerializeField] TextMeshProUGUI text_teamStyle;
     GameObject _advBtn;//to Advance Button Elements
 
     [Header("Menu Animations")]
@@ -211,6 +212,7 @@ public class TeamManagerUI : MonoBehaviour
 
 ;
         _text_NameTeam.text = gameManager.playerTeam.TeamName;
+        text_teamStyle.text = gameManager.playerTeam._teamStyle.ToString();
         
         musicManager.RestoreMutedAudioSources();
         

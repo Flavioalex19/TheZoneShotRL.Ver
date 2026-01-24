@@ -53,7 +53,14 @@ public class MatchUI : MonoBehaviour
     [SerializeField] List<string> list_Shooting = new List<string>();
     [SerializeField] List <string> list_LosesBall = new List<string>();
     [SerializeField] List<string> list_Preparation = new List<string>();
+    [SerializeField] List<string> list_successShoot = new List<string>();
+    [SerializeField] List<string> list_FailShoot = new List<string>();
+    [SerializeField] List<string> list_successJuke = new List<string>();
+    [SerializeField] List<string> list_failJuke = new List<string>();
+    [SerializeField] List<string> list_successPass = new List<string>();
+    [SerializeField] List<string> list_failPass = new List<string>();
     public string gameAction = " ";
+    public string ResultplayerAction = " ";
 
     [Header("Action Panel")]
     [SerializeField] Image image_actionPanel;
@@ -113,6 +120,8 @@ public class MatchUI : MonoBehaviour
 
     [Header("ResultActionPanel")]
     [SerializeField] Animator _animatorResultPanel;
+    [SerializeField] TextMeshProUGUI text_actionResultS;
+    [SerializeField] TextMeshProUGUI text_actionResultF;
     private void Awake()
     {
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
@@ -277,6 +286,8 @@ public class MatchUI : MonoBehaviour
             //Activate injury icon
             if(_matchManager.HomeTeam.playersListRoster[i].isInjured) _activeHomePlayers.GetChild(i).GetChild(6).gameObject.SetActive(true);
             else _activeHomePlayers.GetChild(i).GetChild(6).gameObject.SetActive(false);
+            _activeHomePlayers.GetChild(i).GetChild(7).GetChild(0).GetComponent<Image>().fillAmount =
+                (float)_matchManager.HomeTeam.playersListRoster[i].CurrentStamina / _matchManager.HomeTeam.playersListRoster[i].MaxStamina;
         }
         for (int i = 0; i < 4; i++)
         {
@@ -293,6 +304,8 @@ public class MatchUI : MonoBehaviour
                 _activeAwayPlayers.GetChild(i).GetChild(3).gameObject.SetActive(false);
             }
             _activeAwayPlayers.GetChild(i).GetChild(4).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].CurrentStamina.ToString();
+            _activeAwayPlayers.GetChild(i).GetChild(7).GetChild(0).GetComponent<Image>().fillAmount =
+                (float)_matchManager.AwayTeam.playersListRoster[i].CurrentStamina / _matchManager.AwayTeam.playersListRoster[i].MaxStamina;
 
         }
         for (int i = 0; i < 4; i++)
@@ -396,9 +409,24 @@ public class MatchUI : MonoBehaviour
         image_actionPanel.sprite = sprite;
         text_actionNameText.text = actionName;
     }
-    public void ResultActionPanel(string triggerName)
+    public void ResultActionPanel(string triggerName, int actionIndex)
     {
         _animatorResultPanel.SetTrigger(triggerName);
+        switch (actionIndex)
+        {
+            case 0:
+                text_actionResultS.text = list_successShoot[Random.Range(0, list_successShoot.Count)];
+                text_actionResultF.text = list_FailShoot[Random.Range(0, list_FailShoot.Count)];
+                break; 
+            case 1:
+                text_actionResultS.text = list_successPass[Random.Range(0, list_successPass.Count)];
+                text_actionResultF.text = list_failPass[Random.Range(0, list_failPass.Count)];
+                break;
+            case 2:
+                text_actionResultS.text = list_successJuke[Random.Range(0, list_successJuke.Count)];
+                text_actionResultF.text = list_failJuke[Random.Range(0, list_failJuke.Count)];
+                break;
+        }
     }
     public void ActivateVictoryDefeat(string endText)
     {
