@@ -175,6 +175,25 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_btn_toggle;
     [SerializeField] GameObject panel_assisyanceWarning;
 
+    [Header("ResultPanel")]
+    [SerializeField] GameObject resultPanel;
+    [SerializeField] Animator animator_resultPanel;
+    [SerializeField] Button btn_returnToMainScreen;
+    
+
+    [SerializeField] Image image_resultPanel_teamLogo;
+    [SerializeField] TextMeshProUGUI text_resultPanel_teamName;
+    [SerializeField] TextMeshProUGUI text_resultPanel_teamPlacement;
+    [SerializeField] TextMeshProUGUI text_resultPanel_teamWins;
+    [SerializeField] TextMeshProUGUI text_resultPanel_teamDraws;
+    [SerializeField] TextMeshProUGUI text_resultPanel_teamDefeats;
+    //MVP
+    [SerializeField] Player mvp;
+    [SerializeField] Image mvpPortrait;
+    [SerializeField] TextMeshProUGUI text_resultPanel_mvpName;
+    [SerializeField] TextMeshProUGUI text_resultPanel_mvpPtsGame;
+    [SerializeField] TextMeshProUGUI text_resultPanel_mvpStealsGames;
+    [SerializeField] TextMeshProUGUI text_resultPanel_mvpGamesPlayed;
 
     [Header("UI")]
     [SerializeField]TextMeshProUGUI WeekText;
@@ -370,11 +389,13 @@ public class TeamManagerUI : MonoBehaviour
         {
             //setactive end run screen
             _EndBuildScreen.SetActive(true);
+            ResultPanelCreation();
             //gameover_Btn.gameObject.SetActive(true);
             //set the button to reset the game over bool from leaguemanager and return to tile screen, for now
-            _closeGameForTestersBtn.onClick.AddListener(() => ResetRun());
-            _closeGameForTestersBtn.onClick.AddListener(() => gameManager.ResetRunTeams());
-            _closeGameForTestersBtn.onClick.AddListener(() => gameManager.saveSystem.ResetForNewLeagueRun());
+            btn_returnToMainScreen.onClick.AddListener(() => ResetRun());
+            btn_returnToMainScreen.onClick.AddListener(() => gameManager.ResetRunTeams());
+            btn_returnToMainScreen.onClick.AddListener(() => gameManager.saveSystem.ResetForNewLeagueRun());
+            btn_returnToMainScreen.onClick.AddListener(() => gameManager.ReturnToTitleScreen());
             
         }
         
@@ -1139,6 +1160,86 @@ public class TeamManagerUI : MonoBehaviour
         text_assistanceFacilityDescription.text = content;
         text_facilityEffects1.text = effect1;
         text_facilityEffects2.text = effect2;
+    }
+    //Result team panel
+    public void ResultPanelCreation()
+    {
+        resultPanel.SetActive(true);
+        animator_resultPanel.SetTrigger("Go");
+        btn_returnToMainScreen.onClick.AddListener(() => ResetRun());
+        btn_returnToMainScreen.onClick.AddListener(() => gameManager.ResetRunTeams());
+        btn_returnToMainScreen.onClick.AddListener(() => gameManager.saveSystem.ResetForNewLeagueRun());
+
+        //Team Results
+        //find position
+        int index = gameManager.leagueTeams.IndexOf(gameManager.playerTeam);
+        text_resultPanel_teamPlacement.text = index.ToString();
+
+        text_resultPanel_teamWins.text = gameManager.playerTeam.Wins.ToString();
+        text_resultPanel_teamDraws.text = gameManager.playerTeam.Draws.ToString();
+        text_resultPanel_teamDefeats.text = gameManager.playerTeam.Loses.ToString();
+        //MVP
+        mvp = FindMVP();
+        text_resultPanel_mvpName.text = mvp.playerFirstName + " " + mvp.playerLastName;
+        text_resultPanel_mvpPtsGame.text = (mvp.CareerPoints/mvp.CareerGamesPlayed).ToString();
+        text_resultPanel_mvpStealsGames.text = (mvp.CareerSteals / mvp.CareerGamesPlayed).ToString();
+        text_resultPanel_mvpGamesPlayed.text = mvp.CareerGamesPlayed.ToString();
+        Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
+        Sprite sprite = sprites[mvp.ImageCharacterPortrait];
+        
+    }
+    //Find MVP
+    public Player FindMVP()
+    {
+        Player mvpPlayer = null;
+        float bestScore = float.MinValue;
+
+        foreach (Team team in gameManager.leagueTeams)
+        {
+            // Calcula OVR médio do time (proxy para número de vitórias/sucesso)
+            float teamTotalOVR = 0;
+            foreach (Player p in team.playersListRoster)
+            {
+                teamTotalOVR += p.ovr;
+            }
+            float teamAverageOVR = team.playersListRoster.Count > 0 ? teamTotalOVR / team.playersListRoster.Count : 0;
+            float teamWinsBonus = teamAverageOVR / 10f; // ex: time 90 OVR  +9 pontos de bônus
+
+            foreach (Player player in team.playersListRoster)
+            {
+                // Pontos por jogo estimados (baseado em atributos ofensivos)
+                float pointsPerGame = (player.Shooting + player.Inside + player.Mid + player.Outside) / 4f * 0.4f;
+
+                // Steals por jogo estimados
+                float stealsPerGame = player.Stealing * 0.05f;
+
+                // Score total do jogador
+                float mvpScore = (pointsPerGame * 1.5f) +                 // peso alto para scoring
+                                 (stealsPerGame * 4.0f) +                 // peso alto para steals (defesa impactante)
+                                 teamWinsBonus +                          // bônus por time vencedor
+                                 (player.ovr * 0.2f);                     // tie-breaker geral
+
+                // Debug opcional pra testar
+                // Debug.Log($"{player.playerFirstName} {player.playerLastName} - PPG: {pointsPerGame:F1}, SPG: {stealsPerGame:F1}, Score: {mvpScore:F1}");
+
+                if (mvpScore > bestScore)
+                {
+                    bestScore = mvpScore;
+                    mvpPlayer = player;
+                }
+            }
+        }
+
+        if (mvpPlayer != null)
+        {
+            Debug.Log($"MVP da temporada: {mvpPlayer.playerFirstName} {mvpPlayer.playerLastName} (Score: {bestScore:F1})");
+        }
+        else
+        {
+            Debug.LogWarning("Nenhum jogador encontrado para MVP.");
+        }
+
+        return mvpPlayer;
     }
     //ProceedtoPlaypffs
     void AdvanceToPlayoffs()

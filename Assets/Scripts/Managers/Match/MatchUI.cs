@@ -304,7 +304,7 @@ public class MatchUI : MonoBehaviour
                 _activeAwayPlayers.GetChild(i).GetChild(3).gameObject.SetActive(false);
             }
             _activeAwayPlayers.GetChild(i).GetChild(4).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].CurrentStamina.ToString();
-            _activeAwayPlayers.GetChild(i).GetChild(7).GetChild(0).GetComponent<Image>().fillAmount =
+            _activeAwayPlayers.GetChild(i).GetChild(6).GetChild(0).GetComponent<Image>().fillAmount =
                 (float)_matchManager.AwayTeam.playersListRoster[i].CurrentStamina / _matchManager.AwayTeam.playersListRoster[i].MaxStamina;
 
         }

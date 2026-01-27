@@ -333,6 +333,7 @@ public class GameManager : MonoBehaviour
         newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().playerName = player.playerLastName;
         newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().playerAge = player.Age.ToString();
         newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().playerSalary = player.Salary.ToString();
+        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().PlayerOvr = player.ovr;
 
         Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
         switch (player.Personality)
@@ -500,6 +501,10 @@ public class GameManager : MonoBehaviour
         if (leagueManager.Week >= leagueTeams.Count-1) leagueManager.isOnR8 = true;
         //leagueManager.canStartANewWeek = true;
         SceneManager.LoadScene("MyTeamScreen");
+    }
+    public void ReturnToTitleScreen()
+    {
+        SceneManager.LoadScene("Title");
     }
     #endregion
     IEnumerator Delay()

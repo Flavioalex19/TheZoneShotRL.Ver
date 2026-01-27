@@ -13,6 +13,7 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
     public string playerAge;
     public string playerName;
     public string playerSalary;
+    public int PlayerOvr;
 
     Sprite sprite;
     Image playerPortrait;
