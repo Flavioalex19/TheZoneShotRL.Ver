@@ -71,7 +71,13 @@ public class MatchManager : MonoBehaviour
     int ai_currentNumberOfPasses =0;
     float ai_difficulty = 1.75f;
 
-    //events
+    //cards buff
+    public float buff_Atk;
+    public float buff_Defense;
+    public float buff_Pass;
+    public float buff_SP;
+    public float buff_Stamina;
+    public float buff_Juke;
 
     private List<string> eventsList = new List<string>()
     {
@@ -600,12 +606,16 @@ public class MatchManager : MonoBehaviour
             //_matchUI.OffesnivePanelOnOff(true);
             CanChooseDefenseAction = false;
             //verify if has cards on deck
-           
+            buff_Atk = 0;
+            buff_Defense = 0;
+            buff_Pass = 0;
+            buff_SP = 0;
+            buff_Stamina  = 0;
+            buff_Juke = 0;
             
             ResetPostions();
             _matchUI.PlayerWithBallButtonsOnOff();
             
-            //Turn the actck panle on
 
             if (currentGamePossessons > 1)
             {
@@ -1379,6 +1389,13 @@ public class MatchManager : MonoBehaviour
         if (!teamWithball.IsPlayerTeam)
             passSuccessChance *= ai_difficulty;
 
+        //Buff de passe (só pro playerTeam, aplicado ao final) ===
+        if (teamWithball.IsPlayerTeam && buff_Pass > 0)
+        {
+            float buffMultiplier = 1f + (buff_Pass / 100f); // ex: 2 - *1.02 (+2%)
+            passSuccessChance *= buffMultiplier;
+        }
+
         return passSuccessChance;
     }
     float ScoringEquation(Player offense, Player defense, int zone, int momentumModifier)
@@ -1460,6 +1477,12 @@ public class MatchManager : MonoBehaviour
         if (!teamWithball.IsPlayerTeam)
         {
             baseAccuracy *= 1.45f; // IA arremessa 45% melhor
+        }
+        // === NOVO: Buff de passe (só pro playerTeam, aplicado ao final) ===
+        if (teamWithball.IsPlayerTeam && buff_Atk > 0)
+        {
+            float buffMultiplier = 1f + (buff_Atk / 100f); // ex: 2  *1.02 (+2%)
+            baseAccuracy *= buffMultiplier;
         }
 
         return Mathf.Clamp01(baseAccuracy);
@@ -1753,6 +1776,7 @@ public class MatchManager : MonoBehaviour
 
         // Clamp final (nunca abaixo de 5% ou acima de 95% pra manter tensão)
         probability = Mathf.Clamp(probability, 0.05f, 0.95f);
+        probability = Mathf.RoundToInt(probability * 100f);
 
         return probability; // ex: 0.75 = 75% chance
     }
@@ -1840,6 +1864,9 @@ public class MatchManager : MonoBehaviour
 
         // Clamp final pra manter tensão (nunca 0% ou 100%)
         specialAttkSuccess = Mathf.Clamp(specialAttkSuccess, 0.1f, 0.85f);
+
+        // Converte para porcentagem inteira (10 a 85) e arredonda pro inteiro mais próximo
+        int successPercentage = Mathf.RoundToInt(specialAttkSuccess * 100f);
 
         currentGamePossessons--;
         return specialAttkSuccess;

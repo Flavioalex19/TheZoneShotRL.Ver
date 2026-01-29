@@ -45,7 +45,7 @@ public class CardDisplay : MonoBehaviour
                 card.modifyValue = 5;
                 break;
             case "Gold":
-                card.modifyValue = 8;
+                card.modifyValue = 10;
                 break;
         }
         text_cardName.text = card.name;
@@ -59,10 +59,10 @@ public class CardDisplay : MonoBehaviour
         switch (card.cardStyle)
         {
             case CardStyle.Defense:
-                
+                matchManager.buff_Defense = card.modifyValue;
                 break;
             case CardStyle.Attack:
-                matchManager.playerWithTheBall.statBuff = card.modifyValue;
+                matchManager.buff_Atk = card.modifyValue;
                 
                 break;
             case CardStyle.Player:
@@ -71,8 +71,17 @@ public class CardDisplay : MonoBehaviour
             case CardStyle.Stamina:
                 for (int i = 0; i < matchManager.teamWithball.playersListRoster.Count; i++)
                 {
-                    matchManager.teamWithball.playersListRoster[i].CurrentStamina += card.modifyValue;
+                    matchManager.teamWithball.playersListRoster[i].CurrentStamina += card.modifyValue * 2;
                 }
+                break;
+            case CardStyle.Sp:
+                matchManager.buff_SP = card.modifyValue;
+                break;
+            case CardStyle.Juke:
+                matchManager.buff_Juke = card.modifyValue;
+                break;
+            case CardStyle.Pass:
+                matchManager.buff_Pass = card.modifyValue;
                 break;
         }
         matchManager.canUseCards = false;

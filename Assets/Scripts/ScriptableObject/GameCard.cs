@@ -6,7 +6,10 @@ public enum CardStyle
     Defense,
     Attack,
     Player,
-    Stamina
+    Stamina,
+    Sp,
+    Juke,
+    Pass
 }
 [CreateAssetMenu(fileName = "NewGameCard", menuName = "ScriptableObjects/GameCard", order = 1)]
 public class GameCard : ScriptableObject

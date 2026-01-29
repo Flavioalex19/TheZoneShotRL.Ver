@@ -291,8 +291,46 @@ public class GameManager : MonoBehaviour
             
         }
     }
+    public void SortDraftButtonsByOVRCrescente()
+    {
+        // O container/painel onde os botões estão (ajusta o nome se for diferente)
+        Transform container = glg_draftNames.transform;
 
-    
+        if (container.childCount == 0)
+        {
+            Debug.Log("Nenhum botão pra ordenar.");
+            return;
+        }
+
+        // Pega todos os children em uma lista
+        List<Transform> buttons = new List<Transform>();
+        for (int i = 0; i < container.childCount; i++)
+        {
+            Transform child = container.GetChild(i);
+            // Só adiciona se tiver o componente (pra segurança)
+            if (child.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>() != null)
+            {
+                buttons.Add(child);
+            }
+        }
+
+        // Ordena crescente pelo PlayerOvr
+        buttons.Sort((a, b) =>
+        {
+            int ovrA = a.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().PlayerOvr;
+            int ovrB = b.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().PlayerOvr;
+            return ovrA.CompareTo(ovrB); // crescente (menor pro maior)
+        });
+
+        // Reaplica a ordem na Hierarchy
+        for (int i = 0; i < buttons.Count; i++)
+        {
+            buttons[i].SetSiblingIndex(i);
+        }
+
+        Debug.Log("Botões ordenados por OVR crescente!");
+    }
+
     void AlternateTeamsAndAddPlayers()
     {
         int teamIndex = 0; // To track which team to add the player to
