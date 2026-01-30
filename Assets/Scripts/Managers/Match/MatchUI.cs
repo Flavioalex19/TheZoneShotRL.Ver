@@ -84,6 +84,15 @@ public class MatchUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_eventPanelEventDescrption;
     [SerializeField] Image image_eventPanelIcon;
 
+
+    [Header("Bonus Area Elements")]
+    [SerializeField] TextMeshProUGUI text_curretnBonusActive;
+    [SerializeField] TextMeshProUGUI text_bonusAtk;
+    [SerializeField] TextMeshProUGUI text_bonusDef;
+    [SerializeField] TextMeshProUGUI text_bonusJuke;
+    [SerializeField] TextMeshProUGUI text_bonusSp;
+
+
     [Header("Casrds")]
     [SerializeField] Animator animator_HandCards;
 
@@ -95,6 +104,9 @@ public class MatchUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_playerWithTheBallName;
     [SerializeField] Transform transform_playersZones;
     [SerializeField] Transform transform_ActiveAwayPlayers;
+    [SerializeField] TextMeshProUGUI text_PlayerwithTheBallJersey;
+    [SerializeField] TextMeshProUGUI text_PlayerArchtype;
+    [SerializeField] Image image_playerWithTheBallPortrait;
     //debub
     public string playernameWithBall;
 
@@ -153,6 +165,12 @@ public class MatchUI : MonoBehaviour
     {
         UpdatePlayersActive();
         UpdateScore();
+
+        //Update textBuffs
+        text_bonusAtk.text = _matchManager.buff_Atk.ToString() + "%";
+        text_bonusDef.text = _matchManager.buff_Defense.ToString() + "%";
+        text_bonusJuke.text = _matchManager.buff_Juke.ToString() + "%";
+        text_bonusSp.text = _matchManager.buff_SP.ToString() + "%";
 
         if(_matchManager.CanChooseAction)
         {
@@ -327,8 +345,13 @@ public class MatchUI : MonoBehaviour
     }
     public void UpdateOffensiveStats()
     {
-        print("UpdateStats");
+        //print("UpdateStats");
         text_playerWithTheBallName.text = _matchManager.playerWithTheBall.playerFirstName + " " + _matchManager.playerWithTheBall.playerLastName;
+        text_PlayerwithTheBallJersey.text = _matchManager.playerWithTheBall.J_Number.ToString();
+        //Sprite alteration/update
+        Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
+        Sprite sprite = sprites[_matchManager.playerWithTheBall.ImageCharacterPortrait];
+        image_playerWithTheBallPortrait.sprite = sprite;
         //Current game stats
         transform_gameStatsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.PointsMatch.ToString();
         transform_gameStatsArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.StealsMatch.ToString();

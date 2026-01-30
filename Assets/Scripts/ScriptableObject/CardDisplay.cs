@@ -61,10 +61,10 @@ public class CardDisplay : MonoBehaviour
         switch (card.cardStyle)
         {
             case CardStyle.Defense:
-                matchManager.buff_Defense = card.modifyValue;
+                matchManager.buff_Defense += card.modifyValue;
                 break;
             case CardStyle.Attack:
-                matchManager.buff_Atk = card.modifyValue;
+                matchManager.buff_Atk += card.modifyValue;
                 
                 break;
             case CardStyle.Player:
@@ -77,13 +77,13 @@ public class CardDisplay : MonoBehaviour
                 }
                 break;
             case CardStyle.Sp:
-                matchManager.buff_SP = card.modifyValue;
+                matchManager.buff_SP += card.modifyValue;
                 break;
             case CardStyle.Juke:
-                matchManager.buff_Juke = card.modifyValue;
+                matchManager.buff_Juke += card.modifyValue;
                 break;
             case CardStyle.Pass:
-                matchManager.buff_Pass = card.modifyValue;
+                matchManager.buff_Pass += card.modifyValue;
                 break;
         }
         matchManager.canUseCards = false;

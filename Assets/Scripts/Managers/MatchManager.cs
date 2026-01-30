@@ -126,12 +126,20 @@ public class MatchManager : MonoBehaviour
         playerTeamWin = false;
         CanChooseDefenseAction = false;
         momentum = 0;
+        buff_Atk = 0;
+        buff_Defense = 0;
+        buff_Pass = 0;
+        buff_SP = 0;
+        buff_Stamina = 0;
+        buff_Juke = 0;
         //Reset the teams to play
         for (int i = 0; i < manager.leagueTeams.Count; i++)
         {
             manager.leagueTeams[i].HasPlayed = false;
         }
         
+
+
         match = MatchStates.Start;
         currentGamePossessons = GamePossesions;
 
@@ -606,12 +614,7 @@ public class MatchManager : MonoBehaviour
             //_matchUI.OffesnivePanelOnOff(true);
             CanChooseDefenseAction = false;
 
-            buff_Atk = 0;
-            buff_Defense = 0;
-            buff_Pass = 0;
-            buff_SP = 0;
-            buff_Stamina  = 0;
-            buff_Juke = 0;
+            
             
             ResetPostions();
             _matchUI.PlayerWithBallButtonsOnOff();
