@@ -33,6 +33,7 @@ public class CardDisplay : MonoBehaviour
     void SetCardsValues()
     {
         //Define the modify value
+        /*
         switch (card.cardType)
         {
             case "Common":
@@ -48,6 +49,7 @@ public class CardDisplay : MonoBehaviour
                 card.modifyValue = 10;
                 break;
         }
+        */
         text_cardName.text = card.name;
         text_cardType.text = card.cardType;
         text_cardDescription.text = card.cardDescription;

@@ -24,6 +24,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_facilityEffects;
     [SerializeField] TextMeshProUGUI text_facilityEffects1;
     [SerializeField] TextMeshProUGUI text_facilityEffects2;
+    [SerializeField] TextMeshProUGUI text_facilityName;
     [SerializeField] Image _imageAssistanceFacilityImage;
 
     [Header("MainButtons")]
@@ -1153,13 +1154,14 @@ public class TeamManagerUI : MonoBehaviour
         return false;
     }
     //update facility panel
-    public void FacilityPanelInfoUpdate(string content, string effect, string effect1, string effect2,Sprite sprite)
+    public void FacilityPanelInfoUpdate(string content, string effect, string effect1, string effect2,Sprite sprite, string name)
     {
         _imageAssistanceFacilityImage.sprite = sprite;
         text_facilityEffects.text = effect;
         text_assistanceFacilityDescription.text = content;
         text_facilityEffects1.text = effect1;
         text_facilityEffects2.text = effect2;
+        text_facilityName.text = name;
     }
     //Result team panel
     public void ResultPanelCreation()

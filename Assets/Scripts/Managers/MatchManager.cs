@@ -605,7 +605,7 @@ public class MatchManager : MonoBehaviour
         {
             //_matchUI.OffesnivePanelOnOff(true);
             CanChooseDefenseAction = false;
-            //verify if has cards on deck
+
             buff_Atk = 0;
             buff_Defense = 0;
             buff_Pass = 0;

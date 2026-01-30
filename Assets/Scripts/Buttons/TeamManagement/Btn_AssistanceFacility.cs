@@ -15,6 +15,7 @@ public class Btn_AssistanceFacility : MonoBehaviour, IPointerEnterHandler, IPoin
     [SerializeField] string facilityEffects;
     [SerializeField] string facilityEffect1;
     [SerializeField] string facilityEffect2;
+    [SerializeField] string facilityName;
     Animator animator;
 
     TeamManagerUI teamManagerUI;
@@ -38,7 +39,7 @@ public class Btn_AssistanceFacility : MonoBehaviour, IPointerEnterHandler, IPoin
         teamManagerUI = GameObject.Find("TeamManagerUI").GetComponent<TeamManagerUI>();
         animator = GetComponent<Animator>();
         btn_AssistanceInfo = GetComponent<Button>();
-        btn_AssistanceInfo.onClick.AddListener(() => teamManagerUI.FacilityPanelInfoUpdate(assistanceDescription, facilityEffects,facilityEffect1, facilityEffect2 ,sprite_offSprite));
+        btn_AssistanceInfo.onClick.AddListener(() => teamManagerUI.FacilityPanelInfoUpdate(assistanceDescription, facilityEffects,facilityEffect1, facilityEffect2 ,sprite_offSprite,facilityName));
     }
 
     // Update is called once per frame

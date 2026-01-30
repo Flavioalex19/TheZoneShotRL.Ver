@@ -164,8 +164,8 @@ public class LeagueManager : MonoBehaviour
             Index = 0, Description = "Boss, local TV wants a quick hit before the match. Respond in a more humorous way or straight tactics?",
             Choice1 = "Fun & Relatable <color=#FFD700>Marketing +1</color>",
             Choice2 = "Pro & Tactical <color=#FFD700>Office +1</color>",
-            btnIndex0 = 0,
-            btnIndex1 = 6,
+            btnIndex0 = 3,
+            btnIndex1 = 0,
             Modifier = 1,
             eventType = EventType.Interview 
         });
@@ -175,8 +175,8 @@ public class LeagueManager : MonoBehaviour
             Description = "City council just emailed a one-time youth grant. Take it and shout it out, or funnel it to the stadium?",
             Choice1 = "Accept & Promote Locally <color=#FFD700>Marketing +1</color>",
             Choice2 = "Redirect to Facility Upgrade <color=#FFD700>Arena +1</color>",
-            btnIndex0 = 4,
-            btnIndex1 = 0,
+            btnIndex0 = 3,
+            btnIndex1 = 1,
             Modifier = 1,
             eventType = EventType.ReplyToEmails
         });
@@ -187,6 +187,8 @@ public class LeagueManager : MonoBehaviour
             Description = "Players are voting on locker room upgrades. Smart tech or recovery pods?",
             Choice1 = "Smart Lockers & Charging Stations <color=#FFD700>Team Equipment +1</color>",
             Choice2 = "Better Recovery Pods <color=#FFD700>MedCare +1</color>",
+            btnIndex0 = 5,
+            btnIndex1 = 1,//MUDAR QUNADO RECEBER O MEDCARA BTN
             eventType = EventType.TeamMeeting
 
 
@@ -199,6 +201,8 @@ public class LeagueManager : MonoBehaviour
             Choice1 = "Standard Deal + Cash <color=#FFD700>Finances +1</color>",
             Choice2= "Premium Deal + Product for Players <color=#FFD700>Team Equipment +1</color>",
             Modifier = 1,
+            btnIndex0 = 0,//MUDA PARA BOTÃO DE FINANÇAS
+            btnIndex1 = 5,
             eventType = EventType.Sponsor
         
         });
@@ -210,6 +214,8 @@ public class LeagueManager : MonoBehaviour
             Choice1 = "We need better medical support <color=#FFD700>MedCare +1</color>",
             Choice2 = "Fan experience comes first <color=#FFD700>Arena +1</color>",
             Modifier = 1,
+            btnIndex0 = 0,// MED CARA BTN
+            btnIndex1 = 0,//ARENA 
             eventType = EventType.Interview
 
         });
@@ -221,6 +227,8 @@ public class LeagueManager : MonoBehaviour
             Choice1 = "Stock Up Now <color=#FFD700>Team Equipment +1</color>",
             Choice2 = "Negotiate for Future Credit <color=#FFD700>Finances +1</color>",
             Modifier = 1,
+            btnIndex0 = 5,
+            btnIndex1 = 0,// MUDAR BTN FINANCES
             eventType = EventType.Sponsor
 
         });
@@ -232,6 +240,8 @@ public class LeagueManager : MonoBehaviour
             Choice1 = "Luxury Skybox <color=#FFD700>Arena +1</color>",
             Choice2 = "Family Zone with Kids Area <color=#FFD700>Marketing +1</color>",
             Modifier = 1,
+            btnIndex0 = 1,// MUDA PARA BTN ARENA
+            btnIndex1 = 3,
             eventType = EventType.TeamMeeting
 
         });
@@ -243,6 +253,8 @@ public class LeagueManager : MonoBehaviour
             Choice1 = "Convert to Physio Suite <color=#FFD700>MedCare +1</color>",
             Choice2 = "Add Merch Pop-Up Shop <color=#FFD700>Marketing +1</color>",
             Modifier = 1,
+            btnIndex0 = 1,// MUDAR BTN MEDCARE
+            btnIndex1 = 3,
             eventType = EventType.ReplyToEmails
 
         });
@@ -254,6 +266,8 @@ public class LeagueManager : MonoBehaviour
             Choice1 = "Take the Suite + Upgrade Servers <color=#FFD700>Office +1</color>",
             Choice2 = "Sell the Suite Access to League <color=#FFD700>Finances +1</color>",
             Modifier = 1,
+            btnIndex0 = 0,
+            btnIndex1 = 3,// MUDAR BTN FINANCIAS
             eventType = EventType.Sponsor
 
         });
