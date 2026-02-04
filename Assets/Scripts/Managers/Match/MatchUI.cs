@@ -107,6 +107,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_PlayerwithTheBallJersey;
     [SerializeField] TextMeshProUGUI text_PlayerArchtype;
     [SerializeField] Image image_playerWithTheBallPortrait;
+    [SerializeField] Image image_playerPersonality;
     //debub
     public string playernameWithBall;
 
@@ -352,6 +353,7 @@ public class MatchUI : MonoBehaviour
         Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
         Sprite sprite = sprites[_matchManager.playerWithTheBall.ImageCharacterPortrait];
         image_playerWithTheBallPortrait.sprite = sprite;
+        PersonalityUpdate();
         //Current game stats
         transform_gameStatsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.PointsMatch.ToString();
         transform_gameStatsArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.StealsMatch.ToString();
@@ -467,10 +469,12 @@ public class MatchUI : MonoBehaviour
         }
     }
     //Update Percentages
-    public void SetScoringPercentage(string perc)
+    public void SetScoringPercentage(float value)
     {
-        text_shootPercentage.text = perc;
-        text_offensiveScorePercentage.text = perc;
+        float chance = value;
+        int roundNumber = Mathf.RoundToInt(chance * 100f);
+        text_shootPercentage.text = roundNumber.ToString() + " %";
+        text_offensiveScorePercentage.text = roundNumber.ToString() + " %";
     }
     public void SetPassPercentage(string perc)
     {
@@ -583,5 +587,35 @@ public class MatchUI : MonoBehaviour
         teamName1 = _matchManager.AwayTeam.TeamName;
         sprite1 = Resources.Load<Sprite>("2D/Team Logos/" + teamName1);
         _awayTeamImage.sprite = sprite1;
+    }
+    void PersonalityUpdate()
+    {
+        //Personality Icons
+        Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
+        switch (_matchManager.playerWithTheBall.Personality)
+        {
+            case 1:
+                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_01");
+                break;
+            case 2:
+                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_02");
+                break;
+            case 3:
+                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_03");
+                break;
+
+            case 4:
+                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_04");
+                break;
+
+            case 5:
+                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_04");
+                break;
+
+            default:
+                break;
+        }
+        //_sprite = sprite;
+        image_playerPersonality.sprite = sprite;
     }
 }

@@ -269,6 +269,7 @@ public class GameManager : MonoBehaviour
     // Function to generate a specified number of players and add them to the team
     public void GeneratePlayers(int numberOfPlayers)
     {
+        /*
         for (int i = 0; i < numberOfPlayers; i++)
         {
             // Instantiate a new player object
@@ -277,18 +278,66 @@ public class GameManager : MonoBehaviour
             // Access the Player component and set the attributes
             Player newPlayer = playerObject.GetComponent<Player>();
             newPlayer.GenerateRandomPlayer(); // Randomize the player's name and overall rating
-            /*
-            if(UnityEngine.Random.value <= 0.9f)
+           
+            GeneratePlayerDraftButton(newPlayer);
+            
+        }
+        */
+        // Conta quantos níveis de draft estão liberados
+        int unlockedCount = 0;
+        if (leagueManager.CanDraftlvl1) unlockedCount++;
+        if (leagueManager.CanDraftlvl2) unlockedCount++;
+        if (leagueManager.CanDraftlvl3) unlockedCount++;
+
+        // Define as chances baseado no nível liberado
+        float chanceEarly = 0f;
+        float chanceMid = 0f;
+        float chanceEnd = 1f; // default (vai ser ajustado)
+
+        if (unlockedCount == 0)
+        {
+            chanceEarly = 0.80f;
+            chanceMid = 0.20f;
+            chanceEnd = 0f;
+        }
+        else if (unlockedCount <= 2) // intermediário (1 ou 2 liberados)
+        {
+            chanceEarly = 0.60f;
+            chanceMid = 0.35f;
+            chanceEnd = 0.05f;
+        }
+        else // 3 liberados (todas true)
+        {
+            chanceEarly = 0.30f;
+            chanceMid = 0.30f;
+            chanceEnd = 0.40f;
+        }
+        for (int i = 0; i < numberOfPlayers; i++)
+        {
+            // Instantiate a new player object
+            GameObject playerObject = Instantiate(playerPrefab);
+            Player newPlayer = playerObject.GetComponent<Player>();
+
+            // Weighted random pra escolher o tier
+            float rand = Random.value;
+
+            if (rand < chanceEarly)
             {
-                newPlayer.GeneratePlayerLvl0();
+                print("Generate Early");
+                newPlayer.GenerateEarlyPlayer();
+            }
+            else if (rand < chanceEarly + chanceMid)
+            {
+                print("Generate Mid");
+                newPlayer.GenerateMidPlayer();
             }
             else
             {
-                newPlayer.GeneratePlayerLvl4();
+                print("Generate End");
+                newPlayer.GenerateEndPlayer();
             }
-            */
+
             GeneratePlayerDraftButton(newPlayer);
-            
         }
     }
     public void SortDraftButtonsByOVRCrescente()

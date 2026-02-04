@@ -29,7 +29,7 @@ public class DraftUiManager : MonoBehaviour
             _gameManager.GeneratePlayers(_gameManager.leagueTeams.Count * 8);
             count++;
         }
-        _gameManager.SortDraftButtonsByOVRCrescente();
+        //_gameManager.SortDraftButtonsByOVRCrescente();
     }
 
     // Update is called once per frame

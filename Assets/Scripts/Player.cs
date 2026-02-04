@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
         "Denis", "Scott", "Leon", "Nash", "Marc", "Han", "Tom", "Laurence", "Matt","Brian", "Travis", "Robert", "Bob", "Kevin", "Fabian", "Nelson", "Henry", "Austin",
         "Wagner", "Adrian", "Andy", "Eden", "Carl", "Martin", "Wallace", "Tim", "Douglas", "Harry", "Eric", "Ethan", "Max", "Afonso", "Oliver", "Dan", "Ian", "Ewan", "Jack",
         "Felix", "Arnold", "Tommy", "Trevor", "Thomas", "Zack", "Isiah","Erick", "Josh", " Norman", "Marco", "Ed", "Fred", "Dennis", "Marshall", "Patrick", "Ty", "Jerry", "Alfred",
-        "Andrew", "Austin", "Acer"
+        "Andrew", "Austin", "Acer", "Lima"
     };
     private static readonly string[] secondNames = 
     {
@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
         "Young", "Hill", "Armstrong", "Roger", "Macmanus", "Salvi", "Free", "Freeman", "Strong", "Jager", "Cross", "Hunter", "Doyle", "Howard", "Malone", "Gray", "Summers",
         "Miller", "Von", "Yorke", "Clancy", "Tyson", "Collins", "King","Dent", "Barry", "Chambers", "Cole", "Jones", "Langley", "Lee", "Ross", "Souza","Hart", "Kane", "Law",
         "Rogers", "Newton", "Lewis", "Mckay", "Barnes", "Vincent", "Enies", "Wayne", "Burke", "Falcon", "Lamb", "Allen", "Connor", "Fray", "White", "Lane", "Morgan",
-        "Bollock", "Trent", "Brady", "Machado","Edwards", "Thompson", "Mitty", "Webster", "Web", "Watson", "Homes", "Aiken" , "Ainsworth", "Adler"
+        "Bollock", "Trent", "Brady", "Machado","Edwards", "Thompson", "Mitty", "Webster", "Web", "Watson", "Homes", "Aiken" , "Ainsworth", "Adler", "May"
     };
     [SerializeField] public string playerFirstName;
     [SerializeField] public string playerLastName;
@@ -112,70 +112,72 @@ public class Player : MonoBehaviour
         playerLastName = secondNames[Random.Range(0,secondNames.Length)];
         Age = Random.Range(20, 34);
         //ImageCharacterPortrait = Random.Range(0, 7);
-        ImageCharacterPortrait = Random.Range(0, 21);
+        ImageCharacterPortrait = Random.Range(0, 30);
         GenerateContract();
         buff = 0;
         bondPlayer = null;
         //Debug.Log($"Generated Player: {firstName}, OVR: {ovr}");
     }
     //Generate player with ovr from 50-75
-    public void GeneratePlayerLvl0()
+
+    public void GenerateEarlyPlayer()
     {
-        // Random OVR between 60 and 79
-        Shooting = Random.Range(55, 75);
-        Inside = Random.Range(55, 75);
-        Mid = Random.Range(55, 75);
-        Outside = Random.Range(55, 75);
-        Awareness = Random.Range(55, 75);
-        Defending = Random.Range(55, 75);
-        Guarding = Random.Range(55, 75);
-        Stealing = Random.Range(55, 75);
-        Juking = Random.Range(55, 75);
-        Consistency = Random.Range(55, 75);
-        Control = Random.Range(55, 75);
-        Positioning = Random.Range(55, 75);
-        ovr = (Shooting + Inside + Mid + Outside + Awareness + Defending + Guarding + Stealing + Juking + Consistency + Control + Positioning) / 12;
-        Personality = Random.Range(1, 5);
-        Zone = Random.Range(0, 2);
-        //firstName = ((PlayerNames)Random.Range(0, System.Enum.GetValues(typeof(PlayerNames)).Length)).ToString(); // Random name from enum
-        // Randomly select a name from the array
-        playerFirstName = names[Random.Range(0, names.Length)];
-        playerLastName = secondNames[Random.Range(0, secondNames.Length)];
-        Age = Random.Range(20, 34);
-        //ImageCharacterPortrait = Random.Range(0, 7);
-        ImageCharacterPortrait = Random.Range(0, 21);
-        GenerateContract();
-        buff = 0;
-        bondPlayer = null;
+        GeneratePlayerByTier(55, 65, 67, 73);
     }
-    public void GeneratePlayerLvl4()
+
+    public void GenerateMidPlayer()
     {
-        // Random OVR between 60 and 79
-        Shooting = Random.Range(75, 90);
-        Inside = Random.Range(75, 90);
-        Mid = Random.Range(75, 90);
-        Outside = Random.Range(75, 90);
-        Awareness = Random.Range(75, 90);
-        Defending = Random.Range(75, 90);
-        Guarding = Random.Range(75, 90);
-        Stealing = Random.Range(75, 90);
-        Juking = Random.Range(75, 90);
-        Consistency = Random.Range(75, 90);
-        Control = Random.Range(75, 90);
-        Positioning = Random.Range(75, 90);
-        ovr = (Shooting + Inside + Mid + Outside + Awareness + Defending + Guarding + Stealing + Juking + Consistency + Control + Positioning) / 12;
-        Personality = Random.Range(1, 5);
-        Zone = Random.Range(0, 2);
-        //firstName = ((PlayerNames)Random.Range(0, System.Enum.GetValues(typeof(PlayerNames)).Length)).ToString(); // Random name from enum
-        // Randomly select a name from the array
+        GeneratePlayerByTier(65, 70, 75, 80);
+    }
+
+    public void GenerateEndPlayer()
+    {
+        GeneratePlayerByTier(75, 89, 85, 90);
+    }
+
+    private void GeneratePlayerByTier(int minLow, int maxLow, int minHigh, int maxHigh)
+    {
+        // Primeiro: Portrait e Personality
+        ImageCharacterPortrait = Random.Range(0, 36); // 0 a 35
+        Personality = Random.Range(1, 6); // 1 a 5
+
+        // Define atributos específicos baseado no portrait
+        bool isShootingSpec = ImageCharacterPortrait <= 11;
+        bool isJukingSpec = ImageCharacterPortrait >= 12 && ImageCharacterPortrait <= 20;
+        bool isControlSpec = ImageCharacterPortrait >= 21 && ImageCharacterPortrait <= 32;
+        bool isDefendingSpec = ImageCharacterPortrait >= 33 && ImageCharacterPortrait <= 35;
+
+        // Gera atributos
+        Shooting = isShootingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
+        Inside = isShootingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
+        Mid = isShootingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
+        Outside = isShootingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
+
+        Juking = isJukingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
+        Stealing = isJukingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
+        Consistency = isJukingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
+
+        Control = isControlSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
+        Awareness = isControlSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
+
+        Defending = isDefendingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
+        Guarding = isDefendingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
+        Positioning = isDefendingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
+
+        // Calcula OVR (média arredondada)
+        int sum = Shooting + Inside + Mid + Outside + Awareness + Defending + Guarding + Stealing + Juking + Consistency + Control + Positioning;
+        ovr = Mathf.RoundToInt(sum / 12f);
+
+        // Outros campos (iguais ao original)
         playerFirstName = names[Random.Range(0, names.Length)];
         playerLastName = secondNames[Random.Range(0, secondNames.Length)];
         Age = Random.Range(20, 34);
-        //ImageCharacterPortrait = Random.Range(0, 7);
-        ImageCharacterPortrait = Random.Range(0, 21);
         GenerateContract();
         buff = 0;
         bondPlayer = null;
+
+        // Debug opcional
+        // Debug.Log($"Gerado player (Portrait: {ImageCharacterPortrait}, OVR: {ovr})");
     }
     void GenerateContract()
     {

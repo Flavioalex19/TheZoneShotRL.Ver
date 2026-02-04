@@ -53,7 +53,7 @@ public class TrainingManager : MonoBehaviour
     {
         teamManagerUI._trainingResultPanel.SetActive(true);
         int cost = 0;
-        if (effort == 0) cost = 25;
+        if (effort == 0) cost = 20;
         else if (effort == 1) cost = 40;
         else cost = 50;
 

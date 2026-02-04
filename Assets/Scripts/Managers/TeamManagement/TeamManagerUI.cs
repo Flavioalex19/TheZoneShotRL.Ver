@@ -388,6 +388,7 @@ public class TeamManagerUI : MonoBehaviour
         //Lose run
         if (leagueManager.isGameOver|| leagueManager.CanStartANewRun == true)
         {
+            leagueManager.CanDraftlvl1 = true;
             //setactive end run screen
             _EndBuildScreen.SetActive(true);
             ResultPanelCreation();
@@ -850,7 +851,8 @@ public class TeamManagerUI : MonoBehaviour
     }
     public void ContractDiscussion(int weight)
     {
-        contract_asstancePanel.SetActive(true);
+        /*
+        //contract_asstancePanel.SetActive(true);
         if(leagueManager.canNegociateContract == true)
         {
             
@@ -882,8 +884,7 @@ public class TeamManagerUI : MonoBehaviour
             // Verifica limite de contrato + salary cap
             if (p.ContractYears < 5 && projectedSalary < gameManager.playerTeam.SalaryCap)
             {
-                if (/*TryExtendContract(gameManager.playerTeam, p, newSalaryValue, newGamesValue, weight)*/
-                    TryExtendContract(gameManager.playerTeam,p,p.Salary + salaryIncrease,p.ContractYears + gamesIncrease,weight))
+                if (TryExtendContract(gameManager.playerTeam,p,p.Salary + salaryIncrease,p.ContractYears + gamesIncrease,weight))
                 {
                     p.ContractYears += gamesIncrease;
                     p.Salary += salaryIncrease;
@@ -922,8 +923,69 @@ public class TeamManagerUI : MonoBehaviour
         {
             gameManager.playerTeam.CurrentSalary += gameManager.playerTeam.playersListRoster[i].Salary;
         }
+        contract_asstancePanel.SetActive(true);
         _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
-        //UpdateTeamSalary();
+        SaveAfterPlayerEvent();
+        */
+        //contract_asstancePanel.SetActive(true);
+        if (leagueManager.canNegociateContract == true)
+        {
+            // === MOVER AQUI: atualiza CurrentSalary antes de qualquer cálculo ===
+            gameManager.playerTeam.CurrentSalary = 0;
+            for (int i = 0; i < gameManager.playerTeam.playersListRoster.Count; i++)
+            {
+                gameManager.playerTeam.CurrentSalary += gameManager.playerTeam.playersListRoster[i].Salary;
+            }
+            _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
+            // ==============================================================
+
+            int salaryIncrease = 0;
+            int gamesIncrease = 0;
+            switch (weight)
+            {
+                case 0: salaryIncrease = UnityEngine.Random.Range(2, 6); gamesIncrease = 2; break;
+                case 1: salaryIncrease = UnityEngine.Random.Range(6, 9); gamesIncrease = 4; break;
+                case 2: salaryIncrease = UnityEngine.Random.Range(9, 13); gamesIncrease = 6; break;
+            }
+
+            Player p = gameManager.playerTeam.playersListRoster[indexForPlayer];
+            int projectedSalary = gameManager.playerTeam.CurrentSalary + salaryIncrease;
+
+            if (p.ContractYears < 5 && projectedSalary < gameManager.playerTeam.SalaryCap)
+            {
+                if (TryExtendContract(gameManager.playerTeam, p, p.Salary + salaryIncrease, p.ContractYears + gamesIncrease, weight))
+                {
+                    p.ContractYears += gamesIncrease;
+                    p.Salary += salaryIncrease;
+
+                    // Atualiza CurrentSalary imediatamente após aceitar (pra consistência)
+                    gameManager.playerTeam.CurrentSalary += salaryIncrease;
+                    _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
+
+                    contract_resultNegotiationText.text = "Good Job Boss! " + p.playerLastName + " for " + p.ContractYears;
+                    image_assistance.sprite = sprite_AssistanceHappy;
+                }
+                else
+                {
+                    contract_resultNegotiationText.text = "Damn! We can't come to an agreement with " + p.playerLastName + ". Maybe he needs some time to think...";
+                    image_assistance.sprite = sprite_AssistanceFail;
+                }
+                leagueManager.canNegociateContract = false;
+            }
+            else
+            {
+                contract_resultNegotiationText.text = "Boss, we can't extend his contract for now.";
+            }
+        }
+        else
+        {
+            contract_resultNegotiationText.text = "Boss, we can't negotiate any more contracts this week.";
+        }
+
+        ContractButtonsUpdate();
+        contract_asstancePanel.SetActive(true);
+
+        // Removi o recalculo duplicado do final (agora está no início + após aceitar)
         SaveAfterPlayerEvent();
     }
     public bool TryExtendContract(Team team, Player player, int salaryProposed, int gamesProposed,int weight)
@@ -1174,7 +1236,7 @@ public class TeamManagerUI : MonoBehaviour
 
         //Team Results
         //find position
-        int index = gameManager.leagueTeams.IndexOf(gameManager.playerTeam);
+        int index = leagueManager.Standings.IndexOf(gameManager.playerTeam);
         text_resultPanel_teamPlacement.text = index.ToString();
 
         text_resultPanel_teamWins.text = gameManager.playerTeam.Wins.ToString();

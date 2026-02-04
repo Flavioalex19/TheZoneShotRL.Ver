@@ -82,6 +82,7 @@ public class LeagueManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         uiManager = GameObject.Find("UIManager").GetComponent<UiManager>();
         //check to verify if thre is no save file here if thre is none satart the new week-week 1
