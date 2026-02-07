@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.XR;
 using Random = UnityEngine.Random;
 
 public class MatchUI : MonoBehaviour
@@ -476,14 +477,18 @@ public class MatchUI : MonoBehaviour
         text_shootPercentage.text = roundNumber.ToString() + " %";
         text_offensiveScorePercentage.text = roundNumber.ToString() + " %";
     }
-    public void SetPassPercentage(string perc)
+    public void SetPassPercentage(float value)
     {
-        text_passPercentage.text = perc;
-        text_offensivePassPercentage.text = perc; 
+        float chance = value;
+        int roundNumber = Mathf.RoundToInt(chance * 100f);
+        text_passPercentage.text = roundNumber.ToString() + " %";
+        text_offensivePassPercentage.text = roundNumber.ToString() + " %"; 
     }
-    public void SetJukePercentage(string perc)
+    public void SetJukePercentage(float value)
     {
-        text_offensiveJukePercentage.text = perc;
+        float chance = value;
+        int roundNumber = Mathf.RoundToInt(chance);
+        text_offensiveJukePercentage.text = roundNumber.ToString() + " %";
     }
     public void SetSpPercentage(string perc)
     {

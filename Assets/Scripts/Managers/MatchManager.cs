@@ -79,6 +79,9 @@ public class MatchManager : MonoBehaviour
     public float buff_Stamina;
     public float buff_Juke;
 
+    float jukePercentage = 0;
+    bool emptyBool = false;
+
     private List<string> eventsList = new List<string>()
     {
         "None",
@@ -660,8 +663,8 @@ public class MatchManager : MonoBehaviour
                 _matchUI.OffesnivePanelOnOff(true);
                 //print(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false) + " Is the cahnce of success");
                 _matchUI.SetScoringPercentage(ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone,0));
-                _matchUI.SetPassPercentage(GetPassingChance(false).ToString() + " %");
-                _matchUI.SetJukePercentage(GetBeatDefenderSuccessProbability(playerWithTheBall, playerDefending,playerWithTheBall.CurrentZone).ToString() + "%");
+                _matchUI.SetPassPercentage(PassEquation());
+                _matchUI.SetJukePercentage(/*TryBeatDefenderAdvanceZone(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0)*/GetJukePercentage(playerWithTheBall,playerDefending,playerWithTheBall.CurrentZone));
                 _matchUI.SetSpPercentage(GetSpAttackPercentage().ToString() + "%");
                 //_matchUI.SetJukePercentage();
                 uiManager.PlaybyPlayText("Wait for Player Action");
@@ -1461,6 +1464,7 @@ public class MatchManager : MonoBehaviour
     //Equations
     float PassEquation()
     {
+        /*
         float offenseScore = (playerWithTheBall.Awareness + playerWithTheBall.Consistency) / 2f;
         float defenseScore = (playerDefending.Stealing + playerDefending.Guarding) / 2f;
 
@@ -1500,6 +1504,73 @@ public class MatchManager : MonoBehaviour
         }
 
         return passSuccessChance;
+        */
+        // === 1. Cálculo de OVR na hora (média dos 12 attrs) ===
+        int offenseOVR = Mathf.RoundToInt(
+            (playerWithTheBall.Shooting + playerWithTheBall.Inside + playerWithTheBall.Mid + playerWithTheBall.Outside +
+             playerWithTheBall.Awareness + playerWithTheBall.Defending + playerWithTheBall.Guarding + playerWithTheBall.Stealing +
+             playerWithTheBall.Juking + playerWithTheBall.Consistency + playerWithTheBall.Control + playerWithTheBall.Positioning) / 12f);
+
+        int defenseOVR = Mathf.RoundToInt(
+            (playerDefending.Shooting + playerDefending.Inside + playerDefending.Mid + playerDefending.Outside +
+             playerDefending.Awareness + playerDefending.Defending + playerDefending.Guarding + playerDefending.Stealing +
+             playerDefending.Juking + playerDefending.Consistency + playerDefending.Control + playerDefending.Positioning) / 12f);
+
+        // === 2. Offense score (attrs relevantes + OVR bonus + random) ===
+        float offenseAvg = (playerWithTheBall.Awareness + playerWithTheBall.Consistency + playerWithTheBall.Control +
+                            offenseOVR / 5f) / 4f; // OVR dá bônus indireto
+
+        float offenseScore = offenseAvg + UnityEngine.Random.Range(-10f, 15f);
+
+        // === 3. Defense score (attrs defensivos + média extra forte + BONUS AI) ===
+        float defenseAvg = (playerDefending.Stealing + playerDefending.Guarding + playerDefending.Awareness +
+                            playerDefending.Consistency + defenseOVR / 5f) / 5f;
+
+        float defenseMedianBonus = defenseAvg * 0.3f; // +30% da média defensiva (defesa forte)
+
+        float defenseScore = defenseAvg + defenseMedianBonus;
+
+        // REMOVIDO: bloco do hasHDefense
+
+        // AI defende melhor (bônus extra quando AI é o defensor)
+        Team defendingTeam = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
+        if (!defendingTeam.IsPlayerTeam) // AI defendendo
+            defenseScore *= 1.25f; // +25% defesa AI
+
+        // === 4. Chance base (offense vs defense) ===
+        float rawChance = offenseScore / (offenseScore + defenseScore + 40f); // +40 evita extremos
+
+        // === 5. Modificadores (tackle) ===
+        if (chooseDefenseTackle)
+            rawChance *= 0.80f; // -20%
+
+        // === 6. Bias principal: playerTeam mais difícil, AI mais fácil ===
+        float finalChance = rawChance;
+
+        if (teamWithball.IsPlayerTeam)
+        {
+            // PLAYER TEAM: mais dificuldade (precisa stats/buffs altos)
+            finalChance *= 0.85f; // -15% base
+
+            // Buff_Pass compensa (porcentagem)
+            if (buff_Pass > 0)
+                finalChance *= 1f + (buff_Pass / 100f);
+
+            // ESPAÇO PRA MAIS BUFFS FUTUROS
+            // ex: if (buff_Stamina > 0) finalChance *= 1f + (buff_Stamina / 100f);
+        }
+        else
+        {
+            // AI: mais fácil no passe
+            finalChance *= 1.05f; // +5% base
+
+            // Playoffs: AI ainda mais fácil
+            if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
+                finalChance *= 1.10f; // +10% extra AI playoffs
+        }
+
+        // === 7. Clamp final (tensão) ===
+        return Mathf.Clamp(finalChance, 0.15f, 0.95f);
     }
     float ScoringEquation(Player offense, Player defense, int zone, int momentumModifier)
     {
@@ -1969,9 +2040,6 @@ public class MatchManager : MonoBehaviour
         // Normalize fanSupport (0 to 100) to a 0–1 range
         float fanSupportNormalized = Mathf.Clamp(teamWithball.FansSupportPoints / 100f, 0f, 1f);
 
-        // Dynamic risk penalty: ranges from 0.4 (fanSupport=0) to 0.1 (fanSupport=100)
-        float riskPenalty = 0.4f - (0.3f * fanSupportNormalized);
-
         // === OFENSIVE SCORE: média dos 2 atributos principais do TeamStyle ===
         // === DEFENSIVE SCORE: usa atributos defensivos genéricos (Defending, Guarding, Stealing, Awareness) 
         //     – média de 4 pra ser consistente em todos os styles (defesa não varia por style no teu pedido) ===
@@ -2035,7 +2103,7 @@ public class MatchManager : MonoBehaviour
         specialAttkSuccess = 1f / (1f + Mathf.Exp(-6f * scoreDifference));
 
         // Aplica penalty de risco (fan support ajuda a reduzir)
-        specialAttkSuccess = Mathf.Clamp(specialAttkSuccess - riskPenalty, 0.05f, 0.95f);
+        specialAttkSuccess = Mathf.Clamp(specialAttkSuccess, 0.05f, 0.95f);
 
         // Multiplicador final baseado na diferença bruta (mantido do original, ajustado levemente pra escala)
         specialAttkSuccess *= Mathf.Clamp01((offenseScore - defenseScore + 20f) / 120f);
@@ -2399,9 +2467,76 @@ public class MatchManager : MonoBehaviour
     }
     bool TryBeatDefenderAdvanceZone(Player offense, Player defense, int zone, int bonus = 0)
     {
-        //print("Juke");
-        //currentGamePossessons--;
+        // === 1. Cálculo de OVR na hora (média dos 12 attrs) ===
+        int offenseOVR = Mathf.RoundToInt(
+            (offense.Shooting + offense.Inside + offense.Mid + offense.Outside +
+             offense.Awareness + offense.Defending + offense.Guarding + offense.Stealing +
+             offense.Juking + offense.Consistency + offense.Control + offense.Positioning) / 12f);
 
+        int defenseOVR = Mathf.RoundToInt(
+            (defense.Shooting + defense.Inside + defense.Mid + defense.Outside +
+             defense.Awareness + defense.Defending + defense.Guarding + defense.Stealing +
+             defense.Juking + defense.Consistency + defense.Control + defense.Positioning) / 12f);
+
+        // === 2. Offense score (attrs juke + zona + OVR bonus + random + bonus) ===
+        float offenseAvg = (offense.Consistency + offense.Control + offense.Juking +
+                            GetZoneValue(offense, zone) + offenseOVR / 5f) / 4f;
+
+        float offenseScore = offenseAvg + UnityEngine.Random.Range(-10f, 20f) + bonus;
+
+        // === 3. Defense score (attrs defensivos + média extra forte + BONUS AI) ===
+        float defenseAvg = (defense.Consistency + defense.Guarding + defense.Stealing +
+                            GetZoneValue(defense, zone) + defenseOVR / 5f) / 5f;
+
+        float defenseMedianBonus = defenseAvg * 0.3f; // +30% média defensiva
+
+        float defenseScore = defenseAvg + defenseMedianBonus;
+
+        // AI defende melhor (bônus extra quando AI é o defensor)
+        Team defendingTeam = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
+        if (!defendingTeam.IsPlayerTeam) // AI defendendo
+            defenseScore *= 1.25f; // +25% defesa AI
+
+        // === 4. Chance base (offense vs defense) ===
+        float rawChance = offenseScore / (offenseScore + defenseScore + 50f);
+
+        // === 5. Bias principal: playerTeam mais difícil, AI mais fácil ===
+        float finalChance = rawChance;
+
+        if (teamWithball.IsPlayerTeam)
+        {
+            // PLAYER TEAM: mais dificuldade (precisa stats/buffs altos)
+            finalChance *= 0.85f; // -15% base
+
+            // Buff_Juke compensa (porcentagem)
+            if (buff_Juke > 0)
+                finalChance *= 1f + (buff_Juke / 100f);
+
+            // ESPAÇO PRA MAIS BUFFS FUTUROS
+            // ex: if (buff_Stamina > 0) finalChance *= 1f + (buff_Stamina / 100f);
+        }
+        else
+        {
+            // AI: mais fácil no juke
+            finalChance *= 1.05f; // +5% base
+
+            // Playoffs: AI ainda mais fácil
+            if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
+                finalChance *= 1.10f; // +10% extra AI playoffs
+        }
+
+        finalChance = Mathf.Clamp(finalChance, 0.15f, 0.95f);
+        jukePercentage = finalChance;
+        print(finalChance + " This is the juke percentage");
+        // === 6. Decisão final ===
+        bool success = UnityEngine.Random.value < finalChance;
+
+        if (!success)
+        {
+            offense.CurrentZone = 0;
+            return false;
+        }
+        /*
         int offenseRoll = UnityEngine.Random.Range(1, 101)
                          + offense.Consistency
                          + offense.Control
@@ -2429,11 +2564,11 @@ public class MatchManager : MonoBehaviour
 
         if (!success)
         {
-            print("Failed juke");
+            //print("Failed juke");
             offense.CurrentZone = 0;
             return false;
         }
-            
+        */
 
         // ------------------------------------
         // AVANÇAR UMA ZONA
@@ -2448,6 +2583,64 @@ public class MatchManager : MonoBehaviour
         _matchUI.TurnOffPlayerButtons();
         //print(offense.playerLastName + " and the zone is " + offense.CurrentZone);
         return true;
+    }
+    public int GetJukePercentage(Player offense, Player defense, int zone)
+    {
+        // === CÁLCULO IDÊNTICO AO DA TryBeatDefenderAdvanceZone (sem o Random da decisão) ===
+        // 1. OVR na hora
+        int offenseOVR = Mathf.RoundToInt(
+            (offense.Shooting + offense.Inside + offense.Mid + offense.Outside +
+             offense.Awareness + offense.Defending + offense.Guarding + offense.Stealing +
+             offense.Juking + offense.Consistency + offense.Control + offense.Positioning) / 12f);
+
+        int defenseOVR = Mathf.RoundToInt(
+            (defense.Shooting + defense.Inside + defense.Mid + defense.Outside +
+             defense.Awareness + defense.Defending + defense.Guarding + defense.Stealing +
+             defense.Juking + defense.Consistency + defense.Control + defense.Positioning) / 12f);
+
+        // 2. Offense score
+        float offenseAvg = (offense.Consistency + offense.Control + offense.Juking +
+                            GetZoneValue(offense, zone) + offenseOVR / 5f) / 4f;
+
+        float offenseScore = offenseAvg + UnityEngine.Random.Range(-10f, 20f); // mantém variabilidade leve pra UI variar um pouco
+
+        // 3. Defense score
+        float defenseAvg = (defense.Consistency + defense.Guarding + defense.Stealing +
+                            GetZoneValue(defense, zone) + defenseOVR / 5f) / 5f;
+
+        float defenseMedianBonus = defenseAvg * 0.3f;
+        float defenseScore = defenseAvg + defenseMedianBonus;
+
+        // AI defende melhor
+        Team defendingTeam = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
+        if (!defendingTeam.IsPlayerTeam)
+            defenseScore *= 1.25f;
+
+        // 4. Chance base
+        float rawChance = offenseScore / (offenseScore + defenseScore + 50f);
+
+        // 5. Bias
+        float finalChance = rawChance;
+
+        if (teamWithball.IsPlayerTeam)
+        {
+            finalChance *= 0.85f;
+
+            if (buff_Juke > 0)
+                finalChance *= 1f + (buff_Juke / 100f);
+        }
+        else
+        {
+            finalChance *= 1.05f;
+
+            if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
+                finalChance *= 1.10f;
+        }
+
+        finalChance = Mathf.Clamp(finalChance, 0.15f, 0.95f);
+
+        // Retorna como % inteiro arredondado
+        return Mathf.RoundToInt(finalChance * 100f);
     }
     public IEnumerator ToScore(Player playerWithTheBall, Player playerDefending, Team teamWithBall)
     {

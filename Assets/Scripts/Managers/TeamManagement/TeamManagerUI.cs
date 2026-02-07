@@ -951,7 +951,7 @@ public class TeamManagerUI : MonoBehaviour
             Player p = gameManager.playerTeam.playersListRoster[indexForPlayer];
             int projectedSalary = gameManager.playerTeam.CurrentSalary + salaryIncrease;
 
-            if (p.ContractYears < 5 && projectedSalary < gameManager.playerTeam.SalaryCap)
+            if (/*p.ContractYears < 5 &&*/ projectedSalary < gameManager.playerTeam.SalaryCap)
             {
                 if (TryExtendContract(gameManager.playerTeam, p, p.Salary + salaryIncrease, p.ContractYears + gamesIncrease, weight))
                 {
@@ -963,18 +963,18 @@ public class TeamManagerUI : MonoBehaviour
                     _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
 
                     contract_resultNegotiationText.text = "Good Job Boss! " + p.playerLastName + " for " + p.ContractYears;
-                    image_assistance.sprite = sprite_AssistanceHappy;
+                    //image_assistance.sprite = sprite_AssistanceHappy;
                 }
                 else
                 {
                     contract_resultNegotiationText.text = "Damn! We can't come to an agreement with " + p.playerLastName + ". Maybe he needs some time to think...";
-                    image_assistance.sprite = sprite_AssistanceFail;
+                    //image_assistance.sprite = sprite_AssistanceFail;
                 }
                 leagueManager.canNegociateContract = false;
             }
             else
             {
-                contract_resultNegotiationText.text = "Boss, we can't extend his contract for now.";
+                contract_resultNegotiationText.text = "Boss, we can't extend his contract for now." ;
             }
         }
         else
