@@ -416,11 +416,12 @@ public class GameManager : MonoBehaviour
         newButton.GetComponent<Button>().transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.playerLastName.ToString();
         newButton.GetComponent<Button>().transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = player.ovr.ToString();
         newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().index = player.ImageCharacterPortrait;
-        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().SetSprite();
-        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().playerName = player.playerLastName;
+        //newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().playerName = player.playerLastName;
         newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().playerAge = player.Age.ToString();
         newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().playerSalary = player.Salary.ToString();
         newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().PlayerOvr = player.ovr;
+        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().archtypeIndex = player.ImageCharacterPortrait;
+        print("ArchtypeImageIndex " + player.ImageCharacterPortrait);
 
         Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
         switch (player.Personality)
@@ -448,8 +449,11 @@ public class GameManager : MonoBehaviour
         }
         Image myImageComponent = newButton.GetComponent<Button>().transform.GetChild(3).GetComponent<Image>();
         myImageComponent.sprite = sprite;
-        
 
+        //Sprite spriteArchtype = null;
+
+
+        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().SetSprite();
     }
     void AddPlayerToTeam(Player player, Button btn)
     {

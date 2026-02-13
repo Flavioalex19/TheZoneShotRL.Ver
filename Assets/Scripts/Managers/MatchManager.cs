@@ -9,6 +9,13 @@ using UnityEngine.UI;
 
 public class MatchManager : MonoBehaviour
 {
+    public enum AIAction
+    {
+        Pass,
+        Juke,
+        Shoot,
+        Special // vazio por enquanto
+    }
     public enum MatchStates
     {
         None,
@@ -554,6 +561,7 @@ public class MatchManager : MonoBehaviour
                 {
                     teamWithoutTheBall = HomeTeam;
                 }
+                /*
                 bool shoudScore = AI_ShouldTryToScore(teamWithball.Score, teamWithoutTheBall.Score, currentGamePossessons);
 
                 if (shoudScore==false && ai_currentNumberOfPasses > 0)
@@ -611,6 +619,71 @@ public class MatchManager : MonoBehaviour
                         yield break;
                     }
                     //yield break;
+                }
+                */
+                AIAction chosenAction = AI_Tendency(); //  NOVA DECISÃO
+
+                switch (chosenAction)
+                {
+                    case AIAction.Pass:
+                        if (TryPassBall())
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                            if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
+                            SelectDefender();
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                            ResetDefensiveOptions();
+                            continue; // continua loop pra próxima ação
+                        }
+                        else
+                        {
+                            // pass fail  steal + switch
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                            playerWithTheBall.HasTheBall = false;
+                            SwitchPossession();
+                            if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                            ResetDefensiveOptions();
+                            yield break; 
+                        }
+                    // break; removido (não precisa, já saiu com continue ou yield break)
+
+                    case AIAction.Juke:
+                        if (TryBeatDefenderAdvanceZone(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone))
+                        {
+                            // juke success  continua posse (loop)
+                            continue;
+                        }
+                        else
+                        {
+                            // juke fail  steal  switch
+                            playerDefending.StealsMatch++;
+                            currentGamePossessons--;
+                            if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos() + " Loses the ball to " + playerDefending.playerLastName);
+                            playerWithTheBall.HasTheBall = false;
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                            ResetDefensiveOptions();
+                            SwitchPossession();
+                            yield break; 
+                        }
+                    // break; removido
+
+                    case AIAction.Shoot:
+                        if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ShootingText());
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+
+                        yield return Scoring(playerWithTheBall, true);
+                        ResetDefensiveOptions();
+                        yield break; 
+
+                    case AIAction.Special:
+                        // Vazio por enquanto  fallback pra shoot
+                        if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ShootingText());
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+
+                        yield return Scoring(playerWithTheBall, true);
+                        ResetDefensiveOptions();
+                        yield break; 
                 }
             }
         }
@@ -1562,13 +1635,23 @@ public class MatchManager : MonoBehaviour
         else
         {
             // AI: mais fácil no passe
-            finalChance *= 1.05f; // +5% base
+            finalChance *= 1.25f; // +5% base
 
             // Playoffs: AI ainda mais fácil
             if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
-                finalChance *= 1.10f; // +10% extra AI playoffs
-        }
+                finalChance *= 1.30f; // +10% extra AI playoffs
+                                      // === NOVO: BOOST AI SE OVR BAIXO ===
+            int playerOVR = Mathf.RoundToInt(
+                (playerWithTheBall.Shooting + playerWithTheBall.Inside + playerWithTheBall.Mid + playerWithTheBall.Outside +
+                 playerWithTheBall.Awareness + playerWithTheBall.Defending + playerWithTheBall.Guarding + playerWithTheBall.Stealing +
+                 playerWithTheBall.Juking + playerWithTheBall.Consistency + playerWithTheBall.Control + playerWithTheBall.Positioning) / 12f);
 
+            if (playerOVR <= 70)
+                finalChance *= 1.30f; // maior boost
+            else if (playerOVR <= 85)
+                finalChance *= 1.15f; // médio boost
+        }
+        
         // === 7. Clamp final (tensão) ===
         return Mathf.Clamp(finalChance, 0.15f, 0.95f);
     }
@@ -1726,65 +1809,29 @@ public class MatchManager : MonoBehaviour
         else
         {
             // AI atacando: mais fácil
-            finalChance *= 1.05f; // +5% base AI ataque
+            finalChance *= 1.20f; // +5% base AI ataque
 
             // Playoffs: AI ainda mais forte no ataque/defesa
             if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
-                finalChance *= 1.10f; // +10% extra AI playoffs
-        }
+                finalChance *= 1.35f; // +10% extra AI playoffs
+                                      // === NOVO: BOOST AI SE OVR BAIXO ===
+            int playerOVR = Mathf.RoundToInt(
+                (playerWithTheBall.Shooting + playerWithTheBall.Inside + playerWithTheBall.Mid + playerWithTheBall.Outside +
+                 playerWithTheBall.Awareness + playerWithTheBall.Defending + playerWithTheBall.Guarding + playerWithTheBall.Stealing +
+                 playerWithTheBall.Juking + playerWithTheBall.Consistency + playerWithTheBall.Control + playerWithTheBall.Positioning) / 12f);
 
+            if (playerOVR <= 70)
+                finalChance *= 1.30f; // maior boost
+            else if (playerOVR <= 85)
+                finalChance *= 1.15f; // médio boost
+        }
+       
         // === 8. Clamp final (tensão) ===
         return Mathf.Clamp(finalChance, 0.15f, 0.95f);
     }
     float ActivateSpecialAttk()
     {
-        /*
-        float specialAttkSuccess = 0f;
-        float offenseScore;
-        float defenseScore;
-        float offenseNormalized;
-        float defenseNormalized;
-
-        // Normalize fanSupport (0 to 100) to a 0–1 range
-        float fanSupportNormalized = Mathf.Clamp(teamWithball.FansSupportPoints / 100f, 0f, 1f);
-        // Dynamic risk penalty: ranges from 0.4 (fanSupport=0) to 0.1 (fanSupport=100)
-        float riskPenalty = 0.4f - (0.3f * fanSupportNormalized);
-
-        switch (teamWithball._teamStyle)
-        {
-            case TeamStyle.Brawler:
-                offenseScore = (playerWithTheBall.Shooting + playerWithTheBall.Positioning) / 2f;
-                defenseScore = (playerDefending.Defending + playerDefending.Guarding) / 2f;
-                break;
-            case TeamStyle.RailShot:
-                offenseScore = (playerWithTheBall.Awareness + playerWithTheBall.Outside) / 2f;
-                defenseScore = (playerDefending.Positioning + playerDefending.Guarding) / 2f;
-                break;
-            case TeamStyle.PhaseDash:
-                offenseScore = (playerWithTheBall.Juking + playerWithTheBall.Control) / 2f;
-                defenseScore = (playerDefending.Awareness + playerDefending.Stealing) / 2f;
-                break;
-            case TeamStyle.HyperDribbler:
-                offenseScore = (playerWithTheBall.Juking + playerWithTheBall.Consistency) / 2f;
-                defenseScore = (playerDefending.Awareness + playerDefending.Guarding) / 2f;
-                break;
-            default:
-                return 0f; // Fail if team style is undefined
-        }
-
-        // Normalize scores 
-        offenseNormalized = Mathf.Clamp(offenseScore / 100f, 0f, 1f);
-        defenseNormalized = Mathf.Clamp(defenseScore / 100f, 0f, 1f);
-
-        // Sigmoid-based formula for volatility, adjusted by dynamic risk penalty
-        float scoreDifference = offenseNormalized - defenseNormalized;
-        specialAttkSuccess = 1f / (1f + Mathf.Exp(-6f * scoreDifference));
-        specialAttkSuccess = Mathf.Clamp(specialAttkSuccess - riskPenalty, 0.05f, 0.95f);
-        specialAttkSuccess *= Mathf.Clamp01((offenseScore - defenseScore + 20f) / 120f);
-        specialAttkSuccess = Mathf.Clamp(specialAttkSuccess, 0.1f, 0.85f);
-        currentGamePossessons--;
-        return specialAttkSuccess;
-        */
+        
         float specialAttkSuccess = 0f;
         float offenseScore = 0f;
         float defenseScore = 0f;
@@ -2523,6 +2570,16 @@ public class MatchManager : MonoBehaviour
             // Playoffs: AI ainda mais fácil
             if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
                 finalChance *= 1.10f; // +10% extra AI playoffs
+                                      // === NOVO: BOOST AI SE OVR BAIXO ===
+            int playerOVR = Mathf.RoundToInt(
+                (offense.Shooting + offense.Inside + offense.Mid + offense.Outside +
+                 offense.Awareness + offense.Defending + offense.Guarding + offense.Stealing +
+                 offense.Juking + offense.Consistency + offense.Control + offense.Positioning) / 12f);
+
+            if (playerOVR <= 70)
+                finalChance *= 1.30f; // maior boost
+            else if (playerOVR <= 85)
+                finalChance *= 1.15f; // médio boost
         }
 
         finalChance = Mathf.Clamp(finalChance, 0.15f, 0.95f);
@@ -2698,6 +2755,97 @@ public class MatchManager : MonoBehaviour
         // NÃO troca posse — apenas termina
     }
     #endregion
+    //AI
+    private AIAction AI_Tendency()
+    {
+        // === Calcula probabilidades usando nossas equações ===
+        float passChance = PassEquation(); // retorna 0-1
+        //float passChance = PassEquation(); // retorna 0-1
+
+        // Juke chance (mesma lógica do TryBeatDefenderAdvanceZone, sem Random decisão)
+        float jukeChance = CalculateJukeProbability(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone);
+        
+
+        float shootChance = ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0);
+
+        float spChance = 0f; // vazio por enquanto (deixe 0 até melhorar a equação)
+
+        print("Chances: " + "Juke: " + jukeChance+ " " + "Shoot: " + shootChance + " Pass: " + passChance);
+
+        // === Bias estratégico leve (AI prefere pass se posses altas) ===
+        if (currentGamePossessons > GamePossesions / 2) // mais da metade das posses
+        {
+            passChance *= 1.3f; // +20% peso no pass (pra AI manter posse)
+        }
+        else
+        {
+            shootChance *= 1.40f; // +15% peso no shoot (pra forçar fim de posse)
+        }
+
+        // === Total weight pra weighted random ===
+        float totalWeight = passChance + jukeChance + shootChance + spChance;
+
+        if (totalWeight <= 0f) // segurança (raro)
+            return AIAction.Shoot; // default shoot se tudo 0
+
+        float randomValue = UnityEngine.Random.value * totalWeight;
+
+        // Escolhe ação com maior peso acumulado
+        if (randomValue < passChance)
+            return AIAction.Pass;
+        else if (randomValue < passChance + jukeChance)
+            return AIAction.Juke;
+        else if (randomValue < passChance + jukeChance + shootChance)
+            return AIAction.Shoot;
+        else
+            return AIAction.Special; // (nunca chega por enquanto)
+    }
+
+    // Função auxiliar pra juke chance (idêntica à lógica do TryBeatDefender)
+    private float CalculateJukeProbability(Player offense, Player defense, int zone)
+    {
+        // (copia exatamente o cálculo de finalChance do TryBeatDefenderAdvanceZone, sem o Random.value < finalChance)
+        // ... (cola o bloco de cálculo do offenseScore, defenseScore, bias, buff_Juke, clamp)
+        // Retorna finalChance (0-1)
+        // (pra não duplicar código, tu pode extrair o cálculo pra uma função separada se quiser)
+        // Exemplo rápido (copia da última versão):
+        int offenseOVR = /* cálculo OVR */85;
+        int defenseOVR = /* cálculo OVR */85;
+
+        float offenseAvg = (offense.Consistency + offense.Control + offense.Juking +
+                            GetZoneValue(offense, zone) + offenseOVR / 5f) / 4f;
+
+        float offenseScore = offenseAvg + UnityEngine.Random.Range(-10f, 20f);
+
+        float defenseAvg = (defense.Consistency + defense.Guarding + defense.Stealing +
+                            GetZoneValue(defense, zone) + defenseOVR / 5f) / 5f;
+
+        float defenseMedianBonus = defenseAvg * 0.3f;
+        float defenseScore = defenseAvg + defenseMedianBonus;
+
+        Team defendingTeam = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
+        if (!defendingTeam.IsPlayerTeam)
+            defenseScore *= 1.25f;
+
+        float rawChance = offenseScore / (offenseScore + defenseScore + 50f);
+
+        float finalChance = rawChance;
+
+        if (teamWithball.IsPlayerTeam)
+        {
+            finalChance *= 0.85f;
+            if (buff_Juke > 0)
+                finalChance *= 1f + (buff_Juke / 100f);
+        }
+        else
+        {
+            finalChance *= 1.25f;
+            if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
+                finalChance *= 1.10f;
+        }
+
+        return Mathf.Clamp(finalChance, 0.15f, 0.95f);
+    }
     public void Matchpoint()
     {
         HomeTeam.Score += 50;
