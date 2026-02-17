@@ -109,6 +109,10 @@ public class MatchUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_PlayerArchtype;
     [SerializeField] Image image_playerWithTheBallPortrait;
     [SerializeField] Image image_playerPersonality;
+    [SerializeField] TextMeshProUGUI text_DefenderFirstName;
+    [SerializeField] TextMeshProUGUI text_DefenderLastName;
+    [SerializeField] TextMeshProUGUI text_midChance;
+    [SerializeField] TextMeshProUGUI text_insChance;
     //debub
     public string playernameWithBall;
 
@@ -256,7 +260,8 @@ public class MatchUI : MonoBehaviour
 
 
         }
-
+        
+        
 
         //UpdateOffensiveStats();
     }
@@ -341,9 +346,11 @@ public class MatchUI : MonoBehaviour
             for (int i = 0; i < 4; i++)
             {
                 transform_ActiveHomePlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerLastName.ToString();
+                
             }
         }
         
+
     }
     public void UpdateOffensiveStats()
     {
@@ -374,6 +381,11 @@ public class MatchUI : MonoBehaviour
     {
         _text_ScoreBoardHomeTeam.text = _matchManager.HomeTeam.Score.ToString();
         _text_ScoreBoardAwayTeam.text = _matchManager.AwayTeam.Score.ToString();
+    }
+    public void UpdateDefenderInfo(Player defender)
+    {
+        text_DefenderFirstName.text = defender.playerFirstName.ToString();
+        text_DefenderLastName.text = defender.playerLastName.ToString();
     }
     //Post match stats
     public void PostGameStats(Team A, Team B)

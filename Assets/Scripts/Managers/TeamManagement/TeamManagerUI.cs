@@ -76,6 +76,8 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_currentFrontOfficePoints;
     [SerializeField] Image image_playerToTrade;
     [SerializeField] Image image_playerTeam;
+    public Transform transform_trade_AssistanceResultPortrait;
+
     [Header("Training")]
     //Training
     [SerializeField] TrainingManager trainingManager;
@@ -87,6 +89,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Sprite _training_AssistanceSprite;
     [SerializeField] public Image image_currentPlayerPortraitToTrain;
     [SerializeField] public TextMeshProUGUI text_trainingType;
+    [SerializeField] public Transform transform_assistance_ResultPortrait;
     
     //public TextMeshProUGUI text_playerToTrain;
     //public TextMeshProUGUI text_drill;
@@ -136,6 +139,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Image image_assistance;
     [SerializeField] Sprite sprite_AssistanceHappy;
     [SerializeField] Sprite sprite_AssistanceFail;
+    [SerializeField] Transform transform_contract_AssistancePortrait;
     int newGamesValue;
     int newSalaryValue;
     int indexForPlayer;
@@ -786,9 +790,14 @@ public class TeamManagerUI : MonoBehaviour
             _training_btns.GetChild(i).GetComponent<Button>().onClick.AddListener(() => trainingManager.SetPlayerToTrainIndex(index/*, _textPlayerSelected, _textDrillSelected*/));
         }
     }
-    public void UpdateAssistancePortrait()
+    public void UpdateAssistancePortrait(Transform portaritTransform, bool isOn)
     {
-        _training_assistancePortrait.sprite = _training_AssistanceSprite;
+        //_training_assistancePortrait.sprite = _training_AssistanceSprite;
+        if (isOn)
+        {
+            portaritTransform.GetChild(0).gameObject.SetActive(true);
+        }
+        
     }
     public void SetTrainingGrade()
     {
@@ -962,24 +971,28 @@ public class TeamManagerUI : MonoBehaviour
                     gameManager.playerTeam.CurrentSalary += salaryIncrease;
                     _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
 
-                    contract_resultNegotiationText.text = "Good Job Boss! " + p.playerLastName + " for " + p.ContractYears;
+                    contract_resultNegotiationText.text = "Good Job Boss! " + p.playerLastName + " for " + p.ContractYears + " games";
                     //image_assistance.sprite = sprite_AssistanceHappy;
+                    UpdateAssistancePortrait(transform_contract_AssistancePortrait, true);
                 }
                 else
                 {
                     contract_resultNegotiationText.text = "Damn! We can't come to an agreement with " + p.playerLastName + ". Maybe he needs some time to think...";
                     //image_assistance.sprite = sprite_AssistanceFail;
+                    UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
                 }
                 leagueManager.canNegociateContract = false;
             }
             else
             {
                 contract_resultNegotiationText.text = "Boss, we can't extend his contract for now." ;
+                UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
             }
         }
         else
         {
             contract_resultNegotiationText.text = "Boss, we can't negotiate any more contracts this week.";
+            UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
         }
 
         ContractButtonsUpdate();

@@ -184,7 +184,7 @@ public class TrainingManager : MonoBehaviour
             teamManagerUI._textDrillSelected.text = trainingResult;
             // =====================================================================
 
-            teamManagerUI.UpdateAssistancePortrait();
+            teamManagerUI.UpdateAssistancePortrait(teamManagerUI.transform_assistance_ResultPortrait, true);
             leagueManager.canTrain = false;
             teamManagerUI.SetTrainingGrade();
             player.UpdateOVR();

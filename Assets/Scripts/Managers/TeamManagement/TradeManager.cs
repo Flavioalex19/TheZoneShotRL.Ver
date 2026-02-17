@@ -256,10 +256,12 @@ public class TradeManager : MonoBehaviour
             {
                 _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(i).GetComponent<TextMeshProUGUI>().text = "";
             }
+            _teamManagerUI.UpdateAssistancePortrait(_teamManagerUI.transform_trade_AssistanceResultPortrait, true);
         }
         else
         {
             _teamManagerUI.SetTradeResultText("Not enough Front Office points for this trade.");
+            _teamManagerUI.UpdateAssistancePortrait(_teamManagerUI.transform_trade_AssistanceResultPortrait, false);
         }
 
     }

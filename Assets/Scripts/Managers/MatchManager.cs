@@ -40,7 +40,7 @@ public class MatchManager : MonoBehaviour
     public Team AwayTeam;
     [SerializeField] public Team teamWithball;
     [SerializeField] public Player playerWithTheBall;
-    [SerializeField] Player playerDefending;
+    [SerializeField] public Player playerDefending;
     bool playerTeamWin = false;
 
     public float _timeOutTimer = 0;
@@ -749,7 +749,7 @@ public class MatchManager : MonoBehaviour
                 if (_ChooseScoring)
                 {
                     _ChooseScoring = false;
-                    _matchUI.ActionPanelAnim(2, "Shoot");
+                    _matchUI.ActionPanelAnim(5, "Shoot");
                     playerWithTheBall.HasTheBall = false;
                     if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                     //ChangePosOfPlayerWithTheBall();
@@ -1068,17 +1068,22 @@ public class MatchManager : MonoBehaviour
             DefendingTeam = AwayTeam;
 
         // Pick a random player (excluding index 0)
-        int randomIndex = Random.Range(1, 4); // avoid 0
+        int randomIndex = Random.Range(0, 4); // avoid 0
         Player newDefender = DefendingTeam.playersListRoster[randomIndex];
 
+        /*
         // Swap the random player with the one at index 0
         Player temp = DefendingTeam.playersListRoster[0];
         DefendingTeam.playersListRoster[0] = newDefender;
         DefendingTeam.playersListRoster[randomIndex] = temp;
-
+        */
         //newDefender.CurrentZone = 0;
         DefenderName = newDefender.playerFirstName + " " + DefendingTeam.TeamName;
         playerDefending = newDefender;
+        if(HomeTeam.IsPlayerTeam && HomeTeam.hasPossession)
+        {
+            _matchUI.UpdateDefenderInfo(playerDefending);
+        }
         //Debug.Log(newDefender.playerFirstName + " is now defending.");
     }
     //Beat the defender and change zones
