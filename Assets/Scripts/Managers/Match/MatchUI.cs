@@ -502,9 +502,11 @@ public class MatchUI : MonoBehaviour
         int roundNumber = Mathf.RoundToInt(chance);
         text_offensiveJukePercentage.text = roundNumber.ToString() + " %";
     }
-    public void SetSpPercentage(string perc)
+    public void SetSpPercentage(float value)
     {
-        text_offensiveSpPercentage.text = perc;
+        float chance = value;
+        int roundNumber = Mathf.RoundToInt(chance * 100);
+        text_offensiveSpPercentage.text = roundNumber.ToString() + " %";
     }
     //Events
     public void CallEventPanel(string content, Sprite icon)
@@ -521,7 +523,7 @@ public class MatchUI : MonoBehaviour
     //OffensivePanel
     public void OffesnivePanelOnOff(bool isOn)
     {
-        print("Here");
+        //print("Here");
         panel_OffensivePanel.SetActive(isOn);
         UpdateOffensiveStats();
     }

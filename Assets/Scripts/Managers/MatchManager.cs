@@ -517,6 +517,7 @@ public class MatchManager : MonoBehaviour
                     if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                     yield return Scoring(playerWithTheBall,true);
                     currentGamePossessons--;
+                    
                     yield break;
                 }
                 else if (_canCallTimeout == false)
@@ -659,6 +660,7 @@ public class MatchManager : MonoBehaviour
                             // juke fail  steal  switch
                             playerDefending.StealsMatch++;
                             currentGamePossessons--;
+                            print("Is InHere");
                             if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos() + " Loses the ball to " + playerDefending.playerLastName);
                             playerWithTheBall.HasTheBall = false;
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
@@ -738,7 +740,7 @@ public class MatchManager : MonoBehaviour
                 _matchUI.SetScoringPercentage(ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone,0));
                 _matchUI.SetPassPercentage(PassEquation());
                 _matchUI.SetJukePercentage(/*TryBeatDefenderAdvanceZone(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0)*/GetJukePercentage(playerWithTheBall,playerDefending,playerWithTheBall.CurrentZone));
-                _matchUI.SetSpPercentage(GetSpAttackPercentage().ToString() + "%");
+                _matchUI.SetSpPercentage(ActivateSpecialAttk(true));
                 //_matchUI.SetJukePercentage();
                 uiManager.PlaybyPlayText("Wait for Player Action");
                 //Timeout call
@@ -750,6 +752,7 @@ public class MatchManager : MonoBehaviour
                 {
                     _ChooseScoring = false;
                     _matchUI.ActionPanelAnim(5, "Shoot");
+                    yield return new WaitForSeconds(1f);
                     playerWithTheBall.HasTheBall = false;
                     if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                     //ChangePosOfPlayerWithTheBall();
@@ -766,6 +769,7 @@ public class MatchManager : MonoBehaviour
                 {
                     _ChoosePass = false;
                     _matchUI.ActionPanelAnim(0, "Passing");
+                    yield return new WaitForSeconds(1f);
                     if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                     if (/*TryPassBall()*/ MakePassToTeammate(passPlayerIndex))
                     {
@@ -799,9 +803,10 @@ public class MatchManager : MonoBehaviour
                     _sp_numberOfSPActions--;
                     _matchUI.SetSkillPints();
                     _matchUI.ActionPanelAnim(1, "Special");
+                    yield return new WaitForSeconds(1f);
                     playerWithTheBall.HasTheBall = false;
                     if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
-                    if (Random.Range(0f, 1f) < ActivateSpecialAttk())
+                    if (Random.Range(0f, 1f) < ActivateSpecialAttk(false))
                     {
                         int spPoints = 8;
                         //Add later the list of string for a success use o team abillity
@@ -847,6 +852,8 @@ public class MatchManager : MonoBehaviour
                 }
                 else if (_ChooseBeatDefender)
                 {
+                    _matchUI.ActionPanelAnim(7, "Juke");
+                    yield return new WaitForSeconds(1f);
                     if (TryBeatDefenderAdvanceZone(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone))
                     {
                         if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
@@ -1452,6 +1459,7 @@ public class MatchManager : MonoBehaviour
 
             // Consome posse (igual ao teu código)
             currentGamePossessons--;
+            
             RestoreStaminaFromBench(); // mantém se quiser
 
             // Overtime rule (playoffs)
@@ -1834,9 +1842,9 @@ public class MatchManager : MonoBehaviour
         // === 8. Clamp final (tensão) ===
         return Mathf.Clamp(finalChance, 0.15f, 0.95f);
     }
-    float ActivateSpecialAttk()
+    float ActivateSpecialAttk(bool isPercentage)
     {
-        
+        /*
         float specialAttkSuccess = 0f;
         float offenseScore = 0f;
         float defenseScore = 0f;
@@ -1916,11 +1924,93 @@ public class MatchManager : MonoBehaviour
 
         // Multiplicador final baseado na diferença bruta (mantido do original, ajustado levemente pra escala)
         specialAttkSuccess *= Mathf.Clamp01((offenseScore - defenseScore + 20f) / 120f);
-
+        */
+        // === 1. Cálculo de OVR na hora (média dos 12 attrs) ===
+        int offenseOVR = Mathf.RoundToInt(
+        (playerWithTheBall.Shooting + playerWithTheBall.Inside + playerWithTheBall.Mid + playerWithTheBall.Outside +
+        playerWithTheBall.Awareness + playerWithTheBall.Defending + playerWithTheBall.Guarding + playerWithTheBall.Stealing +
+        playerWithTheBall.Juking + playerWithTheBall.Consistency + playerWithTheBall.Control + playerWithTheBall.Positioning) / 12f);
+        int defenseOVR = Mathf.RoundToInt(
+        (playerDefending.Shooting + playerDefending.Inside + playerDefending.Mid + playerDefending.Outside +
+        playerDefending.Awareness + playerDefending.Defending + playerDefending.Guarding + playerDefending.Stealing +
+        playerDefending.Juking + playerDefending.Consistency + playerDefending.Control + playerDefending.Positioning) / 12f);
+        // === 2. Offense score por TeamStyle (INALTERADO + OVR bonus) ===
+        float offenseScore = 0f;
+        switch (teamWithball._teamStyle)
+        {
+            case TeamStyle.Normal:
+                offenseScore = (playerWithTheBall.Shooting + playerWithTheBall.Juking + playerWithTheBall.Control + playerWithTheBall.Positioning) / 4f;
+                break;
+            case TeamStyle.Brawler:
+                offenseScore = (playerWithTheBall.Guarding + playerWithTheBall.Defending) / 2f;
+                break;
+            case TeamStyle.HyperDribbler:
+                offenseScore = (playerWithTheBall.Control + playerWithTheBall.Juking) / 2f;
+                break;
+            case TeamStyle.PhaseDash:
+                offenseScore = (playerWithTheBall.Juking + playerWithTheBall.Awareness) / 2f;
+                break;
+            case TeamStyle.RailShot:
+                offenseScore = (playerWithTheBall.Shooting + playerWithTheBall.Positioning) / 2f;
+                break;
+            case TeamStyle.FutureSight:
+                offenseScore = (playerWithTheBall.Awareness + playerWithTheBall.Positioning) / 2f;
+                break;
+            case TeamStyle.PerfectPlay:
+                offenseScore = (playerWithTheBall.Positioning + playerWithTheBall.Control) / 2f;
+                break;
+            case TeamStyle.ShowTime:
+                offenseScore = (playerWithTheBall.Consistency + playerWithTheBall.Positioning) / 2f;
+                break;
+            case TeamStyle.CloneAttack:
+                offenseScore = (playerWithTheBall.Shooting + playerWithTheBall.Juking) / 2f;
+                break;
+            default:
+                return 0f; // Falha se style indefinido
+        }
+        offenseScore += offenseOVR / 5f; // OVR bonus indireto
+                                         // === 3. Defense score (INALTERADO + média extra + BONUS AI) ===
+        float defenseScore = (playerDefending.Defending + playerDefending.Guarding + playerDefending.Stealing + playerDefending.Awareness) / 4f;
+        float defenseMedianBonus = defenseScore * 0.3f; // +30% média defensiva
+        defenseScore += defenseMedianBonus + defenseOVR / 5f; // OVR bonus defesa
+                                                              // AI defende melhor
+        Team defendingTeam = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
+        if (!defendingTeam.IsPlayerTeam)
+            defenseScore *= 1.25f; // +25% defesa AI
+                                   // === 4. FanSupport + riskPenalty (INALTERADO) ===
+        float fanSupportNormalized = Mathf.Clamp(teamWithball.FansSupportPoints / 100f, 0f, 1f);
+        float riskPenalty = 0.25f - (0.3f * fanSupportNormalized);
+        // === 5. Normalize + Sigmoid (INALTERADO) ===
+        float offenseNormalized = Mathf.Clamp(offenseScore / 99f, 0f, 1f);
+        float defenseNormalized = Mathf.Clamp(defenseScore / 99f, 0f, 1f);
+        float scoreDifference = offenseNormalized - defenseNormalized;
+        float specialAttkSuccess = 1f / (1f + Mathf.Exp(-6f * scoreDifference));
+        // Penalty + multiplicador final (INALTERADO)
+        specialAttkSuccess = Mathf.Clamp(specialAttkSuccess - riskPenalty, 0.05f, 0.95f);
+        specialAttkSuccess *= Mathf.Clamp01((offenseScore - defenseScore + 40f) / 120f);
+        // === 6. Bias principal: playerTeam mais difícil, AI mais fácil ===
+        float finalChance = specialAttkSuccess;
+        if (teamWithball.IsPlayerTeam)
+        {
+            finalChance *= 0.90f; // -15% base
+                                  // Buff_SP compensa (porcentagem)
+            if (buff_SP > 0)
+                finalChance *= 1f + (buff_SP / 100f);
+            // ESPAÇO PRA MAIS BUFFS
+            // ex: if (buff_Stamina > 0) finalChance *= 1f + (buff_Stamina / 100f);
+        }
+        else
+        {
+            finalChance *= 1.05f; // +5% base
+            if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
+                finalChance *= 1.10f; // +10% extra AI playoffs
+        }
         // Clamp final pra manter tensão (nunca 0% ou 100%)
-        specialAttkSuccess = Mathf.Clamp(specialAttkSuccess, 0.1f, 0.85f);
+        specialAttkSuccess = Mathf.Clamp(specialAttkSuccess, 0.2f, 0.85f);
 
-        currentGamePossessons--;
+        if(!isPercentage) currentGamePossessons--;
+
+        print(specialAttkSuccess + "Is the SP%");
         return specialAttkSuccess;
     }
     //Chance succsefull defense choice
