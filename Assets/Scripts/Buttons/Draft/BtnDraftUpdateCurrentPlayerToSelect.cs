@@ -15,12 +15,15 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
     public string playerName;
     public string playerSalary;
     public int PlayerOvr;
-    public int archtypeIndex; 
+    public int archtypeIndex;
+    public int personalityIndex;
+    public Sprite personalitySprite;
 
     Sprite sprite;
     Sprite spriteArchtype;
     Image playerPortrait;
     Image playerArchtypeImage;
+    Image playerPersonalityImage;
     TextMeshProUGUI text_playerName;
     TextMeshProUGUI text_PlayerAge;
     TextMeshProUGUI text_PlayerSalary;
@@ -37,6 +40,7 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
             text_PlayerAge = GameObject.Find("Text_PlayerAge").GetComponent<TextMeshProUGUI>();
             text_PlayerSalary = GameObject.Find("TextSalary").GetComponent<TextMeshProUGUI>();
             playerArchtypeImage = GameObject.Find("ArchtypeImage").GetComponent<Image>();
+            playerPersonalityImage = GameObject.Find("PersonalityImage").GetComponentInParent<Image>();
         }
         
 
@@ -78,6 +82,7 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
             //text_playerName.text = playerName;
             text_PlayerSalary.text = playerSalary;
             playerArchtypeImage.sprite = spriteArchtype;
+            playerPersonalityImage.sprite = personalitySprite;
         }
             
     }

@@ -486,6 +486,7 @@ public class MatchManager : MonoBehaviour
     }
     IEnumerator HandlePossession()
     {
+        currentGamePossessons--;
         if(/*teamWithball == AwayTeam*/ teamWithball.IsPlayerTeam == false)
         {
             if (!isSimulation) _matchUI.OffesnivePanelOnOff(false);
@@ -659,7 +660,7 @@ public class MatchManager : MonoBehaviour
                         {
                             // juke fail  steal  switch
                             playerDefending.StealsMatch++;
-                            currentGamePossessons--;
+                            //currentGamePossessons--;
                             print("Is InHere");
                             if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos() + " Loses the ball to " + playerDefending.playerLastName);
                             playerWithTheBall.HasTheBall = false;
@@ -709,6 +710,7 @@ public class MatchManager : MonoBehaviour
                     if (!isSimulation) _matchUI.UpdateCardsHand();
                 }
             }   
+            _matchUI.text_remainingCards.text = cardsFolder.childCount.ToString();
             while (true)
             {
                 if (!isSimulation) _matchUI.percentagePanel.SetActive(true);
@@ -741,6 +743,8 @@ public class MatchManager : MonoBehaviour
                 _matchUI.SetPassPercentage(PassEquation());
                 _matchUI.SetJukePercentage(/*TryBeatDefenderAdvanceZone(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0)*/GetJukePercentage(playerWithTheBall,playerDefending,playerWithTheBall.CurrentZone));
                 _matchUI.SetSpPercentage(ActivateSpecialAttk(true));
+                _matchUI.text_midChance.text = "Mid: " + Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 1, 0) *100).ToString();
+                _matchUI.text_insChance.text = "Inside: " + Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 2, 0) * 100).ToString();
                 //_matchUI.SetJukePercentage();
                 uiManager.PlaybyPlayText("Wait for Player Action");
                 //Timeout call
@@ -1063,6 +1067,7 @@ public class MatchManager : MonoBehaviour
         ChoosePlayerToCarryBall();
         SelectDefender();
         if (!isSimulation) if (HomeTeam.IsPlayerTeam)_matchUI.ChangePos(HomeTeam);
+        //currentGamePossessons--;
         
     }
     void SelectDefender()
@@ -2008,7 +2013,7 @@ public class MatchManager : MonoBehaviour
         // Clamp final pra manter tensão (nunca 0% ou 100%)
         specialAttkSuccess = Mathf.Clamp(specialAttkSuccess, 0.2f, 0.85f);
 
-        if(!isPercentage) currentGamePossessons--;
+        //if(!isPercentage) currentGamePossessons--;
 
         print(specialAttkSuccess + "Is the SP%");
         return specialAttkSuccess;
@@ -2827,7 +2832,8 @@ public class MatchManager : MonoBehaviour
                 playerWithTheBall.PointsMatch += 6;
                 teamWithBall.Score += 6;
             }
-            currentGamePossessons--;
+            //Soemnte perder posse se arremeçar
+            //currentGamePossessons--;
             uiManager.PlaybyPlayText(
                 playerWithTheBall.playerLastName + " scored! Total: " + playerWithTheBall.PointsMatch
             );

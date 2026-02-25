@@ -421,7 +421,8 @@ public class GameManager : MonoBehaviour
         newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().playerSalary = player.Salary.ToString();
         newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().PlayerOvr = player.ovr;
         newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().archtypeIndex = player.ImageCharacterPortrait;
-        print("ArchtypeImageIndex " + player.ImageCharacterPortrait);
+        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().personalityIndex = player.Personality;
+        //print("ArchtypeImageIndex " + player.ImageCharacterPortrait);
 
         Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
         switch (player.Personality)
@@ -450,6 +451,7 @@ public class GameManager : MonoBehaviour
         Image myImageComponent = newButton.GetComponent<Button>().transform.GetChild(3).GetComponent<Image>();
         myImageComponent.sprite = sprite;
 
+        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().personalitySprite = myImageComponent.sprite;
         //Sprite spriteArchtype = null;
 
 

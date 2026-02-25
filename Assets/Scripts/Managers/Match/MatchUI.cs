@@ -111,8 +111,9 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Image image_playerPersonality;
     [SerializeField] TextMeshProUGUI text_DefenderFirstName;
     [SerializeField] TextMeshProUGUI text_DefenderLastName;
-    [SerializeField] TextMeshProUGUI text_midChance;
-    [SerializeField] TextMeshProUGUI text_insChance;
+    [SerializeField] public TextMeshProUGUI text_midChance;
+    [SerializeField] public TextMeshProUGUI text_insChance;
+    [SerializeField] public TextMeshProUGUI text_remainingCards;
     //debub
     public string playernameWithBall;
 
@@ -486,27 +487,27 @@ public class MatchUI : MonoBehaviour
     {
         float chance = value;
         int roundNumber = Mathf.RoundToInt(chance * 100f);
-        text_shootPercentage.text = roundNumber.ToString() + " %";
-        text_offensiveScorePercentage.text = roundNumber.ToString() + " %";
+        text_shootPercentage.text = roundNumber.ToString() + "%";
+        text_offensiveScorePercentage.text = roundNumber.ToString() + "%";
     }
     public void SetPassPercentage(float value)
     {
         float chance = value;
         int roundNumber = Mathf.RoundToInt(chance * 100f);
-        text_passPercentage.text = roundNumber.ToString() + " %";
-        text_offensivePassPercentage.text = roundNumber.ToString() + " %"; 
+        text_passPercentage.text = roundNumber.ToString() + "%";
+        text_offensivePassPercentage.text = roundNumber.ToString() + "%"; 
     }
     public void SetJukePercentage(float value)
     {
         float chance = value;
         int roundNumber = Mathf.RoundToInt(chance);
-        text_offensiveJukePercentage.text = roundNumber.ToString() + " %";
+        text_offensiveJukePercentage.text = roundNumber.ToString() + "%";
     }
     public void SetSpPercentage(float value)
     {
         float chance = value;
         int roundNumber = Mathf.RoundToInt(chance * 100);
-        text_offensiveSpPercentage.text = roundNumber.ToString() + " %";
+        text_offensiveSpPercentage.text = roundNumber.ToString() + "%";
     }
     //Events
     public void CallEventPanel(string content, Sprite icon)

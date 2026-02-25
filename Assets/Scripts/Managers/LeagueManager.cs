@@ -155,6 +155,9 @@ public class LeagueManager : MonoBehaviour
                 print("not ativate");
             }
         }
+        TeamManagerUI teamManagerUI = GameObject.Find("TeamManagerUI").GetComponent<TeamManagerUI>();
+        //teamManagerUI.EventTypePanel();
+        StartCoroutine(teamManagerUI.EventTypePanel());
         canGenerateEvents = false;
         
     }

@@ -18,6 +18,8 @@ public class TeamManagerUI : MonoBehaviour
     [Header("Events Panel")]
     [SerializeField] GameObject _panelEventsTypes;
     [SerializeField] GameObject _panelEventsChoices;
+    [SerializeField] Animator _animatorEventsType;
+    Transform _transformEventTypeBtns;
 
     [Header("Facility Elelements")]
     [SerializeField] TextMeshProUGUI text_assistanceFacilityDescription;
@@ -404,7 +406,8 @@ public class TeamManagerUI : MonoBehaviour
             btn_returnToMainScreen.onClick.AddListener(() => gameManager.ReturnToTitleScreen());
             
         }
-        
+        //PanelAnimations
+
         //StartCoroutine(NewsLoop(10f));
     }
 
@@ -1317,6 +1320,17 @@ public class TeamManagerUI : MonoBehaviour
         }
 
         return mvpPlayer;
+    }
+    //EventPanelAnim
+    public Transform GetEventBtns()
+    {
+        return _transformEventTypeBtns;
+    }
+    public IEnumerator EventTypePanel()
+    {
+        print("CALL ANIM");
+        yield return new WaitForSeconds(2f);
+        _animatorEventsType.SetBool("isOn",true);
     }
     //ProceedtoPlaypffs
     void AdvanceToPlayoffs()
