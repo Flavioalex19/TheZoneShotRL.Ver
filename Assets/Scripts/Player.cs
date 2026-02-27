@@ -138,14 +138,14 @@ public class Player : MonoBehaviour
     private void GeneratePlayerByTier(int minLow, int maxLow, int minHigh, int maxHigh)
     {
         // Primeiro: Portrait e Personality
-        ImageCharacterPortrait = Random.Range(0, 36); // 0 a 35
+        ImageCharacterPortrait = Random.Range(0, 80); // 0 a 35
         Personality = Random.Range(1, 6); // 1 a 5
 
         // Define atributos específicos baseado no portrait
-        bool isShootingSpec = ImageCharacterPortrait <= 11;
-        bool isJukingSpec = ImageCharacterPortrait >= 12 && ImageCharacterPortrait <= 20;
-        bool isControlSpec = ImageCharacterPortrait >= 21 && ImageCharacterPortrait <= 32;
-        bool isDefendingSpec = ImageCharacterPortrait >= 33 && ImageCharacterPortrait <= 35;
+        bool isShootingSpec = ImageCharacterPortrait <= 20;
+        bool isJukingSpec = ImageCharacterPortrait >= 21 && ImageCharacterPortrait <= 40;
+        bool isControlSpec = ImageCharacterPortrait >= 41 && ImageCharacterPortrait <= 60;
+        bool isDefendingSpec = ImageCharacterPortrait >= 61 && ImageCharacterPortrait <= 80;
 
         // Gera atributos
         Shooting = isShootingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);

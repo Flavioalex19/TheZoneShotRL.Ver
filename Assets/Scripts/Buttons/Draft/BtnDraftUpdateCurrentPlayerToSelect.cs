@@ -52,21 +52,21 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
         Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
         //spriteArchtype = sprites1[index];
         
-        if(index >=0 || index < 11)
+        if(index >=0 || index < 20)
         {
             spriteArchtype = sprites1[0];
         }
-        if(index >= 12 && index <= 20)
+        if(index >= 21 && index <= 40)
         {
             print("Imge number 1");
             spriteArchtype = sprites1[1];
         }
-        if (index >= 21 && index <= 32)
+        if (index >= 41 && index <= 60)
         {
             print("Imge number 1");
             spriteArchtype = sprites1[2];
         }
-        if (index >= 33 && index <= 35)
+        if (index >= 61 && index <= 80)
         {
             spriteArchtype = sprites1[3];
         }

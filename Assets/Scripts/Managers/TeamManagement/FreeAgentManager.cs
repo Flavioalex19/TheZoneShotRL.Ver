@@ -61,7 +61,7 @@ public class FreeAgentManager : MonoBehaviour
                 break;
 
             case 5:
-                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_04");
+                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_05");
                 break;
 
             default:
