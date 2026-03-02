@@ -124,7 +124,10 @@ public class MatchManager : MonoBehaviour
     {
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
         HomeTeam = manager.playerTeam;
-        _sp_numberOfSPActions = manager.playerTeam.FansSupportPoints / 20;
+        _sp_numberOfSPActions = manager.playerTeam.ArenaLvl;
+        if (manager.playerTeam.ArenaLvl == 0) _sp_numberOfSPActions = 1;
+        if (manager.playerTeam.ArenaLvl > 5) _sp_numberOfSPActions = 5;
+        //_sp_numberOfSPActions = manager.playerTeam.FansSupportPoints / 20;
         //print(_sp_numberOfSPActions + " Here");
     }
     // Start is called before the first frame update
@@ -642,6 +645,7 @@ public class MatchManager : MonoBehaviour
                             // pass fail  steal + switch
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                             playerWithTheBall.HasTheBall = false;
+                            if (!isSimulation) _matchUI.ResultActionPanel("S",3);
                             SwitchPossession();
                             if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
@@ -661,11 +665,12 @@ public class MatchManager : MonoBehaviour
                             // juke fail  steal  switch
                             playerDefending.StealsMatch++;
                             //currentGamePossessons--;
-                            print("Is InHere");
+                            //print("Is InHere");
                             if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos() + " Loses the ball to " + playerDefending.playerLastName);
                             playerWithTheBall.HasTheBall = false;
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                             ResetDefensiveOptions();
+                            if (!isSimulation) _matchUI.ResultActionPanel("S", 3);
                             SwitchPossession();
                             yield break; 
                         }
@@ -743,8 +748,8 @@ public class MatchManager : MonoBehaviour
                 _matchUI.SetPassPercentage(PassEquation());
                 _matchUI.SetJukePercentage(/*TryBeatDefenderAdvanceZone(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0)*/GetJukePercentage(playerWithTheBall,playerDefending,playerWithTheBall.CurrentZone));
                 _matchUI.SetSpPercentage(ActivateSpecialAttk(true));
-                _matchUI.text_midChance.text = "Mid: " + Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 1, 0) *100).ToString();
-                _matchUI.text_insChance.text = "Inside: " + Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 2, 0) * 100).ToString();
+                _matchUI.text_midChance.text = "Mid: " + Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 1, 0) *100).ToString() + "%";
+                _matchUI.text_insChance.text = "Inside: " + Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 2, 0) * 100).ToString() + "%";
                 //_matchUI.SetJukePercentage();
                 uiManager.PlaybyPlayText("Wait for Player Action");
                 //Timeout call
@@ -781,7 +786,7 @@ public class MatchManager : MonoBehaviour
                         //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         SelectDefender();
-                        _matchUI.ResultActionPanel("S",1);
+                        if (!isSimulation) _matchUI.ResultActionPanel("S",1);
                         if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         ResetChoices();
                         continue;
@@ -1016,11 +1021,20 @@ public class MatchManager : MonoBehaviour
                 teamWithball.Score += 6;
             }
             if (!isSimulation) uiManager.PlaybyPlayText(player.playerLastName + " Has Scored " + " " + player.PointsMatch);
-            
+            if (!isSimulation)
+            {
+                if (teamWithball!= manager.playerTeam) _matchUI.ResultActionPanel("F", 3);
+            }
+
+
         }
         else
         {
             if (!isSimulation) uiManager.PlaybyPlayText(player.playerLastName + " Missed");
+            if (!isSimulation)
+            {
+                if (teamWithball != manager.playerTeam) _matchUI.ResultActionPanel("S", 3);
+            }
         }
         //currentGamePossessons--;
         playerWithTheBall.HasTheBall = false;
@@ -2803,8 +2817,15 @@ public class MatchManager : MonoBehaviour
     {
         int zone = playerWithTheBall.CurrentZone;
 
+        if(zone == 0)
         uiManager.PlaybyPlayText(
-            playerWithTheBall.playerLastName + " takes a shot from zone " + zone
+            playerWithTheBall.playerLastName + " takes a shot from Outside "
+        );
+        if(zone == 1) uiManager.PlaybyPlayText(
+            playerWithTheBall.playerLastName + " takes a shot from Mid range "
+        );
+        if(zone == 2) uiManager.PlaybyPlayText(
+            playerWithTheBall.playerLastName + " takes a shot from Inside "
         );
 
         yield return new WaitForSeconds(_actionTimer);

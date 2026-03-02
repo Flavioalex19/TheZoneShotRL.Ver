@@ -60,6 +60,8 @@ public class MatchUI : MonoBehaviour
     [SerializeField] List<string> list_failJuke = new List<string>();
     [SerializeField] List<string> list_successPass = new List<string>();
     [SerializeField] List<string> list_failPass = new List<string>();
+    [SerializeField] List<string> list_Opp_FailedAttempt = new List<string>();
+    [SerializeField] List<string> list_Opp_SucAttempt = new List<string>();
     public string gameAction = " ";
     public string ResultplayerAction = " ";
 
@@ -114,6 +116,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] public TextMeshProUGUI text_midChance;
     [SerializeField] public TextMeshProUGUI text_insChance;
     [SerializeField] public TextMeshProUGUI text_remainingCards;
+    [SerializeField] Animator anim_Sp_Button_Activate;
     //debub
     public string playernameWithBall;
 
@@ -562,6 +565,10 @@ public class MatchUI : MonoBehaviour
                 text_actionResultS.text = list_successJuke[Random.Range(0, list_successJuke.Count)];
                 text_actionResultF.text = list_failJuke[Random.Range(0, list_failJuke.Count)];
                 break;
+            case 3:
+                text_actionResultS.text = list_Opp_FailedAttempt[Random.Range(0, list_Opp_FailedAttempt.Count)];
+                text_actionResultF.text = list_Opp_SucAttempt[Random.Range(0, list_Opp_SucAttempt.Count)];
+                break;
         }
     }
     public void ActivateVictoryDefeat(string endText)
@@ -734,5 +741,9 @@ public class MatchUI : MonoBehaviour
         }
         //_sprite = sprite;
         image_playerPersonality.sprite = sprite;
+    }
+    public void UseSpBtn()
+    {
+        anim_Sp_Button_Activate.SetTrigger("Go");
     }
 }
