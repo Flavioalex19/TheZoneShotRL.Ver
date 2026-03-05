@@ -428,7 +428,7 @@ public class SaveSystem : MonoBehaviour
             team.TeamEquipmentLvl = 0;
             team.ArenaLvl = 0;
             team.MedicalLvl = 0;
-            team.SalaryCap = team.SalaryCapReset;
+            team.SalaryCap = team.fixSalaryCap;
             
             File.Delete(filePath);
             Debug.Log($"Save file for team {teamName} has been deleted.");

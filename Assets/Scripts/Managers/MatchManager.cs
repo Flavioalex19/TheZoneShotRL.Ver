@@ -112,8 +112,10 @@ public class MatchManager : MonoBehaviour
     public int momentum = 0;
     public bool canUseCards = true;
     [SerializeField] GameObject cardsPanel;
-    //UI Elemens test
 
+    //Adranline
+    int adrenaline_addUp;
+    //UI Elemens test
     [Header("Debugs")]
     [SerializeField] TextMeshProUGUI _debugTimeoutText;
     [SerializeField] string DefenderName;
@@ -194,6 +196,11 @@ public class MatchManager : MonoBehaviour
         _canCallTimeout = true;
         HasActionOnTimeout = true;
 
+        //AdrenalineBar
+        HomeTeam.AdrenalineBar = 0;
+        AwayTeam.AdrenalineBar = 0;
+
+
         //JUST FOR TESTINg
         for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
         {
@@ -268,6 +275,8 @@ public class MatchManager : MonoBehaviour
         AwayTeam.HasPlayed = true;
         HomeTeam.hasHDefense = false;
         momentum = 0;
+
+        
         //Stamina set fro the game
         for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
         {
@@ -492,6 +501,8 @@ public class MatchManager : MonoBehaviour
         currentGamePossessons--;
         if(/*teamWithball == AwayTeam*/ teamWithball.IsPlayerTeam == false)
         {
+            adrenaline_addUp = 20;
+
             if (!isSimulation) _matchUI.OffesnivePanelOnOff(false);
             CanChooseAction = false;
             
@@ -637,6 +648,7 @@ public class MatchManager : MonoBehaviour
                             if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                             SelectDefender();
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                            if (teamWithball.AdrenalineBar < teamWithball.AdrenalineBarFull) teamWithball.AdrenalineBar += adrenaline_addUp;
                             ResetDefensiveOptions();
                             continue; // continua loop pra próxima ação
                         }
@@ -658,6 +670,7 @@ public class MatchManager : MonoBehaviour
                         if (TryBeatDefenderAdvanceZone(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone))
                         {
                             // juke success  continua posse (loop)
+                            if (teamWithball.AdrenalineBar < teamWithball.AdrenalineBarFull) teamWithball.AdrenalineBar += adrenaline_addUp;
                             continue;
                         }
                         else
@@ -700,7 +713,8 @@ public class MatchManager : MonoBehaviour
             //_matchUI.OffesnivePanelOnOff(true);
             CanChooseDefenseAction = false;
 
-            
+            if (!isSimulation) adrenaline_addUp = 15;//botar a faclity multipler
+            else adrenaline_addUp = 25;
             
             ResetPostions();
             _matchUI.PlayerWithBallButtonsOnOff();
@@ -788,6 +802,9 @@ public class MatchManager : MonoBehaviour
                         SelectDefender();
                         if (!isSimulation) _matchUI.ResultActionPanel("S",1);
                         if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if(HomeTeam.AdrenalineBar<HomeTeam.AdrenalineBarFull)HomeTeam.AdrenalineBar += adrenaline_addUp;
+                        //staminaLoss
+
                         ResetChoices();
                         continue;
                     }
@@ -869,6 +886,7 @@ public class MatchManager : MonoBehaviour
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + "Pass the defender");
                         SelectDefender();
                         _matchUI.ResultActionPanel("S",2);
+                        if (HomeTeam.AdrenalineBar < HomeTeam.AdrenalineBarFull) HomeTeam.AdrenalineBar += adrenaline_addUp;
                         if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         ResetChoices();
                         continue;
@@ -1025,7 +1043,7 @@ public class MatchManager : MonoBehaviour
             {
                 if (teamWithball!= manager.playerTeam) _matchUI.ResultActionPanel("F", 3);
             }
-
+            if (teamWithball.AdrenalineBar < teamWithball.AdrenalineBarFull) teamWithball.AdrenalineBar += adrenaline_addUp;
 
         }
         else
@@ -1864,86 +1882,6 @@ public class MatchManager : MonoBehaviour
     float ActivateSpecialAttk(bool isPercentage)
     {
         /*
-        float specialAttkSuccess = 0f;
-        float offenseScore = 0f;
-        float defenseScore = 0f;
-        float offenseNormalized;
-        float defenseNormalized;
-
-        // Normalize fanSupport (0 to 100) to a 0–1 range
-        float fanSupportNormalized = Mathf.Clamp(teamWithball.FansSupportPoints / 100f, 0f, 1f);
-
-        // Dynamic risk penalty: ranges from 0.4 (fanSupport=0) to 0.1 (fanSupport=100)
-        float riskPenalty = 0.4f - (0.3f * fanSupportNormalized);
-
-        // === OFENSIVE SCORE: média dos 2 atributos principais do TeamStyle ===
-        // === DEFENSIVE SCORE: usa atributos defensivos genéricos (Defending, Guarding, Stealing, Awareness) 
-        //     – média de 4 pra ser consistente em todos os styles (defesa não varia por style no teu pedido) ===
-        defenseScore = (playerDefending.Defending
-                      + playerDefending.Guarding
-                      + playerDefending.Stealing
-                      + playerDefending.Awareness) / 4f;
-
-        switch (teamWithball._teamStyle)
-        {
-            case TeamStyle.Normal:
-                // Normal: sem bônus especial – usa atributos equilibrados (média geral de ataque)
-                offenseScore = (playerWithTheBall.Shooting
-                              + playerWithTheBall.Juking
-                              + playerWithTheBall.Control
-                              + playerWithTheBall.Positioning) / 4f;
-                break;
-
-            case TeamStyle.Brawler:
-                offenseScore = (playerWithTheBall.Guarding + playerWithTheBall.Defending) / 2f;
-                break;
-
-            case TeamStyle.HyperDribbler:
-                offenseScore = (playerWithTheBall.Control + playerWithTheBall.Juking) / 2f;
-                break;
-
-            case TeamStyle.PhaseDash:
-                offenseScore = (playerWithTheBall.Juking + playerWithTheBall.Awareness) / 2f;
-                break;
-
-            case TeamStyle.RailShot:
-                offenseScore = (playerWithTheBall.Shooting + playerWithTheBall.Positioning) / 2f;
-                break;
-
-            case TeamStyle.FutureSight:
-                offenseScore = (playerWithTheBall.Awareness + playerWithTheBall.Positioning) / 2f;
-                break;
-
-            case TeamStyle.PerfectPlay:
-                offenseScore = (playerWithTheBall.Positioning + playerWithTheBall.Control) / 2f;
-                break;
-
-            case TeamStyle.ShowTime:
-                offenseScore = (playerWithTheBall.Consistency + playerWithTheBall.Positioning) / 2f;
-                break;
-
-            case TeamStyle.CloneAttack:
-                offenseScore = (playerWithTheBall.Shooting + playerWithTheBall.Juking) / 2f;
-                break;
-
-            default:
-                return 0f; // Falha total se style indefinido ou não suportado
-        }
-
-        // Normalize scores (atributos vão até 99, média máxima ~99)
-        offenseNormalized = Mathf.Clamp(offenseScore / 99f, 0f, 1f);
-        defenseNormalized = Mathf.Clamp(defenseScore / 99f, 0f, 1f);
-
-        // Sigmoid-based formula for volatility
-        float scoreDifference = offenseNormalized - defenseNormalized;
-        specialAttkSuccess = 1f / (1f + Mathf.Exp(-6f * scoreDifference));
-
-        // Aplica penalty de risco (fan support ajuda a reduzir)
-        specialAttkSuccess = Mathf.Clamp(specialAttkSuccess - riskPenalty, 0.05f, 0.95f);
-
-        // Multiplicador final baseado na diferença bruta (mantido do original, ajustado levemente pra escala)
-        specialAttkSuccess *= Mathf.Clamp01((offenseScore - defenseScore + 20f) / 120f);
-        */
         // === 1. Cálculo de OVR na hora (média dos 12 attrs) ===
         int offenseOVR = Mathf.RoundToInt(
         (playerWithTheBall.Shooting + playerWithTheBall.Inside + playerWithTheBall.Mid + playerWithTheBall.Outside +
@@ -2031,6 +1969,90 @@ public class MatchManager : MonoBehaviour
 
         print(specialAttkSuccess + "Is the SP%");
         return specialAttkSuccess;
+        */
+        // === 1. Requisito da barra ===
+        float fillPercent = (teamWithball.AdrenalineBar / teamWithball.AdrenalineBarFull) * 100f;
+
+        if (fillPercent < 50f)
+            return 0f; // Não pode usar (chance 0%)
+
+        // === 2. Cálculo de OVR na hora (média dos 12 attrs) ===
+        int offenseOVR = Mathf.RoundToInt(
+            (playerWithTheBall.Shooting + playerWithTheBall.Inside + playerWithTheBall.Mid + playerWithTheBall.Outside +
+             playerWithTheBall.Awareness + playerWithTheBall.Defending + playerWithTheBall.Guarding + playerWithTheBall.Stealing +
+             playerWithTheBall.Juking + playerWithTheBall.Consistency + playerWithTheBall.Control + playerWithTheBall.Positioning) / 12f);
+
+        int defenseOVR = Mathf.RoundToInt(
+            (playerDefending.Shooting + playerDefending.Inside + playerDefending.Mid + playerDefending.Outside +
+             playerDefending.Awareness + playerDefending.Defending + playerDefending.Guarding + playerDefending.Stealing +
+             playerDefending.Juking + playerDefending.Consistency + playerDefending.Control + playerDefending.Positioning) / 12f);
+
+        // === 3. Offense score (attrs genéricos + OVR bonus) ===
+        float offenseAvg = (playerWithTheBall.Shooting + playerWithTheBall.Juking + playerWithTheBall.Control +
+                            offenseOVR / 5f) / 4f;
+
+        float offenseScore = offenseAvg + UnityEngine.Random.Range(-10f, 20f);
+
+        // === 4. Defense score (attrs defensivos + média extra + BONUS AI) ===
+        float defenseAvg = (playerDefending.Defending + playerDefending.Guarding + playerDefending.Stealing +
+                            defenseOVR / 5f) / 4f;
+
+        float defenseMedianBonus = defenseAvg * 0.3f; // +30% média defensiva
+
+        float defenseScore = defenseAvg + defenseMedianBonus;
+
+        // AI defende melhor
+        Team defendingTeam = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
+        if (!defendingTeam.IsPlayerTeam)
+            defenseScore *= 1.25f; // +25% defesa AI
+
+        // === 5. Chance base (offense vs defense) ===
+        float rawChance = offenseScore / (offenseScore + defenseScore + 50f);
+
+        // === 6. Chance final baseado na barra preenchida ===
+        float specialAttkSuccess = 0f;
+
+        if (fillPercent >= 100f)
+            specialAttkSuccess = 1f; // 100% acerto garantido
+        else if (fillPercent >= 75f)
+            specialAttkSuccess = 0.70f + (fillPercent - 75f) / 25f * 0.30f; // 70-100% linear
+        else // 50-75%
+            specialAttkSuccess = 0.50f + (fillPercent - 50f) / 25f * 0.10f; // 50-60% linear
+
+        // === 7. Bias principal: playerTeam mais difícil, AI mais fácil ===
+        float finalChance = specialAttkSuccess * rawChance; // integra com chance base
+
+        if (teamWithball.IsPlayerTeam)
+        {
+            finalChance *= 0.85f; // -15% base pro player
+
+            // Buff_SP compensa (porcentagem)
+            if (buff_SP > 0)
+                finalChance *= 1f + (buff_SP / 100f);
+
+            // ESPAÇO PRA MAIS BUFFS
+            // ex: if (buff_Stamina > 0) finalChance *= 1f + (buff_Stamina / 100f);
+        }
+        else
+        {
+            finalChance *= 1.05f; // +5% base AI
+
+            if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
+                finalChance *= 1.10f; // +10% extra AI playoffs
+        }
+
+        // === 8. Clamp final (tensão, mas respeita a lógica da barra) ===
+        finalChance = Mathf.Clamp(finalChance, 0f, 1f);
+
+        // === 9. Uso da barra (se não for só pra %/preview) ===
+        if (!isPercentage)
+        {
+            teamWithball.AdrenalineBar = 0; // Zera a barra ao usar
+            currentGamePossessons--;
+        }
+
+        print(finalChance + " Is the SP%");
+        return finalChance;
     }
     //Chance succsefull defense choice
     //Percentages
@@ -2859,6 +2881,7 @@ public class MatchManager : MonoBehaviour
                 playerWithTheBall.playerLastName + " scored! Total: " + playerWithTheBall.PointsMatch
             );
             _matchUI.ResultActionPanel("S",0);
+            if (HomeTeam.AdrenalineBar < HomeTeam.AdrenalineBarFull) HomeTeam.AdrenalineBar += adrenaline_addUp;
         }
         else
         {

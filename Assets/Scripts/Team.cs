@@ -49,6 +49,7 @@ public class Team : MonoBehaviour
     public int fixFrontOffice;
     public int fixFansSupport;
     public int fixEffort;
+    public int fixSalaryCap= 100;
     //Atrributes
     [SerializeField]public string Description;
     public string CoachName;
@@ -62,6 +63,8 @@ public class Team : MonoBehaviour
     public bool hasHDefense = false;
     public int Dbuff = 0;
     public int OBuff = 0;
+    public int AdrenalineBar;
+    public int AdrenalineBarFull = 100;
 
     #endregion
     //Placement+Playoffs

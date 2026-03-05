@@ -117,6 +117,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] public TextMeshProUGUI text_insChance;
     [SerializeField] public TextMeshProUGUI text_remainingCards;
     [SerializeField] Animator anim_Sp_Button_Activate;
+    [SerializeField] Image image_adrenalineBar;
     //debub
     public string playernameWithBall;
 
@@ -361,8 +362,8 @@ public class MatchUI : MonoBehaviour
 
 
         }
-        
-        
+        image_adrenalineBar.fillAmount = (float)gameManager.playerTeam.AdrenalineBar / (float)gameManager.playerTeam.AdrenalineBarFull;
+
 
         //UpdateOffensiveStats();
     }
