@@ -180,28 +180,7 @@ public class TradeManager : MonoBehaviour
     }
     public void Trade()
     {
-        /*
-        if (_gameManager.playerTeam.FrontOfficePoints >= tradeCost && _leagueManager.canTrade == true)
-        {
-            // allow trade
-            SwapPlayersBetweenTeams(_gameManager.playerTeam.playersListRoster, _playerToTradeIndex, TradeTeam.playersListRoster, _playerToReceive);
-            int _currentTeamIndex = _gameManager.leagueTeams.IndexOf(_gameManager.playerTeam);
-            _teamManagerUI.TeamRoster();
-            _teamManagerUI.SetTheTradingBtns();
-            _leagueManager.canTrade = false;
-            _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "";
-            _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
-            _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "";
-
-            _teamManagerUI.SetTradeResultText("Good job Boss! A new player arrived");
-            _gameManager.playerTeam.FrontOfficePoints-=tradeCost;
-        }
-        else
-        {
-            // vtol trade
-            _teamManagerUI.SetTradeResultText("No enough points boss! E cannot trade for this player");
-        }
-        */
+        
         // Proteção extra: se não encontrou jogador válido
         if (_playerToReceive == -1)
         {

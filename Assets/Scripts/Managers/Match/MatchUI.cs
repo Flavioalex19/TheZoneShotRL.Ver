@@ -118,7 +118,9 @@ public class MatchUI : MonoBehaviour
     [SerializeField] public TextMeshProUGUI text_remainingCards;
     [SerializeField] Animator anim_Sp_Button_Activate;
     [SerializeField] Image image_adrenalineBar;
+    [SerializeField] Image image_offensivePanel_awayTeamHpBAR;
     //debub
+    [SerializeField] TextMeshProUGUI debugText_awayHp;
     public string playernameWithBall;
 
     [Header("Post game")]
@@ -363,7 +365,13 @@ public class MatchUI : MonoBehaviour
 
         }
         image_adrenalineBar.fillAmount = (float)gameManager.playerTeam.AdrenalineBar / (float)gameManager.playerTeam.AdrenalineBarFull;
+        image_offensivePanel_awayTeamHpBAR.fillAmount = (float)_matchManager.awayHP / (float)100;
 
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            _matchManager.awayHP -= 20;
+            debugText_awayHp.text = _matchManager.awayHP.ToString();
+        }
 
         //UpdateOffensiveStats();
     }

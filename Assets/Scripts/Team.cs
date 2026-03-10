@@ -86,7 +86,7 @@ public class Team : MonoBehaviour
         if (playersListRoster.Count < 12) // Assuming a max of 12 players per team
         {
             playersListRoster.Add(newPlayer);
-            Debug.Log($"Player {newPlayer.name} added to the roster.");
+            //Debug.Log($"Player {newPlayer.name} added to the roster.");
         }
         else
         {

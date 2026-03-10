@@ -2,6 +2,7 @@ using DG.Tweening.Core.Easing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -59,14 +60,26 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_playerAge;
     [SerializeField] GameObject careerStatsArea;
     [SerializeField] Transform careerStats;
+    //new/rework
+    [SerializeField] Transform transform_teamBtnsPlayers;
+    [SerializeField] TextMeshProUGUI text_TeamPlayerName;
+    [SerializeField] TextMeshProUGUI text_TeamPlayerOvr;
+    [SerializeField] TextMeshProUGUI text_TeamPlayerContract;
+    [SerializeField] TextMeshProUGUI text_text_TeamPlayerSalary;
+    [SerializeField] TextMeshProUGUI text_TeamPlayerJersey;
+    [SerializeField] Image image_teamPortraitPlayer;
+    [SerializeField] Image image_teamPlayerPersonality;
+    [SerializeField] Image image_TeamPlayerArchtype;
+    [SerializeField] Transform transform_TeamPlayerAllStats;
     Player currentPlayer;
     Sprite _sprite;
-
+    
     [Header("Equips")]
     //Equips
     [SerializeField] Transform equipAreaText;
     [SerializeField]GameObject choicesForTheWeek;
     [SerializeField] GameObject CurrentEventChoiceArea;
+    
     [Header("Trade")]
     //Trade
     [SerializeField]GameObject _tradePanel;
@@ -79,6 +92,32 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Image image_playerToTrade;
     [SerializeField] Image image_playerTeam;
     public Transform transform_trade_AssistanceResultPortrait;
+    //New/Rework
+    [SerializeField] Transform transform_tradeMyPlayersBtn;
+    [SerializeField] GameObject go_tradeFinished;
+    [SerializeField] GameObject prefab_TradePlayerOptionToTradeFor;
+    [SerializeField] Transform transform_tradeBtnOptions;
+    [SerializeField] Transform teste;
+    [SerializeField] GameObject prefabTrade;
+    //playerMyTeamInfo
+    [SerializeField] Image image_trade_MyTeamImage;
+    [SerializeField] Image image_trade_MyPlayerToTradePortrait;
+    [SerializeField] TextMeshProUGUI text_trade_myPlayerName;
+    [SerializeField] TextMeshProUGUI text_trade_MyPlayerOVR;
+    [SerializeField] TextMeshProUGUI text_trade_MyPlayerAge;
+    [SerializeField] Image image_Trade_myPlayerPersonality;
+    [SerializeField] Image image_trade_MyPlayerArchtype;
+    [SerializeField] Image image_trade_receiveTeamImage;
+    [SerializeField] Image image_trade_playerReceivePortrait;
+    [SerializeField] TextMeshProUGUI text_trade_receiveName;
+    [SerializeField] TextMeshProUGUI text_trade_receiveOVR;
+    [SerializeField] TextMeshProUGUI text_trade_receiveAge;
+    [SerializeField] Image image_trade_receivePersonality;
+    [SerializeField] Image image_trade_receiveArchtype;
+    [SerializeField]Player trade_playerToTrade;
+    Player trade_PlayerToReceive;
+    int trade_teamIndex;
+
 
     [Header("Training")]
     //Training
@@ -611,7 +650,7 @@ public class TeamManagerUI : MonoBehaviour
         else
         {
             awayTeamName = gameManager.playerTeam._schedule[currentWeek].TeamName;
-            print(awayTeamName + "NEXT OPP");
+            //print(awayTeamName + "NEXT OPP");
             sprite1 = Resources.Load<Sprite>("2D/Team Logos/" + awayTeamName);
             Image image = _advBtn.transform.GetChild(2).GetComponent<Image>();
             image.sprite = sprite1;
@@ -725,6 +764,90 @@ public class TeamManagerUI : MonoBehaviour
         
         
     }
+    public void TeamSetPlayerBtns()
+    {
+        for (int i = 0; i < transform_teamBtnsPlayers.childCount; i++)
+        {
+            transform_teamBtnsPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text =
+                gameManager.playerTeam.playersListRoster[i].playerFirstName + " " + gameManager.playerTeam.playersListRoster[i].playerLastName;
+            transform_teamBtnsPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].SetOVR().ToString();
+        }
+    }
+    //new team page
+    public void TeamSetPlayersInfo(int index)
+    {
+        text_TeamPlayerName.text = gameManager.playerTeam.playersListRoster[index].playerFirstName + " " + gameManager.playerTeam.playersListRoster[index].playerLastName;
+        text_TeamPlayerOvr.text = gameManager.playerTeam.playersListRoster[index].SetOVR().ToString();
+        text_TeamPlayerContract.text = gameManager.playerTeam.playersListRoster[index].ContractYears.ToString() + " Games";
+        text_text_TeamPlayerSalary.text = gameManager.playerTeam.playersListRoster[index].Salary.ToString();
+        text_TeamPlayerJersey.text = gameManager.playerTeam.playersListRoster[index].J_Number.ToString();
+        //Stats
+        transform_TeamPlayerAllStats.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Shooting.ToString();
+        transform_TeamPlayerAllStats.GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Inside.ToString();
+        transform_TeamPlayerAllStats.GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Mid.ToString();
+        transform_TeamPlayerAllStats.GetChild(3).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Outside.ToString();
+        transform_TeamPlayerAllStats.GetChild(4).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Awareness.ToString();
+        transform_TeamPlayerAllStats.GetChild(5).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Defending.ToString();
+        transform_TeamPlayerAllStats.GetChild(6).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Guarding.ToString();
+        transform_TeamPlayerAllStats.GetChild(7).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Stealing.ToString();
+        transform_TeamPlayerAllStats.GetChild(8).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Juking.ToString();
+        transform_TeamPlayerAllStats.GetChild(9).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Consistency.ToString();
+        transform_TeamPlayerAllStats.GetChild(10).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Control.ToString();
+        transform_TeamPlayerAllStats.GetChild(11).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Positioning.ToString();
+        //Portrait
+        Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
+        Sprite sprite = sprites[gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait];
+        image_teamPortraitPlayer.sprite = sprite;
+        //Archtype
+        Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
+        Sprite archtypeSprite = null;
+        
+        if (gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait >= 0 || gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait < 20)
+        {
+            archtypeSprite = sprites1[0];
+        }
+        if (gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait >= 21 && gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait <= 40)
+        {
+            
+            archtypeSprite = sprites1[1];
+        }
+        if (gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait >= 41 && gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait <= 60)
+        {
+            
+            archtypeSprite = sprites1[2];
+        }
+        if (gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait >= 61 && gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait <= 80)
+        {
+            archtypeSprite = sprites1[3];
+        }
+        image_TeamPlayerArchtype.sprite = archtypeSprite;
+        //Personality
+        Sprite personalitySprite = null;
+        switch (gameManager.playerTeam.playersListRoster[index].Personality)
+        {
+            case 1:
+                personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_01");
+                break;
+            case 2:
+                personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_02");
+                break;
+            case 3:
+                personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_03");
+                break;
+
+            case 4:
+                personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_04");
+                break;
+
+            case 5:
+                personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_05");
+                break;
+
+            default:
+                break;
+        }
+        image_teamPlayerPersonality.sprite = personalitySprite;
+    }
     //Trading
     public void SetTradePanel()
     {
@@ -779,6 +902,268 @@ public class TeamManagerUI : MonoBehaviour
         sprite = sprites[tradePlayer.ImageCharacterPortrait];
         image_playerToTrade.sprite = sprite;
     }
+    //New trade functions
+    public void TradeSetMyPlayersBtns()
+    {
+        for (int i = 0; i < transform_tradeMyPlayersBtn.childCount; i++)
+        {
+            int index = i;   
+
+            // Adiciona o listener usando a variável local (index)
+            transform_tradeMyPlayersBtn.GetChild(i).GetComponent<Button>().onClick.AddListener(() =>
+                TradePlayerToTradeSelected(gameManager.playerTeam.playersListRoster[index]));
+
+            // Preenche os textos (pode continuar usando i normalmente)
+            transform_tradeMyPlayersBtn.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text =
+                gameManager.playerTeam.playersListRoster[i].playerLastName;
+
+            transform_tradeMyPlayersBtn.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text =
+                gameManager.playerTeam.playersListRoster[i].SetOVR().ToString();
+        }
+
+        if (leagueManager.canTrade == false)
+        {
+            go_tradeFinished.SetActive(true);
+        }
+    }
+    void TradePlayerToTradeSelected(Player player)
+    {
+        
+        trade_playerToTrade = player;
+        text_trade_myPlayerName.text = player.playerLastName;
+        text_trade_MyPlayerOVR.text = player.SetOVR().ToString();
+        text_trade_MyPlayerAge.text = player.Age.ToString();
+        //Portrait
+        Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
+        Sprite sprite = sprites[player.ImageCharacterPortrait];
+        image_trade_MyPlayerToTradePortrait.sprite = sprite;
+        //archtype
+        Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
+        Sprite archtypeSprite = null;
+
+        if (player.ImageCharacterPortrait >= 0 || player.ImageCharacterPortrait < 20)
+        {
+            archtypeSprite = sprites1[0];
+        }
+        if (player.ImageCharacterPortrait >= 21 && player.ImageCharacterPortrait <= 40)
+        {
+
+            archtypeSprite = sprites1[1];
+        }
+        if (player.ImageCharacterPortrait >= 41 && player.ImageCharacterPortrait <= 60)
+        {
+
+            archtypeSprite = sprites1[2];
+        }
+        if (player.ImageCharacterPortrait >= 61 && player.ImageCharacterPortrait <= 80)
+        {
+            archtypeSprite = sprites1[3];
+        }
+        image_trade_MyPlayerArchtype.sprite = archtypeSprite;
+        //personality
+        Sprite personalitySprite = null;
+        switch (player.Personality)
+        {
+            case 1:
+                personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_01");
+                break;
+            case 2:
+                personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_02");
+                break;
+            case 3:
+                personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_03");
+                break;
+
+            case 4:
+                personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_04");
+                break;
+
+            case 5:
+                personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_05");
+                break;
+
+            default:
+                break;
+        }
+        image_Trade_myPlayerPersonality.sprite = personalitySprite;
+        //team
+        Sprite teamImage;
+        teamImage = Resources.Load<Sprite>("2D/Team Logos/" + gameManager.playerTeam.TeamName);
+        image_trade_MyTeamImage.sprite = teamImage;
+
+        TradeSearchTradeOptions(player);
+    }
+    void TradeSearchTradeOptions(Player myPlayer)
+    {
+        print(myPlayer.playerLastName);
+        // Limpa opções antigas
+        foreach (Transform child in transform_tradeBtnOptions)
+        {
+            Destroy(child.gameObject);
+        }
+
+        if (myPlayer == null)
+        {
+            Debug.LogError("trade_playerToTrade é null! Não pode prosseguir.");
+            return;
+        }
+
+        List<Team> otherTeams = gameManager.leagueTeams.Where(t => t != gameManager.playerTeam).ToList();
+        if (otherTeams.Count == 0)
+        {
+            Debug.LogError("Nenhum outro time disponível na liga!");
+            return;
+        }
+
+        for (int i = 0; i < 7; i++)
+        {
+            Team targetTeam = otherTeams[UnityEngine.Random.Range(0, otherTeams.Count)];
+            Debug.Log("Time selecionado: " + targetTeam.TeamName);
+
+            float higherOvrChance = gameManager.playerTeam.OfficeLvl * 0.2f;
+            List<Player> candidates = targetTeam.playersListRoster;
+            if (candidates.Count == 0)
+            {
+                Debug.Log("Roster vazio para " + targetTeam.TeamName + ". Skip.");
+                continue;
+            }
+
+            List<Player> higherOvrCandidates = new List<Player>();
+            int tradeOvr = myPlayer.SetOVR();
+            foreach (Player p in candidates)
+            {
+                if (p.SetOVR() > tradeOvr)
+                {
+                    higherOvrCandidates.Add(p);
+                }
+            }
+            Debug.Log("Candidatos com OVR maior: " + higherOvrCandidates.Count);
+
+            Player targetPlayer;
+            if (higherOvrCandidates.Count > 0 && UnityEngine.Random.value < higherOvrChance)
+            {
+                targetPlayer = higherOvrCandidates[UnityEngine.Random.Range(0, higherOvrCandidates.Count)];
+            }
+            else
+            {
+                targetPlayer = candidates[UnityEngine.Random.Range(0, candidates.Count)];
+            }
+            Debug.Log("Jogador selecionado: " + targetPlayer.playerLastName);
+
+            // Instancia botão
+            GameObject buttonObj = Instantiate(prefab_TradePlayerOptionToTradeFor, transform_tradeBtnOptions);
+            if (buttonObj == null)
+            {
+                Debug.LogError("Instantiate falhou! Verifique prefab_TradePlayerOptionToTradeFor.");
+                continue;
+            }
+            Debug.Log("Botão instanciado para " + targetPlayer.playerLastName);
+
+            // Configura textos
+            buttonObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = targetPlayer.playerLastName;
+            buttonObj.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = targetPlayer.Salary.ToString();
+            
+
+            // Listener
+            Button button = buttonObj.GetComponent<Button>();
+            if (button != null)
+            {
+                Player localPlayer = targetPlayer;
+                int localTeamIndex = gameManager.leagueTeams.IndexOf(targetTeam);
+                buttonObj.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[localTeamIndex].TeamName;
+                button.onClick.AddListener(() => TradePlayerToReceive(localPlayer, localTeamIndex));
+            }
+            else
+            {
+                Debug.LogError("Botão sem componente Button!");
+            }
+        }
+
+        Debug.Log(transform_tradeBtnOptions.childCount + " opções criadas");
+    }
+    
+    void TradePlayerToReceive(Player player, int teamIndex)
+    {
+        trade_PlayerToReceive = player;
+        trade_teamIndex = teamIndex;
+        //trade_playerToTrade = player;
+        text_trade_receiveName.text = player.playerLastName;
+        text_trade_receiveOVR.text = player.SetOVR().ToString();
+        text_trade_receiveAge.text = player.Age.ToString();
+        //Portrait
+        Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
+        Sprite sprite = sprites[player.ImageCharacterPortrait];
+        image_trade_playerReceivePortrait.sprite = sprite;
+        //archtype
+        Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
+        Sprite archtypeSprite = null;
+
+        if (player.ImageCharacterPortrait >= 0 || player.ImageCharacterPortrait < 20)
+        {
+            archtypeSprite = sprites1[0];
+        }
+        if (player.ImageCharacterPortrait >= 21 && player.ImageCharacterPortrait <= 40)
+        {
+
+            archtypeSprite = sprites1[1];
+        }
+        if (player.ImageCharacterPortrait >= 41 && player.ImageCharacterPortrait <= 60)
+        {
+
+            archtypeSprite = sprites1[2];
+        }
+        if (player.ImageCharacterPortrait >= 61 && player.ImageCharacterPortrait <= 80)
+        {
+            archtypeSprite = sprites1[3];
+        }
+        image_trade_receiveArchtype.sprite = archtypeSprite;
+        //personality
+        Sprite personalitySprite = null;
+        switch (player.Personality)
+        {
+            case 1:
+                personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_01");
+                break;
+            case 2:
+                personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_02");
+                break;
+            case 3:
+                personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_03");
+                break;
+
+            case 4:
+                personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_04");
+                break;
+
+            case 5:
+                personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_05");
+                break;
+
+            default:
+                break;
+        }
+        image_trade_receivePersonality.sprite = personalitySprite;
+        //team
+        Sprite teamImage;
+        teamImage = Resources.Load<Sprite>("2D/Team Logos/" + gameManager.leagueTeams[teamIndex].TeamName);
+        image_trade_receiveTeamImage.sprite = teamImage;
+
+
+    }
+    public void TradeSwapPlayers()
+    {
+        /*
+        // Remove playerA de teamA
+        teamA.playersListRoster.Remove(playerA);
+        // Remove playerB de teamB
+        teamB.playersListRoster.Remove(playerB);
+        // Adiciona playerB a teamA
+        teamA.playersListRoster.Add(playerB);
+        // Adiciona playerA a teamB
+        teamB.playersListRoster.Add(playerA);
+        */
+        
+    }
     //Training
     public void SetTrainingBtns()
     {
@@ -792,6 +1177,7 @@ public class TeamManagerUI : MonoBehaviour
             int index = gameManager.playerTeam.playersListRoster.IndexOf(gameManager.playerTeam.playersListRoster[i]);
             _training_btns.GetChild(i).GetComponent<Button>().onClick.AddListener(() => trainingManager.SetPlayerToTrainIndex(index/*, _textPlayerSelected, _textDrillSelected*/));
         }
+        
     }
     public void UpdateAssistancePortrait(Transform portaritTransform, bool isOn)
     {

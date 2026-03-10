@@ -354,6 +354,9 @@ public class SaveSystem : MonoBehaviour
         {
             GameObject go = Instantiate(playerPrefab);
             Player p = go.AddComponent<Player>();
+            //go.transform.SetParent(GameManager.transform);  // Ou um objeto persistente
+            DontDestroyOnLoad(go);
+            //Player p = new Player();
 
             p.playerFirstName = pd.firstName;
             p.playerLastName = pd.secondName;

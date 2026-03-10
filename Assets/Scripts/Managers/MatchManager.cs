@@ -115,6 +115,9 @@ public class MatchManager : MonoBehaviour
 
     //Adranline
     int adrenaline_addUp;
+    [Header("Hp-RogueliteElements")]
+    [SerializeField] public int homeHP;
+    [SerializeField] public int awayHP;
     //UI Elemens test
     [Header("Debugs")]
     [SerializeField] TextMeshProUGUI _debugTimeoutText;
@@ -148,6 +151,8 @@ public class MatchManager : MonoBehaviour
         buff_SP = 0;
         buff_Stamina = 0;
         buff_Juke = 0;
+        homeHP = 100;
+        awayHP = 100;
         //Reset the teams to play
         for (int i = 0; i < manager.leagueTeams.Count; i++)
         {
@@ -314,8 +319,10 @@ public class MatchManager : MonoBehaviour
             // Step 3: Wait for final actions (e.g., scoring)
             if (!isSimulation) yield return StartCoroutine(WaitForTimeOut());
 
+            
+
             //Restore stamina on the bench
-            if(currentGamePossessons>1) RestoreStaminaFromBench();
+            if (currentGamePossessons>1) RestoreStaminaFromBench();
             //currentGamePossessons--;
 
             if ((leagueManager.isOnR8 == true || leagueManager.isOnR4 == true || leagueManager.isOnFinals == true) && currentGamePossessons <= 1)
@@ -498,6 +505,7 @@ public class MatchManager : MonoBehaviour
     }
     IEnumerator HandlePossession()
     {
+        if (isSimulation) AISub();
         currentGamePossessons--;
         if(/*teamWithball == AwayTeam*/ teamWithball.IsPlayerTeam == false)
         {
@@ -538,7 +546,7 @@ public class MatchManager : MonoBehaviour
                 else if (_canCallTimeout == false)
                 {
                     yield return StartCoroutine(WaitForTimeOut());
-                    if(!isSimulation)CheckAndSwapLowStaminaPlayers(AwayTeam);
+                    //if(!isSimulation)CheckAndSwapLowStaminaPlayers(AwayTeam);
                     for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
                     {
                         HomeTeam.playersListRoster[i].HasTheBall = false;
@@ -775,6 +783,8 @@ public class MatchManager : MonoBehaviour
                 {
                     _ChooseScoring = false;
                     _matchUI.ActionPanelAnim(5, "Shoot");
+                    //Lose Stamina
+                    StaminaLossByAction(playerWithTheBall);
                     yield return new WaitForSeconds(1f);
                     playerWithTheBall.HasTheBall = false;
                     if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
@@ -792,6 +802,8 @@ public class MatchManager : MonoBehaviour
                 {
                     _ChoosePass = false;
                     _matchUI.ActionPanelAnim(0, "Passing");
+                    //Lose Stamina
+                    StaminaLossByAction(playerWithTheBall);
                     yield return new WaitForSeconds(1f);
                     if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                     if (/*TryPassBall()*/ MakePassToTeammate(passPlayerIndex))
@@ -829,6 +841,8 @@ public class MatchManager : MonoBehaviour
                     _sp_numberOfSPActions--;
                     _matchUI.SetSkillPints();
                     _matchUI.ActionPanelAnim(1, "Special");
+                    //Lose Stamina
+                    StaminaLossByAction(playerWithTheBall);
                     yield return new WaitForSeconds(1f);
                     playerWithTheBall.HasTheBall = false;
                     if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
@@ -858,6 +872,11 @@ public class MatchManager : MonoBehaviour
                                 break;
                             default: break;
                         }
+                        if (!isSimulation && teamWithball.IsPlayerTeam)
+                        {
+                            Team defendingTeam = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
+                            CalculateDamageAndReduceHP(defendingTeam, playerWithTheBall.CurrentZone);
+                        }
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + "has scored!");
                         _matchUI.ResultActionPanel("S",0);
                         if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
@@ -879,6 +898,8 @@ public class MatchManager : MonoBehaviour
                 else if (_ChooseBeatDefender)
                 {
                     _matchUI.ActionPanelAnim(7, "Juke");
+                    //Lose Stamina
+                    StaminaLossByAction(playerWithTheBall);
                     yield return new WaitForSeconds(1f);
                     if (TryBeatDefenderAdvanceZone(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone))
                     {
@@ -906,7 +927,7 @@ public class MatchManager : MonoBehaviour
                 else if(_canCallTimeout == false)
                 {
                     if (!isSimulation) yield return StartCoroutine(WaitForTimeOut());
-                    CheckAndSwapLowStaminaPlayers(AwayTeam);
+                    //CheckAndSwapLowStaminaPlayers(AwayTeam);
                     for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
                     {
                         HomeTeam.playersListRoster[i].HasTheBall = false;
@@ -1044,6 +1065,13 @@ public class MatchManager : MonoBehaviour
                 if (teamWithball!= manager.playerTeam) _matchUI.ResultActionPanel("F", 3);
             }
             if (teamWithball.AdrenalineBar < teamWithball.AdrenalineBarFull) teamWithball.AdrenalineBar += adrenaline_addUp;
+            //Damage Deal
+            if (!isSimulation && teamWithball.IsPlayerTeam)
+            {
+                Team defendingTeam = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
+                CalculateDamageAndReduceHP(defendingTeam, player.CurrentZone);
+            }
+
 
         }
         else
@@ -2333,6 +2361,21 @@ public class MatchManager : MonoBehaviour
         }
         //_matchUI.UpdatePlayersActive();
     }
+    void StaminaLossByAction(Player player)
+    {
+        int loss;
+        if (player.Age <= 23)
+            loss = 5; // baixa
+        else if (player.Age <= 27)
+            loss = 8; // média baixa
+        else if (player.Age <= 31)
+            loss = 12; // média alta
+        else
+            loss = 15; // alta
+
+        player.CurrentStamina -= loss;
+        player.CurrentStamina = Mathf.Max(player.CurrentStamina, 10); // clamp min
+    }
     void StaminaLossByDefender(Player player)
     {
         int staminaLoss = 15;
@@ -2555,6 +2598,33 @@ public class MatchManager : MonoBehaviour
 
                         //Debug.Log($"[AI Substitution] {starter.p_name} substituted by {bench.p_name} due to low stamina.");
                         break; // sai do loop interno (troca feita)
+                    }
+                }
+            }
+        }
+    }
+    public void AISub()
+    {
+        foreach (Team team in new[] { HomeTeam, AwayTeam })
+        {
+            if (!team.IsPlayerTeam)
+            {
+                for (int i = 0; i < 4; i++) // starters (0-3)
+                {
+                    Player starter = team.playersListRoster[i];
+                    if (starter.CurrentStamina < 75)
+                    {
+                        for (int j = 4; j < team.playersListRoster.Count; j++) // subs (4+)
+                        {
+                            Player sub = team.playersListRoster[j];
+                            if (sub.CurrentStamina > starter.CurrentStamina)
+                            {
+                                // Troca
+                                team.playersListRoster[i] = sub;
+                                team.playersListRoster[j] = starter;
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -2882,6 +2952,12 @@ public class MatchManager : MonoBehaviour
             );
             _matchUI.ResultActionPanel("S",0);
             if (HomeTeam.AdrenalineBar < HomeTeam.AdrenalineBarFull) HomeTeam.AdrenalineBar += adrenaline_addUp;
+            //Damage Deal
+            if (!isSimulation && teamWithball.IsPlayerTeam)
+            {
+                Team defendingTeam = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
+                CalculateDamageAndReduceHP(defendingTeam, playerWithTheBall.CurrentZone);
+            }
         }
         else
         {
@@ -2990,6 +3066,29 @@ public class MatchManager : MonoBehaviour
         }
 
         return Mathf.Clamp(finalChance, 0.15f, 0.95f);
+    }
+    //Damage
+    private void CalculateDamageAndReduceHP(Team defendingTeam, int zone, bool isSP = false)
+    {
+        int defHP = defendingTeam == HomeTeam ? homeHP : awayHP;
+        int dano = isSP ? 20 : (zone switch
+        {
+            0 => 10, // Outside
+            1 => 12, // Mid
+            2 => 15, // Inside
+            _ => 10
+        });
+
+        // Mais dano se HP baixo
+        if (defHP < 50) dano = Mathf.RoundToInt(dano * 1.5f);
+        if (defHP < 25) dano = Mathf.RoundToInt(dano * 2f);
+
+        // Reduz HP
+        if (defendingTeam == HomeTeam) homeHP -= dano;
+        else awayHP -= dano;
+
+        homeHP = Mathf.Max(homeHP, 0);
+        awayHP = Mathf.Max(awayHP, 0);
     }
     public void Matchpoint()
     {

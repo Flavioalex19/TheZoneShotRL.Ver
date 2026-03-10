@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Player : MonoBehaviour
 {
     #region SavedVariables
@@ -216,5 +217,10 @@ public class Player : MonoBehaviour
     {
         ovr = (Shooting + Inside + Mid + Outside + Awareness + Defending + Guarding + Stealing + Juking + Consistency + Control + Positioning) / 12;
     }
-
+    public int SetOVR()
+    {
+        int sum = Shooting + Inside + Mid + Outside + Awareness + Defending + Guarding + Stealing + Juking + Consistency + Control + Positioning;
+        ovr = Mathf.RoundToInt(sum / 12f);
+        return ovr;
+    }
 }
