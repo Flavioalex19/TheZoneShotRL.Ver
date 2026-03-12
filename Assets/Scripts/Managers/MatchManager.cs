@@ -71,6 +71,8 @@ public class MatchManager : MonoBehaviour
     public bool chooseDefenseTackle = false;
     public bool chooseBlock = false;
     public bool chooseInterception = false;
+    public bool CanChooseShove = false;
+    public bool CanChooseCharge = false;
     public int _sp_numberOfSPActions;
     #endregion
     //Ai variables
@@ -883,6 +885,7 @@ public class MatchManager : MonoBehaviour
                         SwitchPossession();
                         yield break;
                     }
+                    
                     else
                     {
                         //Change this later for a list of string for a fail event
@@ -924,6 +927,14 @@ public class MatchManager : MonoBehaviour
                         yield break;
                     }
                 }
+                else if (CanChooseShove)
+                {
+
+                }
+                else if (CanChooseCharge)
+                {
+
+                }
                 else if(_canCallTimeout == false)
                 {
                     if (!isSimulation) yield return StartCoroutine(WaitForTimeOut());
@@ -963,6 +974,16 @@ public class MatchManager : MonoBehaviour
     {
         _ChooseBeatDefender = true;
         CanChooseAction= false;
+    }
+    public void ChooseShove()
+    {
+        CanChooseShove = true;
+        CanChooseAction = false;
+    }
+    public void ChooseCharge()
+    {
+        CanChooseCharge = true;
+        CanChooseAction = false;
     }
     public void UseSpecialAttk()
     {
@@ -2799,43 +2820,8 @@ public class MatchManager : MonoBehaviour
             offense.CurrentZone = 0;
             return false;
         }
-        /*
-        int offenseRoll = UnityEngine.Random.Range(1, 101)
-                         + offense.Consistency
-                         + offense.Control
-                         + offense.Juking
-                         + GetZoneValue(offense, zone)
-                         + UnityEngine.Random.Range(-5, 15)
-                         + bonus;
 
-        int defenseRoll = UnityEngine.Random.Range(1, 101)
-                         + defense.Consistency
-                         + defense.Guarding
-                         + defense.Stealing
-                         + GetZoneValue(defense, zone);
-
-        int difference = offenseRoll - defenseRoll;
-
-        bool success;
-
-        if (difference > 20)
-            success = true;
-        else if (difference < -20)
-            success = false;
-        else
-            success = UnityEngine.Random.value < 0.6f;
-
-        if (!success)
-        {
-            //print("Failed juke");
-            offense.CurrentZone = 0;
-            return false;
-        }
-        */
-
-        // ------------------------------------
-        // AVANÇAR UMA ZONA
-        // ------------------------------------
+        //Advance to zone
         if (zone < 2)
             zone++;     // avança 1 casa
         else
@@ -2845,6 +2831,58 @@ public class MatchManager : MonoBehaviour
         _matchUI.UpdatePlayerPlacements();
         _matchUI.TurnOffPlayerButtons();
         //print(offense.playerLastName + " and the zone is " + offense.CurrentZone);
+        return true;
+    }
+    bool TryToShoveDefender(Player attacker, Player defender)
+    {
+        if (attacker.CurrentStamina < 10)
+        {
+            return false; // Não tem stamina suficiente para tentar
+        }
+
+        attacker.CurrentStamina -= 10; // Gasta 10 sempre para tentar
+
+        // Calcula score do attacker: média de Consistency, Control, Shooting + bônus por stamina atual (escala de 0-10)
+        float attackerScore = (attacker.Consistency + attacker.Control + attacker.Shooting) / 3f;
+        attackerScore += attacker.CurrentStamina / 10f; // Mais stamina ajuda (ex: 100 stamina = +10)
+
+        // Calcula score do defender: média de Defending, Awareness, Positioning
+        float defenderScore = (defender.Defending + defender.Awareness + defender.Positioning) / 3f;
+
+        // Adiciona elemento aleatório para chance (ex: -10 a +10)
+        float randomFactor = Random.Range(-10f, 10f);
+
+        // Calcula valor final: positivo = sucesso, negativo = falha
+        float shoveValue = attackerScore - defenderScore + randomFactor;
+
+        if (shoveValue > 0)
+        {
+            defender.CurrentStamina -= 20; // Sucesso: defender perde 20
+            defender.CurrentStamina = Mathf.Max(0, defender.CurrentStamina); // Evita negativo
+            return true;
+        }
+        else
+        {
+            // Falha: torne o valor negativo entendido - talvez attacker perca extra baseado no |shoveValue|
+            int extraLoss = Mathf.RoundToInt(Mathf.Abs(shoveValue)); // Ex: quanto pior, mais perde
+            attacker.CurrentStamina -= extraLoss;
+            attacker.CurrentStamina = Mathf.Max(0, attacker.CurrentStamina); // Evita negativo
+            return false;
+        }
+    }
+    bool TryToChargeAdrenaline(Player playerWithBall, Team team)
+    {
+        if (playerWithBall.CurrentStamina <= 25)
+        {
+            return false; // Não tem stamina suficiente, falha
+        }
+
+        playerWithBall.CurrentStamina -= 25; // Reduz 25 de stamina
+        playerWithBall.CurrentStamina = Mathf.Max(0, playerWithBall.CurrentStamina); // Clamp para evitar negativo (embora >25 garanta)
+
+        team.AdrenalineBar += 25; // Aumenta a barra em 25
+                                  // Assuma que adrenalinebar tem um max, se necessário: team.adrenalinebar = Mathf.Min(team.adrenalinebar, maxAdrenaline);
+
         return true;
     }
     public int GetJukePercentage(Player offense, Player defense, int zone)
@@ -2905,6 +2943,7 @@ public class MatchManager : MonoBehaviour
         // Retorna como % inteiro arredondado
         return Mathf.RoundToInt(finalChance * 100f);
     }
+
     public IEnumerator ToScore(Player playerWithTheBall, Player playerDefending, Team teamWithBall)
     {
         int zone = playerWithTheBall.CurrentZone;

@@ -56,77 +56,11 @@ public class TrainingManager : MonoBehaviour
         if (effort == 0) cost = 20;
         else if (effort == 1) cost = 40;
         else cost = 50;
-
-        if (leagueManager.canTrain == true && gameManager.playerTeam.EffortPoints > cost && _trainingTypeIndex >-1)
+        if (leagueManager.canTrain == true && gameManager.playerTeam.EffortPoints > cost && _trainingTypeIndex > -1)
         {
-            /*
-            // --- BOOST BASEADO NO EFFORT ---
-            int maxBoost = 1; // effort 0
-            if (effort == 1) maxBoost = 2;
-            else if (effort == 2) maxBoost = 4;
-
-            int boost = Random.Range(maxBoost, maxBoost + 1);
-            // ---------------------------------
-
-            selectedTrainingAttribute = (TrainingAttribute)Random.Range(0,
-                System.Enum.GetValues(typeof(TrainingAttribute)).Length);
-
             Player player = gameManager.playerTeam.playersListRoster[playerIndex];
-
-            // Aplicar boost ao atributo
-            switch (selectedTrainingAttribute)
-            {
-                case TrainingAttribute.Awareness: player.Awareness = Mathf.Min(player.Awareness + boost, 99); break;
-                case TrainingAttribute.Shooting: player.Shooting = Mathf.Min(player.Shooting + boost, 99); break;
-                case TrainingAttribute.Inside: player.Inside = Mathf.Min(player.Inside + boost, 99); break;
-                case TrainingAttribute.Outside: player.Outside = Mathf.Min(player.Outside + boost, 99); break;
-                case TrainingAttribute.Mid: player.Mid = Mathf.Min(player.Mid + boost, 99); break;
-                case TrainingAttribute.Defending: player.Defending = Mathf.Min(player.Defending + boost, 99); break;
-                case TrainingAttribute.Consistency: player.Consistency = Mathf.Min(player.Consistency + boost, 99); break;
-                case TrainingAttribute.Juking: player.Juking = Mathf.Min(player.Juking + boost, 99); break;
-                case TrainingAttribute.Stealing: player.Stealing = Mathf.Min(player.Stealing + boost, 99); break;
-                case TrainingAttribute.Control: player.Control = Mathf.Min(player.Control + boost, 99); break;
-                case TrainingAttribute.Guarding: player.Guarding = Mathf.Min(player.Guarding + boost, 99); break;
-            }
-
-            // Resultado simples, direto no atributo
-            teamManagerUI._textDrillSelected.text =
-                $"{player.playerFirstName} {player.playerLastName} +{boost} to {selectedTrainingAttribute}. Training session completed.";
-
-            teamManagerUI.UpdateAssistancePortrait();
-            leagueManager.canTrain = false;
-            teamManagerUI.SetTrainingGrade();
-            player.UpdateOVR();
-            gameManager.playerTeam.EffortPoints -= cost;
-
-            gameManager.saveSystem.SaveLeague();
-            for (int i = 0; i < gameManager.leagueTeams.Count; i++)
-            {
-                //gameManager.saveSystem.SaveTeam(gameManager.leagueTeams[i]);
-                gameManager.saveSystem.SaveTeamInfo(gameManager.leagueTeams[i]);
-            }
-            */
-            // --- BOOST BASEADO NO EFFORT (agora com ranges por atributo) ---
-            int minBoost = 1;
-            int maxBoostExclusive = 4; // padrão effort 0: 1-3
-
-            if (effort == 1)
-            {
-                minBoost = 2;
-                maxBoostExclusive = 5; // 2-4
-            }
-            else if (effort == 2)
-            {
-                minBoost = 3;
-                maxBoostExclusive = 6; // 3-5
-            }
-            // ---------------------------------
-
-            Player player = gameManager.playerTeam.playersListRoster[playerIndex];
-
             // === Lista dos atributos do grupo selecionado ===
             List<TrainingAttribute> targetAttributes = new List<TrainingAttribute>();
-
             if (_trainingTypeIndex == 0)
             {
                 targetAttributes.Add(TrainingAttribute.Awareness);
@@ -147,21 +81,43 @@ public class TrainingManager : MonoBehaviour
                 targetAttributes.Add(TrainingAttribute.Outside);
                 targetAttributes.Add(TrainingAttribute.Shooting);
             }
-
             // Segurança caso index inválido
             if (targetAttributes.Count == 0)
             {
                 teamManagerUI._textDrillSelected.text = "Invalid training type selected.";
                 return;
             }
-
-            // === Aplicar boost em TODOS os atributos do grupo ===
+            int equipmentLvl = gameManager.playerTeam.TeamEquipmentLvl; // Assuma que existe essa propriedade
+            int minBoost = Mathf.Max(1, equipmentLvl / 2); // Ex: lvl 0=1, lvl 7=3
+            int maxBoostExclusive = Mathf.Min(6, equipmentLvl + 2); // Ex: lvl 0=2 (boost 1), lvl 7=6 (boost 1-5)
+            int personality = player.Personality;  // 1-5, assume maior = melhor boost
+            minBoost += Mathf.Max(0, (personality - 1) / 2);  // Ex: +0 para 1, +2 para 5
+            maxBoostExclusive += personality - 1;  // Ex: +0 para 1, +4 para 5 (aumenta range)
+                                                   // === Selecionar atributos baseados em effort ===
+            List<TrainingAttribute> selectedAttributes = new List<TrainingAttribute>();
+            if (effort == 0)
+            {
+                // Apenas 1 aleatório
+                selectedAttributes.Add(targetAttributes[Random.Range(0, targetAttributes.Count)]);
+            }
+            else if (effort == 1)
+            {
+                // Metade aleatória (arredonda para baixo, min 1)
+                int halfCount = Mathf.Max(1, targetAttributes.Count / 2);
+                List<TrainingAttribute> shuffled = new List<TrainingAttribute>(targetAttributes);
+                shuffled.Sort((a, b) => Random.value.CompareTo(Random.value)); // Shuffle aleatório
+                selectedAttributes = shuffled.GetRange(0, halfCount);
+            }
+            else if (effort == 2)
+            {
+                // Todos
+                selectedAttributes = new List<TrainingAttribute>(targetAttributes);
+            }
+            // === Aplicar boost nos atributos selecionados ===
             string trainingResult = $"{player.playerFirstName} {player.playerLastName} improved:\n";
-
-            foreach (TrainingAttribute attr in targetAttributes)
+            foreach (TrainingAttribute attr in selectedAttributes)
             {
                 int boost = Random.Range(minBoost, maxBoostExclusive);
-
                 switch (attr)
                 {
                     case TrainingAttribute.Awareness: player.Awareness = Mathf.Min(player.Awareness + boost, 99); break;
@@ -176,30 +132,26 @@ public class TrainingManager : MonoBehaviour
                     case TrainingAttribute.Control: player.Control = Mathf.Min(player.Control + boost, 99); break;
                     case TrainingAttribute.Guarding: player.Guarding = Mathf.Min(player.Guarding + boost, 99); break;
                 }
-
                 trainingResult += $"+{boost} to {attr}\n";
             }
-
             trainingResult += "Training session completed.";
             teamManagerUI._textDrillSelected.text = trainingResult;
             // =====================================================================
-
             teamManagerUI.UpdateAssistancePortrait(teamManagerUI.transform_assistance_ResultPortrait, true);
             leagueManager.canTrain = false;
             teamManagerUI.SetTrainingGrade();
             player.UpdateOVR();
             gameManager.playerTeam.EffortPoints -= cost;
             gameManager.saveSystem.SaveLeague();
-
             for (int i = 0; i < gameManager.leagueTeams.Count; i++)
             {
                 gameManager.saveSystem.SaveTeamInfo(gameManager.leagueTeams[i]);
             }
             targetAttributes.Clear();
+            selectedAttributes.Clear();
         }
         else
         {
-            
             teamManagerUI._textDrillSelected.text = "Cannot train this week anymore";
         }
     }

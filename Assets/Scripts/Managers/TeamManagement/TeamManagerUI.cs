@@ -6,6 +6,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+//using UnityEngine.UIElements;
 
 public class TeamManagerUI : MonoBehaviour
 {
@@ -115,6 +116,10 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Image image_trade_receivePersonality;
     [SerializeField] Image image_trade_receiveArchtype;
     [SerializeField]Player trade_playerToTrade;
+    [SerializeField] TextMeshProUGUI text_tradeCostOfTrade;
+    [SerializeField] TextMeshProUGUI text_tradeWarningForNoTrade;
+    [SerializeField] TextMeshProUGUI text_trade_frontoffeicePoints;
+    int trade_costOfTrade;
     Player trade_PlayerToReceive;
     int trade_teamIndex;
 
@@ -925,6 +930,7 @@ public class TeamManagerUI : MonoBehaviour
         {
             go_tradeFinished.SetActive(true);
         }
+        text_trade_frontoffeicePoints.text = gameManager.playerTeam.FrontOfficePoints.ToString();
     }
     void TradePlayerToTradeSelected(Player player)
     {
@@ -1028,28 +1034,29 @@ public class TeamManagerUI : MonoBehaviour
                 continue;
             }
 
-            List<Player> higherOvrCandidates = new List<Player>();
+            List<Player> betterCandidates = new List<Player>();
             int tradeOvr = myPlayer.SetOVR();
+            int tradeAge = myPlayer.Age;
             foreach (Player p in candidates)
             {
-                if (p.SetOVR() > tradeOvr)
+                if (p.SetOVR() > tradeOvr || p.Age < tradeAge)
                 {
-                    higherOvrCandidates.Add(p);
+                    betterCandidates.Add(p);
                 }
             }
-            Debug.Log("Candidatos com OVR maior: " + higherOvrCandidates.Count);
+            Debug.Log("Candidatos com OVR maior: " + betterCandidates.Count);
 
             Player targetPlayer;
-            if (higherOvrCandidates.Count > 0 && UnityEngine.Random.value < higherOvrChance)
+            if (betterCandidates.Count > 0 && UnityEngine.Random.value < higherOvrChance)
             {
-                targetPlayer = higherOvrCandidates[UnityEngine.Random.Range(0, higherOvrCandidates.Count)];
+                targetPlayer = betterCandidates[UnityEngine.Random.Range(0, betterCandidates.Count)];
             }
             else
             {
                 targetPlayer = candidates[UnityEngine.Random.Range(0, candidates.Count)];
             }
             Debug.Log("Jogador selecionado: " + targetPlayer.playerLastName);
-
+            int cost = TradeCalculateCost(targetPlayer);
             // Instancia botão
             GameObject buttonObj = Instantiate(prefab_TradePlayerOptionToTradeFor, transform_tradeBtnOptions);
             if (buttonObj == null)
@@ -1071,7 +1078,7 @@ public class TeamManagerUI : MonoBehaviour
                 Player localPlayer = targetPlayer;
                 int localTeamIndex = gameManager.leagueTeams.IndexOf(targetTeam);
                 buttonObj.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.leagueTeams[localTeamIndex].TeamName;
-                button.onClick.AddListener(() => TradePlayerToReceive(localPlayer, localTeamIndex));
+                button.onClick.AddListener(() => TradePlayerToReceive(localPlayer, localTeamIndex, cost));
             }
             else
             {
@@ -1079,13 +1086,14 @@ public class TeamManagerUI : MonoBehaviour
             }
         }
 
-        Debug.Log(transform_tradeBtnOptions.childCount + " opções criadas");
+        //Debug.Log(transform_tradeBtnOptions.childCount + " opções criadas");
     }
     
-    void TradePlayerToReceive(Player player, int teamIndex)
+    void TradePlayerToReceive(Player player, int teamIndex, int cost)
     {
         trade_PlayerToReceive = player;
         trade_teamIndex = teamIndex;
+        trade_costOfTrade = cost;
         //trade_playerToTrade = player;
         text_trade_receiveName.text = player.playerLastName;
         text_trade_receiveOVR.text = player.SetOVR().ToString();
@@ -1148,21 +1156,66 @@ public class TeamManagerUI : MonoBehaviour
         teamImage = Resources.Load<Sprite>("2D/Team Logos/" + gameManager.leagueTeams[teamIndex].TeamName);
         image_trade_receiveTeamImage.sprite = teamImage;
 
+        text_tradeWarningForNoTrade.text = " ";
+
 
     }
     public void TradeSwapPlayers()
     {
-        /*
-        // Remove playerA de teamA
-        teamA.playersListRoster.Remove(playerA);
-        // Remove playerB de teamB
-        teamB.playersListRoster.Remove(playerB);
-        // Adiciona playerB a teamA
-        teamA.playersListRoster.Add(playerB);
-        // Adiciona playerA a teamB
-        teamB.playersListRoster.Add(playerA);
-        */
+      
+        if(gameManager.playerTeam.FrontOfficePoints - trade_costOfTrade > 0)
+        {
+            // Remove playerA de teamA
+            gameManager.playerTeam.playersListRoster.Remove(trade_playerToTrade);
+            // Remove playerB de teamB
+            gameManager.leagueTeams[trade_teamIndex].playersListRoster.Remove(trade_PlayerToReceive);
+            // Adiciona playerB a teamA
+            gameManager.playerTeam.playersListRoster.Add(trade_PlayerToReceive);
+            // Adiciona playerA a teamB
+            gameManager.leagueTeams[trade_teamIndex].playersListRoster.Add(trade_playerToTrade);
+            //cannot tade this week
+            leagueManager.canTrade = false;
+            //turn oon panel
+            go_tradeFinished.SetActive(true);
+            gameManager.playerTeam.FrontOfficePoints -= trade_costOfTrade;
+            text_trade_frontoffeicePoints.text = gameManager.playerTeam.FrontOfficePoints.ToString();
+            for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+            {
+                gameManager.saveSystem.SaveTeamInfo(gameManager.leagueTeams[i]);
+            }
+        }
+        else
+        {
+            text_tradeWarningForNoTrade.text = "Not enought points";
+        }
         
+
+
+    }
+    int TradeCalculateCost(Player player)
+    {
+        int ovr = player.SetOVR();
+        int baseCost;
+        if (ovr < 70)
+        {
+            baseCost = 10;
+        }
+        else if (ovr <= 80)
+        {
+            baseCost = 20;
+        }
+        else if (ovr <= 90)
+        {
+            baseCost = 30;
+        }
+        else
+        {
+            baseCost = 40;
+        }
+        int financeLvl = gameManager.playerTeam.FinancesLvl;  // Assuma que existe essa propriedade (0-7)
+        int discount = financeLvl;  // Simples: reduz por lvl (max -7)
+        int cost = Mathf.Max(0, baseCost - discount);  // Evita negativo
+        return cost;
     }
     //Training
     public void SetTrainingBtns()

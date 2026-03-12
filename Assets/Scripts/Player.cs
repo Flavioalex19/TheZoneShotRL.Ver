@@ -24,7 +24,10 @@ public class Player : MonoBehaviour
         "Denis", "Scott", "Leon", "Nash", "Marc", "Han", "Tom", "Laurence", "Matt","Brian", "Travis", "Robert", "Bob", "Kevin", "Fabian", "Nelson", "Henry", "Austin",
         "Wagner", "Adrian", "Andy", "Eden", "Carl", "Martin", "Wallace", "Tim", "Douglas", "Harry", "Eric", "Ethan", "Max", "Afonso", "Oliver", "Dan", "Ian", "Ewan", "Jack",
         "Felix", "Arnold", "Tommy", "Trevor", "Thomas", "Zack", "Isiah","Erick", "Josh", " Norman", "Marco", "Ed", "Fred", "Dennis", "Marshall", "Patrick", "Ty", "Jerry", "Alfred",
-        "Andrew", "Austin", "Acer", "Lima","Aaron", "Drake"
+        "Andrew", "Austin", "Acer", "Lima","Aaron", "Drake", "Ajay", "Allan", "Alvin", "Anton", "Archer", "Blake", "Brad", "Brandom", "Braxton", "Bret", "Brian", "Bruce", "Calvin",
+        "Cary", "Chester", "C.J", "Clayton", "Colby", "Cody", "Cory", "Dalton", "Damian", "Dane", "Deelan", "Deshawn", "Dmitri", "Donovan" ,"Dray", "Draymond", "Earnest",
+        "Efrem", "Elliot", "Finn", "Flynt", "Fry", "Gavin", "Geoff", "Gilligan", "Glenn", "Hank","Alistair", "Benedict", "Harold", "Hercules", "Herman", "Hugh", "Hugo", "Iggy",
+        "Igor", "Thiago", "Rod", "Ichiro", "Iniko", "Itashi", "J.B.", "J.D.", "J.T.", "J.R.", "Jacub", "Jarrett", "Jax", "Keith", "Keyshawn", "Kirk", "Lawrence"
     };
     private static readonly string[] secondNames = 
     {
@@ -32,7 +35,10 @@ public class Player : MonoBehaviour
         "Young", "Hill", "Armstrong", "Roger", "Macmanus", "Salvi", "Free", "Freeman", "Strong", "Jager", "Cross", "Hunter", "Doyle", "Howard", "Malone", "Gray", "Summers",
         "Miller", "Von", "Yorke", "Clancy", "Tyson", "Collins", "King","Dent", "Barry", "Chambers", "Cole", "Jones", "Langley", "Lee", "Ross", "Souza","Hart", "Kane", "Law",
         "Rogers", "Newton", "Lewis", "Mckay", "Barnes", "Vincent", "Enies", "Wayne", "Burke", "Falcon", "Lamb", "Allen", "Connor", "Fray", "White", "Lane", "Morgan",
-        "Bollock", "Trent", "Brady", "Machado","Edwards", "Thompson", "Mitty", "Webster", "Web", "Watson", "Homes", "Aiken" , "Ainsworth", "Adler", "May", "Duke", "Ventura"
+        "Bollock", "Trent", "Brady", "Machado","Edwards", "Thompson", "Mitty", "Webster", "Web", "Watson", "Homes", "Aiken" , "Ainsworth", "Adler", "May", "Duke", "Ventura",
+        "Acker", "Alderman", "Allerdale", "Asimov", "Applegarth", "Ashburn", "Axford", "Backman", "Ballard", "Barlow", "Baron", "Barrick", "Barrowcliff", "Bartholomew", "Batara",
+        "Baumann", "Bayfield", "Beaver", "Beckett", "Beckford", "Beesley", "Behrens", "Bellamy", "Bellington", "Bender", "Bendett", "Benson", "Bernstein", "Bertolini", "Blackford",
+        "Blanc", "Bledsoe", "Borchardt", "Breakspear", "Breakwell", "Chevallier", "Christensen", "Christopher", "Clarkson", "Clemens", "Colby"
     };
     [SerializeField] public string playerFirstName;
     [SerializeField] public string playerLastName;
