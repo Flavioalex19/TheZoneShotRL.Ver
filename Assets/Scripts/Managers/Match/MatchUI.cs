@@ -119,6 +119,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Animator anim_Sp_Button_Activate;
     [SerializeField] Image image_adrenalineBar;
     [SerializeField] Image image_offensivePanel_awayTeamHpBAR;
+    Animator off_Animator;
     //debub
     [SerializeField] TextMeshProUGUI debugText_awayHp;
     public string playernameWithBall;
@@ -654,19 +655,47 @@ public class MatchUI : MonoBehaviour
         {
             if (_matchManager.HomeTeam.playersListRoster[i] == _matchManager.playerWithTheBall)
             {
+                off_Animator = transform_ActiveHomePlayers.GetChild(i).GetChild(7).GetComponent<Animator>();
+                //print(animator + "New");
                 transform_ActiveHomePlayers.GetChild(i).GetChild(7).gameObject.SetActive(true);
                 transform_ActiveHomePlayers.GetChild(i).GetChild(5).gameObject.SetActive(true);
                 transform_ActiveHomePlayers.GetChild(i).GetChild(3).gameObject.SetActive(true);
+                //off_Animator.enabled = true;
+                //off_Animator.SetBool("On", true);
+                
+                
             }
             else
             {
+                //Animator animator = transform_ActiveHomePlayers.GetChild(i).GetChild(7).GetComponent<Animator>();
                 transform_ActiveHomePlayers.GetChild(i).GetChild(7).gameObject.SetActive(false);
                 transform_ActiveHomePlayers.GetChild(i).GetChild(5).gameObject.SetActive(false);
                 transform_ActiveHomePlayers.GetChild(i).GetChild(3).gameObject.SetActive(false);
+                //animator.SetBool("On", false);
+                //animator.Update(0f);  // Força update imediato do state machine
+                
             }
             //print(_matchManager.HomeTeam.playersListRoster[i].playerLastName + " this is his zone: " + _matchManager.HomeTeam.playersListRoster[i].CurrentZone);
         }
 
+    }
+    public void ActivateAnimatorOffensivePanel()
+    {
+        print(off_Animator + "New offAnimator");
+        off_Animator.SetBool("On", true);
+    }
+    public void UsedPlayerBtns()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (_matchManager.HomeTeam.playersListRoster[i] == _matchManager.playerWithTheBall)
+            {
+                Animator animator = transform_ActiveHomePlayers.GetChild(i).GetChild(7).GetComponent<Animator>();
+                animator.SetBool("On", false);
+            }
+            
+            //print(_matchManager.HomeTeam.playersListRoster[i].playerLastName + " this is his zone: " + _matchManager.HomeTeam.playersListRoster[i].CurrentZone);
+        }
     }
     public void UpdatePlayerPlacements()
     {

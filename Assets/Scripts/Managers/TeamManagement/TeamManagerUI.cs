@@ -136,6 +136,8 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] public Image image_currentPlayerPortraitToTrain;
     [SerializeField] public TextMeshProUGUI text_trainingType;
     [SerializeField] public Transform transform_assistance_ResultPortrait;
+    [SerializeField] public TextMeshProUGUI training_playerOVR;
+    [SerializeField] public TextMeshProUGUI training_playerAge;
     
     //public TextMeshProUGUI text_playerToTrain;
     //public TextMeshProUGUI text_drill;

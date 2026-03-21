@@ -42,6 +42,8 @@ public class TrainingManager : MonoBehaviour
         playerIndex = index;
         teamManagerUI._textPlayerSelected.text = gameManager.playerTeam.playersListRoster[index].playerFirstName.ToString() + " " + 
             gameManager.playerTeam.playersListRoster[index].playerLastName.ToString();
+        teamManagerUI.training_playerOVR.text = gameManager.playerTeam.playersListRoster[index].SetOVR().ToString();
+        teamManagerUI.training_playerAge.text = gameManager.playerTeam.playersListRoster[index].Age.ToString();
         //SetTraining(index, drillChoosed);
         //Sprite alteration/update
         Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");

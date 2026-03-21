@@ -18,11 +18,23 @@ public class TeamSelectionManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI _text_selectedTeamOnConfirmation;
 
     [SerializeField] Team selectedTeam;
+    [Header("Legacy")]
+    [SerializeField] Button btn_legacy0;
+    [SerializeField] Button btn_legacy1;
+    [SerializeField] Button btn_legacy2;
+    [SerializeField] Button btn_legacy3;
+    [SerializeField] Button btn_legacy4;
+    [SerializeField] Button btn_legacy5;
+    [SerializeField] Button btn_legacy6;
+    [SerializeField] TextMeshProUGUI text_legacyCurrentPoints;
+    [SerializeField] int legacy_currentPoints;
+
     // Start is called before the first frame update
     void Start()
     {
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         _leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
+        legacy_currentPoints = 0;
     }
 
     public void SetPlayerTeam(Team team)

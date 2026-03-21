@@ -746,6 +746,7 @@ public class MatchManager : MonoBehaviour
                 if (!isSimulation) _matchUI.PlayerWithTheBallOff();
                 if (!isSimulation) _matchUI.PlayerWithBallButtonsOnOff();
                 if (!isSimulation) _matchUI.UpdatePlayerPlacements();
+                if(!isSimulation) _matchUI.ActivateAnimatorOffensivePanel();
                 //MatchEvents();
                 //CanChooseAction = true;
                 if ((leagueManager.isOnR8 == true || leagueManager.isOnR4 == true || leagueManager.isOnFinals == true) && currentGamePossessons <= 1)
@@ -783,6 +784,7 @@ public class MatchManager : MonoBehaviour
 
                 if (_ChooseScoring)
                 {
+                    _matchUI.UsedPlayerBtns();
                     _ChooseScoring = false;
                     _matchUI.ActionPanelAnim(5, "Shoot");
                     //Lose Stamina
@@ -802,6 +804,7 @@ public class MatchManager : MonoBehaviour
                 }
                 else if (_ChoosePass)
                 {
+                    _matchUI.UsedPlayerBtns();
                     _ChoosePass = false;
                     _matchUI.ActionPanelAnim(0, "Passing");
                     //Lose Stamina
@@ -839,6 +842,7 @@ public class MatchManager : MonoBehaviour
                 }
                 else if (_ChooseToSpecialAtt)
                 {
+                    _matchUI.UsedPlayerBtns();
                     _ChooseToSpecialAtt = false;
                     _sp_numberOfSPActions--;
                     _matchUI.SetSkillPints();
@@ -900,6 +904,7 @@ public class MatchManager : MonoBehaviour
                 }
                 else if (_ChooseBeatDefender)
                 {
+                    _matchUI.UsedPlayerBtns();
                     _matchUI.ActionPanelAnim(7, "Juke");
                     //Lose Stamina
                     StaminaLossByAction(playerWithTheBall);
@@ -929,10 +934,12 @@ public class MatchManager : MonoBehaviour
                 }
                 else if (CanChooseShove)
                 {
+                    _matchUI.UsedPlayerBtns();
 
                 }
                 else if (CanChooseCharge)
                 {
+                    _matchUI.UsedPlayerBtns();
 
                 }
                 else if(_canCallTimeout == false)
