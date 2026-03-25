@@ -14,6 +14,7 @@ public class IntroManager : MonoBehaviour
     LeagueManager leagueManager;
     [SerializeField] Button btn_career;
     [SerializeField] Button btn_resetLeague;
+    [SerializeField] Button btn_clearSave;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +24,8 @@ public class IntroManager : MonoBehaviour
         _canPressEnter = false;
         btn_career.onClick.AddListener(() => _gameManager.AdvanceToDraft());
         btn_resetLeague.onClick.AddListener(() => leagueManager.ResetLeagueHistoryMode());
+        btn_clearSave.onClick.AddListener(() => ClearCurrentSave());
+        btn_clearSave.onClick.AddListener(() => _gameManager.QuitApp());
         StartCoroutine(ProgressToMainMenu());
         
         
@@ -54,6 +57,14 @@ public class IntroManager : MonoBehaviour
         else
         {
             _teamText.text = "A new journey towards the trophy awaits you.";
+        }
+    }
+    //ClearSave
+    void ClearCurrentSave()
+    {
+        for (int i = 0; i < _gameManager.leagueTeams.Count; i++)
+        {
+            _gameManager.saveSystem.ClearSave(_gameManager.leagueTeams[i].TeamName ,_gameManager.leagueTeams[i]);
         }
     }
 }

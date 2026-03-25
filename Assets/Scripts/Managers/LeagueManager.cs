@@ -60,6 +60,11 @@ public class LeagueManager : MonoBehaviour
     public bool CanDraftSpPlayer4 = false;
     public bool FacilitieBonus0 = false;
     public bool FacilitieBonus1 = false;
+    //legacyOptions
+    public bool isOnDraftLVL0 = false;
+    public bool isOnDraftLVL1 = false;
+    public bool isOnDraftLVL2 = false;
+
 
 
     GameManager gameManager;

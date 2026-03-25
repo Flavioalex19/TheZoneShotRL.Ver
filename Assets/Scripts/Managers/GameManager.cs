@@ -285,9 +285,9 @@ public class GameManager : MonoBehaviour
         */
         // Conta quantos níveis de draft estão liberados
         int unlockedCount = 0;
-        if (leagueManager.CanDraftlvl1) unlockedCount++;
-        if (leagueManager.CanDraftlvl2) unlockedCount++;
-        if (leagueManager.CanDraftlvl3) unlockedCount++;
+        if (leagueManager.isOnDraftLVL0) unlockedCount++;
+        if (leagueManager.isOnDraftLVL1) unlockedCount++;
+        if (leagueManager.isOnDraftLVL2) unlockedCount++;
 
         // Define as chances baseado no nível liberado
         float chanceEarly = 0f;

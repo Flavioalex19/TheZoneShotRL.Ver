@@ -19,6 +19,7 @@ public class TeamSelectionManager : MonoBehaviour
 
     [SerializeField] Team selectedTeam;
     [Header("Legacy")]
+    [SerializeField] Transform transform_btnsLegacy;
     [SerializeField] Button btn_legacy0;
     [SerializeField] Button btn_legacy1;
     [SerializeField] Button btn_legacy2;
@@ -26,8 +27,8 @@ public class TeamSelectionManager : MonoBehaviour
     [SerializeField] Button btn_legacy4;
     [SerializeField] Button btn_legacy5;
     [SerializeField] Button btn_legacy6;
-    [SerializeField] TextMeshProUGUI text_legacyCurrentPoints;
-    [SerializeField] int legacy_currentPoints;
+    [SerializeField] public TextMeshProUGUI text_legacyCurrentPoints;
+    [SerializeField] public int legacy_currentPoints;
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +36,8 @@ public class TeamSelectionManager : MonoBehaviour
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         _leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
         legacy_currentPoints = 0;
+        
+
     }
 
     public void SetPlayerTeam(Team team)
@@ -66,5 +69,26 @@ public class TeamSelectionManager : MonoBehaviour
     public void ClearCurrentSelectedTeamText()
     {
         _debugCurrentTeam.text = " ";
+    }
+
+    public void ResetLegacyBtns()
+    {
+        legacy_currentPoints = 0;
+        for (int i = 0; i < transform_btnsLegacy.childCount; i++)
+        {
+            transform_btnsLegacy.GetChild(i).GetComponent<BtnTeamSelectionLegacy>().Btn_legacy.interactable = true;
+        }
+        //reset league bonus for draft or season
+        _leagueManager.isOnDraftLVL0 = false;
+        _leagueManager.isOnDraftLVL1 = false;
+        _leagueManager.isOnDraftLVL2 = false;
+
+    }
+    //Debug Panel
+    public void DebugUnlock()
+    {
+        _leagueManager.isOnDraftLVL0 = true;
+        _leagueManager.isOnDraftLVL1 = true;
+        _leagueManager.isOnDraftLVL2 = true;
     }
 }
