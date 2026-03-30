@@ -188,6 +188,8 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Sprite sprite_AssistanceHappy;
     [SerializeField] Sprite sprite_AssistanceFail;
     [SerializeField] Transform transform_contract_AssistancePortrait;
+    [SerializeField] TextMeshProUGUI contract_playerOvr;
+    [SerializeField] TextMeshProUGUI contract_PlayerAge;
     int newGamesValue;
     int newSalaryValue;
     int indexForPlayer;
@@ -1164,7 +1166,6 @@ public class TeamManagerUI : MonoBehaviour
     }
     public void TradeSwapPlayers()
     {
-      
         if(gameManager.playerTeam.FrontOfficePoints - trade_costOfTrade > 0)
         {
             // Remove playerA de teamA
@@ -1282,14 +1283,17 @@ public class TeamManagerUI : MonoBehaviour
             contract_PlayerbuttonsArea.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].playerFirstName + " " +
                 gameManager.playerTeam.playersListRoster[i].playerLastName;
             contract_PlayerbuttonsArea.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].ContractYears.ToString();
+            contract_PlayerbuttonsArea.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].SetOVR().ToString();
         }
     }
     public void UpdatePlayerContract(int index)
     {
 
         contract_playerName.text = gameManager.playerTeam.playersListRoster[index].playerFirstName + " " + gameManager.playerTeam.playersListRoster[index].playerLastName;
-        contract_CurrentPlayerGames.text = "Games Remaining " + gameManager.playerTeam.playersListRoster[index].ContractYears.ToString();
-        contract_CurrentPlayerSalary.text = "Salary " + gameManager.playerTeam.playersListRoster[index].Salary.ToString();
+        contract_CurrentPlayerGames.text =  gameManager.playerTeam.playersListRoster[index].ContractYears.ToString();
+        contract_CurrentPlayerSalary.text =  gameManager.playerTeam.playersListRoster[index].Salary.ToString();
+        contract_PlayerAge.text = gameManager.playerTeam.playersListRoster[index].Age.ToString();
+        contract_playerOvr.text = gameManager.playerTeam.playersListRoster[index].SetOVR().ToString();
         Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
         Sprite sprite = sprites[gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait];
         contract_selectePlayer.sprite = sprite;
@@ -1304,83 +1308,6 @@ public class TeamManagerUI : MonoBehaviour
     }
     public void ContractDiscussion(int weight)
     {
-        /*
-        //contract_asstancePanel.SetActive(true);
-        if(leagueManager.canNegociateContract == true)
-        {
-            
-            int salaryIncrease = 0;
-            int gamesIncrease = 0;
-
-            switch (weight)
-            {
-                case 0:                     // Oferta ruim
-                    salaryIncrease = UnityEngine.Random.Range(2, 6);
-                    gamesIncrease = 2;
-                    break;
-
-                case 1:                     // Oferta média
-                    salaryIncrease = UnityEngine.Random.Range(6, 9);
-                    gamesIncrease = 4;
-                    break;
-
-                case 2:                     // Melhor oferta
-                    salaryIncrease = UnityEngine.Random.Range(9, 13);
-                    gamesIncrease = 6;
-                    break;
-            }
-            Player p = gameManager.playerTeam.playersListRoster[indexForPlayer];
-
-            // Calcula o salário projetado após a mudança
-            int projectedSalary = gameManager.playerTeam.CurrentSalary + salaryIncrease;
-
-            // Verifica limite de contrato + salary cap
-            if (p.ContractYears < 5 && projectedSalary < gameManager.playerTeam.SalaryCap)
-            {
-                if (TryExtendContract(gameManager.playerTeam,p,p.Salary + salaryIncrease,p.ContractYears + gamesIncrease,weight))
-                {
-                    p.ContractYears += gamesIncrease;
-                    p.Salary += salaryIncrease;
-
-                    contract_resultNegotiationText.text =
-                        "Good Job Boss! " + p.playerLastName + " for " + p.ContractYears;
-
-                    image_assistance.sprite = sprite_AssistanceHappy;
-
-                }
-                else
-                {
-                    contract_resultNegotiationText.text =
-                        "Damn! We can't come to an agreement with " + p.playerLastName +
-                        ". Maybe he needs some time to think...";
-
-                    image_assistance.sprite = sprite_AssistanceFail;
-                }
-
-                leagueManager.canNegociateContract = false;
-            }
-            else
-            {
-                contract_resultNegotiationText.text =
-                    "Boss, we can't extend his contract for now.";
-            }
-        }
-        else
-        {
-            contract_resultNegotiationText.text = "Boss, we can't negotiate any more contracts this week.";
-        }
-        
-        ContractButtonsUpdate();
-        gameManager.playerTeam.CurrentSalary = 0;
-        for (int i = 0; i < gameManager.playerTeam.playersListRoster.Count; i++)
-        {
-            gameManager.playerTeam.CurrentSalary += gameManager.playerTeam.playersListRoster[i].Salary;
-        }
-        contract_asstancePanel.SetActive(true);
-        _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
-        SaveAfterPlayerEvent();
-        */
-        //contract_asstancePanel.SetActive(true);
         if (leagueManager.canNegociateContract == true)
         {
             // === MOVER AQUI: atualiza CurrentSalary antes de qualquer cálculo ===
@@ -1657,7 +1584,7 @@ public class TeamManagerUI : MonoBehaviour
     }
     public bool IsPlayerTeamInTop8()
     {
-        LeagueManager leagueManager = FindObjectOfType<LeagueManager>();
+        LeagueManager leagueManager = FindFirstObjectByType<LeagueManager>();
 
         if (leagueManager == null || leagueManager.Standings == null)
             return false;

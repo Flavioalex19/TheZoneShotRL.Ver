@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     }
 
     public GameMode mode;
+    public List<Team> fullTeamList = new List<Team>();
     public List<Team> leagueTeams = new List<Team>();
     //public Team team; // Reference to the Team object
     public GameObject playerPrefab; // Prefab to instantiate new players
@@ -47,6 +48,19 @@ public class GameManager : MonoBehaviour
         else
         {
             Destroy(gameObject); // Destroy duplicates
+        }
+        leagueTeams.Clear();
+        foreach (Team teamTemplate in fullTeamList)
+        {
+            GameObject teamGO = Instantiate(teamTemplate.gameObject);   // Instancia o GameObject
+            Team newTeam = teamGO.GetComponent<Team>();
+
+            teamGO.transform.SetParent(transform);
+            DontDestroyOnLoad(teamGO);
+
+            leagueTeams.Add(newTeam);
+
+            Debug.Log($"Time persistente criado: {newTeam.TeamName}");
         }
     }
     private void Start()
@@ -163,6 +177,7 @@ public class GameManager : MonoBehaviour
         {
             Application.Quit();
         }
+        /*
         #region Draft
         if (mode == GameMode.Draft)
         {
@@ -184,6 +199,7 @@ public class GameManager : MonoBehaviour
         }
         #endregion
 
+        */
         #region Match
         
         
@@ -264,25 +280,13 @@ public class GameManager : MonoBehaviour
             team.GetSchedule().Clear();
         }
     }
-
+    /*
     #region DRAFT METHODS
     // Function to generate a specified number of players and add them to the team
     public void GeneratePlayers(int numberOfPlayers)
     {
-        /*
-        for (int i = 0; i < numberOfPlayers; i++)
-        {
-            // Instantiate a new player object
-            GameObject playerObject = Instantiate(playerPrefab);
-
-            // Access the Player component and set the attributes
-            Player newPlayer = playerObject.GetComponent<Player>();
-            newPlayer.GenerateRandomPlayer(); // Randomize the player's name and overall rating
-           
-            GeneratePlayerDraftButton(newPlayer);
-            
-        }
-        */
+        
+        
         // Conta quantos níveis de draft estão liberados
         int unlockedCount = 0;
         if (leagueManager.isOnDraftLVL0) unlockedCount++;
@@ -339,6 +343,7 @@ public class GameManager : MonoBehaviour
 
             GeneratePlayerDraftButton(newPlayer);
         }
+        
     }
     public void SortDraftButtonsByOVRCrescente()
     {
@@ -484,12 +489,7 @@ public class GameManager : MonoBehaviour
         // Check if all buttons are removed from GridLayoutGroup
         if (glg_draftNames.transform.childCount == 0)
         {
-            /*
-            for (int i = 0; i < leagueTeams.Count; i++)
-            {
-                saveSystem.SaveTeam(leagueTeams[i]);
-            }
-            */
+            
 
             // Change mode and scene---THIA COULD BE A BUTTON!!!!!!!!!!!!!!!!
             mode = GameMode.TeamManagement;
@@ -505,15 +505,10 @@ public class GameManager : MonoBehaviour
 
     //Testing!!!!!!!!!!!!!!!!!!!!!
 
-    public void AdvanceToDraft()
-    {
-        
-        StartCoroutine(AdvanceToDraftRoutine());
-
-    }
+    
     private IEnumerator AdvanceToDraftRoutine()
     {
-        introManager = GameObject.FindObjectOfType<IntroManager>().GetComponent<IntroManager>();
+        introManager = GameObject.FindFirstObjectByType<IntroManager>().GetComponent<IntroManager>();
         if (GameObject.Find("TransitionSequence"))
         {
             Animator animator = GameObject.Find("TransitionSequence").GetComponent<Animator>();
@@ -533,7 +528,7 @@ public class GameManager : MonoBehaviour
             saveSystem.ResetForNewLeagueRun();
             saveSystem.ResetLeagueData();
         }
-        if (/*IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName)*/leagueManager.CanStartANewRun == false)
+        if (leagueManager.CanStartANewRun == false)
         {
             mode = GameMode.TeamManagement;
             //mode = GameMode.TeamManagement;
@@ -567,12 +562,76 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene("TeamSelection");
         }
     }
+    
+    #endregion
+    */
     public void ToTitleScreen()
     {
         SceneManager.LoadScene("Title");
     }
-    #endregion
 
+    public void AdvanceToDraft()
+    {
+
+        StartCoroutine(AdvanceToDraftRoutine());
+
+    }
+    private IEnumerator AdvanceToDraftRoutine()
+    {
+        introManager = GameObject.FindFirstObjectByType<IntroManager>().GetComponent<IntroManager>();
+        if (GameObject.Find("TransitionSequence"))
+        {
+            Animator animator = GameObject.Find("TransitionSequence").GetComponent<Animator>();
+            GameObject.Find("PhaseText").GetComponent<TextMeshProUGUI>().text = " Next Phase";
+            animator.SetTrigger("Go");
+        }
+
+        float timer = 2f;
+        while (timer > 0)
+        {
+            introManager.ChangeStageTransitionTextIntro();
+            timer -= Time.deltaTime;
+            yield return null; // Wait a frame instead of freezing
+        }
+        if (leagueManager.CanStartANewRun)
+        {
+            saveSystem.ResetForNewLeagueRun();
+            saveSystem.ResetLeagueData();
+        }
+        if (leagueManager.CanStartANewRun == false)
+        {
+            mode = GameMode.TeamManagement;
+            //mode = GameMode.TeamManagement;
+            SceneManager.LoadScene("MyTeamScreen");
+        }
+        else
+        {
+            //mode = GameMode.Draft;
+            //saveSystem.ResetForNewRun();
+            leagueManager.canGenerateEvents = true;
+            //reset teams
+            for (int i = 0; i < leagueTeams.Count; i++)
+            {
+                leagueTeams[i].playersListRoster.Clear();
+                leagueTeams[i].Moral = leagueTeams[i].fixMoral;
+                leagueTeams[i].FrontOfficePoints = leagueTeams[i].fixFrontOffice;
+                leagueTeams[i].FansSupportPoints = leagueTeams[i].fixFansSupport;
+                leagueTeams[i].EffortPoints = leagueTeams[i].fixEffort;
+                leagueTeams[i].Wins = 0;
+                leagueTeams[i].Loses = 0;
+                leagueTeams[i].Draws = 0;
+                leagueTeams[i].OfficeLvl = 0;
+                leagueTeams[i].MedicalLvl = 0;
+                leagueTeams[i].ArenaLvl = 0;
+                leagueTeams[i].FinancesLvl = 0;
+                leagueTeams[i].MarketingLvl = 0;
+                leagueTeams[i].TeamEquipmentLvl = 0;
+
+
+            }
+            SceneManager.LoadScene("TeamSelection");
+        }
+    }
     #region Transitions METHODS
     public void GoToMatch()
     {

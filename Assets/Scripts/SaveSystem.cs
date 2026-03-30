@@ -34,7 +34,7 @@ public class SaveSystem : MonoBehaviour
     */
     public void SaveTeamInfo(Team team)
     {
-        LeagueManager leagueManager = FindObjectOfType<LeagueManager>();
+        LeagueManager leagueManager = FindFirstObjectByType<LeagueManager>();
         TeamData teamData = new TeamData(team,leagueManager);
 
         string json = JsonUtility.ToJson(teamData, true);
@@ -44,7 +44,7 @@ public class SaveSystem : MonoBehaviour
     }
     public void SaveLeague()
     {
-        LeagueManager leagueManager = FindObjectOfType<LeagueManager>();
+        LeagueManager leagueManager = FindFirstObjectByType<LeagueManager>();
 
         LeagueManagerData data = new LeagueManagerData(leagueManager);
 
@@ -57,200 +57,7 @@ public class SaveSystem : MonoBehaviour
         File.WriteAllText(path, json);
     }
     // Load team data from JSON file
-    /*
-    public void LoadTeam(Team team, GameObject playerPrefab)
-    {
-        
-        string filePath = GetSavePath(team.TeamName);
-
-        if (File.Exists(filePath))
-        {
-            string json = File.ReadAllText(filePath);
-            TeamData teamData = JsonUtility.FromJson<TeamData>(json);
-            LeagueManagerData leagueManagerData = JsonUtility.FromJson<LeagueManagerData>(json);//////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-            team.IsPlayerTeam = false;
-            team.Moral = 0;
-            team.FrontOfficePoints = 0;
-            team.FansSupportPoints = 0;
-            team.EffortPoints = 0;
-            team.Wins = 0;
-            team.Draws = 0;
-            team.Loses = 0;
-            team.CurrentSalary = 0;
-            team.FinancesLvl = 0;
-            team.OfficeLvl = 0;
-            team.MarketingLvl = 0;
-            team.isR4 = false;
-            team.isR8 = false;
-            team.isFinalist = false;
-            team.isChampion = false;
-
-            team.IsPlayerTeam = teamData.isPlayerControlled;
-            team.Moral = teamData.teamMoral;
-            team.FrontOfficePoints = teamData.teamFrontOffice;
-            team.FansSupportPoints = teamData.teamFansSupport;
-            team.EffortPoints = teamData.teamEffort;
-            team.Wins = teamData.win;
-            team.Draws = teamData.draw;
-            team.Loses = teamData.lost;
-            team.CurrentSalary = teamData.cap;
-            team.FinancesLvl = teamData.finances;
-            team.OfficeLvl = teamData.offices;
-            team.MarketingLvl = teamData.market;
-            team.TeamEquipmentLvl = teamData.equip;
-            team.ArenaLvl = teamData.arena;
-            team.MedicalLvl = teamData.medical;
-            team.isR4 = teamData.isTop4;
-            team.isR8 = teamData.isTop8;
-            team.isFinalist = teamData.FinalTeam;
-            team.isChampion = teamData.Champion;
-
-            
-
-            // Clear existing roster and repopulate from saved data
-            team.playersListRoster.Clear();
-            team._equipmentList.Clear();
-            team.ClearAllPlayers();
-            if (team.IsPlayerTeam) print("THS IS THE PLAYERS TEAM" + " " + team.TeamName);
-            //Load Equipment
-            if (team.IsPlayerTeam )
-            {
-                foreach (EquipmentData equipData in teamData.equiList)
-                {
-                    
-                    Equipment newEquip = new Equipment
-                    {
-                        Index = equipData.indexNumber,
-                        Name = equipData.equipName,
-                        Level = equipData.lvl,
-                        ShotBoost = equipData.ShotB,
-                        InsBoost = equipData.InsB,
-                        MidBoost = equipData.MidB,
-                        OutBoost = equipData.OutB
-                    };
-                    if (!team._equipmentList.Exists(e => e.Index == newEquip.Index))
-                    {
-                        team._equipmentList.Add(newEquip);
-                        Debug.Log($"Loaded Equip: {newEquip.Name} Level: {newEquip.Level}");
-                    }
-                }
-                // Check if the equipment list has been populated correctly
-                if (team._equipmentList.Count > 0)
-                {
-                    Debug.Log($"Total Equipment Loaded: {team._equipmentList.Count}");
-                }
-                else
-                {
-                    Debug.LogWarning("No equipment loaded for the team.");
-                }
-                //print(team._equipmentList.Count + " Number of equips");
-            }
-            else
-            {
-                print("Has DATA");
-            }
-            //Load Players
-            foreach (PlayerData playerData in teamData.playersListData)
-            {
-                GameObject playerGO = Instantiate(playerPrefab);
-                //Player newPlayer = new GameObject().AddComponent<Player>();
-                Player newPlayer = playerGO.AddComponent<Player>();
-
-                newPlayer.playerFirstName = playerData.firstName;
-                newPlayer.playerLastName = playerData.secondName;
-                newPlayer.Age = playerData.playerAge;
-                newPlayer.ovr = playerData.ovr;
-                newPlayer.Shooting = playerData.shooting;
-                newPlayer.Inside = playerData.inside;
-                newPlayer.Mid = playerData.mid;
-                newPlayer.Outside = playerData.outside;
-                newPlayer.Defending = playerData.defend;
-                newPlayer.Guarding = playerData.guard;
-                newPlayer.Stealing = playerData.steal;
-                newPlayer.Awareness = playerData.awn;
-                newPlayer.Juking = playerData.juk;
-                newPlayer.Consistency = playerData.cosis;
-                newPlayer.Control = playerData.control;
-                newPlayer.Positioning = playerData.pos;
-                newPlayer.ContractYears = playerData.yearsC;
-                newPlayer.Salary = playerData.salaryPlayer;
-                newPlayer.Personality = playerData.persona;
-                newPlayer.ImageCharacterPortrait = playerData.imageIndex;
-                newPlayer.J_Number = playerData.jNum;
-                newPlayer.Zone = playerData.zone;
-                newPlayer.CareerGamesPlayed = playerData.c_gamesPlayed;
-                newPlayer.CareerPoints = playerData.c_pointsMade;
-                newPlayer.CareerSteals = playerData.c_steals;
-                newPlayer.CareerFieldGoalAttempted = playerData.c_fieldGoal;
-                newPlayer.CareerFieldGoalMade = playerData.c_fieldGoalsMade;
-                newPlayer.buff = playerData.b_buff;
-                newPlayer.bondPlayer = playerData.p_bond;
-                team.playersListRoster.Add(newPlayer);
-            }
-
-            // Load schedule
-            team._schedule.Clear();
-            foreach (string teamName in teamData.scheduleTeamNames)
-            {
-                Team opponent = FindTeamByName(teamName); // Must return a valid Team from leagueTeams
-                if (opponent != null && opponent != team)
-                {
-                    team._schedule.Add(opponent);
-                }
-            }
-
-            if (team.IsPlayerTeam && teamData.leagueData != null)
-            {
-                LeagueManager leagueManager = FindObjectOfType<LeagueManager>();
-                if (leagueManager != null)
-                {
-                    leagueManager.Week = teamData.leagueData.weekNumber;
-                    leagueManager.canGenerateEvents = teamData.leagueData.canGenEvent;
-                    leagueManager.canStartANewWeek = teamData.leagueData.canStartANewWeek;
-                    leagueManager.canTrade = teamData.leagueData.canTradePlayers;
-                    leagueManager.canTrain = teamData.leagueData.canTrainPlayer;
-                    leagueManager.CanStartTutorial = teamData.leagueData.canStartTutorial;
-                    leagueManager.canNegociateContract = teamData.leagueData.canNegociateContract;
-                    leagueManager.isOnR4 = teamData.leagueData.isr4;
-                    leagueManager.isOnR8 = teamData.leagueData.isr8;
-                    leagueManager.isOnFinals = teamData.leagueData.isFinal;
-
-                    //PLayoffs lists
-                    leagueManager.List_R8Teams.Clear();
-                    foreach (string name in leagueManagerData.R8Names)
-                    {
-                        Team t = FindTeamByName(name);
-                        if (t != null) leagueManager.List_R8Teams.Add(t);
-                    }
-
-                    leagueManager.List_R4Teams.Clear();
-                    foreach (string name in leagueManagerData.R4Names)
-                    {
-                        Team t = FindTeamByName(name);
-                        if (t != null) leagueManager.List_R4Teams.Add(t);
-                    }
-
-                    leagueManager.List_Finalist.Clear();
-                    foreach (string name in leagueManagerData.FinalNames)
-                    {
-                        Team t = FindTeamByName(name);
-                        if (t != null) leagueManager.List_Finalist.Add(t);
-                    }
-                }
-            }
-
-
-            Debug.Log($"Team {team.TeamName} loaded successfully from {filePath}");
-            Debug.Log($"Loaded JSON for {team.TeamName}, equipment count: {teamData.equiList?.Count}");
-        }
-        else
-        {
-            Debug.LogError($"No save file found for {team.TeamName} at {filePath}");
-        }
-        
-    }
-    */
+    
     public void LoadLeague()
     {
         string path = Path.Combine(
@@ -263,7 +70,7 @@ public class SaveSystem : MonoBehaviour
         string json = File.ReadAllText(path);
         LeagueManagerData data = JsonUtility.FromJson<LeagueManagerData>(json);
 
-        LeagueManager lm = FindObjectOfType<LeagueManager>();
+        LeagueManager lm = FindFirstObjectByType<LeagueManager>();
 
         lm.Week = data.weekNumber;
         lm.canGenerateEvents = data.canGenEvent;
@@ -443,7 +250,7 @@ public class SaveSystem : MonoBehaviour
     }
     public void ResetLeagueData()
     {
-        LeagueManager leagueManager = FindObjectOfType<LeagueManager>();
+        LeagueManager leagueManager = FindFirstObjectByType<LeagueManager>();
 
 
         if (leagueManager == null)
@@ -481,8 +288,8 @@ public class SaveSystem : MonoBehaviour
     }
     public void ResetForNewLeagueRun()
     {
-        LeagueManager leagueManager = FindObjectOfType<LeagueManager>();
-        GameManager gameManager = FindObjectOfType<GameManager>();
+        LeagueManager leagueManager = FindFirstObjectByType<LeagueManager>();
+        GameManager gameManager = FindFirstObjectByType<GameManager>();
 
         if (leagueManager == null)
         {
@@ -557,8 +364,8 @@ public class SaveSystem : MonoBehaviour
     */
     public void ResetLeagueHistory()
     {
-        LeagueManager leagueManager = FindObjectOfType<LeagueManager>();
-        GameManager gameManager = FindObjectOfType<GameManager>();
+        LeagueManager leagueManager = FindFirstObjectByType<LeagueManager>();
+        GameManager gameManager = FindFirstObjectByType<GameManager>();
 
         leagueManager.CanDraftlvl1 = false;
         leagueManager.CanDraftlvl2 = false;
@@ -594,7 +401,7 @@ public class SaveSystem : MonoBehaviour
     }
     private Team FindTeamByName(string name)
     {
-        return FindObjectOfType<GameManager>().leagueTeams
+        return FindFirstObjectByType<GameManager>().leagueTeams
             .FirstOrDefault(t => t.TeamName == name);
     }
 }

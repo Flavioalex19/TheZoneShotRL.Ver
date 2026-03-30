@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -38,13 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -67,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -135,6 +131,66 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: fullTeamList.Array.size
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: 'fullTeamList.Array.data[0]'
+      value: 
+      objectReference: {fileID: 247511481009705585, guid: bac72de72e83f3946b22b73c381a244a, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: 'fullTeamList.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8985775287296533070, guid: c8d55af16177e3d4495d2057f2d13e53, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: 'fullTeamList.Array.data[2]'
+      value: 
+      objectReference: {fileID: 3835133189410921805, guid: 0068726d1c5df484f9dc2630e4468009, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: 'fullTeamList.Array.data[3]'
+      value: 
+      objectReference: {fileID: 4930805896377140774, guid: aeca574c5522f4645acfcfc17d6fd4d5, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: 'fullTeamList.Array.data[4]'
+      value: 
+      objectReference: {fileID: 4692404391865069018, guid: d0d8f7883d31ffb4193b26a1e65844d6, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: 'fullTeamList.Array.data[5]'
+      value: 
+      objectReference: {fileID: 3188942586306340408, guid: 7f9e7d1ae36d2414eade87402b912e57, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: 'fullTeamList.Array.data[6]'
+      value: 
+      objectReference: {fileID: 9142570226746684108, guid: 50a9d2ac7b6a1fc429b16d6db742e672, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: 'fullTeamList.Array.data[7]'
+      value: 
+      objectReference: {fileID: 3523512651790483354, guid: 878a046738525e74990ec310eb3fee11, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: 'fullTeamList.Array.data[8]'
+      value: 
+      objectReference: {fileID: 5283688353268470781, guid: c3f11cd17e65e3241bc8f28fdd2bece2, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: 'fullTeamList.Array.data[9]'
+      value: 
+      objectReference: {fileID: 3756884860746625187, guid: 2c2d398b473427a4fa58ad949dcca53a, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: 'fullTeamList.Array.data[10]'
+      value: 
+      objectReference: {fileID: 2506644486509712687, guid: 7f6393af04da79f46b700bcf2a5293f8, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: 'fullTeamList.Array.data[11]'
+      value: 
+      objectReference: {fileID: 4249980956442338357, guid: ffa18768f7943954a9e04d1391c1e593, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: 'fullTeamList.Array.data[12]'
+      value: 
+      objectReference: {fileID: 5572551497414634707, guid: d93adf236e0522e4787b7ce4d63ae0a7, type: 3}
+    - target: {fileID: 1440562841019506731, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
+      propertyPath: 'fullTeamList.Array.data[13]'
+      value: 
+      objectReference: {fileID: 2052997404638072686, guid: 81faef22108b39b4a92e23bfe75d3884, type: 3}
     - target: {fileID: 3227278085919532099, guid: e5cdcd827201e324bbb8739a1eb146b3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -731,7 +787,6 @@ MonoBehaviour:
   m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
-  m_Version: 2
   m_TaaSettings:
     m_Quality: 3
     m_FrameInfluence: 0.1
@@ -739,6 +794,7 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1001 &1902944578
 PrefabInstance:
   m_ObjectHideFlags: 0

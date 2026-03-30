@@ -1643,47 +1643,7 @@ public class MatchManager : MonoBehaviour
     //Equations
     float PassEquation()
     {
-        /*
-        float offenseScore = (playerWithTheBall.Awareness + playerWithTheBall.Consistency) / 2f;
-        float defenseScore = (playerDefending.Stealing + playerDefending.Guarding) / 2f;
 
-        // --- NOVO ---
-        if (teamWithball.hasHDefense)
-            defenseScore *= 1.1f; // +10% eficácia
-
-        float offenseNormalized = Mathf.Clamp((offenseScore - 30f) / (99f - 30f), 0f, 1f);
-        float defenseNormalized = Mathf.Clamp((defenseScore - 30f) / (99f - 30f), 0f, 1f);
-
-        float passSuccessChance = offenseNormalized / (offenseNormalized + defenseNormalized);
-
-        //Apply Buff and Bond
-        if (playerWithTheBall.buff > 0)
-            passSuccessChance *= 1.10f; // +10%
-
-        if (playerWithTheBall.bondPlayer != null)
-        {
-            int bondIndex = teamWithball.playersListRoster.IndexOf(playerWithTheBall.bondPlayer);
-            if (bondIndex >= 0 && bondIndex < 4) // bond está entre os 4 primeiros
-                passSuccessChance *= 1.07f; // +7%
-        }
-        
-        //return passSuccessChance;
-        // Se a defesa escolheu "tackle", fica 20% mais difícil de o passe dar certo
-        if (chooseDefenseTackle)
-            passSuccessChance *= 0.8f; // reduz 20%
-                                       // Apply AI coefficient only if AI
-        if (!teamWithball.IsPlayerTeam)
-            passSuccessChance *= ai_difficulty;
-
-        //Buff de passe (só pro playerTeam, aplicado ao final) ===
-        if (teamWithball.IsPlayerTeam && buff_Pass > 0)
-        {
-            float buffMultiplier = 1f + (buff_Pass / 100f); // ex: 2 - *1.02 (+2%)
-            passSuccessChance *= buffMultiplier;
-        }
-
-        return passSuccessChance;
-        */
         // === 1. Cálculo de OVR na hora (média dos 12 attrs) ===
         int offenseOVR = Mathf.RoundToInt(
             (playerWithTheBall.Shooting + playerWithTheBall.Inside + playerWithTheBall.Mid + playerWithTheBall.Outside +
@@ -1763,94 +1723,6 @@ public class MatchManager : MonoBehaviour
     }
     float ScoringEquation(Player offense, Player defense, int zone, int momentumModifier)
     {
-        /*
-        // 1. Base Zone Accuracy
-        float baseAccuracy = 0.7f; // default mid
-        switch (zone)
-        {
-            case 0: baseAccuracy = 0.64f; break; // Outside
-            case 1: baseAccuracy = 0.70f; break; // Mid
-            case 2: baseAccuracy = 0.75f; break; // Inside
-        }
-
-        // 2. Offense Value (X)
-        int offenseValue =
-            UnityEngine.Random.Range(1, 101) +  // variance
-            offense.Consistency +
-            offense.Control +
-            offense.Shooting +
-            GetZoneValue(offense, zone) +
-            UnityEngine.Random.Range(-10, 26); // bonus
-
-        // 3. Defense Value (Y)
-        int defenseValue =
-            UnityEngine.Random.Range(1, 101) +  // variance
-            defense.Consistency +
-            defense.Guarding +
-            defense.Stealing +
-            GetZoneValue(defense, zone);
-
-        if (teamWithball.hasHDefense)
-            defenseValue = (int)(defenseValue * 1.1f); // +10% eficácia
-
-        int Z = offenseValue - defenseValue;
-
-        // 4. Modify accuracy based on result
-        if (Z >= 300 && Z <= 356) baseAccuracy += 0.18f;
-        else if (Z >= 200 && Z <= 299) baseAccuracy += 0.15f;
-        else if (Z >= 150 && Z <= 199) baseAccuracy += 0.12f;
-        else if (Z >= 100 && Z <= 149) baseAccuracy += 0.08f;
-        else if (Z >= 50 && Z <= 99) baseAccuracy += 0.05f;
-        else if (Z >= 0 && Z <= 49) baseAccuracy += 0f;
-        else if (Z >= -50 && Z <= -1) baseAccuracy -= 0.06f;
-        else if (Z >= -100 && Z <= -51) baseAccuracy -= 0.12f;
-        else if (Z <= -101 && Z >= -356) return 0f; // Block
-
-        // 5. Stamina factor (0 = sempre erra, 100 = bônus)
-        float staminaFactor = offense.CurrentStamina / 100f;
-        float staminaBonus = 1f + (offense.CurrentStamina / 500f); // até +20% no máximo
-        baseAccuracy *= staminaFactor * staminaBonus;
-        // 5. Clamp result between 0%–100%
-        //return Mathf.Clamp01(baseAccuracy);
-        // Apply AI coefficient only if AI
-        //return isAI ? Mathf.Clamp01(baseAccuracy * ai_difficulty) : Mathf.Clamp01(baseAccuracy);
-        // 6. Apply subtle momentum modifier
-        switch (momentumModifier)
-        {
-            case 0: break; // neutro, sem impacto
-            case 1: baseAccuracy *= 0.95f; break; // mais difícil (~-5%)
-            case 2: baseAccuracy *= 1.05f; break; // mais fácil (~+5%)
-            //case 3: baseAccuracy *= 0.60f; break;
-        }
-        if(playerWithTheBall.isInjured) baseAccuracy *= 0.60f;
-
-        // --- ADIÇÃO: aplicar efeitos de buff e bond ---
-        if (offense.buff > 0)
-            baseAccuracy *= 1.10f; // +10%
-
-        if (offense.bondPlayer != null)
-        {
-            int bondIndex = teamWithball.playersListRoster.IndexOf(offense.bondPlayer);
-            if (bondIndex >= 0 && bondIndex < 4) // bond está entre os 4 primeiros
-                baseAccuracy *= 1.07f; // +7%
-        }
-        
-        if (chooseBlock)
-            baseAccuracy *= 0.8f; // reduz 20%
-        //return isAI ? Mathf.Clamp01(baseAccuracy * (1f / ai_difficulty)) : Mathf.Clamp01(baseAccuracy);
-        if (!teamWithball.IsPlayerTeam)
-        {
-            baseAccuracy *= 1.45f; // IA arremessa 45% melhor
-        }
-        // === NOVO: Buff de passe (só pro playerTeam, aplicado ao final) ===
-        if (teamWithball.IsPlayerTeam && buff_Atk > 0)
-        {
-            float buffMultiplier = 1f + (buff_Atk / 100f); // ex: 2  *1.02 (+2%)
-            baseAccuracy *= buffMultiplier;
-        }
-
-        return Mathf.Clamp01(baseAccuracy);
-        */
         // === 1. Cálculo de OVR na hora (média dos 12 attrs) ===
         int ovr = Mathf.RoundToInt(
             (offense.Shooting + offense.Inside + offense.Mid + offense.Outside +

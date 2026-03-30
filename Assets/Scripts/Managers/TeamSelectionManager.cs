@@ -56,15 +56,47 @@ public class TeamSelectionManager : MonoBehaviour
     public void AdvanceToDraft()
     {
         //do a check if the bonus is valid
-
-        selectedTeam = _gameManager.playerTeam;
-        selectedTeam.ActivatePlayerTeam();
+        /*
+        _gameManager.playerTeam.IsPlayerTeam = true;
         selectedTeam.CreateEquips();
         _gameManager.mode = GameManager.GameMode.Draft;
         _gameManager.ScheduleCreation(_gameManager.leagueTeams);
         _gameManager.mode = GameManager.GameMode.Draft;
         SceneManager.LoadScene("Draft");//no transition
+        */
+        if (_gameManager.playerTeam == null)
+        {
+            Debug.LogError("playerTeam está null! Verifique se o time foi selecionado corretamente.");
+            return;
+        }
 
+        // FORMA MAIS SEGURA: Procura o time na lista leagueTeams pelo nome e seta IsPlayerTeam = true
+        bool teamFound = false;
+
+        foreach (Team team in _gameManager.leagueTeams)
+        {
+            if (team.TeamName == _gameManager.playerTeam.TeamName)
+            {
+                team.IsPlayerTeam = true;
+                _gameManager.playerTeam = team;     // Atualiza a referência principal
+                teamFound = true;
+                Debug.Log($"IsPlayerTeam definido como TRUE para: {team.TeamName}");
+                break;
+            }
+        }
+
+        if (!teamFound)
+        {
+            Debug.LogError("Não foi possível encontrar o time na lista leagueTeams!");
+            return;
+        }
+
+        // Resto do código
+        selectedTeam.CreateEquips();
+        _gameManager.mode = GameManager.GameMode.Draft;
+        _gameManager.ScheduleCreation(_gameManager.leagueTeams);
+
+        SceneManager.LoadScene("Draft");
     }
     public void ClearCurrentSelectedTeamText()
     {
@@ -90,5 +122,32 @@ public class TeamSelectionManager : MonoBehaviour
         _leagueManager.isOnDraftLVL0 = true;
         _leagueManager.isOnDraftLVL1 = true;
         _leagueManager.isOnDraftLVL2 = true;
+    }
+    public void SetPlayerTeam(string selectedTeamName)
+    {
+        if (string.IsNullOrEmpty(selectedTeamName))
+        {
+            Debug.LogError("Nome do time selecionado está vazio!");
+            return;
+        }
+
+        bool found = false;
+
+        foreach (Team team in _gameManager.leagueTeams)
+        {
+            if (team.TeamName == selectedTeamName)
+            {
+                team.IsPlayerTeam = true;
+                _gameManager.playerTeam = team;           // Atualiza a referência principal
+                found = true;
+                Debug.Log($"Time do jogador definido: {team.TeamName}");
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            Debug.LogError($"Time com o nome '{selectedTeamName}' não encontrado na lista leagueTeams!");
+        }
     }
 }
