@@ -36,7 +36,25 @@ public class GameManager : MonoBehaviour
 
     int count = 0;//testing the transition to onli create ince time the players
 
-    public Team playerTeam;
+    //public Team playerTeam;
+    public Team playerTeam
+    {
+        get
+        {
+            if (_playerTeamCache == null || !_playerTeamCache.IsPlayerTeam)
+            {
+                _playerTeamCache = leagueTeams.FirstOrDefault(t => t != null && t.IsPlayerTeam);
+            }
+            return _playerTeamCache;
+        }
+        set
+        {
+            _playerTeamCache = value;
+            if (value != null) value.IsPlayerTeam = true;
+        }
+    }
+
+    private Team _playerTeamCache;
     private void Awake()
     {
         // Singleton implementation
@@ -49,19 +67,8 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject); // Destroy duplicates
         }
-        leagueTeams.Clear();
-        foreach (Team teamTemplate in fullTeamList)
-        {
-            GameObject teamGO = Instantiate(teamTemplate.gameObject);   // Instancia o GameObject
-            Team newTeam = teamGO.GetComponent<Team>();
-
-            teamGO.transform.SetParent(transform);
-            DontDestroyOnLoad(teamGO);
-
-            leagueTeams.Add(newTeam);
-
-            Debug.Log($"Time persistente criado: {newTeam.TeamName}");
-        }
+        
+        
     }
     private void Start()
     {
@@ -70,7 +77,11 @@ public class GameManager : MonoBehaviour
         leagueManager =GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
         uiManager = GameObject.Find("UIManager").GetComponent<UiManager>();
         mode = GameMode.MainMenu;
-
+        if (leagueManager.CanStartANewRun)
+        {
+            DestroyAllWithTag("ZsPlayer");
+            DestroyAllWithTag("Team");
+        }
         if (mode == GameMode.Draft)
         {
             glg_draftNames = GameObject.Find("DraftContent").GetComponent<GridLayoutGroup>();
@@ -147,6 +158,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        /*
         for (int i = 0; i < leagueTeams.Count; i++)
         {
             if (leagueTeams[i].IsPlayerTeam)
@@ -156,7 +168,7 @@ public class GameManager : MonoBehaviour
                 //leagueTeams[0].ActivatePlayerTeam();
             }
         }
-
+        */
         // If the ESC key is pressed and there is a save file, clear the save
         if (Input.GetKeyDown(KeyCode.Tab) && IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
         {
@@ -166,7 +178,7 @@ public class GameManager : MonoBehaviour
             {
                 saveSystem.ClearSave(leagueTeams[i].TeamName, leagueTeams[i]);
                 saveSystem.ResetLeagueData();
-                saveSystem.ResetForNewLeagueRun();
+                //saveSystem.ResetForNewLeagueRun();
                 print("Clear");
             }
             Application.Quit();
@@ -177,29 +189,7 @@ public class GameManager : MonoBehaviour
         {
             Application.Quit();
         }
-        /*
-        #region Draft
-        if (mode == GameMode.Draft)
-        {
-            if (mode == GameMode.Draft)
-            {
-                if (SceneManager.GetActiveScene().name == "Draft")
-                {
-                    glg_draftNames = GameObject.Find("DraftContent").GetComponent<GridLayoutGroup>();
-                    if (count < 1)
-                    {
-                        //GeneratePlayers(leagueTeams.Count * 8);
-                        count++;
-                    }
-                }
-                //leagueTeams[1].IsPlayerTeam = true;//TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-            }
-        }
-        #endregion
-
-        */
+        
         #region Match
         
         
@@ -280,291 +270,7 @@ public class GameManager : MonoBehaviour
             team.GetSchedule().Clear();
         }
     }
-    /*
-    #region DRAFT METHODS
-    // Function to generate a specified number of players and add them to the team
-    public void GeneratePlayers(int numberOfPlayers)
-    {
-        
-        
-        // Conta quantos níveis de draft estão liberados
-        int unlockedCount = 0;
-        if (leagueManager.isOnDraftLVL0) unlockedCount++;
-        if (leagueManager.isOnDraftLVL1) unlockedCount++;
-        if (leagueManager.isOnDraftLVL2) unlockedCount++;
-
-        // Define as chances baseado no nível liberado
-        float chanceEarly = 0f;
-        float chanceMid = 0f;
-        float chanceEnd = 1f; // default (vai ser ajustado)
-
-        if (unlockedCount == 0)
-        {
-            chanceEarly = 0.80f;
-            chanceMid = 0.20f;
-            chanceEnd = 0f;
-        }
-        else if (unlockedCount <= 2) // intermediário (1 ou 2 liberados)
-        {
-            chanceEarly = 0.60f;
-            chanceMid = 0.35f;
-            chanceEnd = 0.05f;
-        }
-        else // 3 liberados (todas true)
-        {
-            chanceEarly = 0.30f;
-            chanceMid = 0.30f;
-            chanceEnd = 0.40f;
-        }
-        for (int i = 0; i < numberOfPlayers; i++)
-        {
-            // Instantiate a new player object
-            GameObject playerObject = Instantiate(playerPrefab);
-            Player newPlayer = playerObject.GetComponent<Player>();
-
-            // Weighted random pra escolher o tier
-            float rand = Random.value;
-
-            if (rand < chanceEarly)
-            {
-                print("Generate Early");
-                newPlayer.GenerateEarlyPlayer();
-            }
-            else if (rand < chanceEarly + chanceMid)
-            {
-                print("Generate Mid");
-                newPlayer.GenerateMidPlayer();
-            }
-            else
-            {
-                print("Generate End");
-                newPlayer.GenerateEndPlayer();
-            }
-
-            GeneratePlayerDraftButton(newPlayer);
-        }
-        
-    }
-    public void SortDraftButtonsByOVRCrescente()
-    {
-        // O container/painel onde os botões estão (ajusta o nome se for diferente)
-        Transform container = glg_draftNames.transform;
-
-        if (container.childCount == 0)
-        {
-            Debug.Log("Nenhum botão pra ordenar.");
-            return;
-        }
-
-        // Pega todos os children em uma lista
-        List<Transform> buttons = new List<Transform>();
-        for (int i = 0; i < container.childCount; i++)
-        {
-            Transform child = container.GetChild(i);
-            // Só adiciona se tiver o componente (pra segurança)
-            if (child.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>() != null)
-            {
-                buttons.Add(child);
-            }
-        }
-
-        // Ordena crescente pelo PlayerOvr
-        buttons.Sort((a, b) =>
-        {
-            int ovrA = a.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().PlayerOvr;
-            int ovrB = b.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().PlayerOvr;
-            return ovrA.CompareTo(ovrB); // crescente (menor pro maior)
-        });
-
-        // Reaplica a ordem na Hierarchy
-        for (int i = 0; i < buttons.Count; i++)
-        {
-            buttons[i].SetSiblingIndex(i);
-        }
-
-        Debug.Log("Botões ordenados por OVR crescente!");
-    }
-
-    void AlternateTeamsAndAddPlayers()
-    {
-        int teamIndex = 0; // To track which team to add the player to
-
-        // Find all Player components in the scene
-        foreach (Player player in FindObjectsOfType<Player>())
-        {
-            // Add the player to the current team
-            leagueTeams[teamIndex].playersListRoster.Add(player);
-            // Print the player's name and the team they were added to
-            Debug.Log($"Player {player.playerFirstName} added to Team {leagueTeams[teamIndex].TeamName}");
-            // Alternate to the next team
-            teamIndex = (teamIndex + 1) % leagueTeams.Count;
-        }
-    }
-    public void GeneratePlayerDraftButton(Player player)
-    {
-        Debug.Log("player.bt_DraftInfo: " + (player.bt_DraftInfo == null ? "NULL!" : "OK"));
-        Debug.Log("glg_draftNames: " + (glg_draftNames == null ? "NULL!" : "OK"));
-
-        if (player.bt_DraftInfo == null)
-        {
-            Debug.LogError("bt_DraftInfo está null! Verifica o prefab do Player.");
-            return;
-        }
-        if (glg_draftNames == null)
-        {
-            Debug.LogError("glg_draftNames está null no GameManager! Verifica o Inspector.");
-            return;
-        }
-        GameObject newButton = Instantiate(player.bt_DraftInfo,glg_draftNames.transform, false);
-        newButton.GetComponent<Button>().onClick.AddListener(() => AddPlayerToTeam(player, newButton.GetComponent<Button>()));
-        newButton.GetComponent<Button>().transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = player.playerFirstName.ToString();
-        newButton.GetComponent<Button>().transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = player.playerLastName.ToString();
-        newButton.GetComponent<Button>().transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = player.ovr.ToString();
-        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().index = player.ImageCharacterPortrait;
-        //newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().playerName = player.playerLastName;
-        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().playerAge = player.Age.ToString();
-        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().playerSalary = player.Salary.ToString();
-        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().PlayerOvr = player.ovr;
-        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().archtypeIndex = player.ImageCharacterPortrait;
-        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().personalityIndex = player.Personality;
-        //print("ArchtypeImageIndex " + player.ImageCharacterPortrait);
-
-        Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
-        switch (player.Personality)
-        {
-            case 1:
-                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_01");
-                break;
-            case 2:
-                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_02");
-                break; 
-            case 3:
-                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_03");
-                break;
-                
-            case 4:
-                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_04");
-                break;
-
-            case 5:
-                sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_05");
-                break;
-
-            default:
-                break;
-        }
-        Image myImageComponent = newButton.GetComponent<Button>().transform.GetChild(3).GetComponent<Image>();
-        myImageComponent.sprite = sprite;
-
-        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().personalitySprite = myImageComponent.sprite;
-        //Sprite spriteArchtype = null;
-
-
-        newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>().SetSprite();
-    }
-    void AddPlayerToTeam(Player player, Button btn)
-    {
-        player.J_Number = leagueTeams[currentTeamIndex].GenerateUniqueShirtNumber();
-        //print("This player number and team is: " + player.J_Number + " " + leagueTeams[currentTeamIndex].TeamName);
-        
-        // Add the player to the current team
-        leagueTeams[currentTeamIndex].playersListRoster.Add(player);
-        // Print the player's name and the team they were added to
-        //Debug.Log($"Player {player.playerFirstName} added to Team {leagueTeams[currentTeamIndex].TeamName}");
-        Destroy(btn.gameObject);//NEW!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-        // Check child count in the next frame
-        StartCoroutine(CheckAndProceedAfterDestroy());
-
-        // Alternate to the next team""""""""""""""""""""""""
-        currentTeamIndex = (currentTeamIndex + 1) % leagueTeams.Count;
-        
-        
-    }
-    IEnumerator CheckAndProceedAfterDestroy()
-    {
-        // Wait for the end of the frame to ensure Destroy() has taken effect
-        yield return new WaitForEndOfFrame();
-
-        // Check if all buttons are removed from GridLayoutGroup
-        if (glg_draftNames.transform.childCount == 0)
-        {
-            
-
-            // Change mode and scene---THIA COULD BE A BUTTON!!!!!!!!!!!!!!!!
-            mode = GameMode.TeamManagement;
-            leagueManager.CanStartANewRun = false;
-            leagueManager.canGenerateEvents = true;
-            leagueManager.canStartANewWeek = true;
-            SceneManager.LoadScene("MyTeamScreen");
-        }
-        
-
-    }
     
-
-    //Testing!!!!!!!!!!!!!!!!!!!!!
-
-    
-    private IEnumerator AdvanceToDraftRoutine()
-    {
-        introManager = GameObject.FindFirstObjectByType<IntroManager>().GetComponent<IntroManager>();
-        if (GameObject.Find("TransitionSequence"))
-        {
-            Animator animator = GameObject.Find("TransitionSequence").GetComponent<Animator>();
-            GameObject.Find("PhaseText").GetComponent<TextMeshProUGUI>().text = " Next Phase";
-            animator.SetTrigger("Go");
-        }
-
-        float timer = 2f;
-        while (timer > 0)
-        {
-            introManager.ChangeStageTransitionTextIntro();
-            timer -= Time.deltaTime;
-            yield return null; // Wait a frame instead of freezing
-        }
-        if (leagueManager.CanStartANewRun)
-        {
-            saveSystem.ResetForNewLeagueRun();
-            saveSystem.ResetLeagueData();
-        }
-        if (leagueManager.CanStartANewRun == false)
-        {
-            mode = GameMode.TeamManagement;
-            //mode = GameMode.TeamManagement;
-            SceneManager.LoadScene("MyTeamScreen");
-        }
-        else
-        {
-            //mode = GameMode.Draft;
-            //saveSystem.ResetForNewRun();
-            leagueManager.canGenerateEvents = true;
-            //reset teams
-            for (int i = 0; i < leagueTeams.Count; i++)
-            {
-                leagueTeams[i].playersListRoster.Clear();
-                leagueTeams[i].Moral = leagueTeams[i].fixMoral;
-                leagueTeams[i].FrontOfficePoints = leagueTeams[i].fixFrontOffice;
-                leagueTeams[i].FansSupportPoints = leagueTeams[i].fixFansSupport;
-                leagueTeams[i].EffortPoints = leagueTeams[i].fixEffort;
-                leagueTeams[i].Wins = 0;
-                leagueTeams[i].Loses = 0;
-                leagueTeams[i].Draws = 0;
-                leagueTeams[i].OfficeLvl = 0;
-                leagueTeams[i].MedicalLvl = 0;
-                leagueTeams[i].ArenaLvl = 0;
-                leagueTeams[i].FinancesLvl = 0;
-                leagueTeams[i].MarketingLvl = 0;
-                leagueTeams[i].TeamEquipmentLvl = 0;
-                
-
-            }
-            SceneManager.LoadScene("TeamSelection");
-        }
-    }
-    
-    #endregion
-    */
     public void ToTitleScreen()
     {
         SceneManager.LoadScene("Title");
@@ -597,6 +303,8 @@ public class GameManager : MonoBehaviour
         {
             saveSystem.ResetForNewLeagueRun();
             saveSystem.ResetLeagueData();
+            leagueTeams.Clear();
+            NewTeamsForRun();
         }
         if (leagueManager.CanStartANewRun == false)
         {
@@ -609,26 +317,34 @@ public class GameManager : MonoBehaviour
             //mode = GameMode.Draft;
             //saveSystem.ResetForNewRun();
             leagueManager.canGenerateEvents = true;
+            leagueManager.isGameOver = false;
             //reset teams
-            for (int i = 0; i < leagueTeams.Count; i++)
+            if(leagueTeams.Count> 0)
             {
-                leagueTeams[i].playersListRoster.Clear();
-                leagueTeams[i].Moral = leagueTeams[i].fixMoral;
-                leagueTeams[i].FrontOfficePoints = leagueTeams[i].fixFrontOffice;
-                leagueTeams[i].FansSupportPoints = leagueTeams[i].fixFansSupport;
-                leagueTeams[i].EffortPoints = leagueTeams[i].fixEffort;
-                leagueTeams[i].Wins = 0;
-                leagueTeams[i].Loses = 0;
-                leagueTeams[i].Draws = 0;
-                leagueTeams[i].OfficeLvl = 0;
-                leagueTeams[i].MedicalLvl = 0;
-                leagueTeams[i].ArenaLvl = 0;
-                leagueTeams[i].FinancesLvl = 0;
-                leagueTeams[i].MarketingLvl = 0;
-                leagueTeams[i].TeamEquipmentLvl = 0;
+                for (int i = 0; i < leagueTeams.Count; i++)
+                {
+                    leagueTeams[i].playersListRoster.Clear();
+                    leagueTeams[i].Moral = leagueTeams[i].fixMoral;
+                    leagueTeams[i].FrontOfficePoints = leagueTeams[i].fixFrontOffice;
+                    leagueTeams[i].FansSupportPoints = leagueTeams[i].fixFansSupport;
+                    leagueTeams[i].EffortPoints = leagueTeams[i].fixEffort;
+                    leagueTeams[i].Wins = 0;
+                    leagueTeams[i].Loses = 0;
+                    leagueTeams[i].Draws = 0;
+                    leagueTeams[i].OfficeLvl = 0;
+                    leagueTeams[i].MedicalLvl = 0;
+                    leagueTeams[i].ArenaLvl = 0;
+                    leagueTeams[i].FinancesLvl = 0;
+                    leagueTeams[i].MarketingLvl = 0;
+                    leagueTeams[i].TeamEquipmentLvl = 0;
 
+
+                }
 
             }
+
+            //leagueTeams.Clear();
+            //NewTeamsForRun();
             SceneManager.LoadScene("TeamSelection");
         }
     }
@@ -695,5 +411,63 @@ public class GameManager : MonoBehaviour
     public void QuitApp()
     {
         Application.Quit();
+    }
+    //createTeams
+    public void NewTeamsForRun()
+    {
+        // Proteção: Se já existe a quantidade correta de times, não recria
+        if (leagueTeams.Count == fullTeamList.Count && fullTeamList.Count > 0)
+        {
+            Debug.Log("Times já existem na quantidade correta. Pulando recriação.");
+            return;
+        }
+        leagueTeams.Clear();
+        foreach (Team teamTemplate in fullTeamList)
+        {
+            GameObject teamGO = Instantiate(teamTemplate.gameObject);   // Instancia o GameObject
+            Team newTeam = teamGO.GetComponent<Team>();
+
+            teamGO.transform.SetParent(transform);
+            DontDestroyOnLoad(teamGO);
+
+            leagueTeams.Add(newTeam);
+
+            Debug.Log($"Time persistente criado: {newTeam.TeamName}");
+        }
+    }
+    public void ReassignPlayerTeam()
+    {
+        if (leagueTeams == null || leagueTeams.Count == 0)
+        {
+            Debug.LogError("leagueTeams está vazia! Não foi possível reatribuir playerTeam.");
+            return;
+        }
+
+        foreach (Team team in leagueTeams)
+        {
+            if (team.IsPlayerTeam)
+            {
+                playerTeam = team;
+                Debug.Log($"playerTeam reatribuído com sucesso: {team.TeamName}");
+                return;
+            }
+        }
+
+        Debug.LogError("Nenhum time com IsPlayerTeam = true foi encontrado!");
+    }
+    //Destroy objs by tag
+    public void DestroyAllWithTag(string tag)
+    {
+        // Busca todos os objetos ativos na cena com essa tag
+        GameObject[] objectsToDestroy = GameObject.FindGameObjectsWithTag(tag);
+
+        // Apaga todos eles
+        foreach (GameObject obj in objectsToDestroy)
+        {
+            Destroy(obj);
+        }
+
+        // Opcional: mensagem no console para confirmar
+        Debug.Log($"Foram destruídos {objectsToDestroy.Length} objetos com a tag '{tag}'.");
     }
 }

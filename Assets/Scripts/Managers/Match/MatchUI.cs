@@ -62,6 +62,8 @@ public class MatchUI : MonoBehaviour
     [SerializeField] List<string> list_failPass = new List<string>();
     [SerializeField] List<string> list_Opp_FailedAttempt = new List<string>();
     [SerializeField] List<string> list_Opp_SucAttempt = new List<string>();
+    [SerializeField] List<string> list_ChargeLines = new List<string>();
+    [SerializeField] List<string> list_Shove = new List<string>();
     public string gameAction = " ";
     public string ResultplayerAction = " ";
 

@@ -288,26 +288,28 @@ public class SaveSystem : MonoBehaviour
     }
     public void ResetForNewLeagueRun()
     {
+        
+        //SaveLeague();
         LeagueManager leagueManager = FindFirstObjectByType<LeagueManager>();
         GameManager gameManager = FindFirstObjectByType<GameManager>();
 
-        if (leagueManager == null)
-        {
-            Debug.LogError("LeagueManager not found.");
-            return;
-        }
-        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
-        {
-            //gameManager.leagueTeams[i].isChampion = false;
-        }
+        if (leagueManager == null || gameManager == null) return;
+
         leagueManager.isGameOver = false;
         leagueManager.CanStartANewRun = true;
-        gameManager.saveSystem.SaveLeague();
-        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+
+        // Proteção inteligente: só recria se realmente precisar
+        if (gameManager.leagueTeams.Count != gameManager.fullTeamList.Count ||
+            gameManager.leagueTeams.Count == 0)
         {
-            gameManager.saveSystem.ClearSave(gameManager.leagueTeams[i].TeamName, gameManager.leagueTeams[i]);
+            //gameManager.NewTeamsForRun();
         }
-        //SaveLeague();
+        else
+        {
+            Debug.Log("leagueTeams já possui a quantidade correta de times. Não foi recriado.");
+        }
+
+        gameManager.saveSystem.SaveLeague();
     }
     /*
     public void ResetForNewRun()
@@ -403,5 +405,116 @@ public class SaveSystem : MonoBehaviour
     {
         return FindFirstObjectByType<GameManager>().leagueTeams
             .FirstOrDefault(t => t.TeamName == name);
+    }
+    public void FullResetForNewLeagueRun()
+    {
+        GameManager gm = FindFirstObjectByType<GameManager>();
+        LeagueManager lm = FindFirstObjectByType<LeagueManager>();
+
+        if (gm == null)
+        {
+            Debug.LogError("GameManager não encontrado!");
+            return;
+        }
+
+        Debug.Log("=== INICIANDO FULL RESET PARA NOVA RUN ===");
+
+        // 1. Apagar todos os arquivos de save
+        foreach (Team team in gm.leagueTeams)
+        {
+            if (team == null) continue;
+            string filePath = GetSavePath(team.TeamName);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+                Debug.Log($"Save deletado: {team.TeamName}");
+            }
+        }
+
+        // Apagar save da liga
+        string leaguePath = Path.Combine(Application.persistentDataPath, "leagueData.json");
+        if (File.Exists(leaguePath))
+            File.Delete(leaguePath);
+
+        // 2. Destruir todos os objetos Team e Players existentes na cena
+        gm.DestroyAllWithTag("Team");
+        gm.DestroyAllWithTag("ZsPlayer");     // assumindo que seus players têm essa tag
+
+        // 3. Limpar a lista de times
+        gm.leagueTeams.Clear();
+
+        // 4. Reset básico do LeagueManager (apenas o essencial)
+        if (lm != null)
+        {
+            lm.Week = 0;
+            lm.canGenerateEvents = true;
+            lm.canStartANewWeek = true;
+            lm.canTrade = true;
+            lm.canTrain = true;
+            lm.canNegociateContract = true;
+            lm.isGameOver = false;
+            lm.CanStartANewRun = true;
+            lm.isOnR8 = false;
+            lm.isOnR4 = false;
+            lm.isOnFinals = false;
+
+            // Limpar listas de playoffs
+            lm.List_R8Teams.Clear();
+            lm.List_R4Teams.Clear();
+            lm.List_Finalist.Clear();
+            lm.List_R8Names.Clear();
+            lm.List_R4Names.Clear();
+        }
+
+        // 5. Recriar os times do zero (a partir do fullTeamList)
+       // gm.NewTeamsForRun();
+
+        // 6. Salvar estado limpo da liga
+        SaveLeague();
+
+        Debug.Log("=== FULL RESET PARA NOVA RUN CONCLUÍDO ===");
+        Debug.Log("Times recriados e saves apagados. Pronto para nova run.");
+    }
+    public void ClearLeagueProgress()
+    {
+        LeagueManager lm = FindFirstObjectByType<LeagueManager>();
+        if (lm == null)
+        {
+            Debug.LogError("LeagueManager não encontrado!");
+            return;
+        }
+
+        Debug.Log("=== CLEAR LEAGUE PROGRESS (DEBUG) ===");
+
+        // Reset de Draft Levels
+        lm.CanDraftlvl1 = false;
+        lm.CanDraftlvl2 = false;
+        lm.CanDraftlvl3 = false;
+
+        // Reset de Special Players
+        lm.CanDrafSpPlayer0 = false;
+        lm.CanDraftSpPlayer1 = false;
+        lm.CanDraftSpPlayer2 = false;
+        lm.CanDraftSpPlayer3 = false;
+        lm.CanDraftSpPlayer4 = false;
+
+        // Reset de Facility Bonuses
+        lm.FacilitieBonus0 = false;
+        lm.FacilitieBonus1 = false;
+
+        // Reset de opções legacy (se ainda estiver usando)
+        lm.isOnDraftLVL0 = false;
+        lm.isOnDraftLVL1 = false;
+        lm.isOnDraftLVL2 = false;
+
+        // Opcional: Reset de algumas flags básicas
+        lm.canTrade = true;
+        lm.canTrain = true;
+        lm.canNegociateContract = true;
+
+        // Salva o estado limpo
+        SaveLeague();
+
+        Debug.Log("League Progress limpo com sucesso! (Todos os drafts e bônus foram resetados para false)");
     }
 }

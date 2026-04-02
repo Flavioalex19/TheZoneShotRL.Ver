@@ -38,7 +38,7 @@ public class Player : MonoBehaviour
         "Bollock", "Trent", "Brady", "Machado","Edwards", "Thompson", "Mitty", "Webster", "Web", "Watson", "Homes", "Aiken" , "Ainsworth", "Adler", "May", "Duke", "Ventura",
         "Acker", "Alderman", "Allerdale", "Asimov", "Applegarth", "Ashburn", "Axford", "Backman", "Ballard", "Barlow", "Baron", "Barrick", "Barrowcliff", "Bartholomew", "Batara",
         "Baumann", "Bayfield", "Beaver", "Beckett", "Beckford", "Beesley", "Behrens", "Bellamy", "Bellington", "Bender", "Bendett", "Benson", "Bernstein", "Bertolini", "Blackford",
-        "Blanc", "Bledsoe", "Borchardt", "Breakspear", "Breakwell", "Chevallier", "Christensen", "Christopher", "Clarkson", "Clemens", "Colby"
+        "Blanc", "Bledsoe", "Borchardt", "Breakspear", "Breakwell", "Chevallier", "Christensen", "Christopher", "Clarkson", "Clemens", "Colby", "Cook", "Grimmes"
     };
     [SerializeField] public string playerFirstName;
     [SerializeField] public string playerLastName;

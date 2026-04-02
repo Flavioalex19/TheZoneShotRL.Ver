@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using UnityEditor.Build.Content;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -153,20 +152,7 @@ public class DraftUiManager : MonoBehaviour
     // Cria um jogador aleatório com tier
     private Player CreateRandomPlayer()
     {
-        /*
-        GameObject playerObject = Instantiate(_gameManager.playerPrefab);
-        Player newPlayer = playerObject.GetComponent<Player>();
-
-        float rand = Random.value;
-        if (rand < 0.40f)
-            newPlayer.GenerateEarlyPlayer();
-        else if (rand < 0.75f)
-            newPlayer.GenerateMidPlayer();
-        else
-            newPlayer.GenerateEndPlayer();
-
-        return newPlayer;
-        */
+        
         GameObject playerObject = Instantiate(_gameManager.playerPrefab);
         Player newPlayer = playerObject.GetComponent<Player>();
 
@@ -178,7 +164,7 @@ public class DraftUiManager : MonoBehaviour
         {
             playerObject.transform.SetParent(_gameManager.transform);
         }
-
+        /*
         float rand = Random.value;
         if (rand < 0.40f)
             newPlayer.GenerateEarlyPlayer();
@@ -186,7 +172,53 @@ public class DraftUiManager : MonoBehaviour
             newPlayer.GenerateMidPlayer();
         else
             newPlayer.GenerateEndPlayer();
+        */
+        // === LÓGICA DE GERAÇÃO BASEADA NOS NÍVEIS DESBLOQUEADOS ===
+        float rand = Random.value;
 
+        if (!leagueManager.isOnDraftLVL0 && !leagueManager.isOnDraftLVL1 && !leagueManager.isOnDraftLVL2)
+        {
+            // Todas falsas  Piores jogadores (muitos End, poucos Early)
+            if (rand < 0.20f)
+                newPlayer.GenerateEarlyPlayer();      // 20% Early
+            else if (rand < 0.80f)
+                newPlayer.GenerateMidPlayer();        // 60% Mid
+            else
+                newPlayer.GenerateEndPlayer();        // 20% End
+        }
+        else if (leagueManager.isOnDraftLVL0 && !leagueManager.isOnDraftLVL1 && !leagueManager.isOnDraftLVL2)
+        {
+            // Apenas LVL 0  Equilíbrio Early / Mid
+            if (rand < 0.50f)
+                newPlayer.GenerateEarlyPlayer();      // 50% Early
+            else
+                newPlayer.GenerateMidPlayer();        // 50% Mid
+        }
+        else if (leagueManager.isOnDraftLVL1)
+        {
+            // LVL 1 desbloqueado  Mais Mid, menos Early, pouco End
+            if (rand < 0.20f)
+                newPlayer.GenerateEarlyPlayer();      // 20% Early
+            else if (rand < 0.90f)
+                newPlayer.GenerateMidPlayer();        // 70% Mid
+            else
+                newPlayer.GenerateEndPlayer();        // 10% End
+        }
+        else if (leagueManager.isOnDraftLVL2)
+        {
+            // LVL 2 desbloqueado  Foco em Mid + bom End
+            if (rand < 0.10f)
+                newPlayer.GenerateEarlyPlayer();      // 10% Early
+            else if (rand < 0.70f)
+                newPlayer.GenerateMidPlayer();        // 60% Mid
+            else
+                newPlayer.GenerateEndPlayer();        // 30% End
+        }
+        else
+        {
+            // Fallback (caso estranho)
+            newPlayer.GenerateMidPlayer();
+        }
         return newPlayer;
     }
 

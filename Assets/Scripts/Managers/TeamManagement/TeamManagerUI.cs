@@ -116,7 +116,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Image image_trade_receivePersonality;
     [SerializeField] Image image_trade_receiveArchtype;
     [SerializeField]Player trade_playerToTrade;
-    [SerializeField] TextMeshProUGUI text_tradeCostOfTrade;
+    [SerializeField] public TextMeshProUGUI text_tradeCostOfTrade;
     [SerializeField] TextMeshProUGUI text_tradeWarningForNoTrade;
     [SerializeField] TextMeshProUGUI text_trade_frontoffeicePoints;
     int trade_costOfTrade;
@@ -250,6 +250,10 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_resultPanel_mvpStealsGames;
     [SerializeField] TextMeshProUGUI text_resultPanel_mvpGamesPlayed;
 
+    [Header("GameOverPanel")]
+    [SerializeField] GameObject go_playerGameOverFiredPanel;
+    [SerializeField] Button btn_go_ReturnToMainTitle;
+
     [Header("UI")]
     [SerializeField]TextMeshProUGUI WeekText;
     [SerializeField] Image image_teamIcon;
@@ -283,20 +287,15 @@ public class TeamManagerUI : MonoBehaviour
         _advBtn = GameObject.Find("Advance Button");
         //gameover_Btn.onClick.AddListener(() => gameManager.QuitAndClear());//Set Game over button
         //WeekText = GameObject.Find("Week Text").GetComponent<TextMeshProUGUI>();
-
+        if (gameManager.playerTeam == null)
+        {
+            gameManager.ReassignPlayerTeam();
+        }
 ;
         _text_NameTeam.text = gameManager.playerTeam.TeamName;
         text_teamStyle.text = gameManager.playerTeam._teamStyle.ToString();
         
         musicManager.RestoreMutedAudioSources();
-        
-        //EquipmentUI
-        //EquipUI();
-
-        #region AdvanceButton
-        //AdvanceButton
-        //AdvButtonUpdate();
-        #endregion
         _scheduleArea.SetActive(false);
         
 
@@ -348,12 +347,7 @@ public class TeamManagerUI : MonoBehaviour
         SetTeamIcon();
         if (leagueManager.Week > gameManager.leagueTeams.Count - 1)
         {
-            //_EndBuildScreen.SetActive(true);
-            /*
-            if(leagueManager.isOnFinals == false && leagueManager.isOnR4== true)leagueManager.isOnFinals = true;
-            //if(leagueManager.isOnR4 == true) leagueManager.isOnR4 = true;//remove later
-            if(leagueManager.isOnR8==false)leagueManager.isOnR8 = true;
-            */
+            
             if (IsPlayerTeamInTop8())
             {
                 _playoffsAdvBtn.SetActive(true);
@@ -366,10 +360,15 @@ public class TeamManagerUI : MonoBehaviour
             }
             
         }
+        //check morale
+        if(gameManager.playerTeam.Moral <= 0)
+        {
+            leagueManager.isGameOver = true;
+        }
 
         //leagueManager.CreateTeamSalary();
         UpdateTeamSalary();
-
+        /*
         if (gameManager.playerTeam.Moral < 0) 
         {
             gameoverPanel.SetTrigger("On");
@@ -380,7 +379,7 @@ public class TeamManagerUI : MonoBehaviour
         {
             gameover_Btn.gameObject.SetActive(false);
         }
-
+        */
         if(leagueManager.canGenerateEvents == true)
         {
             _panelEventsChoices.SetActive(true);
@@ -424,12 +423,11 @@ public class TeamManagerUI : MonoBehaviour
         WeekText.text = leagueManager.Week.ToString();
         if (leagueManager.Week > gameManager.leagueTeams.Count - 1) WeekText.text = "Playoffs";
         //else WeekText.text = leagueManager.Week.ToString();
-        AdvButtonUpdate();
+        
 
         //playoffs
         if (leagueManager.Week > gameManager.leagueTeams.Count - 1 || leagueManager.isOnR8 == true/* && leagueManager.isOnR8*/)
         {
-            //_EndBuildScreen.SetActive(true);
             _playoffsAdvBtn.SetActive(true);
             if (leagueManager.isOnR8 == false) leagueManager.isOnR8 = true;
             gameManager.saveSystem.SaveLeague();
@@ -439,12 +437,14 @@ public class TeamManagerUI : MonoBehaviour
         {
             _playoffsAdvBtn.SetActive(false);
         }
-        //Lose run
-        if (leagueManager.isGameOver|| leagueManager.CanStartANewRun == true)
+        AdvButtonUpdate();
+        /*
+        //close run run
+        if ( leagueManager.CanStartANewRun == true)
         {
             leagueManager.CanDraftlvl1 = true;
             //setactive end run screen
-            _EndBuildScreen.SetActive(true);
+            //_EndBuildScreen.SetActive(true);
             ResultPanelCreation();
             //gameover_Btn.gameObject.SetActive(true);
             //set the button to reset the game over bool from leaguemanager and return to tile screen, for now
@@ -454,7 +454,40 @@ public class TeamManagerUI : MonoBehaviour
             btn_returnToMainScreen.onClick.AddListener(() => gameManager.ReturnToTitleScreen());
             
         }
-        //PanelAnimations
+        //Gameover
+        if (leagueManager.isGameOver)
+        {
+            go_playerGameOverFiredPanel.SetActive(true);
+            leagueManager.CanStartANewRun = true;
+            //btn_go_ReturnToMainTitle.onClick.AddListener(() => ResetRun());
+            //btn_go_ReturnToMainTitle.onClick.AddListener(() => gameManager.ResetRunTeams());
+            //btn_go_ReturnToMainTitle.onClick.AddListener(() => gameManager.saveSystem.ResetForNewLeagueRun());
+            btn_go_ReturnToMainTitle.onClick.AddListener(() => gameManager.ReturnToTitleScreen());
+            gameManager.DestroyAllWithTag("Team");
+            gameManager.DestroyAllWithTag("ZsPlayer");
+            //gameManager.NewTeamsForRun();
+
+
+        }
+        */
+        
+        SetTextOfFacilities();
+        // ==================== LÓGICA DE FIM DE RUN / GAME OVER ====================
+        if (leagueManager.isGameOver)
+        {
+            // Caso de Game Over (moral baixa ou eliminado)
+            go_playerGameOverFiredPanel.SetActive(true);
+            btn_go_ReturnToMainTitle.onClick.RemoveAllListeners();
+            btn_go_ReturnToMainTitle.onClick.AddListener(() => StartNewLeagueRun());
+        }
+        else if (leagueManager.CanStartANewRun == true)
+        {
+            // Caso de Fim de Run normal (completou a temporada)
+            ResultPanelCreation();
+            btn_returnToMainScreen.onClick.RemoveAllListeners();
+            btn_returnToMainScreen.onClick.AddListener(() => StartNewLeagueRun());
+        }
+        // =====================================================================
 
         //StartCoroutine(NewsLoop(10f));
     }
@@ -462,17 +495,13 @@ public class TeamManagerUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Update the current Week text
-        //WeekText.text = leagueManager.Week.ToString();
         
         if(leagueManager.canGenerateEvents == false && leagueManager.canStartANewWeek == false)
         {
             CurrentEventChoiceArea.SetActive(false);
         }
-        //testing area
-        //TODO- AT THE START CREATE A VARIABLE FOR THE TEAM CONTROLLERD BY THE PLAYER!!!!!
-        //teamStatsTextsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.Moral.ToString();
-        if(gameManager.mode == GameManager.GameMode.TeamManagement && leagueManager.canStartANewWeek == false)
+
+        if(gameManager.mode == GameManager.GameMode.TeamManagement && leagueManager.canStartANewWeek == false && leagueManager.isGameOver == false)
         {
             if (GameObject.Find("Week Text"))
             {
@@ -497,19 +526,18 @@ public class TeamManagerUI : MonoBehaviour
             }
             UpdateFacilities();
         }
+         
         
-        /*
-        for (int i = 0; i < equipAreaText.childCount; i++)
-        {
-            equipAreaText.GetChild(i).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam._equipmentList[i].Level.ToString();
-        }
-        */
         
-        //BtnsAnimations
+       
+
+        
+
+        // Btns Animations (estas são seguras mesmo se playerTeam for null)
         _animator_trade.SetBool("On", leagueManager.canTrade);
         _animator_training.SetBool("On", leagueManager.canTrain);
         _animator_contract.SetBool("On", leagueManager.canNegociateContract);
-        
+
     }
     //GameOverReset
     public void ResetRun()
@@ -629,8 +657,7 @@ public class TeamManagerUI : MonoBehaviour
     //Advance Button Update the elements
     public void AdvButtonUpdate()
     {
-        
-        
+        /*
         //Player team
         Sprite sprite = null;
         string teamName;
@@ -666,7 +693,56 @@ public class TeamManagerUI : MonoBehaviour
             _awayteamImage.sprite = sprite1;
             //WeekText.text = currentWeek.ToString();
         }
-        
+        */
+        // === PROTEÇÃO PRINCIPAL ===
+        if (gameManager == null || gameManager.playerTeam == null)
+        {
+            Debug.LogWarning("AdvButtonUpdate: gameManager.playerTeam ainda é null. Aguardando atribuição...");
+            // Limpa as imagens para evitar visual quebrado
+            if (_currentTeamImage != null) _currentTeamImage.sprite = null;
+            if (_awayteamImage != null) _awayteamImage.sprite = null;
+            return;
+        }
+
+        // Player Team Logo
+        string teamName = gameManager.playerTeam.TeamName;
+        Sprite sprite = Resources.Load<Sprite>("2D/Team Logos/" + teamName);
+
+        if (sprite != null)
+        {
+            Image myImageComponent = _advBtn.transform.GetChild(1).GetComponent<Image>();
+            if (myImageComponent != null) myImageComponent.sprite = sprite;
+
+            if (_currentTeamImage != null) _currentTeamImage.sprite = sprite;
+        }
+        else
+        {
+            Debug.LogWarning($"Logo não encontrado para o time: {teamName}");
+        }
+
+        // Away Team Logo
+        int currentWeek = Mathf.Max(0, leagueManager.Week - 1);
+        Sprite sprite1 = null;
+
+        if (gameManager.playerTeam._schedule != null &&
+            currentWeek < gameManager.playerTeam._schedule.Count &&
+            gameManager.playerTeam._schedule[currentWeek] != null)
+        {
+            string awayTeamName = gameManager.playerTeam._schedule[currentWeek].TeamName;
+            sprite1 = Resources.Load<Sprite>("2D/Team Logos/" + awayTeamName);
+
+            if (sprite1 != null)
+            {
+                Image image = _advBtn.transform.GetChild(2).GetComponent<Image>();
+                if (image != null) image.sprite = sprite1;
+                if (_awayteamImage != null) _awayteamImage.sprite = sprite1;
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"Não foi possível encontrar o adversário na semana {currentWeek}");
+            // Opcional: colocar imagem de "Bye" ou deixar vazio
+        }
 
     }
     //TeamRoster
@@ -1129,6 +1205,7 @@ public class TeamManagerUI : MonoBehaviour
             archtypeSprite = sprites1[3];
         }
         image_trade_receiveArchtype.sprite = archtypeSprite;
+        text_tradeCostOfTrade.text = trade_costOfTrade.ToString();
         //personality
         Sprite personalitySprite = null;
         switch (player.Personality)
@@ -1689,6 +1766,50 @@ public class TeamManagerUI : MonoBehaviour
 
         return mvpPlayer;
     }
+    void SetTextOfFacilities()
+    {
+        if (leagueManager.canGenerateEvents == false && leagueManager.canStartANewWeek == false)
+        {
+            CurrentEventChoiceArea.SetActive(false);
+        }
+
+        // Só executa a parte pesada quando estiver realmente no TeamManagement
+        if (gameManager.mode == GameManager.GameMode.TeamManagement &&
+            leagueManager.canStartANewWeek == false &&
+            leagueManager.isGameOver == false)
+        {
+            //Team Moral/FrontOffice/FansSupport
+            if (GameObject.Find("MoralePointsText"))
+            {
+                GameObject.Find("MoralePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.Moral.ToString();
+            }
+            if (GameObject.Find("FrontOfficePointsText"))
+            {
+                GameObject.Find("FrontOfficePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FrontOfficePoints.ToString();
+            }
+            if (GameObject.Find("FanSupportPointsText"))
+            {
+                GameObject.Find("FanSupportPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FansSupportPoints.ToString();
+            }
+            if (GameObject.Find("EffortPointsText"))
+            {
+                GameObject.Find("EffortPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.EffortPoints.ToString();
+            }
+
+            UpdateFacilities();
+        }
+
+    }
+    private void StartNewLeagueRun()
+    {
+        Debug.Log("Iniciando nova league run...");
+
+        // Reset completo (apaga saves, destrói objetos antigos, recria times, etc.)
+        gameManager.saveSystem.FullResetForNewLeagueRun();
+
+        // Volta para a tela inicial
+        gameManager.ReturnToTitleScreen();
+    }
     //EventPanelAnim
     public Transform GetEventBtns()
     {
@@ -1700,15 +1821,7 @@ public class TeamManagerUI : MonoBehaviour
         yield return new WaitForSeconds(2f);
         _animatorEventsType.SetBool("isOn",true);
     }
-    //ProceedtoPlaypffs
-    void AdvanceToPlayoffs()
-    {
 
-    }
-    IEnumerator WaitAnimation()
-    {
-        yield return null;
-    }
     //SaveFunction
     public void SaveAfterPlayerEvent()
     {

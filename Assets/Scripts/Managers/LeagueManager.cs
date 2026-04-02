@@ -106,14 +106,21 @@ public class LeagueManager : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        ///Else will be about the play off
         /*
-        if(canGenerateEvents == true && gameManager.mode == GameManager.GameMode.TeamManagement)
+        if (!canGenerateEvents || gameManager == null) return;
+
+        if (gameManager.mode == GameManager.GameMode.TeamManagement)
         {
-            print("NEW WEEK");
             NewWeek();
         }
-        *///Else will be about the play off
-        if (!canGenerateEvents || gameManager == null) return;
+        */
+        if (!canGenerateEvents || gameManager == null)
+            return;
+
+        // Evita chamar NewWeek() logo após um reset completo
+        if (CanStartANewRun == true)
+            return;
 
         if (gameManager.mode == GameManager.GameMode.TeamManagement)
         {
@@ -160,9 +167,19 @@ public class LeagueManager : MonoBehaviour
                 print("not ativate");
             }
         }
+        /*
         TeamManagerUI teamManagerUI = GameObject.Find("TeamManagerUI").GetComponent<TeamManagerUI>();
-        //teamManagerUI.EventTypePanel();
         StartCoroutine(teamManagerUI.EventTypePanel());
+        */
+        TeamManagerUI teamManagerUI = GameObject.Find("TeamManagerUI")?.GetComponent<TeamManagerUI>();
+        if (teamManagerUI != null)
+        {
+            StartCoroutine(teamManagerUI.EventTypePanel());
+        }
+        else
+        {
+            Debug.LogWarning("TeamManagerUI não encontrado. Provavelmente após reset da run.");
+        }
         canGenerateEvents = false;
         
     }
@@ -321,6 +338,7 @@ public class LeagueManager : MonoBehaviour
     //Buttons
     public void AddOnClick(EventOption eventOption, int indexOfChoice)
     {
+        EnsurePlayerTeamIsSet();
         activeOption = eventOption;
         canStartANewWeek = false;
         for (int i = 0; i < gameManager.leagueTeams.Count; i++)
@@ -490,12 +508,44 @@ public class LeagueManager : MonoBehaviour
     //Reset
     public void ResetLeagueHistoryMode()
     {
-        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+        if (gameManager.leagueTeams.Count > 0)
         {
-            gameManager.leagueTeams[i].isChampion = false;
+            for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+            {
+                gameManager.leagueTeams[i].isChampion = false;
+            }
         }
+        Week = 0;
+        canTrade = true;
+        canTrain = true;
+        
+
     }
-    
+    private void EnsurePlayerTeamIsSet()
+    {
+        if (gameManager == null)
+        {
+            gameManager = FindFirstObjectByType<GameManager>();
+            if (gameManager == null) return;
+        }
+
+        if (gameManager.playerTeam != null && gameManager.playerTeam.IsPlayerTeam)
+            return; // Já está correto
+
+        // Tenta encontrar o time do jogador
+        foreach (Team team in gameManager.leagueTeams)
+        {
+            if (team.IsPlayerTeam)
+            {
+                gameManager.playerTeam = team;
+                _playerTeam = team;
+                Debug.Log($"[LeagueManager] playerTeam definido corretamente: {team.TeamName}");
+                return;
+            }
+        }
+
+        Debug.LogError("[LeagueManager] Não foi possível encontrar o time do jogador!");
+    }
 }
 [System.Serializable]
 public class EventOption

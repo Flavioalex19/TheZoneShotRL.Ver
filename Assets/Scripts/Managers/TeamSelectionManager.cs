@@ -55,15 +55,7 @@ public class TeamSelectionManager : MonoBehaviour
     }
     public void AdvanceToDraft()
     {
-        //do a check if the bonus is valid
         /*
-        _gameManager.playerTeam.IsPlayerTeam = true;
-        selectedTeam.CreateEquips();
-        _gameManager.mode = GameManager.GameMode.Draft;
-        _gameManager.ScheduleCreation(_gameManager.leagueTeams);
-        _gameManager.mode = GameManager.GameMode.Draft;
-        SceneManager.LoadScene("Draft");//no transition
-        */
         if (_gameManager.playerTeam == null)
         {
             Debug.LogError("playerTeam está null! Verifique se o time foi selecionado corretamente.");
@@ -95,6 +87,49 @@ public class TeamSelectionManager : MonoBehaviour
         selectedTeam.CreateEquips();
         _gameManager.mode = GameManager.GameMode.Draft;
         _gameManager.ScheduleCreation(_gameManager.leagueTeams);
+
+        SceneManager.LoadScene("Draft");
+        */
+        if (_gameManager.playerTeam == null)
+        {
+            Debug.LogError("playerTeam está null! Verifique se o time foi selecionado corretamente.");
+            return;
+        }
+
+        // FORMA SEGURA: Define o time do jogador corretamente
+        bool teamFound = false;
+        foreach (Team team in _gameManager.leagueTeams)
+        {
+            if (team.TeamName == _gameManager.playerTeam.TeamName)
+            {
+                team.IsPlayerTeam = true;
+                _gameManager.playerTeam = team;        // Atualiza referência principal
+                teamFound = true;
+                Debug.Log($"IsPlayerTeam definido como TRUE para: {team.TeamName}");
+                break;
+            }
+        }
+
+        if (!teamFound)
+        {
+            Debug.LogError("Não foi possível encontrar o time na lista leagueTeams!");
+            return;
+        }
+
+        // === CRIAÇÃO DO SCHEDULE (com proteção) ===
+        if (_gameManager.playerTeam._schedule == null || _gameManager.playerTeam._schedule.Count == 0)
+        {
+            Debug.Log("Gerando Schedule pela primeira vez...");
+            _gameManager.ScheduleCreation(_gameManager.leagueTeams);
+        }
+        else
+        {
+            Debug.Log("Schedule já existe. Pulando recriação.");
+        }
+
+        selectedTeam.CreateEquips();           // Se ainda for necessário
+
+        _gameManager.mode = GameManager.GameMode.Draft;
 
         SceneManager.LoadScene("Draft");
     }

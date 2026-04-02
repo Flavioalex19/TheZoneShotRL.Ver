@@ -23,7 +23,7 @@ public class IntroManager : MonoBehaviour
         _canProgressToMainMenu = false;
         _canPressEnter = false;
         btn_career.onClick.AddListener(() => _gameManager.AdvanceToDraft());
-        btn_resetLeague.onClick.AddListener(() => leagueManager.ResetLeagueHistoryMode());
+        btn_resetLeague.onClick.AddListener(() => leagueManager.ResetLeagueHistoryMode());//mudar para savesystem.ClearLeagueProgress
         btn_clearSave.onClick.AddListener(() => ClearCurrentSave());
         btn_clearSave.onClick.AddListener(() => _gameManager.QuitApp());
         StartCoroutine(ProgressToMainMenu());
