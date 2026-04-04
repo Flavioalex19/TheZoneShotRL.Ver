@@ -343,7 +343,6 @@ public class TeamManagerUI : MonoBehaviour
         //ToogleNewsAndAssistancePanel();
         //End tESTING Screen
         //_closeGameForTestersBtn.onClick.AddListener(() => gameManager.QuitAndClear());
-        _EndBuildScreen.SetActive(false);
         SetTeamIcon();
         if (leagueManager.Week > gameManager.leagueTeams.Count - 1)
         {
@@ -391,7 +390,7 @@ public class TeamManagerUI : MonoBehaviour
             _panelEventsChoices.SetActive(false);
             _panelEventsTypes.SetActive(false);
         }
-
+        /*
         //FreeAgents if necessary
         _freeAgents_panel.SetActive(false);
         freeAgentManager.RemoveExpiredContracts(gameManager.playerTeam);
@@ -411,8 +410,42 @@ public class TeamManagerUI : MonoBehaviour
             }
         }
         UpdateTeamSalary();
+        */
+        _freeAgents_panel.SetActive(false);
+
+        if (gameManager.playerTeam != null)
+        {
+            // Remove contratos expirados (lógica de limpeza)
+            freeAgentManager.RemoveExpiredContracts(gameManager.playerTeam);
+
+            // Se o time tem menos de 8 jogadores, ativa o painel de Free Agents
+            if (gameManager.playerTeam.playersListRoster.Count < 8)
+            {
+                canProgressWithWeek = false;
+                _freeAgents_panel.SetActive(true);
+
+                int neededPlayers = 8 - gameManager.playerTeam.playersListRoster.Count;
+                freeAgentManager.GeneratePlayers(neededPlayers);
+
+                StartCoroutine(ProgressWithWeek());
+
+                Debug.Log($"Free Agents ativados: {neededPlayers} jogadores necessários.");
+            }
+            else
+            {
+                canProgressWithWeek = true;
+            }
+
+            // Atualiza salário do time
+            UpdateTeamSalary();
+        }
+        else
+        {
+            Debug.LogWarning("playerTeam é null durante inicialização do TeamManagerUI.");
+        }
+
         //tutorialPanel
-        if(leagueManager.canGenerateEvents == false|| leagueManager.Week>1 || leagueManager.CanStartTutorial == false)
+        if (leagueManager.canGenerateEvents == false|| leagueManager.Week>1 || leagueManager.CanStartTutorial == false)
         {
             tutorialPanel.SetActive(false);
         }
@@ -1821,7 +1854,20 @@ public class TeamManagerUI : MonoBehaviour
         yield return new WaitForSeconds(2f);
         _animatorEventsType.SetBool("isOn",true);
     }
+    public void RemoveExpiredContracts(Team team)
+    {
+        if (team == null || team.playersListRoster == null) return;
 
+        for (int i = team.playersListRoster.Count - 1; i >= 0; i--)
+        {
+            if (team.playersListRoster[i].ContractYears <= 0)
+            {
+                // Opcional: Destroy o GameObject do player se for MonoBehaviour
+                Destroy(team.playersListRoster[i].gameObject);
+                team.playersListRoster.RemoveAt(i);
+            }
+        }
+    }
     //SaveFunction
     public void SaveAfterPlayerEvent()
     {

@@ -65,6 +65,8 @@ public class Team : MonoBehaviour
     public int OBuff = 0;
     public int AdrenalineBar;
     public int AdrenalineBarFull = 100;
+    public int match_hp;
+    public int match_hpMax=100;
 
     #endregion
     //Placement+Playoffs

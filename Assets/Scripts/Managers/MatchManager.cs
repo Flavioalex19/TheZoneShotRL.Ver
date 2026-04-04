@@ -195,6 +195,7 @@ public class MatchManager : MonoBehaviour
         _matchUI.SetTheTeamTextForTheMatch();
         HomeTeam.Score = 0;
         AwayTeam.Score = 0;
+        AwayTeam.match_hp = AwayTeam.match_hpMax;
         HomeTeam.isOnDefenseBonus = false;
         AwayTeam.isOnDefenseBonus = false;
         teamWithball = HomeTeam;//Change Later
@@ -508,7 +509,7 @@ public class MatchManager : MonoBehaviour
     IEnumerator HandlePossession()
     {
         if (isSimulation) AISub();
-        currentGamePossessons--;
+        //currentGamePossessons--;
         if(/*teamWithball == AwayTeam*/ teamWithball.IsPlayerTeam == false)
         {
             adrenaline_addUp = 20;
@@ -706,6 +707,7 @@ public class MatchManager : MonoBehaviour
                 _matchUI.text_midChance.text = "Mid: " + Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 1, 0) *100).ToString() + "%";
                 _matchUI.text_insChance.text = "Inside: " + Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 2, 0) * 100).ToString() + "%";
                 //_matchUI.SetJukePercentage();
+                _matchUI.SetDMGText(GetDamageValue(playerWithTheBall.CurrentZone));
                 uiManager.PlaybyPlayText("Wait for Player Action");
                 //Timeout call
                 //yield return StartCoroutine(WaitForTimeOut());
@@ -900,7 +902,7 @@ public class MatchManager : MonoBehaviour
             }
             
         }
-        
+        currentGamePossessons--;
     }
     void ResetChoices()
     {
@@ -1094,7 +1096,7 @@ public class MatchManager : MonoBehaviour
         ChoosePlayerToCarryBall();
         SelectDefender();
         if (!isSimulation) if (HomeTeam.IsPlayerTeam)_matchUI.ChangePos(HomeTeam);
-        //currentGamePossessons--;
+        currentGamePossessons--;
         
     }
     void SelectDefender()
@@ -1623,6 +1625,7 @@ public class MatchManager : MonoBehaviour
     }
     float ScoringEquation(Player offense, Player defense, int zone, int momentumModifier)
     {
+        /*
         // === 1. Cálculo de OVR na hora (média dos 12 attrs) ===
         int ovr = Mathf.RoundToInt(
             (offense.Shooting + offense.Inside + offense.Mid + offense.Outside +
@@ -1706,6 +1709,38 @@ public class MatchManager : MonoBehaviour
        
         // === 8. Clamp final (tensão) ===
         return Mathf.Clamp(finalChance, 0.15f, 0.95f);
+        */
+        int ovr = offense.SetOVR();
+
+        float baseAccuracy = zone switch
+        {
+            0 => 0.60f,   // Outside
+            1 => 0.70f,   // Mid
+            2 => 0.79f,   // Inside
+            _ => 0.68f
+        };
+
+        float adrenaline = teamWithball.IsPlayerTeam ? teamWithball.AdrenalineBar : 75f;
+        float adrenalineFactor = adrenaline / 100f;
+
+        float difficulty = teamWithball.IsPlayerTeam
+            ? 1f - (adrenalineFactor * 0.36f)
+            : 1f - (adrenalineFactor * 0.16f);
+
+        float offenseScore = (offense.Shooting + offense.Consistency + offense.Control + ovr / 5f) / 4f;
+        float defenseScore = (defense.Guarding + defense.Awareness + defense.Consistency) / 3.5f;
+
+        float rawChance = offenseScore / (offenseScore + defenseScore + 48f);
+
+        // BUFF DE ATAQUE / SHOOTING (facilitador forte)
+        float shootingBuffMultiplier = 1f + (buff_Atk / 100f);     // ou buff_Offense, use o nome que você tem
+
+        float finalChance = rawChance * baseAccuracy * difficulty * shootingBuffMultiplier;
+
+        float staminaFactor = GetStaminaMultiplier(offense.CurrentStamina);
+        finalChance *= staminaFactor;
+
+        return Mathf.Clamp(finalChance, 0.20f, 0.93f);
     }
     float ActivateSpecialAttk(bool isPercentage)
     {
@@ -2256,6 +2291,7 @@ public class MatchManager : MonoBehaviour
     //Offensive Panel And Options
     bool MakePassToTeammate(int receiverIndex)
     {
+        /*
         // Falha no passe?
         if (Random.Range(0f, 1f) > PassEquation())
         {
@@ -2293,6 +2329,54 @@ public class MatchManager : MonoBehaviour
         _matchUI.TurnOffPlayerButtons();
         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " receives the pass.");
         return true;
+        */
+        if (receiverIndex < 0 || receiverIndex >= teamWithball.playersListRoster.Count)
+            return false;
+
+        Player receiver = teamWithball.playersListRoster[receiverIndex];
+        if (receiver == playerWithTheBall || receiver.HasTheBall)
+            return false;
+
+        // Adrenalina (IA sempre usa 75)
+        float adrenaline = teamWithball.IsPlayerTeam ? teamWithball.AdrenalineBar : 75f;
+        float adrenalineFactor = adrenaline / 100f;
+
+        float baseChance = 0.80f;                                   // Base boa
+        float difficulty = teamWithball.IsPlayerTeam
+            ? 1f - (adrenalineFactor * 0.32f)                      // Penalidade adrenalina
+            : 1f - (adrenalineFactor * 0.12f);
+
+        // BUFF DO PASSE (facilitador forte)
+        float passBuffMultiplier = 1f + (buff_Pass / 100f);        // ex: buff_Pass = 20  +20%
+
+        float finalChance = baseChance * difficulty * passBuffMultiplier;
+
+        float staminaFactor = GetStaminaMultiplier(playerWithTheBall.CurrentStamina);
+        finalChance *= staminaFactor;
+        finalChance = Mathf.Clamp(finalChance, 0.38f, 0.94f);
+
+        if (Random.value > finalChance)
+        {
+            uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos());
+            playerWithTheBall.HasTheBall = false;
+            playerWithTheBall.CurrentZone = 0;
+            return false;
+        }
+
+        // Sucesso
+        playerWithTheBall.CurrentZone = 0;
+        receiver.CurrentZone = 0;
+        playerWithTheBall.HasTheBall = false;
+        receiver.HasTheBall = true;
+        playerWithTheBall = receiver;
+
+        ResetPostions();
+        _matchUI.UpdatePlayerPlacements();
+        _matchUI.PlayerWithBallButtonsOnOff();
+        _matchUI.TurnOffPlayerButtons();
+
+        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " receives the pass.");
+        return true;
     }
     public void ChooseIndexToPass(int index)
     {
@@ -2300,6 +2384,7 @@ public class MatchManager : MonoBehaviour
     }
     bool TryBeatDefenderAdvanceZone(Player offense, Player defense, int zone, int bonus = 0)
     {
+        /*
         // === 1. Cálculo de OVR na hora (média dos 12 attrs) ===
         int offenseOVR = Mathf.RoundToInt(
             (offense.Shooting + offense.Inside + offense.Mid + offense.Outside +
@@ -2390,6 +2475,47 @@ public class MatchManager : MonoBehaviour
         _matchUI.UpdatePlayerPlacements();
         _matchUI.TurnOffPlayerButtons();
         //print(offense.playerLastName + " and the zone is " + offense.CurrentZone);
+        return true;
+        */
+        int offenseOVR = offense.SetOVR();
+        int defenseOVR = defense.SetOVR();
+
+        float adrenaline = teamWithball.IsPlayerTeam ? teamWithball.AdrenalineBar : 75f;
+        float adrenalineFactor = adrenaline / 100f;
+
+        float baseJuke = 0.68f;
+        float difficulty = teamWithball.IsPlayerTeam
+            ? 1f - (adrenalineFactor * 0.38f)
+            : 1f - (adrenalineFactor * 0.18f);
+
+        float offenseScore = (offense.Juking + offense.Control + offense.Consistency + offenseOVR / 4f) / 4f;
+        float defenseScore = (defense.Guarding + defense.Awareness + defense.Consistency + defenseOVR / 4f) / 4f;
+
+        float rawChance = offenseScore / (offenseScore + defenseScore + 45f);
+
+        // BUFF DO JUKE (facilitador forte)
+        float jukeBuffMultiplier = 1f + (buff_Juke / 100f);
+
+        float finalChance = rawChance * baseJuke * difficulty * jukeBuffMultiplier * (1f + bonus / 100f);
+
+        float staminaFactor = GetStaminaMultiplier(offense.CurrentStamina);
+        finalChance *= staminaFactor;
+
+        finalChance = Mathf.Clamp(finalChance, 0.25f, 0.90f);
+        jukePercentage = finalChance;
+
+        bool success = Random.value < finalChance;
+
+        if (!success)
+        {
+            offense.CurrentZone = 0;
+            return false;
+        }
+
+        offense.CurrentZone = Mathf.Min(zone + 1, 2);
+        _matchUI.UpdatePlayerPlacements();
+        _matchUI.TurnOffPlayerButtons();
+
         return true;
     }
     bool TryToShoveDefender(Player attacker, Player defender)
@@ -2668,6 +2794,7 @@ public class MatchManager : MonoBehaviour
     //Damage
     private void CalculateDamageAndReduceHP(Team defendingTeam, int zone, bool isSP = false)
     {
+        /*
         int defHP = defendingTeam == HomeTeam ? homeHP : awayHP;
         int dano = isSP ? 20 : (zone switch
         {
@@ -2687,6 +2814,81 @@ public class MatchManager : MonoBehaviour
 
         homeHP = Mathf.Max(homeHP, 0);
         awayHP = Mathf.Max(awayHP, 0);
+        */
+        // HP atual do time defensor
+        int currentHP = defendingTeam == HomeTeam ? homeHP : awayHP;
+
+        // === DANO BASE POR ZONA ===
+        int baseDamage = zone switch
+        {
+            0 => 12,   // Outside
+            1 => 16,   // Mid
+            2 => 22,   // Inside (mais perigoso)
+            _ => 12
+        };
+
+        // === MULTIPLICADOR POR ADRENALINA ===
+        float adrenaline = teamWithball.AdrenalineBar;           // 0 a 100
+        float adrenalineMultiplier = 1f + (adrenaline / 100f) * 0.70f;   // Máximo +70% quando barra cheia
+
+        // Dano final antes de SP
+        float finalDamage = baseDamage * adrenalineMultiplier;
+
+        // Se for Special Attack (isSP), aumenta significativamente
+        if (isSP)
+        {
+            finalDamage *= 1.8f;        // Special Attack causa muito mais dano
+        }
+
+        // Reduz um pouco o dano quando o time defensor está com HP muito baixo (evita matar muito rápido)
+        if (currentHP < 40)
+            finalDamage *= 0.85f;
+
+        int damageToApply = Mathf.RoundToInt(finalDamage);
+
+        // Aplica o dano
+        if (defendingTeam == HomeTeam)
+            homeHP = Mathf.Max(0, homeHP - damageToApply);
+        else
+            awayHP = Mathf.Max(0, awayHP - damageToApply);
+
+        Debug.Log($"Dano causado: {damageToApply} | Zona: {zone} | Adrenalina: {adrenaline} | HP restante: {(defendingTeam == HomeTeam ? homeHP : awayHP)}");
+    }
+    private float GetStaminaMultiplier(int stamina)
+    {
+        if (stamina >= 80) return 1.00f;   // Sem penalidade
+        else if (stamina >= 60) return 0.92f;   // Leve
+        else if (stamina >= 40) return 0.80f;   // Médio
+        else return 0.60f;   // Forte (abaixo de 40)
+    }
+    private int GetDamageValue(int zone, bool isSP = false)
+    {
+        // Dano base por zona
+        int baseDamage = zone switch
+        {
+            0 => 12,   // Outside
+            1 => 16,   // Mid
+            2 => 22,   // Inside
+            _ => 12
+        };
+
+        // Multiplicador pela adrenalina (0 a 100)
+        float adrenalineFactor = teamWithball.AdrenalineBar / 100f;
+        float adrenalineMultiplier = 1f + (adrenalineFactor * 0.70f);   // até +70% quando barra cheia
+
+        float finalDamage = baseDamage * adrenalineMultiplier;
+
+        if (isSP)
+        {
+            finalDamage *= 1.85f;     // Special Attack causa muito mais dano
+        }
+
+        // Redução leve se o inimigo estiver com HP baixo
+        int enemyHP = (teamWithball == HomeTeam) ? awayHP : homeHP;
+        if (enemyHP < 40)
+            finalDamage *= 0.85f;
+
+        return Mathf.RoundToInt(finalDamage);
     }
     public void Matchpoint()
     {

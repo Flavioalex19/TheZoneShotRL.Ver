@@ -121,6 +121,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Animator anim_Sp_Button_Activate;
     [SerializeField] Image image_adrenalineBar;
     [SerializeField] Image image_offensivePanel_awayTeamHpBAR;
+    [SerializeField] TextMeshProUGUI text_currentDMG;
     Animator off_Animator;
     //debub
     [SerializeField] TextMeshProUGUI debugText_awayHp;
@@ -624,6 +625,10 @@ public class MatchUI : MonoBehaviour
         float chance = value;
         int roundNumber = Mathf.RoundToInt(chance * 100);
         text_offensiveSpPercentage.text = roundNumber.ToString() + "%";
+    }
+    public void SetDMGText(int value)
+    {
+        text_currentDMG.text = value.ToString();
     }
     //Events
     public void CallEventPanel(string content, Sprite icon)
