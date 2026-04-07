@@ -151,7 +151,7 @@ public class TeamManagerUI : MonoBehaviour
     [Header("SalaryCap")]
     [SerializeField] TextMeshProUGUI _text_CurrentTeamSalary;
 
-    [Header("Options")]
+    [Header("Options---Old")]
     [SerializeField] GameObject _optionsPanel;
     [SerializeField] Button _optionsQuitBtn;
 
@@ -320,8 +320,8 @@ public class TeamManagerUI : MonoBehaviour
         PopulateStandings();
         _standingsPanel.SetActive(false);
         //Options
-        _optionsQuitBtn.onClick.AddListener(() => Application.Quit());
-        _optionsPanel.SetActive(false);
+        //_optionsQuitBtn.onClick.AddListener(() => Application.Quit());
+        //_optionsPanel.SetActive(false);
         //Contract
         ContractButtonsUpdate();
         contract_asstancePanel.SetActive(false);
