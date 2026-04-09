@@ -100,6 +100,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Transform transform_tradeBtnOptions;
     [SerializeField] Transform teste;
     [SerializeField] GameObject prefabTrade;
+    [SerializeField] Sprite sprite_transparent;
     //playerMyTeamInfo
     [SerializeField] Image image_trade_MyTeamImage;
     [SerializeField] Image image_trade_MyPlayerToTradePortrait;
@@ -297,7 +298,12 @@ public class TeamManagerUI : MonoBehaviour
         
         musicManager.RestoreMutedAudioSources();
         _scheduleArea.SetActive(false);
-        
+        if (leagueManager.canStartANewWeek == true)
+        {
+            leagueManager.canNegociateContract = true;
+            leagueManager.canTrade = true;
+            leagueManager.canTrain = true;
+        }
 
         #region TeamRoster Panel
         //Team Roster panel setup
@@ -390,46 +396,26 @@ public class TeamManagerUI : MonoBehaviour
             _panelEventsChoices.SetActive(false);
             _panelEventsTypes.SetActive(false);
         }
-        /*
-        //FreeAgents if necessary
-        _freeAgents_panel.SetActive(false);
-        freeAgentManager.RemoveExpiredContracts(gameManager.playerTeam);
-        if (gameManager.playerTeam.playersListRoster.Count < 8)
-        {
-            canProgressWithWeek = false;
-            _freeAgents_panel.SetActive(true);
-            freeAgentManager.GeneratePlayers(10 - gameManager.playerTeam.playersListRoster.Count);
-            StartCoroutine(ProgressWithWeek());
-
-            //_freeAgents_panel.SetActive(false);
-            //print("Pass");
-            //UpdateTeamSalary();
-            for (int i = 0; i < gameManager.playerTeam.playersListRoster.Count; i++)
-            {
-                gameManager.playerTeam.CurrentSalary += gameManager.playerTeam.playersListRoster[i].Salary;
-            }
-        }
-        UpdateTeamSalary();
-        */
+        
         _freeAgents_panel.SetActive(false);
 
         if (gameManager.playerTeam != null)
         {
-            // Remove contratos expirados (lógica de limpeza)
+            // Remove todos os contratos expirados primeiro
             freeAgentManager.RemoveExpiredContracts(gameManager.playerTeam);
 
-            // Se o time tem menos de 8 jogadores, ativa o painel de Free Agents
+            // Se após a remoção o time ficou com menos de 8 jogadores  ativa o painel
             if (gameManager.playerTeam.playersListRoster.Count < 8)
             {
                 canProgressWithWeek = false;
                 _freeAgents_panel.SetActive(true);
 
-                int neededPlayers = 8 - gameManager.playerTeam.playersListRoster.Count;
-                freeAgentManager.GeneratePlayers(neededPlayers);
+                // SEMPRE gera EXATAMENTE 8 jogadores novos (independente de quantos expiraram)
+                freeAgentManager.GeneratePlayers(8);
 
                 StartCoroutine(ProgressWithWeek());
 
-                Debug.Log($"Free Agents ativados: {neededPlayers} jogadores necessários.");
+                Debug.Log($"Free Agents ativado - Gerados 8 jogadores novos (roster atual: {gameManager.playerTeam.playersListRoster.Count})");
             }
             else
             {
@@ -471,38 +457,6 @@ public class TeamManagerUI : MonoBehaviour
             _playoffsAdvBtn.SetActive(false);
         }
         AdvButtonUpdate();
-        /*
-        //close run run
-        if ( leagueManager.CanStartANewRun == true)
-        {
-            leagueManager.CanDraftlvl1 = true;
-            //setactive end run screen
-            //_EndBuildScreen.SetActive(true);
-            ResultPanelCreation();
-            //gameover_Btn.gameObject.SetActive(true);
-            //set the button to reset the game over bool from leaguemanager and return to tile screen, for now
-            btn_returnToMainScreen.onClick.AddListener(() => ResetRun());
-            btn_returnToMainScreen.onClick.AddListener(() => gameManager.ResetRunTeams());
-            btn_returnToMainScreen.onClick.AddListener(() => gameManager.saveSystem.ResetForNewLeagueRun());
-            btn_returnToMainScreen.onClick.AddListener(() => gameManager.ReturnToTitleScreen());
-            
-        }
-        //Gameover
-        if (leagueManager.isGameOver)
-        {
-            go_playerGameOverFiredPanel.SetActive(true);
-            leagueManager.CanStartANewRun = true;
-            //btn_go_ReturnToMainTitle.onClick.AddListener(() => ResetRun());
-            //btn_go_ReturnToMainTitle.onClick.AddListener(() => gameManager.ResetRunTeams());
-            //btn_go_ReturnToMainTitle.onClick.AddListener(() => gameManager.saveSystem.ResetForNewLeagueRun());
-            btn_go_ReturnToMainTitle.onClick.AddListener(() => gameManager.ReturnToTitleScreen());
-            gameManager.DestroyAllWithTag("Team");
-            gameManager.DestroyAllWithTag("ZsPlayer");
-            //gameManager.NewTeamsForRun();
-
-
-        }
-        */
         
         SetTextOfFacilities();
         // ==================== LÓGICA DE FIM DE RUN / GAME OVER ====================
@@ -522,7 +476,6 @@ public class TeamManagerUI : MonoBehaviour
         }
         // =====================================================================
 
-        //StartCoroutine(NewsLoop(10f));
     }
 
     // Update is called once per frame
@@ -1198,7 +1151,11 @@ public class TeamManagerUI : MonoBehaviour
                 Debug.LogError("Botão sem componente Button!");
             }
         }
-
+        if (transform_tradeBtnOptions.childCount == 0)
+        {
+            ClearTradeTargetUI();
+            Debug.Log("Nenhuma opção de troca encontrada. UI limpa.");
+        }
         //Debug.Log(transform_tradeBtnOptions.childCount + " opções criadas");
     }
     
@@ -1330,6 +1287,24 @@ public class TeamManagerUI : MonoBehaviour
         int cost = Mathf.Max(0, baseCost - discount);  // Evita negativo
         return cost;
     }
+    public void ClearTradeTargetUI()
+    {
+        // Limpa informações do jogador alvo
+        text_trade_receiveName.text = "";
+        text_trade_receiveOVR.text = "";
+        text_trade_receiveAge.text = "";
+        text_tradeCostOfTrade.text = "";
+        text_tradeWarningForNoTrade.text = "No trade options available";
+
+        // Limpa imagens
+        if (image_trade_playerReceivePortrait != null) image_trade_playerReceivePortrait.sprite = sprite_transparent;   // ou seu sprite transparente
+        if (image_trade_receiveArchtype != null) image_trade_receiveArchtype.sprite = sprite_transparent;
+        if (image_trade_receivePersonality != null) image_trade_receivePersonality.sprite = sprite_transparent;
+        if (image_trade_receiveTeamImage != null) image_trade_receiveTeamImage.sprite = sprite_transparent;
+
+        // Opcional: desativa o painel de receive se quiser
+        // TradeReceivePlayerArea.SetActive(false);
+    }
     //Training
     public void SetTrainingBtns()
     {
@@ -1418,6 +1393,7 @@ public class TeamManagerUI : MonoBehaviour
     }
     public void ContractDiscussion(int weight)
     {
+        /*
         if (leagueManager.canNegociateContract == true)
         {
             // === MOVER AQUI: atualiza CurrentSalary antes de qualquer cálculo ===
@@ -1441,7 +1417,7 @@ public class TeamManagerUI : MonoBehaviour
             Player p = gameManager.playerTeam.playersListRoster[indexForPlayer];
             int projectedSalary = gameManager.playerTeam.CurrentSalary + salaryIncrease;
 
-            if (/*p.ContractYears < 5 &&*/ projectedSalary < gameManager.playerTeam.SalaryCap)
+            if ( projectedSalary < gameManager.playerTeam.SalaryCap)
             {
                 if (TryExtendContract(gameManager.playerTeam, p, p.Salary + salaryIncrease, p.ContractYears + gamesIncrease, weight))
                 {
@@ -1480,6 +1456,71 @@ public class TeamManagerUI : MonoBehaviour
         contract_asstancePanel.SetActive(true);
 
         // Removi o recalculo duplicado do final (agora está no início + após aceitar)
+        SaveAfterPlayerEvent();
+        */
+        if (leagueManager.canNegociateContract == false)
+        {
+            contract_resultNegotiationText.text = "Boss, we can't negotiate any more contracts this week.";
+            UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
+            ContractButtonsUpdate();
+            contract_asstancePanel.SetActive(true);
+            return;
+        }
+
+        // Atualiza CurrentSalary antes de qualquer cálculo
+        gameManager.playerTeam.CurrentSalary = 0;
+        for (int i = 0; i < gameManager.playerTeam.playersListRoster.Count; i++)
+        {
+            gameManager.playerTeam.CurrentSalary += gameManager.playerTeam.playersListRoster[i].Salary;
+        }
+        _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
+
+        // Calcula os aumentos
+        int salaryIncrease = 0;
+        int gamesIncrease = 0;
+        switch (weight)
+        {
+            case 0: salaryIncrease = UnityEngine.Random.Range(2, 6); gamesIncrease = 2; break;
+            case 1: salaryIncrease = UnityEngine.Random.Range(6, 9); gamesIncrease = 4; break;
+            case 2: salaryIncrease = UnityEngine.Random.Range(9, 13); gamesIncrease = 6; break;
+        }
+
+        Player p = gameManager.playerTeam.playersListRoster[indexForPlayer];
+
+        // === PROTEÇÃO PRINCIPAL: Verifica se vai exceder o Salary Cap ===
+        int projectedTotalSalary = gameManager.playerTeam.CurrentSalary + salaryIncrease;
+
+        if (projectedTotalSalary > gameManager.playerTeam.SalaryCap)
+        {
+            contract_resultNegotiationText.text = "We can't extend this contract because it would exceed our Salary Cap.";
+            UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
+            ContractButtonsUpdate();
+            contract_asstancePanel.SetActive(true);
+            return;
+        }
+
+        // Se não exceder, continua com a negociação normal
+        if (TryExtendContract(gameManager.playerTeam, p, p.Salary + salaryIncrease, p.ContractYears + gamesIncrease, weight))
+        {
+            p.ContractYears += gamesIncrease;
+            p.Salary += salaryIncrease;
+
+            // Atualiza CurrentSalary imediatamente
+            gameManager.playerTeam.CurrentSalary += salaryIncrease;
+            _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
+
+            contract_resultNegotiationText.text = "Good Job Boss! " + p.playerLastName + " for " + p.ContractYears + " games";
+            UpdateAssistancePortrait(transform_contract_AssistancePortrait, true);
+        }
+        else
+        {
+            contract_resultNegotiationText.text = "Damn! We can't come to an agreement with " + p.playerLastName + ". Maybe he needs some time to think...";
+            UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
+        }
+
+        leagueManager.canNegociateContract = false;
+        ContractButtonsUpdate();
+        contract_asstancePanel.SetActive(true);
         SaveAfterPlayerEvent();
     }
     public bool TryExtendContract(Team team, Player player, int salaryProposed, int gamesProposed,int weight)

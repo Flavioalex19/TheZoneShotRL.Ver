@@ -161,6 +161,12 @@ public class LeagueManager : MonoBehaviour
                 ChoiceButtonsTransform.GetChild(1).GetComponent<Button>().onClick.AddListener(() => ChooseEventTypeOnClick(randomEvent1));
                 ChoiceButtonsTransform.GetChild(0).Find("Description Text").GetComponentInChildren<TextMeshProUGUI>().text = randomEvent0.ToString();
                 ChoiceButtonsTransform.GetChild(1).Find("Description Text").GetComponentInChildren<TextMeshProUGUI>().text = randomEvent1.ToString();
+                //ImageIcon1
+                Image eventImage0 = GameObject.Find("ImageIcon1").GetComponent<Image>();
+                Image eventImage1 = GameObject.Find("ImageIcon0").GetComponent<Image>();
+                SetEventImage(randomEvent0.ToString(), eventImage0);
+                SetEventImage(randomEvent1.ToString(), eventImage1);
+
             }
             else
             {
@@ -334,7 +340,37 @@ public class LeagueManager : MonoBehaviour
         GameObject.Find("EventText").GetComponent<TextMeshProUGUI>().text = event1.Description.ToString();
 
     }
+    public void SetEventImage(string eventName, Image eventImage)
+    {
+        if (eventImage == null)
+        {
+            Debug.LogWarning("eventImage é null! Não é possível aplicar a sprite.");
+            return;
+        }
 
+        if (string.IsNullOrEmpty(eventName))
+        {
+            Debug.LogWarning("EventName está vazio!");
+            eventImage.sprite = null;
+            return;
+        }
+
+        // Caminho dentro da pasta Resources
+        string path = "2D/Events/Events/" + eventName;
+
+        Sprite sprite = Resources.Load<Sprite>(path);
+
+        if (sprite != null)
+        {
+            eventImage.sprite = sprite;
+            Debug.Log($"Imagem aplicada com sucesso: {eventName}");
+        }
+        else
+        {
+            Debug.LogWarning($"Imagem não encontrada para o evento: {eventName} | Caminho: {path}");
+            eventImage.sprite = null;   // ou pode colocar uma imagem padrão aqui
+        }
+    }
     //Buttons
     public void AddOnClick(EventOption eventOption, int indexOfChoice)
     {

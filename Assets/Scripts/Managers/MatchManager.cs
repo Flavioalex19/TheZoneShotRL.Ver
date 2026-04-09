@@ -402,40 +402,40 @@ public class MatchManager : MonoBehaviour
         //stats increment
         if (HomeTeam.IsPlayerTeam)
         {
-            // OFFICE  Front Office Points
+            // OFFICE - Front Office Points
             if (HomeTeam.OfficeLvl >= 0)
             {
-                float bonus = 2f * (1f + HomeTeam.OfficeLvl * 0.5f);
-                HomeTeam.FrontOfficePoints += Mathf.RoundToInt(bonus);
+                int bonus = GetFacilityBonus(HomeTeam.OfficeLvl);
+                HomeTeam.FrontOfficePoints += bonus;
             }
 
-            // FINANCES  Salary Cap
+            // FINANCES - Salary Cap
             if (HomeTeam.FinancesLvl >= 0)
             {
-                float bonus = 2f * (1f + HomeTeam.FinancesLvl * 0.5f);
-                HomeTeam.SalaryCap += Mathf.RoundToInt(bonus);
+                int bonus = GetFacilityBonus(HomeTeam.FinancesLvl);
+                //HomeTeam.SalaryCap += bonus;
             }
 
-            // MARKETING  Fan Support
+            // MARKETING - Fan Support
             if (HomeTeam.MarketingLvl >= 0)
             {
-                float bonus = 3f * (1f + HomeTeam.MarketingLvl * 0.5f);
-                HomeTeam.FansSupportPoints += Mathf.RoundToInt(bonus);
+                int bonus = GetFacilityBonus(HomeTeam.MarketingLvl);
+                HomeTeam.FansSupportPoints += bonus;
             }
 
-            // ARENA  Morale
+            // ARENA - Morale
             if (HomeTeam.ArenaLvl >= 0)
             {
-                float bonus = 3f * (1f + HomeTeam.ArenaLvl * 0.5f);
-                HomeTeam.Moral += Mathf.RoundToInt(bonus);
+                int bonus = GetFacilityBonus(HomeTeam.ArenaLvl);
+                HomeTeam.Moral += bonus;
                 HomeTeam.Moral = Mathf.Clamp(HomeTeam.Moral, 0, 100);
             }
 
-            // MEDICAL  Effort / Stamina / Recovery bonus
+            // MEDICAL - Effort Points
             if (HomeTeam.MedicalLvl >= 0)
             {
-                float bonus = 3f * (1f + HomeTeam.MedicalLvl * 0.5f);
-                HomeTeam.EffortPoints += Mathf.RoundToInt(bonus);
+                int bonus = GetFacilityBonus(HomeTeam.MedicalLvl);
+                HomeTeam.EffortPoints += bonus;
             }
 
         }
@@ -1744,7 +1744,7 @@ public class MatchManager : MonoBehaviour
     }
     float ActivateSpecialAttk(bool isPercentage)
     {
-        
+        /*
         // === 1. Requisito da barra ===
         float fillPercent = (teamWithball.AdrenalineBar / teamWithball.AdrenalineBarFull) * 100f;
 
@@ -1827,6 +1827,84 @@ public class MatchManager : MonoBehaviour
         }
 
         print(finalChance + " Is the SP%");
+        return finalChance;
+        */
+        float fillPercent = (teamWithball.AdrenalineBar / teamWithball.AdrenalineBarFull) * 100f;
+
+        float specialAttkSuccess = 0f;
+
+        // === REGRA ESPECIAL: 100% de chance quando barra cheia ===
+        if (fillPercent >= 100f)
+        {
+            specialAttkSuccess = 1f;           // Garantido
+            if (!isPercentage)
+            {
+                teamWithball.AdrenalineBar = 0; // Zera a barra ao usar
+                currentGamePossessons--;
+            }
+            return 1f;
+        }
+
+        // === LÓGICA NORMAL (abaixo de 100%) ===
+        if (fillPercent < 50f)
+            return 0f; // Não pode usar abaixo de 50%
+
+        // Cálculo base (mantido da sua versão anterior)
+        int offenseOVR = Mathf.RoundToInt(
+            (playerWithTheBall.Shooting + playerWithTheBall.Inside + playerWithTheBall.Mid + playerWithTheBall.Outside +
+             playerWithTheBall.Awareness + playerWithTheBall.Defending + playerWithTheBall.Guarding + playerWithTheBall.Stealing +
+             playerWithTheBall.Juking + playerWithTheBall.Consistency + playerWithTheBall.Control + playerWithTheBall.Positioning) / 12f);
+
+        int defenseOVR = Mathf.RoundToInt(
+            (playerDefending.Shooting + playerDefending.Inside + playerDefending.Mid + playerDefending.Outside +
+             playerDefending.Awareness + playerDefending.Defending + playerDefending.Guarding + playerDefending.Stealing +
+             playerDefending.Juking + playerDefending.Consistency + playerDefending.Control + playerDefending.Positioning) / 12f);
+
+        float offenseAvg = (playerWithTheBall.Shooting + playerWithTheBall.Juking + playerWithTheBall.Control +
+                            offenseOVR / 5f) / 4f;
+        float offenseScore = offenseAvg + UnityEngine.Random.Range(-10f, 20f);
+
+        float defenseAvg = (playerDefending.Defending + playerDefending.Guarding + playerDefending.Stealing +
+                            defenseOVR / 5f) / 4f;
+        float defenseMedianBonus = defenseAvg * 0.3f;
+        float defenseScore = defenseAvg + defenseMedianBonus;
+
+        Team defendingTeam = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
+        if (!defendingTeam.IsPlayerTeam)
+            defenseScore *= 1.25f;
+
+        float rawChance = offenseScore / (offenseScore + defenseScore + 50f);
+
+        // Chance baseada na barra (50% ~ 100%)
+        if (fillPercent >= 75f)
+            specialAttkSuccess = 0.70f + (fillPercent - 75f) / 25f * 0.30f;   // 70% a 100%
+        else
+            specialAttkSuccess = 0.50f + (fillPercent - 50f) / 25f * 0.20f;   // 50% a 70%
+
+        float finalChance = specialAttkSuccess * rawChance;
+
+        if (teamWithball.IsPlayerTeam)
+        {
+            finalChance *= 0.85f;                     // Player sofre mais dificuldade
+            if (buff_SP > 0)
+                finalChance *= 1f + (buff_SP / 100f); // Buff_SP ajuda
+        }
+        else
+        {
+            finalChance *= 1.05f;
+            if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
+                finalChance *= 1.10f;
+        }
+
+        finalChance = Mathf.Clamp(finalChance, 0f, 1f);
+
+        // Se não for apenas para mostrar porcentagem, zera a barra ao usar
+        if (!isPercentage)
+        {
+            teamWithball.AdrenalineBar = 0;
+            currentGamePossessons--;
+        }
+
         return finalChance;
     }
     //Chance succsefull defense choice
@@ -2703,6 +2781,7 @@ public class MatchManager : MonoBehaviour
     //AI
     private AIAction AI_Tendency()
     {
+        /*
         // === Calcula probabilidades usando nossas equações ===
         float passChance = PassEquation(); // retorna 0-1
         //float passChance = PassEquation(); // retorna 0-1
@@ -2744,6 +2823,55 @@ public class MatchManager : MonoBehaviour
             return AIAction.Shoot;
         else
             return AIAction.Special; // (nunca chega por enquanto)
+        */
+        float passChance = PassEquation();
+        float jukeChance = CalculateJukeProbability(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone);
+        float shootChance = ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0);
+        float spChance = ActivateSpecialAttk(true);
+
+        if (currentGamePossessons == 1 && !teamWithball.IsPlayerTeam)
+        {
+            int scoreDifference = HomeTeam.Score - AwayTeam.Score;
+
+            if (scoreDifference < 0)
+            {
+                if (playerWithTheBall.CurrentZone < 2 && jukeChance > 0.25f)
+                {
+                    Debug.Log("AI Last Possession - Losing and zone < 2 - Forcing Juke");
+                    return AIAction.Juke;
+                }
+                else
+                {
+                    Debug.Log("AI Last Possession - Losing but zone = 2 - Trying Shoot");
+                    return AIAction.Shoot;
+                }
+            }
+            else if (scoreDifference == 0)
+            {
+                if (shootChance > 0.50f)
+                    return AIAction.Shoot;
+                else if (playerWithTheBall.CurrentZone < 2)
+                    return AIAction.Juke;
+                else
+                    return AIAction.Shoot;
+            }
+        }
+
+        float totalWeight = passChance + jukeChance + shootChance + spChance;
+
+        if (totalWeight <= 0f)
+            return AIAction.Shoot;
+
+        float randomValue = UnityEngine.Random.value * totalWeight;
+
+        if (randomValue < passChance)
+            return AIAction.Pass;
+        else if (randomValue < passChance + jukeChance)
+            return AIAction.Juke;
+        else if (randomValue < passChance + jukeChance + shootChance)
+            return AIAction.Shoot;
+        else
+            return AIAction.Special;
     }
 
     // Função auxiliar pra juke chance (idêntica à lógica do TryBeatDefender)
@@ -2889,6 +3017,23 @@ public class MatchManager : MonoBehaviour
             finalDamage *= 0.85f;
 
         return Mathf.RoundToInt(finalDamage);
+    }
+    private int GetFacilityBonus(int level)
+    {
+        if (level >= 6)
+            return 20;           // Nivel 6 ou superior = 20 pontos fixos
+
+        // Niveis 0 a 5 - Progressão racional e crescente
+        switch (level)
+        {
+            case 0: return 3;
+            case 1: return 5;
+            case 2: return 7;
+            case 3: return 9;
+            case 4: return 12;
+            case 5: return 15;
+            default: return 3;   // segurança
+        }
     }
     public void Matchpoint()
     {
