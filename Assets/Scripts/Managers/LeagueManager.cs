@@ -24,7 +24,7 @@ public class LeagueManager : MonoBehaviour
     [SerializeField]public List<Team> Standings = new List<Team>();
 
     #region Events Variables
-    EventType _choseEventType;
+    public EventType _choseEventType;
     #endregion
 
     public bool canTrade = true;
@@ -69,6 +69,7 @@ public class LeagueManager : MonoBehaviour
 
     public bool TriggerWeek = false;
     public bool WeekFullyInitialized = false;
+
 
     GameManager gameManager;
     UiManager uiManager;
@@ -118,7 +119,7 @@ public class LeagueManager : MonoBehaviour
             NewWeek();
         }
         */
-        
+        /*
         if(TriggerWeek == true)
         {
             
@@ -132,6 +133,7 @@ public class LeagueManager : MonoBehaviour
             if (gameManager.mode == GameManager.GameMode.TeamManagement)
             {
                 NewWeek();
+                //HandleFreeAgents();
             }
         }
         else
@@ -140,14 +142,14 @@ public class LeagueManager : MonoBehaviour
 
         }
         
-        
+        */
     }
     public void IncreaseWeek()
     {
         Week++;
         
     }
-    void NewWeek()
+    public void NewWeek()
     {
         /*
         TeamManagerUI teamManagerUI = GameObject.Find("TeamManagerUI")?.GetComponent<TeamManagerUI>();
@@ -162,7 +164,7 @@ public class LeagueManager : MonoBehaviour
                 canTrade = true;
                 canNegociateContract = true;
                 CreateEventsForWeek();
-                HandleFreeAgents();
+                //HandleFreeAgents();
                 WeekFullyInitialized = true;
                 Transform ChoiceButtonsTransform = GameObject.Find("ChoiceButtons").transform;
 
@@ -207,71 +209,77 @@ public class LeagueManager : MonoBehaviour
         canGenerateEvents = false;
         WeekFullyInitialized = true;
         */
+        Debug.Log("[NewWeek] === INÍCIO DA FUNÇÃO ===");
+
         if (gameManager.mode != GameManager.GameMode.TeamManagement)
-            return;
-
-        if (canStartANewWeek == true && CanStartANewRun == false)
         {
-            canTrain = true;
-            canTrade = true;
-            canNegociateContract = true;
+            Debug.LogWarning("[NewWeek] Modo não é TeamManagement.");
+            return;
+        }
 
-            CreateEventsForWeek();
-            HandleFreeAgents();
+        if (canStartANewWeek == false || CanStartANewRun == true)
+        {
+            Debug.LogWarning("[NewWeek] Condições impediram execução.");
+            return;
+        }
 
-            // Configuração dos botões de escolha de evento
-            Transform ChoiceButtonsTransform = GameObject.Find("ChoiceButtons").transform;
+        Debug.Log("[NewWeek] Condições OK - Criando eventos...");
 
-            if (ChoiceButtonsTransform != null)
+        canTrain = true;
+        canTrade = true;
+        canNegociateContract = true;
+
+        CreateEventsForWeek();
+        Debug.Log($"[NewWeek] CreateEventsForWeek() concluído. {eventOptions.Count} eventos.");
+
+        // Configuração dos botões
+        Transform ChoiceButtonsTransform = GameObject.Find("ChoiceButtons")?.transform;
+        if (ChoiceButtonsTransform != null)
+        {
+            EventType randomEvent0 = (EventType)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EventType)).Length);
+            EventType randomEvent1;
+            do
             {
-                int buttonCount = Mathf.Min(ChoiceButtonsTransform.childCount, 2);
-
-                EventType randomEvent0 = (EventType)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EventType)).Length);
-                EventType randomEvent1;
-                do
-                {
-                    randomEvent1 = (EventType)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EventType)).Length);
-                }
-                while (randomEvent1 == randomEvent0);
-
-                // Cria os listeners
-                ChoiceButtonsTransform.GetChild(0).GetComponent<Button>().onClick.AddListener(() => ChooseEventTypeOnClick(randomEvent0));
-                ChoiceButtonsTransform.GetChild(1).GetComponent<Button>().onClick.AddListener(() => ChooseEventTypeOnClick(randomEvent1));
-
-                // Textos das descrições
-                ChoiceButtonsTransform.GetChild(0).Find("Description Text").GetComponentInChildren<TextMeshProUGUI>().text = randomEvent0.ToString();
-                ChoiceButtonsTransform.GetChild(1).Find("Description Text").GetComponentInChildren<TextMeshProUGUI>().text = randomEvent1.ToString();
-
-                // Imagens dos eventos
-                Image eventImage0 = GameObject.Find("ImageIcon1")?.GetComponent<Image>();
-                Image eventImage1 = GameObject.Find("ImageIcon0")?.GetComponent<Image>();
-
-                if (eventImage0 != null) SetEventImage(randomEvent0.ToString(), eventImage0);
-                if (eventImage1 != null) SetEventImage(randomEvent1.ToString(), eventImage1);
+                randomEvent1 = (EventType)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EventType)).Length);
             }
-            else
-            {
-                Debug.LogWarning("ChoiceButtonsTransform não encontrado!");
-            }
+            while (randomEvent1 == randomEvent0);
 
-            WeekFullyInitialized = true;
-            canGenerateEvents = false;     // Só desativa depois de tudo pronto
+            ChoiceButtonsTransform.GetChild(0).GetComponent<Button>().onClick.AddListener(() => ChooseEventTypeOnClick(randomEvent0));
+            ChoiceButtonsTransform.GetChild(1).GetComponent<Button>().onClick.AddListener(() => ChooseEventTypeOnClick(randomEvent1));
+
+            ChoiceButtonsTransform.GetChild(0).Find("Description Text").GetComponentInChildren<TextMeshProUGUI>().text = randomEvent0.ToString();
+            ChoiceButtonsTransform.GetChild(1).Find("Description Text").GetComponentInChildren<TextMeshProUGUI>().text = randomEvent1.ToString();
+
+            Image eventImage0 = GameObject.Find("ImageIcon1")?.GetComponent<Image>();
+            Image eventImage1 = GameObject.Find("ImageIcon0")?.GetComponent<Image>();
+
+            if (eventImage0 != null) SetEventImage(randomEvent0.ToString(), eventImage0);
+            if (eventImage1 != null) SetEventImage(randomEvent1.ToString(), eventImage1);
+
+            Debug.Log("[NewWeek] Botões de eventos configurados com sucesso.");
         }
         else
         {
-            Debug.Log("NewWeek: canStartANewWeek ou CanStartANewRun impediu a execução.");
+            Debug.LogError("[NewWeek] ERRO: ChoiceButtonsTransform é NULL!");
         }
 
-        // Chama o painel de animação de eventos
+        WeekFullyInitialized = true;
+        canGenerateEvents = false;
+
+        Debug.Log("[NewWeek] Setup concluído. Chamando animação...");
+
+        // === ANIMAÇÃO DO PAINEL (parte que estava falhando) ===
         TeamManagerUI teamManagerUI = GameObject.Find("TeamManagerUI")?.GetComponent<TeamManagerUI>();
         if (teamManagerUI != null)
         {
+            Debug.Log("[NewWeek] TeamManagerUI encontrado. Iniciando EventTypePanel...");
             StartCoroutine(teamManagerUI.EventTypePanel());
         }
         else
         {
-            Debug.LogWarning("TeamManagerUI não encontrado. Provavelmente após reset da run.");
+            Debug.LogError("[NewWeek] ERRO CRÍTICO: TeamManagerUI não encontrado! Animação não será chamada.");
         }
+
     }
     public void CreateEventsForWeek()
     {
@@ -668,6 +676,7 @@ public class LeagueManager : MonoBehaviour
     }
     public void HandleFreeAgents()
     {
+        bool canGenerate = false;
         TeamManagerUI teamManagerUI = GameObject.Find("TeamManagerUI")?.GetComponent<TeamManagerUI>();
         if (teamManagerUI == null)
         {
@@ -685,22 +694,31 @@ public class LeagueManager : MonoBehaviour
             // 2. Se o roster ficou abaixo de 8, força geração de EXATAMENTE 8 novos jogadores
             if (gameManager.playerTeam.playersListRoster.Count < 8)
             {
+                canGenerate = true;
                 teamManagerUI.canProgressWithWeek = false;
                 teamManagerUI._freeAgents_panel.SetActive(true);
 
-                // SEMPRE gera 8 jogadores novos, independentemente de quantos expiraram
-                teamManagerUI.freeAgentManager.GeneratePlayers(8);
+                if (canGenerate)
+                {
+                    // SEMPRE gera 8 jogadores novos, independentemente de quantos expiraram
+                    teamManagerUI.freeAgentManager.GeneratePlayers(8);
+                    teamManagerUI._freeAgents_panel.SetActive(true);
+                }
+                canGenerate = false;
 
                 Debug.Log($"Free Agents: Gerados 8 jogadores novos. Roster atual: {gameManager.playerTeam.playersListRoster.Count}");
 
                 teamManagerUI.StartCoroutine(teamManagerUI.ProgressWithWeek());
+                //teamManagerUI.UpdateTeamSalary();
             }
             else
             {
                 teamManagerUI.canProgressWithWeek = true;
+                teamManagerUI.UpdateTeamSalary();
             }
 
-            teamManagerUI.UpdateTeamSalary();
+            //teamManagerUI.UpdateTeamSalary();
+            teamManagerUI.CallWarning();
         }
         else
         {

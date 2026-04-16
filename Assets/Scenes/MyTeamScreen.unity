@@ -7053,6 +7053,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 122394042}
   m_CullTransparentMesh: 1
+--- !u!1 &124366657
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 124366659}
+  - component: {fileID: 124366658}
+  m_Layer: 0
+  m_Name: EventManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &124366658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 124366657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 966395d6532647242b32b8f431638742, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EventsManager
+  ChoiceButtonsTransform: {fileID: 8853607084319888235}
+  EventChoiceButtonsTransform: {fileID: 1018128186}
+  eventImage0: {fileID: 1584280516}
+  eventImage1: {fileID: 2051054583}
+--- !u!4 &124366659
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 124366657}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &129760972
 GameObject:
   m_ObjectHideFlags: 0
@@ -132574,6 +132622,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8111468171303608069, guid: 76f8d0d3e26e0f34287d97e12ee97b72, type: 3}
   m_PrefabInstance: {fileID: 8853607084319888232}
   m_PrefabAsset: {fileID: 0}
+--- !u!224 &8853607084319888235 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6371520080466628496, guid: 76f8d0d3e26e0f34287d97e12ee97b72, type: 3}
+  m_PrefabInstance: {fileID: 8853607084319888232}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &8979378906822602335
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132990,6 +133043,7 @@ SceneRoots:
   - {fileID: 19821779}
   - {fileID: 67970499}
   - {fileID: 1068024612}
+  - {fileID: 124366659}
   - {fileID: 222102849}
   - {fileID: 2026734102}
   - {fileID: 60644001}

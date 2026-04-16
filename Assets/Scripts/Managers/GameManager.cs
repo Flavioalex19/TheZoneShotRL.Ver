@@ -77,6 +77,7 @@ public class GameManager : MonoBehaviour
         leagueManager =GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
         uiManager = GameObject.Find("UIManager").GetComponent<UiManager>();
         mode = GameMode.MainMenu;
+        //NewTeamsForRun();
         if (leagueManager.CanStartANewRun)
         {
             DestroyAllWithTag("ZsPlayer");
@@ -100,10 +101,11 @@ public class GameManager : MonoBehaviour
         //TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //leagueTeams[0].CreateEquips();
         //leagueTeams[0].ActivatePlayerTeam();//This should be set on the team selection!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        
+
 
         // Check if there is a saved file for the team
         #region Loading Teams
+        /*
         //Loadng teams
         if (IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
         {
@@ -151,6 +153,57 @@ public class GameManager : MonoBehaviour
                 //leagueTeams[i].CreateEquips();
                 playerTeam = leagueTeams[i];
                 //leagueTeams[0].ActivatePlayerTeam();
+            }
+        }
+        */
+        // Sempre limpa a lista leagueTeams no início
+        // 1. Sempre limpa a lista antes de recriar
+        leagueTeams.Clear();
+
+        // 2. Recria os times a partir do fullTeamList
+        NewTeamsForRun();
+
+        if (IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
+        {
+            Debug.Log("[GameManager] Save encontrado - Carregando dados...");
+
+            //Loadleague
+            saveSystem.LoadLeague();
+
+            // Load the saved team data into the newly created teams
+            for (int i = 0; i < leagueTeams.Count; i++)
+            {
+                saveSystem.LoadTeamInfo(leagueTeams[i], playerPrefab);
+
+                if (leagueTeams[i].IsPlayerTeam)
+                    playerTeam = leagueTeams[i];
+            }
+        }
+        else
+        {
+            Debug.Log("[GameManager] Nenhum save encontrado - Inicializando valores padrão");
+
+            for (int i = 0; i < leagueTeams.Count; i++)
+            {
+                leagueTeams[i].Moral = leagueTeams[i].fixMoral;
+                leagueTeams[i].FansSupportPoints = leagueTeams[i].fixFans;
+                leagueTeams[i].FrontOfficePoints = leagueTeams[i].fixFrontOffice;
+                leagueTeams[i].EffortPoints = leagueTeams[i].fixEffort;
+                leagueTeams[i].IsPlayerTeam = false;
+                leagueTeams[i].Wins = 0;
+                leagueTeams[i].Draws = 0;
+                leagueTeams[i].Loses = 0;
+                leagueTeams[i]._equipmentList.Clear();
+            }
+        }
+
+        // 3. Garante que o playerTeam seja atribuído corretamente
+        for (int i = 0; i < leagueTeams.Count; i++)
+        {
+            if (leagueTeams[i].IsPlayerTeam)
+            {
+                playerTeam = leagueTeams[i];
+                break;
             }
         }
         #endregion
@@ -303,8 +356,8 @@ public class GameManager : MonoBehaviour
         {
             saveSystem.ResetForNewLeagueRun();
             saveSystem.ResetLeagueData();
-            leagueTeams.Clear();
-            NewTeamsForRun();
+            //leagueTeams.Clear();
+            //NewTeamsForRun();
         }
         if (leagueManager.CanStartANewRun == false)
         {
@@ -415,13 +468,15 @@ public class GameManager : MonoBehaviour
     //createTeams
     public void NewTeamsForRun()
     {
+        /*
+        leagueTeams.Clear();
         // Proteção: Se já existe a quantidade correta de times, não recria
         if (leagueTeams.Count == fullTeamList.Count && fullTeamList.Count > 0)
         {
             Debug.Log("Times já existem na quantidade correta. Pulando recriação.");
             return;
         }
-        leagueTeams.Clear();
+        //leagueTeams.Clear();
         foreach (Team teamTemplate in fullTeamList)
         {
             GameObject teamGO = Instantiate(teamTemplate.gameObject);   // Instancia o GameObject
@@ -434,6 +489,42 @@ public class GameManager : MonoBehaviour
 
             Debug.Log($"Time persistente criado: {newTeam.TeamName}");
         }
+        */
+        leagueTeams.Clear(); // Garante que começa vazia
+
+        if (fullTeamList == null || fullTeamList.Count == 0)
+        {
+            Debug.LogError("[GameManager] fullTeamList está vazia! Não é possível criar os times.");
+            return;
+        }
+
+        foreach (Team teamTemplate in fullTeamList)
+        {
+            if (teamTemplate == null)
+            {
+                Debug.LogWarning("[GameManager] Template de time null encontrado. Pulando.");
+                continue;
+            }
+
+            GameObject teamGO = Instantiate(teamTemplate.gameObject);
+            Team newTeam = teamGO.GetComponent<Team>();
+
+            if (newTeam == null)
+            {
+                Debug.LogError("[GameManager] Falha ao pegar componente Team do template!");
+                Destroy(teamGO);
+                continue;
+            }
+
+            teamGO.transform.SetParent(transform);
+            DontDestroyOnLoad(teamGO);
+
+            leagueTeams.Add(newTeam);
+
+            Debug.Log($"[GameManager] Time criado e adicionado: {newTeam.TeamName}");
+        }
+
+        Debug.Log($"[GameManager] Total de times recriados e adicionados na lista: {leagueTeams.Count}");
     }
     public void ReassignPlayerTeam()
     {

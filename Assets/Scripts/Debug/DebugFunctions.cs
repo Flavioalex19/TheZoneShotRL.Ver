@@ -27,5 +27,12 @@ public class DebugFunctions : MonoBehaviour
     public void ZeroContract()
     {
         gameManager.playerTeam.playersListRoster[5].ContractYears = 0;
+        for (int i = 0; i < gameManager.playerTeam.playersListRoster.Count; i++)
+        {
+            if (gameManager.playerTeam.playersListRoster[i].ContractYears < 1)
+            {
+                print("This player will be a free agent " + gameManager.playerTeam.playersListRoster[i].playerLastName);
+            }
+        }
     }
 }

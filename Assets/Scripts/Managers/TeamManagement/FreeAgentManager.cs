@@ -10,7 +10,7 @@ public class FreeAgentManager : MonoBehaviour
     GameManager gameManager;
     [SerializeField] TeamManagerUI teamManagerUI;
     [SerializeField] GridLayoutGroup gdl_FreeAgents;
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,8 +26,11 @@ public class FreeAgentManager : MonoBehaviour
 
             // Access the Player component and set the attributes
             Player newPlayer = playerObject.GetComponent<Player>();
-            newPlayer.GenerateRandomPlayer(); // Randomize the player's name and overall rating
-            GeneratePlayerDraftButton(newPlayer);//NEW!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            newPlayer.GenerateEarlyPlayer(); // Randomize the player's name and overall rating
+            DontDestroyOnLoad(playerObject);                    // Mantém o jogador entre cenas
+            playerObject.transform.SetParent(gameManager.transform); // Organiza como filho do GameManager
+            GeneratePlayerDraftButton(newPlayer);
+            
 
         }
     }
@@ -93,7 +96,7 @@ public class FreeAgentManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         // Check if all buttons are removed from GridLayoutGroup
-        if (gameManager.playerTeam.playersListRoster.Count >=8)
+        if (gameManager.playerTeam.playersListRoster.Count >= 8)
         {
 
             //Fechar o painel de FA!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -106,6 +109,7 @@ public class FreeAgentManager : MonoBehaviour
     //Check if contracts expires
     public void RemoveExpiredContracts(Team team)
     {
+        /*
         // Remove all players whose contract years are less than 1
         //team.playersListRoster.RemoveAll(player => player.ContractYears < 1);
         int beforeCount = team.playersListRoster.Count;
@@ -120,6 +124,44 @@ public class FreeAgentManager : MonoBehaviour
             // No players were removed
             Debug.Log("No players with expiring contracts on team: " + team.TeamName);
         }
-    }
+        */
+        if (team == null || team.playersListRoster == null)
+            return;
 
+        int beforeCount = team.playersListRoster.Count;
+
+        // Lista temporária para guardar os jogadores que vamos destruir
+        List<Player> playersToDestroy = new List<Player>();
+
+        // 1. Procura e coleta os jogadores com contrato expirado
+        for (int i = team.playersListRoster.Count - 1; i >= 0; i--)
+        {
+            Player p = team.playersListRoster[i];
+
+            if (p != null && p.ContractYears < 1)
+            {
+                playersToDestroy.Add(p);           // salva o jogador
+                team.playersListRoster.RemoveAt(i); // remove da lista
+                Debug.Log($"[RemoveExpiredContracts] Jogador marcado para remoção: {p.playerFirstName} {p.playerLastName}");
+            }
+        }
+
+        // 2. Destrói os GameObjects dos jogadores removidos
+        foreach (Player p in playersToDestroy)
+        {
+            if (p != null && p.gameObject != null)
+            {
+                Destroy(p.gameObject);
+                Debug.Log($"[RemoveExpiredContracts] GameObject destruído: {p.playerFirstName} {p.playerLastName}");
+            }
+        }
+
+        int afterCount = team.playersListRoster.Count;
+
+        Debug.Log($"[RemoveExpiredContracts] Time {team.TeamName}: {beforeCount} - {afterCount} jogadores. Removidos: {beforeCount - afterCount}");
+
+        // 3. Limpeza extra (segurança) - remove qualquer null que possa ter sobrado
+        team.playersListRoster.RemoveAll(p => p == null);
+
+    }
 }
