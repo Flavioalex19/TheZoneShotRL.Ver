@@ -618,7 +618,7 @@ public class LeagueManager : MonoBehaviour
         }
         for (int i = 0; i < Standings.Count; i++)
         {
-            print(Standings[i].TeamName + " " + Standings[i].Wins);
+            //print(Standings[i].TeamName + " " + Standings[i].Wins);
         }
     }
     //SalaryCap

@@ -398,6 +398,7 @@ public class GameManager : MonoBehaviour
 
             //leagueTeams.Clear();
             //NewTeamsForRun();
+            CheckAndRecreateTeamsIfNeeded();
             SceneManager.LoadScene("TeamSelection");
         }
     }
@@ -560,5 +561,40 @@ public class GameManager : MonoBehaviour
 
         // Opcional: mensagem no console para confirmar
         Debug.Log($"Foram destruídos {objectsToDestroy.Length} objetos com a tag '{tag}'.");
+    }
+    public void CheckAndRecreateTeamsIfNeeded()
+    {
+        // Conta quantos filhos diretos têm a tag "Team"
+        int childTeamCount = 0;
+
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Transform child = transform.GetChild(i);
+            if (child.CompareTag("Team"))
+            {
+                childTeamCount++;
+            }
+        }
+
+        Debug.Log($"[GameManager] Filhos com tag 'Team': {childTeamCount} | fullTeamList: {fullTeamList.Count}");
+
+        // Se a quantidade não bater, recria
+        if (childTeamCount != fullTeamList.Count)
+        {
+            Debug.Log($"[GameManager] Quantidade de times incorreta. Limpando e recriando...");
+
+            leagueTeams.Clear();
+            DestroyAllWithTag("Team");     // Remove todos os objetos com tag Team
+            NewTeamsForRun();              // Recria corretamente
+            for (int i = 0; i < leagueTeams.Count; i++)
+            {
+                leagueTeams[i].IsPlayerTeam = false;
+                leagueTeams[i].playersListRoster.Clear();
+            }
+        }
+        else
+        {
+            Debug.Log("[GameManager] Quantidade de times está correta. Não precisa recriar.");
+        }
     }
 }

@@ -254,6 +254,7 @@ public class TeamManagerUI : MonoBehaviour
     [Header("GameOverPanel")]
     [SerializeField] GameObject go_playerGameOverFiredPanel;
     [SerializeField] Button btn_go_ReturnToMainTitle;
+    bool isGameOver = false;
 
     [Header("UI")]
     [SerializeField]TextMeshProUGUI WeekText;
@@ -438,53 +439,73 @@ public class TeamManagerUI : MonoBehaviour
         // Espera o LeagueManager terminar tudo antes de continuar
         StartCoroutine(WaitForWeekInitialization());
         */
-        _advBtn = GameObject.Find("Advance Button");
-
-        if (gameManager.playerTeam == null)
+        if (gameManager.playerTeam.Moral <= 0)
         {
-            gameManager.ReassignPlayerTeam();
-        }
-
-        Debug.Log("[TeamManagerUI] Start() iniciado");
-
-        // Chamada simples do EventsManager
-        EventsManager eventsManager = FindFirstObjectByType<EventsManager>();
-        if (eventsManager != null && leagueManager.canGenerateEvents && leagueManager.canStartANewWeek)
-        {
-            Debug.Log("[TeamManagerUI] Chamando StartNewWeekEvents()");
-            eventsManager.StartNewWeekEvents();
+            //leagueManager.isGameOver = true;
+            isGameOver = true;
         }
         else
         {
-            _panelEventsChoices.SetActive(false);
-            _panelEventsTypes.SetActive(false);
+            isGameOver= false;
         }
-
-        // === UI Básica (sem esperar nada) ===
-        _text_NameTeam.text = gameManager.playerTeam.TeamName;
-        text_teamStyle.text = gameManager.playerTeam._teamStyle.ToString();
-
-        musicManager.RestoreMutedAudioSources();
-        _scheduleArea.SetActive(false);
-        SetTeamIcon();
-        //UpdateTeamSalary();
-        AdvButtonUpdate();
-        SetTextOfFacilities();
-        //CallWarning();
-        //leagueManager.CreateTeamSalary();
-
-        WeekText.text = leagueManager.Week.ToString();
-        if (leagueManager.Week > gameManager.leagueTeams.Count - 1)
-            WeekText.text = "Playoffs";
-
-        // Ativa os painéis de eventos manualmente (sem animação por enquanto)
-        if (leagueManager.canGenerateEvents)
+        
+        if(isGameOver == false)
         {
-            _panelEventsChoices.SetActive(true);
-            _panelEventsTypes.SetActive(true);
-        }
+            _advBtn = GameObject.Find("Advance Button");
 
-        Debug.Log("[TeamManagerUI] Start() finalizado - UI básica carregada");
+            if (gameManager.playerTeam == null)
+            {
+                gameManager.ReassignPlayerTeam();
+            }
+
+            Debug.Log("[TeamManagerUI] Start() iniciado");
+
+            // Chamada simples do EventsManager
+            EventsManager eventsManager = FindFirstObjectByType<EventsManager>();
+            if (eventsManager != null && leagueManager.canGenerateEvents && leagueManager.canStartANewWeek)
+            {
+                Debug.Log("[TeamManagerUI] Chamando StartNewWeekEvents()");
+                eventsManager.StartNewWeekEvents();
+            }
+            else
+            {
+                _panelEventsChoices.SetActive(false);
+                _panelEventsTypes.SetActive(false);
+            }
+
+            // === UI Básica (sem esperar nada) ===
+            _text_NameTeam.text = gameManager.playerTeam.TeamName;
+            text_teamStyle.text = gameManager.playerTeam._teamStyle.ToString();
+
+            musicManager.RestoreMutedAudioSources();
+            _scheduleArea.SetActive(false);
+            SetTeamIcon();
+            //UpdateTeamSalary();
+            AdvButtonUpdate();
+            SetTextOfFacilities();
+            //CallWarning();
+            //leagueManager.CreateTeamSalary();
+
+            WeekText.text = leagueManager.Week.ToString();
+            if (leagueManager.Week > gameManager.leagueTeams.Count - 1)
+                WeekText.text = "Playoffs";
+
+            // Ativa os painéis de eventos manualmente (sem animação por enquanto)
+            if (leagueManager.canGenerateEvents)
+            {
+                _panelEventsChoices.SetActive(true);
+                _panelEventsTypes.SetActive(true);
+            }
+
+            Debug.Log("[TeamManagerUI] Start() finalizado - UI básica carregada");
+        }
+        else
+        {
+            ResultPanelCreation();
+            btn_returnToMainScreen.onClick.RemoveAllListeners();
+            btn_returnToMainScreen.onClick.AddListener(() => StartNewLeagueRun());
+        }
+        
     }
 
     // Update is called once per frame
