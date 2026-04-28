@@ -439,6 +439,20 @@ public class TeamManagerUI : MonoBehaviour
         // Espera o LeagueManager terminar tudo antes de continuar
         StartCoroutine(WaitForWeekInitialization());
         */
+        
+        if (IsPlayerTeamInTop8() && leagueManager.Week-1 >= gameManager.leagueTeams.Count)
+        {
+            leagueManager.isOnR8 = true;
+        }
+        else
+        {
+            isGameOver = true;
+        }
+        if (leagueManager.Week > gameManager.leagueTeams.Count - 1 && leagueManager.isOnR8 == false)
+        {
+            isGameOver = true;
+        }
+        
         if (gameManager.playerTeam.Moral <= 0)
         {
             //leagueManager.isGameOver = true;
@@ -488,7 +502,10 @@ public class TeamManagerUI : MonoBehaviour
 
             WeekText.text = leagueManager.Week.ToString();
             if (leagueManager.Week > gameManager.leagueTeams.Count - 1)
+            {
                 WeekText.text = "Playoffs";
+            }
+                
 
             // Ativa os painéis de eventos manualmente (sem animação por enquanto)
             if (leagueManager.canGenerateEvents)
