@@ -17,7 +17,7 @@ public class PlayoffUI : MonoBehaviour
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
-        pfManager.CreatePlayoffBracket();
+        //pfManager.CreatePlayoffBracket();
         UpdateR8Images();
         if (leagueManager.isOnR4)
         {

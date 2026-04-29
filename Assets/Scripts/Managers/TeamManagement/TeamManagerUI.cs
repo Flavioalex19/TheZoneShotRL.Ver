@@ -13,6 +13,7 @@ public class TeamManagerUI : MonoBehaviour
     GameManager gameManager;
     LeagueManager leagueManager;
     MusicManager musicManager;
+    PlayoffManager playoffManager;
 
     [Header("Intro")]
     [SerializeField] TextMeshProUGUI _text_NameTeam;
@@ -283,6 +284,7 @@ public class TeamManagerUI : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
         musicManager = GameObject.Find("MusicManager").GetComponent<MusicManager>();
+        playoffManager = GameObject.Find("PlayoffManager").GetComponent<PlayoffManager>();
         //Schedule
         ScheduleUpdated();
         leagueManager.CreateStandings();
@@ -439,10 +441,14 @@ public class TeamManagerUI : MonoBehaviour
         // Espera o LeagueManager terminar tudo antes de continuar
         StartCoroutine(WaitForWeekInitialization());
         */
-        
+        if (leagueManager.isGameOver == true || gameManager.playerTeam.isChampion == true)
+        {
+            isGameOver = true;
+        }
         if (IsPlayerTeamInTop8() && leagueManager.Week-1 >= gameManager.leagueTeams.Count)
         {
             leagueManager.isOnR8 = true;
+            
         }
         else
         {
@@ -462,7 +468,11 @@ public class TeamManagerUI : MonoBehaviour
         {
             isGameOver= false;
         }
-        
+        if (leagueManager.isOnR8)
+        {
+            print("Playoffs rackerts made");
+            playoffManager.CreatePlayoffBracket();
+        }
         if(isGameOver == false)
         {
             _advBtn = GameObject.Find("Advance Button");
@@ -735,43 +745,10 @@ public class TeamManagerUI : MonoBehaviour
     //Advance Button Update the elements
     public void AdvButtonUpdate()
     {
-        /*
-        //Player team
-        Sprite sprite = null;
-        string teamName;
-        teamName = gameManager.playerTeam.TeamName;
-        sprite = Resources.Load<Sprite>("2D/Team Logos/" + teamName);
-        Image myImageComponent = _advBtn.transform.GetChild(1).GetComponent<Image>();
-        myImageComponent.sprite = sprite;
-        _currentTeamImage.sprite = sprite;
-        //AwayTeam
-        Sprite sprite1 = null;
-        string awayTeamName;
+        string tn;
+        Sprite sp;
+        Sprite sp1;
 
-        int currentWeek = 0;
-        if(leagueManager.Week == 0)
-        {
-            currentWeek = 0;
-        }
-        else
-        {
-            currentWeek = leagueManager.Week -1;
-        }
-        if(leagueManager.Week > gameManager.leagueTeams.Count - 1)
-        {
-            //wait
-        }
-        else
-        {
-            awayTeamName = gameManager.playerTeam._schedule[currentWeek].TeamName;
-            //print(awayTeamName + "NEXT OPP");
-            sprite1 = Resources.Load<Sprite>("2D/Team Logos/" + awayTeamName);
-            Image image = _advBtn.transform.GetChild(2).GetComponent<Image>();
-            image.sprite = sprite1;
-            _awayteamImage.sprite = sprite1;
-            //WeekText.text = currentWeek.ToString();
-        }
-        */
         // === PROTEÇÃO PRINCIPAL ===
         if (gameManager == null || gameManager.playerTeam == null)
         {
@@ -782,6 +759,157 @@ public class TeamManagerUI : MonoBehaviour
             return;
         }
 
+        // ====================== PLAYOFFS ======================
+        if (leagueManager.isOnFinals)
+        {
+            Debug.Log("[AdvButtonUpdate] Modo FINALS ativado");
+
+            // Player Team Logo
+            tn = gameManager.playerTeam.TeamName;
+            sp = Resources.Load<Sprite>("2D/Team Logos/" + tn);
+            if (sp != null)
+            {
+                Image myImageComponent = _advBtn.transform.GetChild(1).GetComponent<Image>();
+                if (myImageComponent != null) myImageComponent.sprite = sp;
+                if (_currentTeamImage != null) _currentTeamImage.sprite = sp;
+            }
+
+            // Adversário na Final
+            Team opponent = null;
+            if (leagueManager.List_Finalist != null)
+            {
+                foreach (Team t in leagueManager.List_Finalist)
+                {
+                    if (t != null && !t.IsPlayerTeam)
+                    {
+                        opponent = t;
+                        break;
+                    }
+                }
+            }
+
+            if (opponent != null)
+            {
+                sp1 = Resources.Load<Sprite>("2D/Team Logos/" + opponent.TeamName);
+                if (sp1 != null)
+                {
+                    Image image = _advBtn.transform.GetChild(2).GetComponent<Image>();
+                    if (image != null) image.sprite = sp1;
+                    if (_awayteamImage != null) _awayteamImage.sprite = sp1;
+                }
+            }
+
+            if (WeekText != null) WeekText.text = "Finals";
+            return;
+        }
+        else if (leagueManager.isOnR4)
+        {
+            Debug.Log("[AdvButtonUpdate] Modo R4 (Semifinal) ativado");
+
+            // Player Team Logo
+            tn = gameManager.playerTeam.TeamName;
+            sp = Resources.Load<Sprite>("2D/Team Logos/" + tn);
+            if (sp != null)
+            {
+                Image myImageComponent = _advBtn.transform.GetChild(1).GetComponent<Image>();
+                if (myImageComponent != null) myImageComponent.sprite = sp;
+                if (_currentTeamImage != null) _currentTeamImage.sprite = sp;
+            }
+
+            // Adversário no R4
+            Team opponent = null;
+            if (leagueManager.List_R4Teams != null)
+            {
+                foreach (Team t in leagueManager.List_R4Teams)
+                {
+                    if (t != null && !t.IsPlayerTeam)
+                    {
+                        opponent = t;
+                        break;
+                    }
+                }
+            }
+
+            if (opponent != null)
+            {
+                sp1 = Resources.Load<Sprite>("2D/Team Logos/" + opponent.TeamName);
+                if (sp1 != null)
+                {
+                    Image image = _advBtn.transform.GetChild(2).GetComponent<Image>();
+                    if (image != null) image.sprite = sp1;
+                    if (_awayteamImage != null) _awayteamImage.sprite = sp1;
+                }
+            }
+
+            if (WeekText != null) WeekText.text = "Semifinals";
+            return;
+        }
+        else if (leagueManager.isOnR8)
+        {
+            Debug.Log("[AdvButtonUpdate] Modo R8 (Quartas) ativado");
+
+            // Player Team Logo
+            string teamN = gameManager.playerTeam.TeamName;
+            Sprite spriteTeamH = Resources.Load<Sprite>("2D/Team Logos/" + teamN);
+            if (spriteTeamH != null)
+            {
+                Image myImageComponent = _advBtn.transform.GetChild(1).GetComponent<Image>();
+                if (myImageComponent != null) myImageComponent.sprite = spriteTeamH;
+                if (_currentTeamImage != null) _currentTeamImage.sprite = spriteTeamH;
+            }
+
+            // === BLOCO ALTERADO PARA R8 ===
+            // Busca o adversário de forma mais segura
+            Team opponent = null;
+
+            if (leagueManager.List_R8Teams != null && leagueManager.List_R8Teams.Count > 0)
+            {
+                // Tenta encontrar um time que NÃO seja o do jogador
+                foreach (Team t in leagueManager.List_R8Teams)
+                {
+                    if (t != null && t != gameManager.playerTeam)
+                    {
+                        opponent = t;
+                        break;
+                    }
+                }
+                opponent = leagueManager.List_R8Teams[1];
+                // Fallback: se não encontrou por referência, pega o primeiro time diferente
+                if (opponent == null)
+                {
+                    foreach (Team t in leagueManager.List_R8Teams)
+                    {
+                        if (t != null && t.TeamName != gameManager.playerTeam.TeamName)
+                        {
+                            opponent = t;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Aplica a imagem do adversário
+            if (opponent != null)
+            {
+                Sprite spriteTeamAway = Resources.Load<Sprite>("2D/Team Logos/" + opponent.TeamName);
+                if (spriteTeamAway != null)
+                {
+                    Image image = _advBtn.transform.GetChild(2).GetComponent<Image>();
+                    if (image != null) image.sprite = spriteTeamAway;
+                    if (_awayteamImage != null) _awayteamImage.sprite = spriteTeamAway;
+                }
+            }
+            else
+            {
+                Debug.LogWarning("[AdvButtonUpdate] Não encontrou adversário na List_R8Teams");
+            }
+            // === FIM DO BLOCO ALTERADO ===
+
+            if (WeekText != null) WeekText.text = "Playoffs";
+            return;
+        }
+
+        //reguçar season!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // Player Team Logo
         string teamName = gameManager.playerTeam.TeamName;
         Sprite sprite = Resources.Load<Sprite>("2D/Team Logos/" + teamName);

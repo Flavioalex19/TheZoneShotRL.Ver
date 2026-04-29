@@ -368,6 +368,10 @@ public class MatchManager : MonoBehaviour
                     leagueManager.CanStartANewRun = true;
                     //leagueManager.isGameOver = true;
                 }
+                if (leagueManager.isOnFinals)
+                {
+                    manager.playerTeam.isChampion = true;
+                }
             }
             
         }
@@ -1247,7 +1251,7 @@ public class MatchManager : MonoBehaviour
         // Define round atual
         if (leagueManager.isOnR8 && !leagueManager.isOnR4)
         {
-            print("Quarters!!!!!!!!!!!!!!!!!");
+            //print("Quarters!!!!!!!!!!!!!!!!!");
             sourceList = leagueManager.List_R8Teams;
             targetList = leagueManager.List_R4Teams;
         }

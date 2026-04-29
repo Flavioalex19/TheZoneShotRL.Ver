@@ -15,12 +15,6 @@ public class AdvMatchPlayoffs : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     public void AdvanceToMatch()
     {
 
