@@ -192,6 +192,8 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Transform transform_contract_AssistancePortrait;
     [SerializeField] TextMeshProUGUI contract_playerOvr;
     [SerializeField] TextMeshProUGUI contract_PlayerAge;
+    [SerializeField] TextMeshProUGUI contract_text_contractCostValue;
+    [SerializeField] TextMeshProUGUI contract_text_currentFrontOfficePoints;
     int newGamesValue;
     int newSalaryValue;
     int indexForPlayer;
@@ -1434,6 +1436,7 @@ public class TeamManagerUI : MonoBehaviour
             contract_PlayerbuttonsArea.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].ContractYears.ToString();
             contract_PlayerbuttonsArea.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].SetOVR().ToString();
         }
+        contract_text_currentFrontOfficePoints.text = gameManager.playerTeam.FrontOfficePoints.ToString();
     }
     public void UpdatePlayerContract(int index)
     {
@@ -1451,13 +1454,14 @@ public class TeamManagerUI : MonoBehaviour
         newGamesValue = 2;
         contract_newContractValuesArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = newGamesValue.ToString();
         contract_newContractValuesArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = newSalaryValue.ToString();
+        contract_text_contractCostValue.text = ContractValue(gameManager.playerTeam.playersListRoster[index]).ToString();
 
 
 
     }
     public void ContractDiscussion(int weight)
     {
-        
+        /*
         if (leagueManager.canNegociateContract == false)
         {
             contract_resultNegotiationText.text = "Boss, we can't negotiate any more contracts this week.";
@@ -1522,41 +1526,173 @@ public class TeamManagerUI : MonoBehaviour
         ContractButtonsUpdate();
         contract_asstancePanel.SetActive(true);
         SaveAfterPlayerEvent();
+        */
+        Player p = gameManager.playerTeam.playersListRoster[indexForPlayer];
+
+        // === NOVA VERIFICAÇÃO: Front Office Points suficientes? ===
+        int cost = ContractValue(p);
+
+        if (gameManager.playerTeam.FrontOfficePoints < cost)
+        {
+            contract_resultNegotiationText.text = "We don't have enough Front Office Points for this.";
+            UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
+            ContractButtonsUpdate();
+            contract_asstancePanel.SetActive(true);
+            return;
+        }
+
+        // Atualiza CurrentSalary antes de qualquer cálculo
+        gameManager.playerTeam.CurrentSalary = 0;
+        for (int i = 0; i < gameManager.playerTeam.playersListRoster.Count; i++)
+        {
+            gameManager.playerTeam.CurrentSalary += gameManager.playerTeam.playersListRoster[i].Salary;
+        }
+        _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
+
+        // === CÁLCULO DE AUMENTO DE JOGOS BASEADO NO FRONT OFFICE LEVEL ===
+        int salaryIncrease = 0;
+        int gamesIncrease = 0;
+
+        switch (weight)
+        {
+            case 0: salaryIncrease = UnityEngine.Random.Range(2, 6); break;
+            case 1: salaryIncrease = UnityEngine.Random.Range(6, 9); break;
+            case 2: salaryIncrease = UnityEngine.Random.Range(9, 13); break;
+        }
+
+        // Quantidade de jogos de extensão depende do FrontOfficeLvl
+        if (gameManager.playerTeam.OfficeLvl >= 6)
+            gamesIncrease = 8;
+        else if (gameManager.playerTeam.OfficeLvl >= 4)
+            gamesIncrease = 6;
+        else if (gameManager.playerTeam.OfficeLvl >= 1)
+            gamesIncrease = 3;
+        else
+            gamesIncrease = 2;   // nível 0
+
+        // === PROTEÇÃO DE SALARY CAP ===
+        int projectedTotalSalary = gameManager.playerTeam.CurrentSalary + salaryIncrease;
+        if (projectedTotalSalary > gameManager.playerTeam.SalaryCap)
+        {
+            contract_resultNegotiationText.text = "We can't extend this contract because it would exceed our Salary Cap.";
+            UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
+            ContractButtonsUpdate();
+            contract_asstancePanel.SetActive(true);
+            return;
+        }
+
+        // Continua com a negociação normal
+        if (TryExtendContract(gameManager.playerTeam, p, p.Salary + salaryIncrease, p.ContractYears + gamesIncrease, weight))
+        {
+            p.ContractYears += gamesIncrease;
+            p.Salary += salaryIncrease;
+
+            // Debita o custo do Front Office Points
+            gameManager.playerTeam.FrontOfficePoints -= ContractValue(p);
+
+            gameManager.playerTeam.CurrentSalary += salaryIncrease;
+            _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
+
+            contract_resultNegotiationText.text = "Good Job Boss! " + p.playerLastName + " for " + p.ContractYears + " games";
+            UpdateAssistancePortrait(transform_contract_AssistancePortrait, true);
+        }
+        else
+        {
+            contract_resultNegotiationText.text = "Damn! We can't come to an agreement with " + p.playerLastName + ". Maybe he needs some time to think...";
+            UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
+        }
+        contract_text_currentFrontOfficePoints.text = gameManager.playerTeam.FrontOfficePoints.ToString();
+        ContractButtonsUpdate();
+        contract_asstancePanel.SetActive(true);
+        SaveAfterPlayerEvent();
     }
     public bool TryExtendContract(Team team, Player player, int salaryProposed, int gamesProposed,int weight)
     {
-       
-        // Não aceitar propostas menores que o salário atual
+        /*
+         // Não aceitar propostas menores que o salário atual
+         if (salaryProposed < player.Salary)
+             return false;
+
+         // === NOVA LÓGICA DE CHANCE COM FATORES ===
+         float baseChance = weight switch
+         {
+             0 => 0.50f,  // Oferta ruim
+             1 => 0.70f,  // Oferta média
+             2 => 0.85f,  // Oferta boa
+             _ => 0.50f
+         };
+
+         // Personality: 1 (fácil)  multiplier 1.0; 5 (difícil)  multiplier 0.6
+         float personalityMultiplier = 1f - (player.Personality - 1) * 0.1f;
+
+         // FinancesLevel: 0  multiplier 1.0; 7  multiplier 1.5 (ajuda bastante)
+         // Confirme o nome exato do campo (ex: FinancesLevel, FinancesLvl, etc.)
+         float financesMultiplier = 1f + (team.FinancesLvl / 7f) * 0.5f;
+
+         // Chance final combinada
+         float finalChance = baseChance * personalityMultiplier * financesMultiplier;
+
+         // Clamp pra nunca ser impossível ou garantido
+         finalChance = Mathf.Clamp(finalChance, 0.1f, 0.95f);
+
+         // Debug opcional pra testar (comente depois)
+         // Debug.Log($"Contract chance: base={baseChance}, personalityMult={personalityMultiplier}, financesMult={financesMultiplier}, final={finalChance}");
+
+         return UnityEngine.Random.value < finalChance;
+         */
         if (salaryProposed < player.Salary)
             return false;
 
-        // === NOVA LÓGICA DE CHANCE COM FATORES ===
         float baseChance = weight switch
         {
-            0 => 0.50f,  // Oferta ruim
-            1 => 0.70f,  // Oferta média
-            2 => 0.85f,  // Oferta boa
+            0 => 0.50f,
+            1 => 0.70f,
+            2 => 0.85f,
             _ => 0.50f
         };
 
-        // Personality: 1 (fácil)  multiplier 1.0; 5 (difícil)  multiplier 0.6
-        float personalityMultiplier = 1f - (player.Personality - 1) * 0.1f;
+        float refusalChance = player.Personality switch
+        {
+            1 => 0.00f,
+            2 => 0.05f,
+            3 => 0.10f,
+            4 => 0.30f,
+            5 => 0.40f,
+            _ => 0.00f
+        };
 
-        // FinancesLevel: 0  multiplier 1.0; 7  multiplier 1.5 (ajuda bastante)
-        // Confirme o nome exato do campo (ex: FinancesLevel, FinancesLvl, etc.)
         float financesMultiplier = 1f + (team.FinancesLvl / 7f) * 0.5f;
 
-        // Chance final combinada
-        float finalChance = baseChance * personalityMultiplier * financesMultiplier;
+        float finalChance = baseChance * (1f - refusalChance) * financesMultiplier;
 
-        // Clamp pra nunca ser impossível ou garantido
         finalChance = Mathf.Clamp(finalChance, 0.1f, 0.95f);
-
-        // Debug opcional pra testar (comente depois)
-        // Debug.Log($"Contract chance: base={baseChance}, personalityMult={personalityMultiplier}, financesMult={financesMultiplier}, final={finalChance}");
 
         return UnityEngine.Random.value < finalChance;
     }
+    public int ContractValue(Player player)
+    {
+        if (player == null) return 0;
+
+        int baseCost;
+
+        // Base cost baseado no OVR
+        if (player.SetOVR() < 60)
+            baseCost = 20;
+        else if (player.SetOVR() <= 74)
+            baseCost = 35;
+        else if (player.SetOVR() <= 79)
+            baseCost = 45;
+        else
+            baseCost = 60;   // máximo
+
+        // Desconto baseado no FinancesLvl (0 a 7)
+        int discount = gameManager.playerTeam.FinancesLvl * 4;   // máximo 28 de desconto no lvl 7
+
+        int finalCost = Mathf.Max(10, baseCost - discount);
+
+        return finalCost;
+    }
+    /*
     public void AddOrDecreaseContractGamesGamesValue(bool isAdding)
     {
         if (isAdding)
@@ -1583,6 +1719,7 @@ public class TeamManagerUI : MonoBehaviour
             contract_newContractValuesArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = newSalaryValue.ToString();
         }
     }
+    */
     //FreeAgent
     public IEnumerator ProgressWithWeek()
     {
