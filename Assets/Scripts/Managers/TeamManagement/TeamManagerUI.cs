@@ -1602,6 +1602,7 @@ public class TeamManagerUI : MonoBehaviour
             UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
         }
         contract_text_currentFrontOfficePoints.text = gameManager.playerTeam.FrontOfficePoints.ToString();
+        UpdateMoralAndPointsTexts();
         ContractButtonsUpdate();
         contract_asstancePanel.SetActive(true);
         SaveAfterPlayerEvent();
@@ -1679,11 +1680,11 @@ public class TeamManagerUI : MonoBehaviour
         if (player.SetOVR() < 60)
             baseCost = 20;
         else if (player.SetOVR() <= 74)
-            baseCost = 35;
+            baseCost = 30;
         else if (player.SetOVR() <= 79)
-            baseCost = 45;
+            baseCost = 35;
         else
-            baseCost = 60;   // máximo
+            baseCost = 50;   // máximo
 
         // Desconto baseado no FinancesLvl (0 a 7)
         int discount = gameManager.playerTeam.FinancesLvl * 4;   // máximo 28 de desconto no lvl 7

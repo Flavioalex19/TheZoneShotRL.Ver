@@ -422,9 +422,11 @@ public class MatchUI : MonoBehaviour
                 _activeHomePlayers.GetChild(i).GetChild(3).gameObject.SetActive(false);
             }
             _activeHomePlayers.GetChild(i).GetChild(4).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].CurrentStamina.ToString();
+            /*
             //Activate injury icon
             if(_matchManager.HomeTeam.playersListRoster[i].isInjured) _activeHomePlayers.GetChild(i).GetChild(6).gameObject.SetActive(true);
             else _activeHomePlayers.GetChild(i).GetChild(6).gameObject.SetActive(false);
+            */
             _activeHomePlayers.GetChild(i).GetChild(7).GetChild(0).GetComponent<Image>().fillAmount =
                 (float)_matchManager.HomeTeam.playersListRoster[i].CurrentStamina / _matchManager.HomeTeam.playersListRoster[i].MaxStamina;
         }
@@ -662,7 +664,7 @@ public class MatchUI : MonoBehaviour
         {
             if (_matchManager.HomeTeam.playersListRoster[i] == _matchManager.playerWithTheBall)
             {
-                off_Animator = transform_ActiveHomePlayers.GetChild(i).GetChild(7).GetComponent<Animator>();
+                //off_Animator = transform_ActiveHomePlayers.GetChild(i).GetChild(7).GetComponent<Animator>();
                 //print(animator + "New");
                 transform_ActiveHomePlayers.GetChild(i).GetChild(7).gameObject.SetActive(true);
                 transform_ActiveHomePlayers.GetChild(i).GetChild(5).gameObject.SetActive(true);
@@ -686,11 +688,14 @@ public class MatchUI : MonoBehaviour
         }
 
     }
+    /*
     public void ActivateAnimatorOffensivePanel()
     {
         print(off_Animator + "New offAnimator");
         off_Animator.SetBool("On", true);
     }
+    */
+    /*
     public void UsedPlayerBtns()
     {
         for (int i = 0; i < 4; i++)
@@ -704,6 +709,7 @@ public class MatchUI : MonoBehaviour
             //print(_matchManager.HomeTeam.playersListRoster[i].playerLastName + " this is his zone: " + _matchManager.HomeTeam.playersListRoster[i].CurrentZone);
         }
     }
+    */
     public void UpdatePlayerPlacements()
     {
         //print("Check position");
@@ -727,11 +733,11 @@ public class MatchUI : MonoBehaviour
             }
             if(_matchManager.HomeTeam.playersListRoster[i].CurrentZone > 1)
             {
-                transform_ActiveHomePlayers.GetChild(i).GetChild(7).GetChild(2).gameObject.SetActive(false);
+                transform_ActiveHomePlayers.GetChild(i).GetChild(7).GetChild(3).gameObject.SetActive(false);
             }
             else
             {
-                transform_ActiveHomePlayers.GetChild(i).GetChild(7).GetChild(2).gameObject.SetActive(true);
+                transform_ActiveHomePlayers.GetChild(i).GetChild(7).GetChild(3).gameObject.SetActive(true);
             }
         }
     }
