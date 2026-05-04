@@ -299,6 +299,7 @@ public class TeamManagerUI : MonoBehaviour
         {
             isGameOver = true;
         }
+        /*
         if (IsPlayerTeamInTop8() && leagueManager.Week-1 >= gameManager.leagueTeams.Count)
         {
             leagueManager.isOnR8 = true;
@@ -307,6 +308,19 @@ public class TeamManagerUI : MonoBehaviour
         else
         {
             isGameOver = true;
+        }
+        */
+        if(leagueManager.Week >= gameManager.leagueTeams.Count)
+        {
+            if (IsPlayerTeamInTop8())
+            {
+                leagueManager.isOnR8 = true;
+            }
+            else
+            {
+                isGameOver = true;
+                leagueManager.isOnR8 = false;
+            }
         }
         if (leagueManager.Week > gameManager.leagueTeams.Count - 1 && leagueManager.isOnR8 == false)
         {
@@ -1866,6 +1880,7 @@ public class TeamManagerUI : MonoBehaviour
     }
     public bool IsPlayerTeamInTop8()
     {
+        /*
         LeagueManager leagueManager = FindFirstObjectByType<LeagueManager>();
 
         if (leagueManager == null || leagueManager.Standings == null)
@@ -1876,6 +1891,23 @@ public class TeamManagerUI : MonoBehaviour
         for (int i = 0; i < limit; i++)
         {
             if (leagueManager.Standings[i].IsPlayerTeam)
+                return true;
+        }
+
+        return false;
+        */
+        // Se você já tem referência ao leagueManager no script, use ela
+        if (leagueManager == null)
+            leagueManager = FindFirstObjectByType<LeagueManager>();
+
+        if (leagueManager == null || leagueManager.Standings == null || leagueManager.Standings.Count == 0)
+            return false;
+
+        int limit = Mathf.Min(8, leagueManager.Standings.Count);
+
+        for (int i = 0; i < limit; i++)
+        {
+            if (leagueManager.Standings[i] != null && leagueManager.Standings[i].IsPlayerTeam)
                 return true;
         }
 

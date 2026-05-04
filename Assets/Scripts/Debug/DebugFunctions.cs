@@ -18,7 +18,7 @@ public class DebugFunctions : MonoBehaviour
     }
     public void JumpToFinalWeeks()
     {
-        leagueManager.Week = gameManager.leagueTeams.Count - 2;
+        leagueManager.Week = gameManager.leagueTeams.Count ;
     }
     public void OnePosMatch()
     {
@@ -34,5 +34,9 @@ public class DebugFunctions : MonoBehaviour
                 print("This player will be a free agent " + gameManager.playerTeam.playersListRoster[i].playerLastName);
             }
         }
+    }
+    public void ReceivePoints(Team team)
+    {
+        team.Score = -50;
     }
 }
