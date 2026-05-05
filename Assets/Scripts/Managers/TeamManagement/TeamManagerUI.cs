@@ -294,30 +294,23 @@ public class TeamManagerUI : MonoBehaviour
     }
     void Start()
     {
-        
+        /*
         if (leagueManager.isGameOver == true || gameManager.playerTeam.isChampion == true)
         {
             isGameOver = true;
         }
-        /*
-        if (IsPlayerTeamInTop8() && leagueManager.Week-1 >= gameManager.leagueTeams.Count)
-        {
-            leagueManager.isOnR8 = true;
-            
-        }
-        else
-        {
-            isGameOver = true;
-        }
-        */
+        
         if(leagueManager.Week >= gameManager.leagueTeams.Count)
         {
+            print("End Of regular season");
             if (IsPlayerTeamInTop8())
             {
+                
                 leagueManager.isOnR8 = true;
             }
             else
             {
+                print("Not qualified");
                 isGameOver = true;
                 leagueManager.isOnR8 = false;
             }
@@ -400,7 +393,94 @@ public class TeamManagerUI : MonoBehaviour
             btn_returnToMainScreen.onClick.RemoveAllListeners();
             btn_returnToMainScreen.onClick.AddListener(() => StartNewLeagueRun());
         }
-        
+        */
+        if ( gameManager.playerTeam.isChampion == true)
+        {
+            isGameOver = true;
+        }
+        if (leagueManager.Week >= gameManager.leagueTeams.Count)
+        {
+
+            if (IsPlayerTeamInTop8())
+            {
+                leagueManager.isOnR8 = true;
+            }
+            else
+            {
+                isGameOver = true;           
+                leagueManager.isOnR8 = false;
+            }
+        }
+
+        // Verificação extra de playoffs
+        if (leagueManager.Week > gameManager.leagueTeams.Count - 1 && leagueManager.isOnR8 == false)
+        {
+            isGameOver = true;
+        }
+
+        if (gameManager.playerTeam.Moral <= 0)
+        {
+            isGameOver = true;               // Só define true quando necessário
+                                             
+        }
+
+        if (leagueManager.isOnR8)
+        {
+            print("Playoffs rackerts made");
+            playoffManager.CreatePlayoffBracket();
+        }
+
+        // Decisão final - agora funciona corretamente
+        if (isGameOver == false)
+        {
+            _advBtn = GameObject.Find("Advance Button");
+            if (gameManager.playerTeam == null)
+            {
+                gameManager.ReassignPlayerTeam();
+            }
+            Debug.Log("[TeamManagerUI] Start() iniciado");
+
+            EventsManager eventsManager = FindFirstObjectByType<EventsManager>();
+            if (eventsManager != null && leagueManager.canGenerateEvents && leagueManager.canStartANewWeek)
+            {
+                Debug.Log("[TeamManagerUI] Chamando StartNewWeekEvents()");
+                eventsManager.StartNewWeekEvents();
+            }
+            else
+            {
+                _panelEventsChoices.SetActive(false);
+                _panelEventsTypes.SetActive(false);
+            }
+
+            _text_NameTeam.text = gameManager.playerTeam.TeamName;
+            text_teamStyle.text = gameManager.playerTeam._teamStyle.ToString();
+            musicManager.RestoreMutedAudioSources();
+            _scheduleArea.SetActive(false);
+            SetTeamIcon();
+            AdvButtonUpdate();
+            SetTextOfFacilities();
+            WeekText.text = leagueManager.Week.ToString();
+
+            if (leagueManager.Week > gameManager.leagueTeams.Count - 1)
+            {
+                WeekText.text = "Playoffs";
+            }
+
+            if (leagueManager.canGenerateEvents)
+            {
+                _panelEventsChoices.SetActive(true);
+                _panelEventsTypes.SetActive(true);
+            }
+
+            Debug.Log("[TeamManagerUI] Start() finalizado - UI básica carregada");
+        }
+        else
+        {
+            ResultPanelCreation();
+            btn_returnToMainScreen.onClick.RemoveAllListeners();
+            btn_returnToMainScreen.onClick.AddListener(() => StartNewLeagueRun());
+        }
+
     }
 
     // Update is called once per frame

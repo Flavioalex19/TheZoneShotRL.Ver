@@ -35,8 +35,10 @@ public class DebugFunctions : MonoBehaviour
             }
         }
     }
-    public void ReceivePoints(Team team)
+    public void ReceivePoints()
     {
-        team.Score = -50;
+        MatchManager matchManager = GameObject.Find("MatchManager").GetComponent<MatchManager>();
+
+        matchManager.HomeTeam.Score = -50;
     }
 }

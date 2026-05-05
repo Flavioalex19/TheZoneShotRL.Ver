@@ -89,7 +89,8 @@ public class MatchManager : MonoBehaviour
     public float buff_Juke;
 
     float jukePercentage;
-    int consecutiveSuccesses = 0;
+    public int consecutiveSuccesses = 0;
+    
 
     private List<string> eventsList = new List<string>()
     {
@@ -1718,7 +1719,22 @@ public class MatchManager : MonoBehaviour
             else if (playerOVR <= 85)
                 finalChance *= 1.15f; // médio boost
         }
-        if (consecutiveSuccesses >= 2) finalChance *= 1.15f;
+        //if (consecutiveSuccesses >= 2) finalChance *= 1.15f;
+        float streakMultiplier = 1f;
+
+        if (teamWithball.IsPlayerTeam)
+        {
+            // Streak real do Player Team (0 a 10)
+            int streak = Mathf.Clamp(consecutiveSuccesses, 0, 10);
+            streakMultiplier = 1f + (streak * 0.04f);   // Máximo 25% de bônus no streak 10
+        }
+        else
+        {
+            // AI sempre tem streak fixo em 5
+            streakMultiplier = 1f + (5 * 0.025f);        // 12.5% fixo para AI
+        }
+
+        finalChance *= streakMultiplier;
         // === 7. Clamp final (tensão) ===
         return Mathf.Clamp(finalChance, 0.15f, 0.95f);
     }
@@ -1753,7 +1769,22 @@ public class MatchManager : MonoBehaviour
 
         float staminaFactor = GetStaminaMultiplier(offense.CurrentStamina);
         finalChance *= staminaFactor;
-        if (consecutiveSuccesses >= 2) finalChance *= 1.15f;//streak bonus
+        //if (consecutiveSuccesses >= 2) finalChance *= 1.15f;//streak bonus
+        float streakMultiplier = 1f;
+
+        if (teamWithball.IsPlayerTeam)
+        {
+            // Streak real do Player Team (0 a 10)
+            int streak = Mathf.Clamp(consecutiveSuccesses, 0, 10);
+            streakMultiplier = 1f + (streak * 0.04f);   // Máximo 25% de bônus no streak 10
+        }
+        else
+        {
+            // AI sempre tem streak fixo em 5
+            streakMultiplier = 1f + (5 * 0.065f);        // 12.5% fixo para AI
+        }
+
+        finalChance *= streakMultiplier;
         return Mathf.Clamp(finalChance, 0.20f, 0.93f);
     }
     float ActivateSpecialAttk(bool isPercentage)
@@ -2093,99 +2124,7 @@ public class MatchManager : MonoBehaviour
     }
     bool TryBeatDefenderAdvanceZone(Player offense, Player defense, int zone, int bonus = 0)
     {
-        /*
-        // === 1. Cálculo de OVR na hora (média dos 12 attrs) ===
-        int offenseOVR = Mathf.RoundToInt(
-            (offense.Shooting + offense.Inside + offense.Mid + offense.Outside +
-             offense.Awareness + offense.Defending + offense.Guarding + offense.Stealing +
-             offense.Juking + offense.Consistency + offense.Control + offense.Positioning) / 12f);
-
-        int defenseOVR = Mathf.RoundToInt(
-            (defense.Shooting + defense.Inside + defense.Mid + defense.Outside +
-             defense.Awareness + defense.Defending + defense.Guarding + defense.Stealing +
-             defense.Juking + defense.Consistency + defense.Control + defense.Positioning) / 12f);
-
-        // === 2. Offense score (attrs juke + zona + OVR bonus + random + bonus) ===
-        float offenseAvg = (offense.Consistency + offense.Control + offense.Juking +
-                            GetZoneValue(offense, zone) + offenseOVR / 5f) / 4f;
-
-        float offenseScore = offenseAvg + UnityEngine.Random.Range(-10f, 20f) + bonus;
-
-        // === 3. Defense score (attrs defensivos + média extra forte + BONUS AI) ===
-        float defenseAvg = (defense.Consistency + defense.Guarding + defense.Stealing +
-                            GetZoneValue(defense, zone) + defenseOVR / 5f) / 5f;
-
-        float defenseMedianBonus = defenseAvg * 0.3f; // +30% média defensiva
-
-        float defenseScore = defenseAvg + defenseMedianBonus;
-
-        // AI defende melhor (bônus extra quando AI é o defensor)
-        Team defendingTeam = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
-        if (!defendingTeam.IsPlayerTeam) // AI defendendo
-            defenseScore *= 1.25f; // +25% defesa AI
-
-        // === 4. Chance base (offense vs defense) ===
-        float rawChance = offenseScore / (offenseScore + defenseScore + 50f);
-
-        // === 5. Bias principal: playerTeam mais difícil, AI mais fácil ===
-        float finalChance = rawChance;
-
-        if (teamWithball.IsPlayerTeam)
-        {
-            // PLAYER TEAM: mais dificuldade (precisa stats/buffs altos)
-            finalChance *= 0.85f; // -15% base
-
-            // Buff_Juke compensa (porcentagem)
-            if (buff_Juke > 0)
-                finalChance *= 1f + (buff_Juke / 100f);
-
-            // ESPAÇO PRA MAIS BUFFS FUTUROS
-            // ex: if (buff_Stamina > 0) finalChance *= 1f + (buff_Stamina / 100f);
-        }
-        else
-        {
-            // AI: mais fácil no juke
-            finalChance *= 1.05f; // +5% base
-
-            // Playoffs: AI ainda mais fácil
-            if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
-                finalChance *= 1.10f; // +10% extra AI playoffs
-                                      // === NOVO: BOOST AI SE OVR BAIXO ===
-            int playerOVR = Mathf.RoundToInt(
-                (offense.Shooting + offense.Inside + offense.Mid + offense.Outside +
-                 offense.Awareness + offense.Defending + offense.Guarding + offense.Stealing +
-                 offense.Juking + offense.Consistency + offense.Control + offense.Positioning) / 12f);
-
-            if (playerOVR <= 70)
-                finalChance *= 1.30f; // maior boost
-            else if (playerOVR <= 85)
-                finalChance *= 1.15f; // médio boost
-        }
-
-        finalChance = Mathf.Clamp(finalChance, 0.15f, 0.95f);
-        jukePercentage = finalChance;
-        print(finalChance + " This is the juke percentage");
-        // === 6. Decisão final ===
-        bool success = UnityEngine.Random.value < finalChance;
-
-        if (!success)
-        {
-            offense.CurrentZone = 0;
-            return false;
-        }
-
-        //Advance to zone
-        if (zone < 2)
-            zone++;     // avança 1 casa
-        else
-            zone = 2;   // mantém no limite máximo
-
-        offense.CurrentZone = zone;
-        _matchUI.UpdatePlayerPlacements();
-        _matchUI.TurnOffPlayerButtons();
-        //print(offense.playerLastName + " and the zone is " + offense.CurrentZone);
-        return true;
-        */
+        
         int offenseOVR = offense.SetOVR();
         int defenseOVR = defense.SetOVR();
 
@@ -2209,7 +2148,22 @@ public class MatchManager : MonoBehaviour
 
         float staminaFactor = GetStaminaMultiplier(offense.CurrentStamina);
         finalChance *= staminaFactor;
-        if (consecutiveSuccesses >= 2) finalChance *= 1.15f;
+        //if (consecutiveSuccesses >= 2) finalChance *= 1.15f;
+        float streakMultiplier = 1f;
+
+        if (teamWithball.IsPlayerTeam)
+        {
+            // Streak real do Player Team (0 a 10)
+            int streak = Mathf.Clamp(consecutiveSuccesses, 0, 10);
+            streakMultiplier = 1f + (streak * 0.055f);   // Máximo 25% de bônus no streak 10
+        }
+        else
+        {
+            // AI sempre tem streak fixo em 5
+            streakMultiplier = 1f + (5 * 0.025f);        // 12.5% fixo para AI
+        }
+
+        finalChance *= streakMultiplier;
         finalChance = Mathf.Clamp(finalChance, 0.25f, 0.90f);
         jukePercentage = finalChance;
 
@@ -2671,7 +2625,7 @@ public class MatchManager : MonoBehaviour
     private void RegisterSuccess()
     {
         consecutiveSuccesses++;
-        if (consecutiveSuccesses >= 2)
+        if (consecutiveSuccesses >= 5)
         {
             uiManager.PlaybyPlayText("Player is on fire!");
         }
