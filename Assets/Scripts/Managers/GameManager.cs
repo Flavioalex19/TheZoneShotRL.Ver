@@ -67,14 +67,9 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject); // Destroy duplicates
         }
-        
-        
-    }
-    private void Start()
-    {
-        
+
         //saveSystem.ClearSave(team.TeamName);
-        leagueManager =GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
+        leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
         uiManager = GameObject.Find("UIManager").GetComponent<UiManager>();
         mode = GameMode.MainMenu;
         //NewTeamsForRun();
@@ -97,65 +92,9 @@ public class GameManager : MonoBehaviour
             //leagueTeams[i].IsPlayerTeam = false;
         }
         ClearSchedule();
-
-        //TESTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //leagueTeams[0].CreateEquips();
-        //leagueTeams[0].ActivatePlayerTeam();//This should be set on the team selection!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
         // Check if there is a saved file for the team
         #region Loading Teams
-        /*
-        //Loadng teams
-        if (IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
-        {
-            //Loadleague 
-            saveSystem.LoadLeague();
-            // Load the saved team
-            //saveSystem.LoadTeam(team);OLD!!!!!!!!!!!!!!!!!!!!!!!!!!
-            for (int i = 0; i < leagueTeams.Count; i++)
-            {
-                //print("TIME TO LOAD");
-                //saveSystem.LoadTeam(leagueTeams[i],playerPrefab);
-                saveSystem.LoadTeamInfo(leagueTeams[i], playerPrefab);
-                if (leagueTeams[i].IsPlayerTeam)playerTeam = leagueTeams[i];
-                //print(playerTeam + "THIS IS THE PLAYER!!!!!");
-            }
-            //PrintTeamPlayers();
 
-            
-        }
-        else
-        {
-            print("NO SAVE");
-            for (int i = 0; i < leagueTeams.Count; i++)
-            {
-               
-                leagueTeams[i].Moral =leagueTeams[i].fixMoral;
-                leagueTeams[i].FansSupportPoints = leagueTeams[i].fixFans;
-                leagueTeams[i].FrontOfficePoints = leagueTeams[i].fixFrontOffice;
-                leagueTeams[i].EffortPoints = leagueTeams[i].fixEffort;
-                leagueTeams[i].IsPlayerTeam = false;
-                leagueTeams[i].Wins = 0;
-                leagueTeams[i].Draws = 0;
-                leagueTeams[i].Loses = 0;
-                leagueTeams[i]._equipmentList.Clear();
-                
-            }
-            
-            
-           
-        }
-        for (int i = 0; i < leagueTeams.Count; i++)
-        {
-            if (leagueTeams[i].IsPlayerTeam)
-            {
-                //leagueTeams[i].CreateEquips();
-                playerTeam = leagueTeams[i];
-                //leagueTeams[0].ActivatePlayerTeam();
-            }
-        }
-        */
         // Sempre limpa a lista leagueTeams no início
         // 1. Sempre limpa a lista antes de recriar
         leagueTeams.Clear();
@@ -207,6 +146,11 @@ public class GameManager : MonoBehaviour
             }
         }
         #endregion
+    }
+    private void Start()
+    {
+        
+        
     }
 
     private void Update()
@@ -590,11 +534,35 @@ public class GameManager : MonoBehaviour
             {
                 leagueTeams[i].IsPlayerTeam = false;
                 leagueTeams[i].playersListRoster.Clear();
+                //leagueManager.Standings.Add(leagueTeams[i]);
+            }
+            leagueManager.Standings.Clear();
+            for (int i = 0; i < leagueTeams.Count; i++)
+            {
+                if (transform.GetChild(i).CompareTag("Team"))
+                {
+                    leagueManager.Standings.Add(transform.GetChild(i).GetComponent<Team>());
+                }
             }
         }
         else
         {
             Debug.Log("[GameManager] Quantidade de times está correta. Não precisa recriar.");
         }
+    }
+    public void DestroyAllTeams()
+    {
+        // Procura todos os objetos na cena com a tag "team"
+        GameObject[] teams = GameObject.FindGameObjectsWithTag("team");
+
+        int count = teams.Length;
+
+        foreach (GameObject teamObj in teams)
+        {
+            Destroy(teamObj);
+        }
+        leagueManager.Standings.Clear();
+        playerTeam = null;
+        Debug.Log($"[GameManager] DestroyAllTeams() Foram destruídos {count} objetos com a tag 'team'.");
     }
 }

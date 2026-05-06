@@ -104,45 +104,21 @@ public class LeagueManager : MonoBehaviour
         {
             NewWeek();
         }
-        Standings = gameManager.leagueTeams;
+        Standings.Clear();
+        //Standings = gameManager.leagueTeams;
+        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+        {
+            if (gameManager.transform.GetChild(i).CompareTag("Team"))
+            {
+                Standings.Add(gameManager.transform.GetChild(i).GetComponent<Team>());
+            }
+        }
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        ///Else will be about the play off
-        /*
-        if (!canGenerateEvents || gameManager == null) return;
-
-        if (gameManager.mode == GameManager.GameMode.TeamManagement)
-        {
-            NewWeek();
-        }
-        */
-        /*
-        if(TriggerWeek == true)
-        {
-            
-            if (!canGenerateEvents || gameManager == null)
-                return;
-
-            // Evita chamar NewWeek() logo após um reset completo
-            if (CanStartANewRun == true)
-                return;
-
-            if (gameManager.mode == GameManager.GameMode.TeamManagement)
-            {
-                NewWeek();
-                //HandleFreeAgents();
-            }
-        }
-        else
-        {
-            if (gameManager.mode == GameManager.GameMode.TeamManagement)WeekFullyInitialized = true;
-
-        }
         
-        */
     }
     public void IncreaseWeek()
     {
@@ -151,64 +127,7 @@ public class LeagueManager : MonoBehaviour
     }
     public void NewWeek()
     {
-        /*
-        TeamManagerUI teamManagerUI = GameObject.Find("TeamManagerUI")?.GetComponent<TeamManagerUI>();
-        //Week++;
-        //Create a IF to very the week
-
-        if (gameManager.mode == GameManager.GameMode.TeamManagement)
-        {
-            if(canStartANewWeek == true && CanStartANewRun == false)
-            {
-                canTrain = true;
-                canTrade = true;
-                canNegociateContract = true;
-                CreateEventsForWeek();
-                //HandleFreeAgents();
-                WeekFullyInitialized = true;
-                Transform ChoiceButtonsTransform = GameObject.Find("ChoiceButtons").transform;
-
-                int buttonCount = Mathf.Min(ChoiceButtonsTransform.childCount, 2); // Ensure no out-of-range
-
-                EventType randomEvent0 = (EventType)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EventType)).Length);
-                EventType randomEvent1;
-                do
-                {
-                    randomEvent1 = (EventType)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EventType)).Length);
-                }
-                while (randomEvent1 == randomEvent0);
-                //Create the onclick event of the button to choose the event type
-                ChoiceButtonsTransform.GetChild(0).GetComponent<Button>().onClick.AddListener(() => ChooseEventTypeOnClick(randomEvent0));
-                ChoiceButtonsTransform.GetChild(1).GetComponent<Button>().onClick.AddListener(() => ChooseEventTypeOnClick(randomEvent1));
-                ChoiceButtonsTransform.GetChild(0).Find("Description Text").GetComponentInChildren<TextMeshProUGUI>().text = randomEvent0.ToString();
-                ChoiceButtonsTransform.GetChild(1).Find("Description Text").GetComponentInChildren<TextMeshProUGUI>().text = randomEvent1.ToString();
-                //ImageIcon1
-                Image eventImage0 = GameObject.Find("ImageIcon1").GetComponent<Image>();
-                Image eventImage1 = GameObject.Find("ImageIcon0").GetComponent<Image>();
-                SetEventImage(randomEvent0.ToString(), eventImage0);
-                SetEventImage(randomEvent1.ToString(), eventImage1);
-
-                
-
-            }
-            else
-            {
-                print("not ativate");
-            }
-        }
-
-        //TeamManagerUI teamManagerUI = GameObject.Find("TeamManagerUI")?.GetComponent<TeamManagerUI>();
-        if (teamManagerUI != null)
-        {
-            StartCoroutine(teamManagerUI.EventTypePanel());
-        }
-        else
-        {
-            Debug.LogWarning("TeamManagerUI não encontrado. Provavelmente após reset da run.");
-        }
-        canGenerateEvents = false;
-        WeekFullyInitialized = true;
-        */
+        
         Debug.Log("[NewWeek] === INÍCIO DA FUNÇÃO ===");
 
         if (gameManager.mode != GameManager.GameMode.TeamManagement)

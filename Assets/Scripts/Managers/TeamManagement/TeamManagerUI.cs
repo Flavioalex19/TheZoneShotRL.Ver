@@ -294,110 +294,16 @@ public class TeamManagerUI : MonoBehaviour
     }
     void Start()
     {
-        /*
-        if (leagueManager.isGameOver == true || gameManager.playerTeam.isChampion == true)
+        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
         {
-            isGameOver = true;
-        }
-        
-        if(leagueManager.Week >= gameManager.leagueTeams.Count)
-        {
-            print("End Of regular season");
-            if (IsPlayerTeamInTop8())
+            if (gameManager.leagueTeams[i].isChampion == true &&
+                gameManager.leagueTeams[i].IsPlayerTeam == true)
             {
-                
-                leagueManager.isOnR8 = true;
-            }
-            else
-            {
-                print("Not qualified");
                 isGameOver = true;
-                leagueManager.isOnR8 = false;
+                break;
             }
         }
-        if (leagueManager.Week > gameManager.leagueTeams.Count - 1 && leagueManager.isOnR8 == false)
-        {
-            isGameOver = true;
-        }
-        
-        if (gameManager.playerTeam.Moral <= 0)
-        {
-            //leagueManager.isGameOver = true;
-            isGameOver = true;
-        }
-        else
-        {
-            isGameOver= false;
-        }
-        if (leagueManager.isOnR8)
-        {
-            print("Playoffs rackerts made");
-            playoffManager.CreatePlayoffBracket();
-        }
-        if(isGameOver == false)
-        {
-            _advBtn = GameObject.Find("Advance Button");
-
-            if (gameManager.playerTeam == null)
-            {
-                gameManager.ReassignPlayerTeam();
-            }
-
-            Debug.Log("[TeamManagerUI] Start() iniciado");
-
-            // Chamada simples do EventsManager
-            EventsManager eventsManager = FindFirstObjectByType<EventsManager>();
-            if (eventsManager != null && leagueManager.canGenerateEvents && leagueManager.canStartANewWeek)
-            {
-                Debug.Log("[TeamManagerUI] Chamando StartNewWeekEvents()");
-                eventsManager.StartNewWeekEvents();
-            }
-            else
-            {
-                _panelEventsChoices.SetActive(false);
-                _panelEventsTypes.SetActive(false);
-            }
-
-            // === UI Básica (sem esperar nada) ===
-            _text_NameTeam.text = gameManager.playerTeam.TeamName;
-            text_teamStyle.text = gameManager.playerTeam._teamStyle.ToString();
-
-            musicManager.RestoreMutedAudioSources();
-            _scheduleArea.SetActive(false);
-            SetTeamIcon();
-            //UpdateTeamSalary();
-            AdvButtonUpdate();
-            SetTextOfFacilities();
-            //CallWarning();
-            //leagueManager.CreateTeamSalary();
-
-            WeekText.text = leagueManager.Week.ToString();
-            if (leagueManager.Week > gameManager.leagueTeams.Count - 1)
-            {
-                WeekText.text = "Playoffs";
-            }
-                
-
-            // Ativa os painéis de eventos manualmente (sem animação por enquanto)
-            if (leagueManager.canGenerateEvents)
-            {
-                _panelEventsChoices.SetActive(true);
-                _panelEventsTypes.SetActive(true);
-            }
-
-            Debug.Log("[TeamManagerUI] Start() finalizado - UI básica carregada");
-        }
-        else
-        {
-            ResultPanelCreation();
-            btn_returnToMainScreen.onClick.RemoveAllListeners();
-            btn_returnToMainScreen.onClick.AddListener(() => StartNewLeagueRun());
-        }
-        */
-        if ( gameManager.playerTeam.isChampion == true)
-        {
-            isGameOver = true;
-        }
+       
         if (leagueManager.Week >= gameManager.leagueTeams.Count)
         {
 
@@ -480,7 +386,95 @@ public class TeamManagerUI : MonoBehaviour
             btn_returnToMainScreen.onClick.RemoveAllListeners();
             btn_returnToMainScreen.onClick.AddListener(() => StartNewLeagueRun());
         }
+        
+        /*
+        // ====================== VERIFICAÇÃO DE CAMPEÃO (PRIORIDADE MÁXIMA) ======================
+        if (gameManager.playerTeam.isChampion == true)
+        {
+            isGameOver = true;                    // Mantido
+            Debug.Log("Player Team é CAMPEÃO!");
+        }
+        // =======================================================================================
 
+        if (leagueManager.Week >= gameManager.leagueTeams.Count)
+        {
+            print("End Of regular season");
+
+            if (IsPlayerTeamInTop8())
+            {
+                leagueManager.isOnR8 = true;
+            }
+            else
+            {
+                print("Not qualified");
+                isGameOver = true;
+                leagueManager.isOnR8 = false;
+            }
+        }
+
+        if (leagueManager.Week > gameManager.leagueTeams.Count - 1 && leagueManager.isOnR8 == false)
+        {
+            isGameOver = true;
+        }
+
+        if (gameManager.playerTeam.Moral <= 0)
+        {
+            isGameOver = true;
+        }
+
+        // ====================== DECISÃO FINAL (agora com prioridade correta) ======================
+        if (isGameOver == false)
+        {
+            // UI normal da temporada / próxima semana
+            _advBtn = GameObject.Find("Advance Button");
+            if (gameManager.playerTeam == null)
+            {
+                gameManager.ReassignPlayerTeam();
+            }
+            Debug.Log("[TeamManagerUI] Start() iniciado");
+
+            EventsManager eventsManager = FindFirstObjectByType<EventsManager>();
+            if (eventsManager != null && leagueManager.canGenerateEvents && leagueManager.canStartANewWeek)
+            {
+                Debug.Log("[TeamManagerUI] Chamando StartNewWeekEvents()");
+                eventsManager.StartNewWeekEvents();
+            }
+            else
+            {
+                _panelEventsChoices.SetActive(false);
+                _panelEventsTypes.SetActive(false);
+            }
+
+            _text_NameTeam.text = gameManager.playerTeam.TeamName;
+            text_teamStyle.text = gameManager.playerTeam._teamStyle.ToString();
+            musicManager.RestoreMutedAudioSources();
+            _scheduleArea.SetActive(false);
+            SetTeamIcon();
+            AdvButtonUpdate();
+            SetTextOfFacilities();
+            WeekText.text = leagueManager.Week.ToString();
+
+            if (leagueManager.Week > gameManager.leagueTeams.Count - 1)
+            {
+                WeekText.text = "Playoffs";
+            }
+
+            if (leagueManager.canGenerateEvents)
+            {
+                _panelEventsChoices.SetActive(true);
+                _panelEventsTypes.SetActive(true);
+            }
+
+            Debug.Log("[TeamManagerUI] Start() finalizado - UI básica carregada");
+        }
+        else
+        {
+            // Tela de Game Over ou Campeão
+            ResultPanelCreation();
+            btn_returnToMainScreen.onClick.RemoveAllListeners();
+            btn_returnToMainScreen.onClick.AddListener(() => StartNewLeagueRun());
+        }
+        */
     }
 
     // Update is called once per frame
@@ -549,9 +543,9 @@ public class TeamManagerUI : MonoBehaviour
         }
         for (int i = 0; i < gameManager.leagueTeams.Count; i++)
         {
-            gameManager.saveSystem.SaveTeamInfo(gameManager.leagueTeams[i]);
+            gameManager.saveSystem.SaveTeamInfo(gameManager.leagueTeams[i]);//mudar apara a lista fixa depois
         }
-        
+        gameManager.DestroyAllTeams();
         
 
     }
@@ -1497,8 +1491,7 @@ public class TeamManagerUI : MonoBehaviour
     //Standings
     void PopulateStandings()
     {
-        //print(_standingsPlacement.childCount + " Info teams slots");
-        for (int i = 0; i < /*_standingsPlacement.childCount*/gameManager.leagueTeams.Count; i++)
+        for (int i = 0; i < leagueManager.Standings.Count; i++)
         {
             
             _standingsPlacement.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = (i+1).ToString();
@@ -1960,22 +1953,7 @@ public class TeamManagerUI : MonoBehaviour
     }
     public bool IsPlayerTeamInTop8()
     {
-        /*
-        LeagueManager leagueManager = FindFirstObjectByType<LeagueManager>();
-
-        if (leagueManager == null || leagueManager.Standings == null)
-            return false;
-
-        int limit = Mathf.Min(8, leagueManager.Standings.Count);
-
-        for (int i = 0; i < limit; i++)
-        {
-            if (leagueManager.Standings[i].IsPlayerTeam)
-                return true;
-        }
-
-        return false;
-        */
+        
         // Se você já tem referência ao leagueManager no script, use ela
         if (leagueManager == null)
             leagueManager = FindFirstObjectByType<LeagueManager>();
@@ -2006,6 +1984,10 @@ public class TeamManagerUI : MonoBehaviour
     //Result team panel
     public void ResultPanelCreation()
     {
+        if(isGameOver == false)
+        {
+            
+        }
         resultPanel.SetActive(true);
         animator_resultPanel.SetTrigger("Go");
         btn_returnToMainScreen.onClick.AddListener(() => ResetRun());
@@ -2023,12 +2005,12 @@ public class TeamManagerUI : MonoBehaviour
         //MVP
         mvp = FindMVP();
         text_resultPanel_mvpName.text = mvp.playerFirstName + " " + mvp.playerLastName;
-        text_resultPanel_mvpPtsGame.text = (mvp.CareerPoints/mvp.CareerGamesPlayed).ToString();
+        text_resultPanel_mvpPtsGame.text = (mvp.CareerPoints / mvp.CareerGamesPlayed).ToString();
         text_resultPanel_mvpStealsGames.text = (mvp.CareerSteals / mvp.CareerGamesPlayed).ToString();
         text_resultPanel_mvpGamesPlayed.text = mvp.CareerGamesPlayed.ToString();
         Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
         Sprite sprite = sprites[mvp.ImageCharacterPortrait];
-        
+
     }
     //Find MVP
     public Player FindMVP()
