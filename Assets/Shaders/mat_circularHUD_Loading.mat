@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-1135388427966567864
+--- !u!114 &-1579292472092449553
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
   version: 10
 --- !u!21 &2100000
 Material:
@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: mat_glow
-  m_Shader: {fileID: -6465566751694194690, guid: 04943b88258df5f4f9ad582843ce2b47, type: 3}
+  m_Name: mat_circularHUD_Loading
+  m_Shader: {fileID: -6465566751694194690, guid: 7f4aa51cd5759bb42863c13b9d23cdb6, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -31,8 +31,7 @@ Material:
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
-  disabledShaderPasses:
-  - MOTIONVECTORS
+  disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -54,15 +53,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats:
-    - _BrightnessCorrection: 2
-    - _Frequency: 5
-    - _InterferenceStrength: 1
-    - _QueueControl: 0
-    - _QueueOffset: 0
-    - _Use_Red_for_Alpha: 0
+    m_Floats: []
     m_Colors:
-    - _Color: {r: 0.15289456, g: 1.2918487, b: 2.4335716, a: 1}
-    - _TilingAndOffset: {r: 1, g: 1, b: 0, a: 0}
+    - White: {r: 1, g: 1, b: 1, a: 1}
+    - _ColorA: {r: 2.9072976, g: 0, b: 5.278032, a: 0.12156863}
+    - _ColorB: {r: 0, g: 0.50689507, b: 2, a: 0.16862746}
+    - _ColorC: {r: 0, g: 4.7806363, b: 9.189588, a: 0.49019608}
+    - _RotationSpeed: {r: 15, g: 35, b: -25, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
