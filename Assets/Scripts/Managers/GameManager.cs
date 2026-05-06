@@ -413,28 +413,8 @@ public class GameManager : MonoBehaviour
     //createTeams
     public void NewTeamsForRun()
     {
-        /*
-        leagueTeams.Clear();
-        // Proteção: Se já existe a quantidade correta de times, não recria
-        if (leagueTeams.Count == fullTeamList.Count && fullTeamList.Count > 0)
-        {
-            Debug.Log("Times já existem na quantidade correta. Pulando recriação.");
-            return;
-        }
-        //leagueTeams.Clear();
-        foreach (Team teamTemplate in fullTeamList)
-        {
-            GameObject teamGO = Instantiate(teamTemplate.gameObject);   // Instancia o GameObject
-            Team newTeam = teamGO.GetComponent<Team>();
-
-            teamGO.transform.SetParent(transform);
-            DontDestroyOnLoad(teamGO);
-
-            leagueTeams.Add(newTeam);
-
-            Debug.Log($"Time persistente criado: {newTeam.TeamName}");
-        }
-        */
+        
+        
         leagueTeams.Clear(); // Garante que começa vazia
 
         if (fullTeamList == null || fullTeamList.Count == 0)
