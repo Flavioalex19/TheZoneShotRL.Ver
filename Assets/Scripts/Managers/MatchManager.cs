@@ -2607,18 +2607,18 @@ public class MatchManager : MonoBehaviour
     private int GetFacilityBonus(int level)
     {
         if (level >= 6)
-            return 20;           // Nivel 6 ou superior = 20 pontos fixos
+            return 40;           // Nivel 6 ou superior = 20 pontos fixos
 
         // Niveis 0 a 5 - Progressão racional e crescente
         switch (level)
         {
-            case 0: return 3;
-            case 1: return 5;
-            case 2: return 7;
-            case 3: return 9;
-            case 4: return 12;
-            case 5: return 15;
-            default: return 3;   // segurança
+            case 0: return 5;
+            case 1: return 10;
+            case 2: return 15;
+            case 3: return 20;
+            case 4: return 25;
+            case 5: return 30;
+            default: return 5;   // segurança
         }
     }
     //streak functions
