@@ -294,6 +294,10 @@ public class TeamManagerUI : MonoBehaviour
     }
     void Start()
     {
+        if (leagueManager.isGameOver)
+        {
+            isGameOver = true;
+        }
         for (int i = 0; i < gameManager.leagueTeams.Count; i++)
         {
             if (gameManager.leagueTeams[i].isChampion == true &&
@@ -1001,7 +1005,7 @@ public class TeamManagerUI : MonoBehaviour
     //new team page
     public void TeamSetPlayersInfo(int index)
     {
-        text_TeamPlayerName.text = gameManager.playerTeam.playersListRoster[index].playerFirstName + " " + gameManager.playerTeam.playersListRoster[index].playerLastName;
+        text_TeamPlayerName.text = gameManager.playerTeam.playersListRoster[index].playerFirstName[0] + ". " + gameManager.playerTeam.playersListRoster[index].playerLastName;
         text_TeamPlayerOvr.text = gameManager.playerTeam.playersListRoster[index].SetOVR().ToString();
         text_TeamPlayerContract.text = gameManager.playerTeam.playersListRoster[index].ContractYears.ToString() + " Games";
         text_text_TeamPlayerSalary.text = gameManager.playerTeam.playersListRoster[index].Salary.ToString();
