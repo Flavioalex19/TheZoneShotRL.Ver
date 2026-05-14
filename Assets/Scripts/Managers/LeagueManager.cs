@@ -114,12 +114,6 @@ public class LeagueManager : MonoBehaviour
             }
         }
     }
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        
-    }
     public void IncreaseWeek()
     {
         Week++;
@@ -128,7 +122,7 @@ public class LeagueManager : MonoBehaviour
     public void NewWeek()
     {
         
-        Debug.Log("[NewWeek] === INÍCIO DA FUNÇÃO ===");
+        //Debug.Log("[NewWeek] === INÍCIO DA FUNÇÃO ===");
 
         if (gameManager.mode != GameManager.GameMode.TeamManagement)
         {
@@ -185,18 +179,18 @@ public class LeagueManager : MonoBehaviour
         WeekFullyInitialized = true;
         canGenerateEvents = false;
 
-        Debug.Log("[NewWeek] Setup concluído. Chamando animação...");
+        //Debug.Log("[NewWeek] Setup concluído. Chamando animação...");
 
         // === ANIMAÇÃO DO PAINEL (parte que estava falhando) ===
         TeamManagerUI teamManagerUI = GameObject.Find("TeamManagerUI")?.GetComponent<TeamManagerUI>();
         if (teamManagerUI != null)
         {
-            Debug.Log("[NewWeek] TeamManagerUI encontrado. Iniciando EventTypePanel...");
+            //Debug.Log("[NewWeek] TeamManagerUI encontrado. Iniciando EventTypePanel...");
             StartCoroutine(teamManagerUI.EventTypePanel());
         }
         else
         {
-            Debug.LogError("[NewWeek] ERRO CRÍTICO: TeamManagerUI não encontrado! Animação não será chamada.");
+            //Debug.LogError("[NewWeek] ERRO CRÍTICO: TeamManagerUI não encontrado! Animação não será chamada.");
         }
 
     }

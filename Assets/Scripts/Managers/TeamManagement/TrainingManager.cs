@@ -58,7 +58,16 @@ public class TrainingManager : MonoBehaviour
         if (effort == 0) cost = 20;
         else if (effort == 1) cost = 40;
         else cost = 50;
-        if (leagueManager.canTrain == true && gameManager.playerTeam.EffortPoints > cost && _trainingTypeIndex > -1)
+
+        //discount based on financaes facilty
+        int financesDiscount = 0;
+        if (gameManager.playerTeam.FinancesLvl > 0)
+        {
+            financesDiscount = Mathf.Min(30, gameManager.playerTeam.FinancesLvl * 4); // máx 30 no lvl 7+
+        }
+        cost = Mathf.Max(10, cost - financesDiscount);
+
+        if (gameManager.playerTeam.EffortPoints > cost && _trainingTypeIndex > -1)
         {
             Player player = gameManager.playerTeam.playersListRoster[playerIndex];
             // === Lista dos atributos do grupo selecionado ===
@@ -90,8 +99,15 @@ public class TrainingManager : MonoBehaviour
                 return;
             }
             int equipmentLvl = gameManager.playerTeam.TeamEquipmentLvl; // Assuma que existe essa propriedade
-            int minBoost = Mathf.Max(1, equipmentLvl / 2); // Ex: lvl 0=1, lvl 7=3
-            int maxBoostExclusive = Mathf.Min(6, equipmentLvl + 2); // Ex: lvl 0=2 (boost 1), lvl 7=6 (boost 1-5)
+            int minBoost = Mathf.Max(1, equipmentLvl / 2);
+            int maxBoostExclusive = Mathf.Min(8, equipmentLvl + 3);
+            if (equipmentLvl >= 4)
+            {
+                minBoost += 1;
+                maxBoostExclusive += 2;
+            }
+            //int minBoost = Mathf.Max(1, equipmentLvl / 2); // Ex: lvl 0=1, lvl 7=3
+            //int maxBoostExclusive = Mathf.Min(6, equipmentLvl + 2); // Ex: lvl 0=2 (boost 1), lvl 7=6 (boost 1-5)
             int personality = player.Personality;  // 1-5, assume maior = melhor boost
             minBoost += Mathf.Max(0, (personality - 1) / 2);  // Ex: +0 para 1, +2 para 5
             maxBoostExclusive += personality - 1;  // Ex: +0 para 1, +4 para 5 (aumenta range)
@@ -144,6 +160,7 @@ public class TrainingManager : MonoBehaviour
             teamManagerUI.SetTrainingGrade();
             player.UpdateOVR();
             gameManager.playerTeam.EffortPoints -= cost;
+            teamManagerUI.UpdateMoralAndPointsTexts();
             gameManager.saveSystem.SaveLeague();
             for (int i = 0; i < gameManager.leagueTeams.Count; i++)
             {

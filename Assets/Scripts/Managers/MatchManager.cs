@@ -1,3 +1,4 @@
+using DG.Tweening.Core.Easing;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -403,14 +404,14 @@ public class MatchManager : MonoBehaviour
             // OFFICE - Front Office Points
             if (HomeTeam.OfficeLvl >= 0)
             {
-                int bonus = GetFacilityBonus(HomeTeam.OfficeLvl);
+                int bonus = GetFacilityBonus(HomeTeam.MarketingLvl);
                 HomeTeam.FrontOfficePoints += bonus;
             }
 
             // FINANCES - Salary Cap
             if (HomeTeam.FinancesLvl >= 0)
             {
-                int bonus = GetFacilityBonus(HomeTeam.FinancesLvl);
+                int bonus = GetFacilityBonus(HomeTeam.MarketingLvl);
                 //HomeTeam.SalaryCap += bonus;
             }
 
@@ -424,7 +425,7 @@ public class MatchManager : MonoBehaviour
             // ARENA - Morale
             if (HomeTeam.ArenaLvl >= 0)
             {
-                int bonus = GetFacilityBonus(HomeTeam.ArenaLvl);
+                int bonus = GetFacilityBonus(HomeTeam.MarketingLvl);
                 HomeTeam.Moral += bonus;
                 HomeTeam.Moral = Mathf.Clamp(HomeTeam.Moral, 0, 100);
             }
@@ -432,7 +433,7 @@ public class MatchManager : MonoBehaviour
             // MEDICAL - Effort Points
             if (HomeTeam.MedicalLvl >= 0)
             {
-                int bonus = GetFacilityBonus(HomeTeam.MedicalLvl);
+                int bonus = GetFacilityBonus(HomeTeam.MarketingLvl);
                 HomeTeam.EffortPoints += bonus;
             }
 
@@ -967,7 +968,7 @@ public class MatchManager : MonoBehaviour
     {
         //float passSuccessChance = Mathf.Clamp((playerWithTheBall.Awareness - 30f) / (99f - 30f), 0f, 1f);
 
-        if (Random.Range(0f, 1f) >/*> passSuccessChance*/ PassEquation())
+        if (Random.Range(0f, 1f) > PassEquation())
         {
             //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " made a bad pass! Possession lost.");
             if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos());
@@ -1729,7 +1730,15 @@ public class MatchManager : MonoBehaviour
         {
             staminaLoss = 5;
         }
-        
+
+        float medicalReduction = 0f;
+
+        if (team.IsPlayerTeam && manager != null && manager.playerTeam != null)
+        {
+            // Level 0 = 0%, Level 1 = 3%, ... Level 7 = 15%
+            medicalReduction = Mathf.Clamp(team.MedicalLvl * 0.0214f, 0f, 0.15f);
+        }
+
         for (int i = 0; i < 4; i++)
         {
             if (team.playersListRoster[i].Age < 25)
@@ -1746,7 +1755,15 @@ public class MatchManager : MonoBehaviour
                 team.playersListRoster[i].CurrentStamina -= (staminaLoss + 10);
             }
             if (team.playersListRoster[i].CurrentStamina < 10) team.playersListRoster[i].CurrentStamina = 10;
-           
+
+            if (team.IsPlayerTeam && medicalReduction > 0f)
+            {
+                team.playersListRoster[i].CurrentStamina += Mathf.RoundToInt((staminaLoss + 5) * medicalReduction);
+            }
+
+            if (team.playersListRoster[i].CurrentStamina < 10)
+                team.playersListRoster[i].CurrentStamina = 10;
+
         }
         //_matchUI.UpdatePlayersActive();
     }
@@ -1754,16 +1771,41 @@ public class MatchManager : MonoBehaviour
     {
         int loss;
         if (player.Age <= 23)
-            loss = 5; // baixa
+            loss = 2; // baixa
         else if (player.Age <= 27)
-            loss = 8; // média baixa
+            loss = 5; // média baixa
         else if (player.Age <= 31)
-            loss = 12; // média alta
+            loss = 10; // média alta
         else
-            loss = 15; // alta
+            loss = 12; // alta
+
+        //check medcare lvl bonus
+        float medicalReduction = 0f;
+
+        if (manager != null && manager.playerTeam != null &&
+            player != null && player.transform.parent != null)
+        {
+            // Verifica se o jogador pertence ao Player Team
+            if (player.transform.parent.GetComponent<Team>() == manager.playerTeam ||
+                manager.playerTeam.playersListRoster.Contains(player))
+            {
+                medicalReduction = Mathf.Clamp(manager.playerTeam.MedicalLvl * 0.0214f, 0f, 0.15f);
+            }
+        }
 
         player.CurrentStamina -= loss;
+
+        //apply bonus
+        if (medicalReduction > 0f)
+        {
+            player.CurrentStamina += Mathf.RoundToInt(loss * medicalReduction);
+        }
+
         player.CurrentStamina = Mathf.Max(player.CurrentStamina, 10); // clamp min
+
+       
+
+        
     }
     void RestoreStaminaFromBench()
     {
@@ -2315,27 +2357,7 @@ public class MatchManager : MonoBehaviour
     //Damage
     private void CalculateDamageAndReduceHP(Team defendingTeam, int zone, bool isSP = false)
     {
-        /*
-        int defHP = defendingTeam == HomeTeam ? homeHP : awayHP;
-        int dano = isSP ? 20 : (zone switch
-        {
-            0 => 10, // Outside
-            1 => 12, // Mid
-            2 => 15, // Inside
-            _ => 10
-        });
-
-        // Mais dano se HP baixo
-        if (defHP < 50) dano = Mathf.RoundToInt(dano * 1.5f);
-        if (defHP < 25) dano = Mathf.RoundToInt(dano * 2f);
-
-        // Reduz HP
-        if (defendingTeam == HomeTeam) homeHP -= dano;
-        else awayHP -= dano;
-
-        homeHP = Mathf.Max(homeHP, 0);
-        awayHP = Mathf.Max(awayHP, 0);
-        */
+        
         // HP atual do time defensor
         int currentHP = defendingTeam == HomeTeam ? homeHP : awayHP;
 

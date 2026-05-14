@@ -391,94 +391,7 @@ public class TeamManagerUI : MonoBehaviour
             btn_returnToMainScreen.onClick.AddListener(() => StartNewLeagueRun());
         }
         
-        /*
-        // ====================== VERIFICAÇÃO DE CAMPEÃO (PRIORIDADE MÁXIMA) ======================
-        if (gameManager.playerTeam.isChampion == true)
-        {
-            isGameOver = true;                    // Mantido
-            Debug.Log("Player Team é CAMPEÃO!");
-        }
-        // =======================================================================================
-
-        if (leagueManager.Week >= gameManager.leagueTeams.Count)
-        {
-            print("End Of regular season");
-
-            if (IsPlayerTeamInTop8())
-            {
-                leagueManager.isOnR8 = true;
-            }
-            else
-            {
-                print("Not qualified");
-                isGameOver = true;
-                leagueManager.isOnR8 = false;
-            }
-        }
-
-        if (leagueManager.Week > gameManager.leagueTeams.Count - 1 && leagueManager.isOnR8 == false)
-        {
-            isGameOver = true;
-        }
-
-        if (gameManager.playerTeam.Moral <= 0)
-        {
-            isGameOver = true;
-        }
-
-        // ====================== DECISÃO FINAL (agora com prioridade correta) ======================
-        if (isGameOver == false)
-        {
-            // UI normal da temporada / próxima semana
-            _advBtn = GameObject.Find("Advance Button");
-            if (gameManager.playerTeam == null)
-            {
-                gameManager.ReassignPlayerTeam();
-            }
-            Debug.Log("[TeamManagerUI] Start() iniciado");
-
-            EventsManager eventsManager = FindFirstObjectByType<EventsManager>();
-            if (eventsManager != null && leagueManager.canGenerateEvents && leagueManager.canStartANewWeek)
-            {
-                Debug.Log("[TeamManagerUI] Chamando StartNewWeekEvents()");
-                eventsManager.StartNewWeekEvents();
-            }
-            else
-            {
-                _panelEventsChoices.SetActive(false);
-                _panelEventsTypes.SetActive(false);
-            }
-
-            _text_NameTeam.text = gameManager.playerTeam.TeamName;
-            text_teamStyle.text = gameManager.playerTeam._teamStyle.ToString();
-            musicManager.RestoreMutedAudioSources();
-            _scheduleArea.SetActive(false);
-            SetTeamIcon();
-            AdvButtonUpdate();
-            SetTextOfFacilities();
-            WeekText.text = leagueManager.Week.ToString();
-
-            if (leagueManager.Week > gameManager.leagueTeams.Count - 1)
-            {
-                WeekText.text = "Playoffs";
-            }
-
-            if (leagueManager.canGenerateEvents)
-            {
-                _panelEventsChoices.SetActive(true);
-                _panelEventsTypes.SetActive(true);
-            }
-
-            Debug.Log("[TeamManagerUI] Start() finalizado - UI básica carregada");
-        }
-        else
-        {
-            // Tela de Game Over ou Campeão
-            ResultPanelCreation();
-            btn_returnToMainScreen.onClick.RemoveAllListeners();
-            btn_returnToMainScreen.onClick.AddListener(() => StartNewLeagueRun());
-        }
-        */
+       
     }
 
     // Update is called once per frame
@@ -521,11 +434,12 @@ public class TeamManagerUI : MonoBehaviour
        
 
         
-
+        /*
         // Btns Animations (estas são seguras mesmo se playerTeam for null)
         _animator_trade.SetBool("On", leagueManager.canTrade);
         _animator_training.SetBool("On", leagueManager.canTrain);
         _animator_contract.SetBool("On", leagueManager.canNegociateContract);
+        */
 
     }
     //GameOverReset
@@ -580,7 +494,7 @@ public class TeamManagerUI : MonoBehaviour
         if (text_facilitiesMedicalLvl != null)
             text_facilitiesMedicalLvl.text = "Med LVL: " + gameManager.playerTeam.MedicalLvl.ToString();
     }
-    private void UpdateMoralAndPointsTexts()
+    public void UpdateMoralAndPointsTexts()
     {
         if (gameManager == null || gameManager.playerTeam == null)
             return;
@@ -1552,72 +1466,7 @@ public class TeamManagerUI : MonoBehaviour
     }
     public void ContractDiscussion(int weight)
     {
-        /*
-        if (leagueManager.canNegociateContract == false)
-        {
-            contract_resultNegotiationText.text = "Boss, we can't negotiate any more contracts this week.";
-            UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
-            ContractButtonsUpdate();
-            contract_asstancePanel.SetActive(true);
-            return;
-        }
-
-        // Atualiza CurrentSalary antes de qualquer cálculo
-        gameManager.playerTeam.CurrentSalary = 0;
-        for (int i = 0; i < gameManager.playerTeam.playersListRoster.Count; i++)
-        {
-            gameManager.playerTeam.CurrentSalary += gameManager.playerTeam.playersListRoster[i].Salary;
-        }
-        _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
-
-        // Calcula os aumentos
-        int salaryIncrease = 0;
-        int gamesIncrease = 0;
-        switch (weight)
-        {
-            case 0: salaryIncrease = UnityEngine.Random.Range(2, 6); gamesIncrease = 2; break;
-            case 1: salaryIncrease = UnityEngine.Random.Range(6, 9); gamesIncrease = 4; break;
-            case 2: salaryIncrease = UnityEngine.Random.Range(9, 13); gamesIncrease = 6; break;
-        }
-
-        Player p = gameManager.playerTeam.playersListRoster[indexForPlayer];
-
-        // === PROTEÇÃO PRINCIPAL: Verifica se vai exceder o Salary Cap ===
-        int projectedTotalSalary = gameManager.playerTeam.CurrentSalary + salaryIncrease;
-
-        if (projectedTotalSalary > gameManager.playerTeam.SalaryCap)
-        {
-            contract_resultNegotiationText.text = "We can't extend this contract because it would exceed our Salary Cap.";
-            UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
-            ContractButtonsUpdate();
-            contract_asstancePanel.SetActive(true);
-            return;
-        }
-
-        // Se não exceder, continua com a negociação normal
-        if (TryExtendContract(gameManager.playerTeam, p, p.Salary + salaryIncrease, p.ContractYears + gamesIncrease, weight))
-        {
-            p.ContractYears += gamesIncrease;
-            p.Salary += salaryIncrease;
-
-            // Atualiza CurrentSalary imediatamente
-            gameManager.playerTeam.CurrentSalary += salaryIncrease;
-            _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
-
-            contract_resultNegotiationText.text = "Good Job Boss! " + p.playerLastName + " for " + p.ContractYears + " games";
-            UpdateAssistancePortrait(transform_contract_AssistancePortrait, true);
-        }
-        else
-        {
-            contract_resultNegotiationText.text = "Damn! We can't come to an agreement with " + p.playerLastName + ". Maybe he needs some time to think...";
-            UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
-        }
-
-        leagueManager.canNegociateContract = false;
-        ContractButtonsUpdate();
-        contract_asstancePanel.SetActive(true);
-        SaveAfterPlayerEvent();
-        */
+        
         Player p = gameManager.playerTeam.playersListRoster[indexForPlayer];
 
         // === NOVA VERIFICAÇÃO: Front Office Points suficientes? ===
@@ -1653,9 +1502,9 @@ public class TeamManagerUI : MonoBehaviour
 
         // Quantidade de jogos de extensão depende do FrontOfficeLvl
         if (gameManager.playerTeam.OfficeLvl >= 6)
-            gamesIncrease = 8;
-        else if (gameManager.playerTeam.OfficeLvl >= 4)
             gamesIncrease = 6;
+        else if (gameManager.playerTeam.OfficeLvl >= 4)
+            gamesIncrease = 4;
         else if (gameManager.playerTeam.OfficeLvl >= 1)
             gamesIncrease = 3;
         else
@@ -1700,38 +1549,7 @@ public class TeamManagerUI : MonoBehaviour
     }
     public bool TryExtendContract(Team team, Player player, int salaryProposed, int gamesProposed,int weight)
     {
-        /*
-         // Não aceitar propostas menores que o salário atual
-         if (salaryProposed < player.Salary)
-             return false;
-
-         // === NOVA LÓGICA DE CHANCE COM FATORES ===
-         float baseChance = weight switch
-         {
-             0 => 0.50f,  // Oferta ruim
-             1 => 0.70f,  // Oferta média
-             2 => 0.85f,  // Oferta boa
-             _ => 0.50f
-         };
-
-         // Personality: 1 (fácil)  multiplier 1.0; 5 (difícil)  multiplier 0.6
-         float personalityMultiplier = 1f - (player.Personality - 1) * 0.1f;
-
-         // FinancesLevel: 0  multiplier 1.0; 7  multiplier 1.5 (ajuda bastante)
-         // Confirme o nome exato do campo (ex: FinancesLevel, FinancesLvl, etc.)
-         float financesMultiplier = 1f + (team.FinancesLvl / 7f) * 0.5f;
-
-         // Chance final combinada
-         float finalChance = baseChance * personalityMultiplier * financesMultiplier;
-
-         // Clamp pra nunca ser impossível ou garantido
-         finalChance = Mathf.Clamp(finalChance, 0.1f, 0.95f);
-
-         // Debug opcional pra testar (comente depois)
-         // Debug.Log($"Contract chance: base={baseChance}, personalityMult={personalityMultiplier}, financesMult={financesMultiplier}, final={finalChance}");
-
-         return UnityEngine.Random.value < finalChance;
-         */
+        
         if (salaryProposed < player.Salary)
             return false;
 
@@ -1784,34 +1602,7 @@ public class TeamManagerUI : MonoBehaviour
 
         return finalCost;
     }
-    /*
-    public void AddOrDecreaseContractGamesGamesValue(bool isAdding)
-    {
-        if (isAdding)
-        {
-            if (newGamesValue < 5) newGamesValue++;
-            contract_newContractValuesArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = newGamesValue.ToString();
-        }
-        else
-        {
-            if (newGamesValue > 0) newGamesValue--;
-            contract_newContractValuesArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = newGamesValue.ToString();
-        }
-    }
-    public void AddOrDecreaseSalary(bool isAdding)
-    {
-        if (isAdding)
-        {
-            if (newSalaryValue < 12) newSalaryValue++;
-            contract_newContractValuesArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = newSalaryValue.ToString();
-        }
-        else
-        {
-            if(newSalaryValue>0)newSalaryValue--;
-            contract_newContractValuesArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = newSalaryValue.ToString();
-        }
-    }
-    */
+    
     //FreeAgent
     public IEnumerator ProgressWithWeek()
     {
