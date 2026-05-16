@@ -1441,7 +1441,7 @@ public class TeamManagerUI : MonoBehaviour
             contract_PlayerbuttonsArea.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].ContractYears.ToString();
             contract_PlayerbuttonsArea.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].SetOVR().ToString();
         }
-        contract_text_currentFrontOfficePoints.text = gameManager.playerTeam.FrontOfficePoints.ToString();
+        contract_text_currentFrontOfficePoints.text = gameManager.playerTeam.FansSupportPoints.ToString();
     }
     public void UpdatePlayerContract(int index)
     {
@@ -1472,7 +1472,7 @@ public class TeamManagerUI : MonoBehaviour
         // === NOVA VERIFICAÇÃO: Front Office Points suficientes? ===
         int cost = ContractValue(p);
 
-        if (gameManager.playerTeam.FrontOfficePoints < cost)
+        if (gameManager.playerTeam.FansSupportPoints < cost)
         {
             contract_resultNegotiationText.text = "We don't have enough Front Office Points for this.";
             UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
@@ -1510,6 +1510,11 @@ public class TeamManagerUI : MonoBehaviour
         else
             gamesIncrease = 2;   // nível 0
 
+        if (p.ContractYears + gamesIncrease > 10)
+        {
+            gamesIncrease = 10 - p.ContractYears;
+        }
+
         // === PROTEÇÃO DE SALARY CAP ===
         int projectedTotalSalary = gameManager.playerTeam.CurrentSalary + salaryIncrease;
         if (projectedTotalSalary > gameManager.playerTeam.SalaryCap)
@@ -1527,8 +1532,8 @@ public class TeamManagerUI : MonoBehaviour
             p.ContractYears += gamesIncrease;
             p.Salary += salaryIncrease;
 
-            // Debita o custo do Front Office Points
-            gameManager.playerTeam.FrontOfficePoints -= ContractValue(p);
+            // Debita o custo do Fansupport Points
+            gameManager.playerTeam.FansSupportPoints -= ContractValue(p);
 
             gameManager.playerTeam.CurrentSalary += salaryIncrease;
             _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
@@ -1541,7 +1546,7 @@ public class TeamManagerUI : MonoBehaviour
             contract_resultNegotiationText.text = "Damn! We can't come to an agreement with " + p.playerLastName + ". Maybe he needs some time to think...";
             UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
         }
-        contract_text_currentFrontOfficePoints.text = gameManager.playerTeam.FrontOfficePoints.ToString();
+        contract_text_currentFrontOfficePoints.text = gameManager.playerTeam.FansSupportPoints.ToString();
         UpdateMoralAndPointsTexts();
         ContractButtonsUpdate();
         contract_asstancePanel.SetActive(true);

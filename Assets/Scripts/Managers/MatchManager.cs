@@ -394,6 +394,7 @@ public class MatchManager : MonoBehaviour
             HomeTeam.Draws++;
             AwayTeam.Draws++;
             if (HomeTeam.IsPlayerTeam) { _matchUI.ActivateVictoryDefeat("Draw"); }
+            
         }
         
         yield return new WaitForSeconds(2f);
@@ -1441,7 +1442,16 @@ public class MatchManager : MonoBehaviour
 
             RestoreStaminaFromBench();
         }
+        if ((leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals) && teamA.Score == teamB.Score)
+        {
+            // Se ainda estiver empatado, força um vencedor dando 2 pontos aleatórios
+            if (Random.value < 0.5f)
+                teamA.Score += 2;
+            else
+                teamB.Score += 2;
 
+            //Debug.Log("[SimulateMatchInstant] Empate resolvido em playoffs com +2 pontos aleatórios");
+        }
         // Fim do jogo - mantido exatamente como estava
         if (teamA.Score > teamB.Score)
         {
@@ -1583,6 +1593,7 @@ public class MatchManager : MonoBehaviour
     }
     float ScoringEquation(Player offense, Player defense, int zone, int momentumModifier)
     {
+        /*
         int ovr = offense.SetOVR();
 
         float baseAccuracy = zone switch
@@ -1635,6 +1646,122 @@ public class MatchManager : MonoBehaviour
         }
 
         finalChance *= streakMultiplier;
+        return Mathf.Clamp(finalChance, 0.20f, 0.93f);
+        */
+        int ovr = offense.SetOVR();
+
+        // X = Offense
+        float X = 100f
+                  + (offense.Consistency * 0.1f)   // 10 a 99
+                  + (zone * 10f);                  // Zone bonus
+
+        // Y = Defense
+        float Y = (defense.Consistency * 0.1f)
+                  + (defense.Positioning * 0.1f)
+                  + (zone * 10f);
+
+        float Z = X - Y;   // Positional Bonus Result
+
+        // Offense final
+        float offenseShot = (offense.Consistency * 0.1f)
+                            + (offense.Control * 0.1f)
+                            + (offense.Shooting * 0.1f)
+                            + (zone * 10f)
+                            + Z;   // + Positional Bonus Result
+
+        // Defense final
+        float defenseShot = (defense.Consistency * 0.1f)
+                            + (defense.Guarding * 0.1f)
+                            + (defense.Awareness * 0.1f)   // ou Blocking se tiver
+                            + (zone * 10f);
+
+        float shotResult = offenseShot - defenseShot;
+
+
+        float defenderQualityMultiplier = 1f;
+
+        int defenseOVR = defense.SetOVR();
+
+        if (defenseOVR < 60)        // Bad Defender
+        {
+            defenderQualityMultiplier = zone switch
+            {
+                0 => 0.85f,   // Outside
+                1 => 0.75f,   // Mid
+                2 => 0.80f,   // Inside
+                _ => 0.80f
+            };
+        }
+        else if (defenseOVR <= 75)  // Average Defender
+        {
+            defenderQualityMultiplier = zone switch
+            {
+                0 => 0.70f,
+                1 => 0.65f,
+                2 => 0.75f,
+                _ => 0.70f
+            };
+        }
+        else                        // Good / Great / Star Defender (75+)
+        {
+            defenderQualityMultiplier = zone switch
+            {
+                0 => 0.55f,
+                1 => 0.50f,
+                2 => 0.60f,
+                _ => 0.55f
+            };
+        }
+
+        float baseAccuracy = shotResult * defenderQualityMultiplier * 0.0028f;
+
+        //float baseAccuracy = 0.68f; // valor padrão
+
+        if (shotResult >= 200f) baseAccuracy = 0.93f;
+        else if (shotResult >= 150f) baseAccuracy = 0.88f;
+        else if (shotResult >= 100f) baseAccuracy = 0.82f;
+        else if (shotResult >= 50f) baseAccuracy = 0.76f;
+        else if (shotResult >= 0f) baseAccuracy = 0.71f;
+        else if (shotResult >= -50f) baseAccuracy = 0.65f;
+        else if (shotResult >= -100f) baseAccuracy = 0.58f;
+        else baseAccuracy = 0.50f; // valores negativos fortes
+
+        float adrenaline = teamWithball.IsPlayerTeam ? teamWithball.AdrenalineBar : 75f;
+        float adrenalineFactor = adrenaline / 100f;
+
+        float difficulty = teamWithball.IsPlayerTeam
+            ? 1f - (adrenalineFactor * 0.32f)
+            : 1f - (adrenalineFactor * 0.14f);
+
+        float rawChance = baseAccuracy * difficulty;
+
+        float shootingBuffMultiplier = 1f + (buff_Atk / 100f);
+
+        float finalChance = rawChance * shootingBuffMultiplier;
+
+        float staminaFactor = GetStaminaMultiplier(offense.CurrentStamina);
+        finalChance *= staminaFactor;
+
+        float streakMultiplier = 1f;
+        if (teamWithball.IsPlayerTeam)
+        {
+            int streak = Mathf.Clamp(consecutiveSuccesses, 0, 10);
+            streakMultiplier = 1f + (streak * 0.04f);
+        }
+        else
+        {
+            if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
+            {
+                finalChance *= 1.35f;
+            }
+            else
+            {
+                finalChance *= 1.20f;
+            }
+            streakMultiplier = 1f + (5 * 0.065f);
+        }
+        finalChance *= streakMultiplier;
+
         return Mathf.Clamp(finalChance, 0.20f, 0.93f);
     }
     float ActivateSpecialAttk(bool isPercentage)
@@ -2258,12 +2385,36 @@ public class MatchManager : MonoBehaviour
     //AI
     private AIAction AI_Tendency()
     {
-        
+        /*
         float passChance = PassEquation();
         float jukeChance = CalculateJukeProbability(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone);
         float shootChance = ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0);
         float spChance = ActivateSpecialAttk(true);
+        */
+        float awareness = playerWithTheBall.Awareness;
+        float shooting = playerWithTheBall.Shooting;
 
+        float passChance = PassEquation() * (1f + (awareness / 100f) * 0.4f);     // Awareness aumenta chance de passe
+        float jukeChance = CalculateJukeProbability(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone);
+
+        // Se o jogador está fora da sua zona preferida, aumenta chance de Juke
+        int preferredZone = GetPreferredZone(playerWithTheBall); // função auxiliar simples
+        if (playerWithTheBall.CurrentZone < preferredZone && playerWithTheBall.CurrentZone < 2)
+        {
+            jukeChance *= 1.35f;   // Aumenta chance de driblar para avançar
+        }
+
+        float shootChance = ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0)
+                            * (1f + (shooting / 100f) * 0.35f);   // Shooting aumenta chance de arremesso
+
+        float spChance = 0f;
+        if (teamWithball.AdrenalineBar >= 50f)
+        {
+            // Quanto mais perto de 100, maior a chance de Special
+            float adrenalineFactor = (teamWithball.AdrenalineBar - 50f) / 50f;
+            spChance = ActivateSpecialAttk(true) * (0.6f + adrenalineFactor * 0.4f);
+        }
+        ////////////////////////////////////////////
         if (currentGamePossessons == 1 && !teamWithball.IsPlayerTeam)
         {
             int scoreDifference = HomeTeam.Score - AwayTeam.Score;
@@ -2308,15 +2459,29 @@ public class MatchManager : MonoBehaviour
         else
             return AIAction.Special;
     }
+    private int GetPreferredZone(Player p)
+    {
+        if (p == null)
+            return 1; // fallback: Mid
 
+        // Compara os atributos principais de cada zona
+        int insideValue = p.Inside;
+        int midValue = p.Mid;
+        int outsideValue = p.Outside;   // ou p.Shooting, se você preferir usar Shooting
+
+        // Retorna a zona com o maior valor
+        if (insideValue >= midValue && insideValue >= outsideValue)
+            return 2; // Inside
+
+        if (midValue >= outsideValue)
+            return 1; // Mid
+
+        return 0;     // Outside
+    }
     // Função auxiliar pra juke chance (idêntica à lógica do TryBeatDefender)
     private float CalculateJukeProbability(Player offense, Player defense, int zone)
     {
-        // (copia exatamente o cálculo de finalChance do TryBeatDefenderAdvanceZone, sem o Random.value < finalChance)
-        // ... (cola o bloco de cálculo do offenseScore, defenseScore, bias, buff_Juke, clamp)
-        // Retorna finalChance (0-1)
-        // (pra não duplicar código, tu pode extrair o cálculo pra uma função separada se quiser)
-        // Exemplo rápido (copia da última versão):
+        
         int offenseOVR = /* cálculo OVR */85;
         int defenseOVR = /* cálculo OVR */85;
 
