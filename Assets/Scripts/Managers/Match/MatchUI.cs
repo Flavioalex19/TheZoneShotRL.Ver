@@ -140,6 +140,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_Victory_Defeat;
     [SerializeField] GameObject panel_victory_defeat;
     [SerializeField] public Animator anim_victoryCircle;
+    [SerializeField] Animator animator_endgame_Result;
     [SerializeField] Button advbtn;
 
     [Header("Animators")]
@@ -796,5 +797,9 @@ public class MatchUI : MonoBehaviour
     public void UseSpBtn()
     {
         anim_Sp_Button_Activate.SetTrigger("Go");
+    }
+    public void StartResultPanel()
+    {
+        animator_endgame_Result.SetTrigger("Go");
     }
 }
