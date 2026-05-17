@@ -1898,13 +1898,13 @@ public class MatchManager : MonoBehaviour
     {
         int loss;
         if (player.Age <= 23)
-            loss = 2; // baixa
+            loss = 10; // baixa
         else if (player.Age <= 27)
-            loss = 5; // média baixa
+            loss = 15; // média baixa
         else if (player.Age <= 31)
-            loss = 10; // média alta
+            loss = 30; // média alta
         else
-            loss = 12; // alta
+            loss = 35; // alta
 
         //check medcare lvl bonus
         float medicalReduction = 0f;
