@@ -171,7 +171,7 @@ public class TrainingManager : MonoBehaviour
         }
         else
         {
-            teamManagerUI._textDrillSelected.text = "Cannot train this week anymore";
+            teamManagerUI._textDrillSelected.text = "Not enought points to train";
         }
     }
     public void CheckIfTrainingIsCompleted()

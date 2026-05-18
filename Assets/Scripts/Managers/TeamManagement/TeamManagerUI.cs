@@ -994,12 +994,16 @@ public class TeamManagerUI : MonoBehaviour
     //Trading
     public void SetTradePanel()
     {
+        /*
         if(leagueManager.canTrade == true)
         {
             _tradePanel.SetActive(true);
             SetTheTradingBtns();
             
         }
+        */
+        _tradePanel.SetActive(true);
+        SetTheTradingBtns();
     }
     public void SetTheTradingBtns()
     {
@@ -1063,11 +1067,12 @@ public class TeamManagerUI : MonoBehaviour
             transform_tradeMyPlayersBtn.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text =
                 gameManager.playerTeam.playersListRoster[i].SetOVR().ToString();
         }
-
+        /*
         if (leagueManager.canTrade == false)
         {
             go_tradeFinished.SetActive(true);
         }
+        */
         text_trade_frontoffeicePoints.text = gameManager.playerTeam.FrontOfficePoints.ToString();
     }
     void TradePlayerToTradeSelected(Player player)
@@ -1316,7 +1321,7 @@ public class TeamManagerUI : MonoBehaviour
             // Adiciona playerA a teamB
             gameManager.leagueTeams[trade_teamIndex].playersListRoster.Add(trade_playerToTrade);
             //cannot tade this week
-            leagueManager.canTrade = false;
+            //leagueManager.canTrade = false;
             //turn oon panel
             go_tradeFinished.SetActive(true);
             gameManager.playerTeam.FrontOfficePoints -= trade_costOfTrade;
@@ -1699,7 +1704,7 @@ public class TeamManagerUI : MonoBehaviour
         string result = " ";
 
         if (leagueManager.canTrain) result += "<color=#3AB0FF> - Training is avaliable for this week\n</color>";
-        if (leagueManager.canTrade) result += "\n<color=#FFD700> - We can trade this week, boss!</color>\n";
+        //if (leagueManager.canTrade) result += "\n<color=#FFD700> - We can trade this week, boss!</color>\n";
         if (leagueManager.canNegociateContract) result += "\n<color=#90EE90> - We can choose a player to negotiate a contract extension</color>";
 
         if (result == " ") result = "No tasks remaining for the week";

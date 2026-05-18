@@ -115,6 +115,7 @@ public class MatchManager : MonoBehaviour
     public int mod_Def = 0;
     public int momentum = 0;
     public bool canUseCards = true;
+    bool canDraw = true;
     [SerializeField] GameObject cardsPanel;
 
     //Adranline
@@ -530,7 +531,7 @@ public class MatchManager : MonoBehaviour
                         currentGamePossessons++;
                     }
                 }
-
+                /*
                 if (currentGamePossessons <= 1)
                 {
                     if(!isSimulation)uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " must shoot due to low possessions!");
@@ -540,6 +541,7 @@ public class MatchManager : MonoBehaviour
                     
                     yield break;
                 }
+                */
                 else if (_canCallTimeout == false)
                 {
                     yield return StartCoroutine(WaitForTimeOut());
@@ -663,7 +665,7 @@ public class MatchManager : MonoBehaviour
             */
             if (!isSimulation)
             {
-                GetAdrenalineAddUp(HomeTeam);
+               adrenaline_addUp = GetAdrenalineAddUp(HomeTeam);
             }
             
             ResetPostions();
@@ -673,11 +675,16 @@ public class MatchManager : MonoBehaviour
             if (currentGamePossessons > 1)
             {
                 ResetChoices();
-                if (cardsFolder.childCount > 3)
+                if(canDraw == true)
                 {
-                    CreateHand();
-                    if (!isSimulation) _matchUI.UpdateCardsHand();
+                    if (cardsFolder.childCount > 3)
+                    {
+                        CreateHand();
+                        if (!isSimulation) _matchUI.UpdateCardsHand();
+                        canDraw = false;
+                    }
                 }
+                
             }   
             _matchUI.text_remainingCards.text = cardsFolder.childCount.ToString();
             while (true)
@@ -1086,6 +1093,7 @@ public class MatchManager : MonoBehaviour
         ControlStamina(HomeTeam);
         ControlStamina(AwayTeam);
         playerWithTheBall = null;
+        canDraw = true;//possibilida ao inicio de turno scar cartas 
         // Toggle team
         if (teamWithball == HomeTeam)
         {
@@ -2063,7 +2071,7 @@ public class MatchManager : MonoBehaviour
         // no avaliable cards do draw
         if (cardsFolder.childCount < 3)
         {
-            Debug.LogWarning("Não há cards suficientes no cardsFolder para criar a mão.");
+            //Debug.LogWarning("Não há cards suficientes no cardsFolder para criar a mão.");
             return;
         }
 
@@ -2089,7 +2097,6 @@ public class MatchManager : MonoBehaviour
             chosenCard.localRotation = Quaternion.identity;
         }
 
-        //Debug.Log("Nova mão criada com 3 cards!");
     }
     #region Offense and Otpions
     void ResetPostions()
@@ -2157,7 +2164,7 @@ public class MatchManager : MonoBehaviour
     }
     bool TryBeatDefenderAdvanceZone(Player offense, Player defense, int zone, int bonus = 0)
     {
-        
+        /*
         int offenseOVR = offense.SetOVR();
         int defenseOVR = defense.SetOVR();
 
@@ -2213,6 +2220,78 @@ public class MatchManager : MonoBehaviour
         _matchUI.TurnOffPlayerButtons();
 
         return true;
+        */
+        // ====================== JUKE CHECK (da imagem) ======================
+        // Offense
+        float X = 100f
+                  + (offense.Consistency * 0.1f)
+                  + (offense.Control * 0.1f)
+                  + (offense.Juking * 0.1f)
+                  + (zone * 10f)
+                  + 0f; // Positional Bonus Result (pode ser integrado depois se quiser)
+
+        // Defense (sem zone, conforme você pediu)
+        float Y = (defense.Consistency * 0.1f)
+                  + (defense.Guarding * 0.1f)
+                  + (defense.Stealing * 0.1f);
+
+        float jukeResult = X - Y;
+
+        // ====================== CONVERSÃO DO RESULTADO EM CHANCE ======================
+        float baseJukeChance;
+
+        if (jukeResult >= 100f)
+            baseJukeChance = 0.85f;     // Juke bem sucedido
+        else if (jukeResult >= -99f)
+            baseJukeChance = 0.50f;     // Meio a meio (removido o "Nothing")
+        else
+            baseJukeChance = 0.25f;     // Steal (defesa vence)
+
+        // ====================== FATORES EXISTENTES (mantidos) ======================
+        float adrenaline = teamWithball.IsPlayerTeam ? teamWithball.AdrenalineBar : 75f;
+        float adrenalineFactor = adrenaline / 100f;
+
+        float difficulty = teamWithball.IsPlayerTeam
+            ? 1f - (adrenalineFactor * 0.38f)
+            : 1f - (adrenalineFactor * 0.18f);
+
+        float rawChance = baseJukeChance * difficulty;
+
+        float jukeBuffMultiplier = 1f + (buff_Juke / 100f);
+
+        float finalChance = rawChance * jukeBuffMultiplier * (1f + bonus / 100f);
+
+        float staminaFactor = GetStaminaMultiplier(offense.CurrentStamina);
+        finalChance *= staminaFactor;
+
+        float streakMultiplier = 1f;
+        if (teamWithball.IsPlayerTeam)
+        {
+            int streak = Mathf.Clamp(consecutiveSuccesses, 0, 10);
+            streakMultiplier = 1f + (streak * 0.055f);
+        }
+        else
+        {
+            streakMultiplier = 1f + (5 * 0.025f);
+        }
+        finalChance *= streakMultiplier;
+
+        finalChance = Mathf.Clamp(finalChance, 0.25f, 0.90f);
+
+        jukePercentage = finalChance;
+
+        bool success = Random.value < finalChance;
+
+        if (!success)
+        {
+            offense.CurrentZone = 0;
+            return false;   // Steal
+        }
+
+        offense.CurrentZone = Mathf.Min(zone + 1, 2);
+        _matchUI.UpdatePlayerPlacements();
+        _matchUI.TurnOffPlayerButtons();
+        return true;   // Juke bem sucedido
     }
     bool TryToShoveDefender(Player attacker, Player defender)
     {
