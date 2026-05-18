@@ -187,13 +187,13 @@ public class TradeManager : MonoBehaviour
             _teamManagerUI.SetTradeResultText("No player selected for trade.");
             return;
         }
-
+        /*
         if (_leagueManager.canTrade == false)
         {
             _teamManagerUI.SetTradeResultText("You already made a trade this turn.");
             return;
         }
-
+        */
         // === NOVO: chance de trade gratuita baseada no Front Office Level ===
         int finalCost = tradeCost;
         int frontOfficeLevel = _gameManager.playerTeam.OfficeLvl; // ajuste o nome do campo se for diferente (ex: FrontOfficeLvl, offideLvl, etc.)

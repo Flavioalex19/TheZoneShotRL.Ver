@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR;
@@ -141,6 +142,8 @@ public class MatchUI : MonoBehaviour
     [SerializeField] GameObject panel_victory_defeat;
     [SerializeField] public Animator anim_victoryCircle;
     [SerializeField] Animator animator_endgame_Result;
+    [SerializeField] TextMeshProUGUI text_victoryDefeatResult;
+    [SerializeField] TextMeshProUGUI text_currentStreakVALUE;
     [SerializeField] Button advbtn;
 
     [Header("Animators")]
@@ -798,8 +801,14 @@ public class MatchUI : MonoBehaviour
     {
         anim_Sp_Button_Activate.SetTrigger("Go");
     }
-    public void StartResultPanel()
+    public void StartResultPanel(string textM)
     {
         animator_endgame_Result.SetTrigger("Go");
+        text_victoryDefeatResult.text = textM;
+        
+    }
+    public void UpdateStreakValue(int value)
+    {
+        text_currentStreakVALUE.text = value.ToString();
     }
 }

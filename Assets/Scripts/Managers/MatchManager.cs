@@ -365,7 +365,8 @@ public class MatchManager : MonoBehaviour
                 {
                     manager.playerTeam.isChampion = true;
                 }
-                _matchUI.ActivateVictoryDefeat("Victory");
+                //_matchUI.ActivateVictoryDefeat("Victory");
+                _matchUI.StartResultPanel("Victory");
             }
             
         }
@@ -383,7 +384,7 @@ public class MatchManager : MonoBehaviour
                     leagueManager.isGameOver = true;
                     //leagueManager.isOnR8 = false;
                 }
-                if (!isSimulation) _matchUI.ActivateVictoryDefeat("Defeat");
+                if (!isSimulation) _matchUI.StartResultPanel("Defeat"); //_matchUI.ActivateVictoryDefeat("Defeat");
             }
             
         }
@@ -393,7 +394,7 @@ public class MatchManager : MonoBehaviour
             AwayTeam.Moral -= 5;
             HomeTeam.Draws++;
             AwayTeam.Draws++;
-            if (HomeTeam.IsPlayerTeam) { _matchUI.ActivateVictoryDefeat("Draw"); }
+            if (HomeTeam.IsPlayerTeam) { _matchUI.StartResultPanel("Draw");/*_matchUI.ActivateVictoryDefeat("Draw"); */}
             
         }
         
@@ -656,8 +657,14 @@ public class MatchManager : MonoBehaviour
             //_matchUI.OffesnivePanelOnOff(true);
             CanChooseDefenseAction = false;
 
+            /*
             if (!isSimulation) adrenaline_addUp = 15;//botar a faclity multipler
             else adrenaline_addUp = 25;
+            */
+            if (!isSimulation)
+            {
+                GetAdrenalineAddUp(HomeTeam);
+            }
             
             ResetPostions();
             _matchUI.PlayerWithBallButtonsOnOff();
@@ -679,6 +686,7 @@ public class MatchManager : MonoBehaviour
                 if (!isSimulation) _matchUI.PlayerWithTheBallOff();
                 if (!isSimulation) _matchUI.PlayerWithBallButtonsOnOff();
                 if (!isSimulation) _matchUI.UpdatePlayerPlacements();
+                if (!isSimulation) _matchUI.UpdateStreakValue(consecutiveSuccesses);
                 //if(!isSimulation) _matchUI.ActivateAnimatorOffensivePanel();
                 //MatchEvents();
                 //CanChooseAction = true;
@@ -869,6 +877,13 @@ public class MatchManager : MonoBehaviour
                     yield return new WaitForSeconds(1f);
                     if (TryToShoveDefender(playerWithTheBall,playerDefending))
                     {
+                        RegisterSuccess();
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + "Shoved " + playerDefending.playerLastName);
+                        //resultPanel _matchUI.ResultActionPanel("S",2);
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        ResetChoices();
+                        continue;
 
                     }
 
@@ -2732,4 +2747,19 @@ public class MatchManager : MonoBehaviour
     }
 
     #endregion
+    public int GetAdrenalineAddUp(Team team)
+    {
+        if (team == null)
+            return 5; // valor padrão de segurança
+
+        int lvl = team.ArenaLvl;
+
+        // Nível 0 = 5
+        // Aumenta progressivamente até o máximo de 25 (a partir do level 6/7)
+        if (lvl >= 7)
+            return 25;
+
+        // Graduação suave: level 0 = 5, level 6 = 23, level 7+ = 25
+        return 5 + (lvl * 3);
+    }
 }
