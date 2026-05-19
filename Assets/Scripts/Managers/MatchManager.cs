@@ -476,6 +476,7 @@ public class MatchManager : MonoBehaviour
         if(playerWithTheBall!=null) playerWithTheBall.HasTheBall = false;
 
         playerWithTheBall = null;
+        /*
         int highestAwareness = int.MinValue;
 
         for (int i = 0; i < 4; i++)
@@ -489,6 +490,10 @@ public class MatchManager : MonoBehaviour
             }
             
         }
+        */
+        int randomIndex = UnityEngine.Random.Range(0, 4);
+        playerWithTheBall = teamWithball.playersListRoster[randomIndex];
+
         playerWithTheBall.HasTheBall = true;
         if (playerWithTheBall != null)
         {
@@ -508,7 +513,7 @@ public class MatchManager : MonoBehaviour
         if( teamWithball.IsPlayerTeam == false)
         {
             adrenaline_addUp = 20;
-
+            AwayTeam.AdrenalineBar = 50;
             if (!isSimulation) _matchUI.OffesnivePanelOnOff(false);
             CanChooseAction = false;
             
@@ -667,7 +672,7 @@ public class MatchManager : MonoBehaviour
             {
                adrenaline_addUp = GetAdrenalineAddUp(HomeTeam);
             }
-            
+            HomeTeam.AdrenalineBar += adrenaline_addUp;
             ResetPostions();
             _matchUI.PlayerWithBallButtonsOnOff();
             ResetStreak();
@@ -709,7 +714,7 @@ public class MatchManager : MonoBehaviour
                 _matchUI.OffesnivePanelOnOff(true);
                 //print(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false) + " Is the cahnce of success");
                 _matchUI.SetScoringPercentage(ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone,0));
-                _matchUI.SetPassPercentage(PassEquation());
+                _matchUI.SetPassPercentage(PercentageMakePassToTeammate(0));
                 _matchUI.SetJukePercentage(/*TryBeatDefenderAdvanceZone(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0)*/GetJukePercentage(playerWithTheBall,playerDefending,playerWithTheBall.CurrentZone));
                 _matchUI.SetSpPercentage(ActivateSpecialAttk(true));
                 _matchUI.text_midChance.text = "Mid: " + Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 1, 0) *100).ToString() + "%";
@@ -1800,7 +1805,7 @@ public class MatchManager : MonoBehaviour
             if (!isPercentage)
             {
                 teamWithball.AdrenalineBar = 0; // Zera a barra ao usar
-                currentGamePossessons--;
+                //currentGamePossessons--;
             }
             return 1f;
         }
@@ -1862,9 +1867,10 @@ public class MatchManager : MonoBehaviour
         if (!isPercentage)
         {
             teamWithball.AdrenalineBar = 0;
-            currentGamePossessons--;
+            //currentGamePossessons--;
         }
-
+        teamWithball.AdrenalineBar = 0; // Zera a barra ao usar
+        currentGamePossessons--;
         return finalChance;
     }
     
@@ -2612,6 +2618,36 @@ public class MatchManager : MonoBehaviour
         }
 
         return Mathf.Clamp(finalChance, 0.15f, 0.95f);
+    }
+    float PercentageMakePassToTeammate(int receiverIndex)
+    {
+        if (receiverIndex < 0 || receiverIndex >= teamWithball.playersListRoster.Count)
+            return 0f;
+
+        Player receiver = teamWithball.playersListRoster[receiverIndex];
+
+        if (receiver == playerWithTheBall || receiver.HasTheBall)
+            return 0f;
+
+        // === CÁLCULO EXATO DA PROBABILIDADE (idêntico ao original) ===
+        float adrenaline = teamWithball.IsPlayerTeam ? teamWithball.AdrenalineBar : 75f;
+        float adrenalineFactor = adrenaline / 100f;
+
+        float baseChance = 0.80f;
+        float difficulty = teamWithball.IsPlayerTeam
+            ? 1f - (adrenalineFactor * 0.32f)
+            : 1f - (adrenalineFactor * 0.12f);
+
+        float passBuffMultiplier = 1f + (buff_Pass / 100f);
+
+        float finalChance = baseChance * difficulty * passBuffMultiplier;
+
+        float staminaFactor = GetStaminaMultiplier(playerWithTheBall.CurrentStamina);
+        finalChance *= staminaFactor;
+
+        finalChance = Mathf.Clamp(finalChance, 0.38f, 0.94f);
+
+        return finalChance;
     }
     //Damage
     private void CalculateDamageAndReduceHP(Team defendingTeam, int zone, bool isSP = false)

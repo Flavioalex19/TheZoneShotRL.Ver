@@ -289,7 +289,7 @@ public class GameManager : MonoBehaviour
             animator.SetTrigger("Go");
         }
 
-        float timer = 2f;
+        float timer = 4f;
         while (timer > 0)
         {
             introManager.ChangeStageTransitionTextIntro();

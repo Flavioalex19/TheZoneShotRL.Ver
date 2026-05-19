@@ -362,7 +362,7 @@ public class TeamManagerUI : MonoBehaviour
                 _panelEventsTypes.SetActive(false);
             }
 
-            _text_NameTeam.text = gameManager.playerTeam.TeamName;
+            _text_NameTeam.text = gameManager.playerTeam.TeamName + " Headquarters";
             text_teamStyle.text = gameManager.playerTeam._teamStyle.ToString();
             musicManager.RestoreMutedAudioSources();
             _scheduleArea.SetActive(false);

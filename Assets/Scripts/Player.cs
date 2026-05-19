@@ -27,7 +27,9 @@ public class Player : MonoBehaviour
         "Andrew", "Austin", "Acer", "Lima","Aaron", "Drake", "Ajay", "Allan", "Alvin", "Anton", "Archer", "Blake", "Brad", "Brandom", "Braxton", "Bret", "Brian", "Bruce", "Calvin",
         "Cary", "Chester", "C.J", "Clayton", "Colby", "Cody", "Cory", "Dalton", "Damian", "Dane", "Deelan", "Deshawn", "Dmitri", "Donovan" ,"Dray", "Draymond", "Earnest",
         "Efrem", "Elliot", "Finn", "Flynt", "Fry", "Gavin", "Geoff", "Gilligan", "Glenn", "Hank","Alistair", "Benedict", "Harold", "Hercules", "Herman", "Hugh", "Hugo", "Iggy",
-        "Igor", "Thiago", "Rod", "Ichiro", "Iniko", "Itashi", "J.B.", "J.D.", "J.T.", "J.R.", "Jacub", "Jarrett", "Jax", "Keith", "Keyshawn", "Kirk", "Lawrence"
+        "Igor", "Thiago", "Rod", "Ichiro", "Iniko", "Itashi", "J.B.", "J.D.", "J.T.", "J.R.", "Jacub", "Jarrett", "Jax", "Keith", "Keyshawn", "Kirk", "Lawrence", "Lee", "Leif",
+        "Leigh", "Lemarcus", "Lennox", "Lenny", "Leonardo", "Levy", "Lionel", "Logan", "Lonnie", "Lowell", "L.P", "L.J", "Lucian", "Mackenzi", "Manny", "Marcel", "Marlon", "Marvin",
+        "Mason", "Nolan"
     };
     private static readonly string[] secondNames = 
     {
@@ -38,7 +40,8 @@ public class Player : MonoBehaviour
         "Bollock", "Trent", "Brady", "Machado","Edwards", "Thompson", "Mitty", "Webster", "Web", "Watson", "Homes", "Aiken" , "Ainsworth", "Adler", "May", "Duke", "Ventura",
         "Acker", "Alderman", "Allerdale", "Asimov", "Applegarth", "Ashburn", "Axford", "Backman", "Ballard", "Barlow", "Baron", "Barrick", "Barrowcliff", "Bartholomew", "Batara",
         "Baumann", "Bayfield", "Beaver", "Beckett", "Beckford", "Beesley", "Behrens", "Bellamy", "Bellington", "Bender", "Bendett", "Benson", "Bernstein", "Bertolini", "Blackford",
-        "Blanc", "Bledsoe", "Borchardt", "Breakspear", "Breakwell", "Chevallier", "Christensen", "Christopher", "Clarkson", "Clemens", "Colby", "Cook", "Grimmes"
+        "Blanc", "Bledsoe", "Borchardt", "Breakspear", "Breakwell", "Chevallier", "Christensen", "Christopher", "Clarkson", "Clemens", "Colby", "Cook", "Grimmes", "Ramos","Graham",
+        "Simmons", "Jane", "Clason", "Assis"
     };
     [SerializeField] public string playerFirstName;
     [SerializeField] public string playerLastName;
