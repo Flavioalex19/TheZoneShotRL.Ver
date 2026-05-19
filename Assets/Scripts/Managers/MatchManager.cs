@@ -664,10 +664,7 @@ public class MatchManager : MonoBehaviour
             //_matchUI.OffesnivePanelOnOff(true);
             CanChooseDefenseAction = false;
 
-            /*
-            if (!isSimulation) adrenaline_addUp = 15;//botar a faclity multipler
-            else adrenaline_addUp = 25;
-            */
+           
             if (!isSimulation)
             {
                adrenaline_addUp = GetAdrenalineAddUp(HomeTeam);
@@ -725,7 +722,7 @@ public class MatchManager : MonoBehaviour
                 //Timeout call
                 //yield return StartCoroutine(WaitForTimeOut());
                 // Wait until player makes a choice
-                yield return new WaitUntil(() => _ChoosePass || _ChooseScoring || _ChooseToSpecialAtt || _ChooseBeatDefender ||_canCallTimeout == false);
+                yield return new WaitUntil(() => _ChoosePass || _ChooseScoring || _ChooseToSpecialAtt || _ChooseBeatDefender || CanChooseCharge || CanChooseShove||_canCallTimeout == false);
 
                 if (_ChooseScoring)
                 {
@@ -883,37 +880,76 @@ public class MatchManager : MonoBehaviour
                 else if (CanChooseShove)
                 {
                     //_matchUI.UsedPlayerBtns();
+                    print("Shove!!!!");
+                    _matchUI.ActionPanelAnim(7, "Shove");
                     //action panel
                     //Lose Stamina
                     StaminaLossByAction(playerWithTheBall);
-                    yield return new WaitForSeconds(1f);
+                    yield return new WaitForSeconds(_actionTimer);
                     if (TryToShoveDefender(playerWithTheBall,playerDefending))
                     {
                         RegisterSuccess();
                         if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + "Shoved " + playerDefending.playerLastName);
-                        //resultPanel _matchUI.ResultActionPanel("S",2);
+                        _matchUI.ResultActionPanel("S", 2);
                         if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         ResetChoices();
                         continue;
 
                     }
+                    else
+                    {
 
+                        ResetStreak();
+                        uiManager.PlaybyPlayText(_matchUI.LosesPos());
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        playerWithTheBall.HasTheBall = false;
+                        _matchUI.ResultActionPanel("F", 2);
+                        SwitchPossession();
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        yield break;
+
+                    }
+                    
 
                 }
                 else if (CanChooseCharge)
                 {
+                    print("Charge!!!!");
+                    _matchUI.ActionPanelAnim(7, "Charge");
+                    yield return new WaitForSeconds(_actionTimer);
                     //_matchUI.UsedPlayerBtns();
-                    //action panel
-                    //Lose Stamina
-                    StaminaLossByAction(playerWithTheBall);
-                    yield return new WaitForSeconds(1f);
+                    uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " is Charging");
+                    if (TryToChargeAdrenaline(playerWithTheBall, HomeTeam))
+                    {
+                        ResetChoices();
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " Charged the field!");
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        ResetChoices();
+                        continue;
+                    }
+                    else
+                    {
+                        ResetStreak();
+                        uiManager.PlaybyPlayText(_matchUI.LosesPos());//fazer uma lista propria disso
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        playerWithTheBall.HasTheBall = false;
+                        _matchUI.ResultActionPanel("F", 2);
+                        SwitchPossession();
+                        uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        yield break;
+                    }
+                    
 
                 }
                 else if(_canCallTimeout == false)
                 {
                     if (!isSimulation) yield return StartCoroutine(WaitForTimeOut());
                     //CheckAndSwapLowStaminaPlayers(AwayTeam);
+                    consecutiveSuccesses = 0;
                     for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
                     {
                         HomeTeam.playersListRoster[i].HasTheBall = false;
@@ -933,6 +969,8 @@ public class MatchManager : MonoBehaviour
         _ChooseScoring = false;
         _ChooseToSpecialAtt = false;
         _ChooseBeatDefender = false;
+        CanChooseShove = false;
+        CanChooseCharge = false;
         CanChooseAction = true;
     }
     public void GetChoosePass()
@@ -957,6 +995,7 @@ public class MatchManager : MonoBehaviour
     }
     public void ChooseCharge()
     {
+        print("I CHOOSE CHARGE!!!!");
         CanChooseCharge = true;
         CanChooseAction = false;
     }
@@ -2346,7 +2385,9 @@ public class MatchManager : MonoBehaviour
         playerWithBall.CurrentStamina -= 25; // Reduz 25 de stamina
         playerWithBall.CurrentStamina = Mathf.Max(0, playerWithBall.CurrentStamina); // Clamp para evitar negativo (embora >25 garanta)
 
-        team.AdrenalineBar += 25; // Aumenta a barra em 25
+        int increaseValue = Random.Range(25, 35);
+
+        team.AdrenalineBar += increaseValue; // Aumenta a barra em 25
                                   // Assuma que adrenalinebar tem um max, se necessário: team.adrenalinebar = Mathf.Min(team.adrenalinebar, maxAdrenaline);
 
         return true;
