@@ -880,7 +880,6 @@ public class MatchManager : MonoBehaviour
                 else if (CanChooseShove)
                 {
                     //_matchUI.UsedPlayerBtns();
-                    print("Shove!!!!");
                     _matchUI.ActionPanelAnim(7, "Shove");
                     //action panel
                     //Lose Stamina
@@ -916,7 +915,6 @@ public class MatchManager : MonoBehaviour
                 }
                 else if (CanChooseCharge)
                 {
-                    print("Charge!!!!");
                     _matchUI.ActionPanelAnim(7, "Charge");
                     yield return new WaitForSeconds(_actionTimer);
                     //_matchUI.UsedPlayerBtns();
@@ -926,6 +924,7 @@ public class MatchManager : MonoBehaviour
                         ResetChoices();
                         if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " Charged the field!");
+                        _matchUI.ResultActionPanel("S", 2);//mudar
                         if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         ResetChoices();
                         continue;
