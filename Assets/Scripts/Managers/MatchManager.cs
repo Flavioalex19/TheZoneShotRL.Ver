@@ -91,7 +91,8 @@ public class MatchManager : MonoBehaviour
 
     float jukePercentage;
     public int consecutiveSuccesses = 0;
-    
+
+    [SerializeField] string currentFormation;
 
     private List<string> eventsList = new List<string>()
     {
@@ -303,6 +304,7 @@ public class MatchManager : MonoBehaviour
         _matchUI.MatchStartAnim();
         while (currentGamePossessons > 0)
         {
+            currentFormation = teamWithball._teamStyle.ToString();
             // Step 1: Choose the player to carry the ball
             ChoosePlayerToCarryBall();
             match = MatchStates.Possesion;
@@ -801,26 +803,9 @@ public class MatchManager : MonoBehaviour
                         //Add later the list of string for a success use o team abillity
                         uiManager.PlaybyPlayText("The team will use their special abillity");
                         if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
-                        switch (teamWithball._teamStyle)
-                        {
-                            case TeamStyle.Brawler:
-                                playerWithTheBall.PointsMatch += spPoints;
-                                teamWithball.Score += spPoints;
-                                break;
-                            case TeamStyle.PhaseDash:
-                                playerWithTheBall.PointsMatch += spPoints;
-                                teamWithball.Score += spPoints;
-                                break;
-                            case TeamStyle.RailShot:
-                                playerWithTheBall.PointsMatch += spPoints;
-                                teamWithball.Score += spPoints;
-                                break;
-                            case TeamStyle.HyperDribbler:
-                                playerWithTheBall.PointsMatch += spPoints;
-                                teamWithball.Score += spPoints;
-                                break;
-                            default: break;
-                        }
+
+                        teamWithball.Score += spPoints;
+
                         if (!isSimulation && teamWithball.IsPlayerTeam)
                         {
                             Team defendingTeam = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
@@ -880,7 +865,7 @@ public class MatchManager : MonoBehaviour
                 else if (CanChooseShove)
                 {
                     //_matchUI.UsedPlayerBtns();
-                    _matchUI.ActionPanelAnim(7, "Shove");
+                    _matchUI.ActionPanelAnim(9, "Shove");
                     //action panel
                     //Lose Stamina
                     StaminaLossByAction(playerWithTheBall);
@@ -915,7 +900,7 @@ public class MatchManager : MonoBehaviour
                 }
                 else if (CanChooseCharge)
                 {
-                    _matchUI.ActionPanelAnim(7, "Charge");
+                    _matchUI.ActionPanelAnim(8, "Charge");
                     yield return new WaitForSeconds(_actionTimer);
                     //_matchUI.UsedPlayerBtns();
                     uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " is Charging");
@@ -1150,7 +1135,7 @@ public class MatchManager : MonoBehaviour
             HomeTeam.hasPossession = true;
             teamWithball = HomeTeam;
         }
-
+        currentFormation = teamWithball._teamStyle.ToString();
         playerWithTheBall = null;
         uiManager.PlaybyPlayText("Possession switches to " + teamWithball.TeamName);
         ChoosePlayerToCarryBall();
@@ -1659,61 +1644,7 @@ public class MatchManager : MonoBehaviour
     }
     float ScoringEquation(Player offense, Player defense, int zone, int momentumModifier)
     {
-        /*
-        int ovr = offense.SetOVR();
-
-        float baseAccuracy = zone switch
-        {
-            0 => 0.65f,   // Outside
-            1 => 0.75f,   // Mid
-            2 => 0.79f,   // Inside
-            _ => 0.68f
-        };
-
-        float adrenaline = teamWithball.IsPlayerTeam ? teamWithball.AdrenalineBar : 75f;
-        float adrenalineFactor = adrenaline / 100f;
-
-        float difficulty = teamWithball.IsPlayerTeam
-            ? 1f - (adrenalineFactor * 0.32f)
-            : 1f - (adrenalineFactor * 0.14f);
-
-        float offenseScore = (offense.Shooting + offense.Consistency + offense.Control + ovr / 5f) / 4f;
-        float defenseScore = (defense.Guarding + defense.Awareness + defense.Consistency) / 3.5f;
-
-        float rawChance = offenseScore / (offenseScore + defenseScore + 40f);
-
-        // BUFF DE ATAQUE / SHOOTING (facilitador forte)
-        float shootingBuffMultiplier = 1f + (buff_Atk / 100f);
-
-        float finalChance = rawChance * baseAccuracy * difficulty * shootingBuffMultiplier;
-
-        float staminaFactor = GetStaminaMultiplier(offense.CurrentStamina);
-        finalChance *= staminaFactor;
-        float streakMultiplier = 1f;
-
-        if (teamWithball.IsPlayerTeam)
-        {
-            // Streak real do Player Team (0 a 10)
-            int streak = Mathf.Clamp(consecutiveSuccesses, 0, 10);
-            streakMultiplier = 1f + (streak * 0.04f);   
-        }
-        else
-        {
-            if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
-            {
-                finalChance *= 1.35f;     // Playoffs: ainda mais fácil
-            }
-            else
-            {
-                finalChance *= 1.20f;     // Temporada regular: mais fácil
-            }
-            // AI sempre tem streak fixo em 5
-            streakMultiplier = 1f + (5 * 0.065f);        
-        }
-
-        finalChance *= streakMultiplier;
-        return Mathf.Clamp(finalChance, 0.20f, 0.93f);
-        */
+        
         int ovr = offense.SetOVR();
 
         // X = Offense
@@ -1806,7 +1737,7 @@ public class MatchManager : MonoBehaviour
         float finalChance = rawChance * shootingBuffMultiplier;
 
         float staminaFactor = GetStaminaMultiplier(offense.CurrentStamina);
-        finalChance *= staminaFactor;
+        finalChance *= staminaFactor * 0.90f;//coeficente 
 
         float streakMultiplier = 1f;
         if (teamWithball.IsPlayerTeam)
@@ -1975,15 +1906,14 @@ public class MatchManager : MonoBehaviour
 
         //check medcare lvl bonus
         float medicalReduction = 0f;
-
         if (manager != null && manager.playerTeam != null &&
             player != null && player.transform.parent != null)
         {
-            // Verifica se o jogador pertence ao Player Team
             if (player.transform.parent.GetComponent<Team>() == manager.playerTeam ||
                 manager.playerTeam.playersListRoster.Contains(player))
             {
-                medicalReduction = Mathf.Clamp(manager.playerTeam.MedicalLvl * 0.0214f, 0f, 0.15f);
+                // Novo scaling: 0% no lvl 0 - 24% no lvl 4 - 38% no lvl 7
+                medicalReduction = Mathf.Clamp(manager.playerTeam.MedicalLvl * 0.055f, 0f, 0.38f);
             }
         }
 
@@ -2916,5 +2846,60 @@ public class MatchManager : MonoBehaviour
 
         // Graduação suave: level 0 = 5, level 6 = 23, level 7+ = 25
         return 5 + (lvl * 3);
+    }
+    public string GetFormationBonus(Team teamWithBall, Player playerWithTheBall)
+    {
+        if (teamWithBall == null || playerWithTheBall == null)
+            return "Neutral";
+
+        // Encontra a posição do jogador no elenco (0 a 3)
+        int positionIndex = teamWithBall.playersListRoster.IndexOf(playerWithTheBall);
+
+        if (positionIndex < 0 || positionIndex > 3)
+            return "Neutral";
+
+        // Pega o TeamStyle do time que tem a bola
+        string formation = teamWithBall._teamStyle.ToString();
+
+        switch (formation)
+        {
+            case "Neutral":
+                return "Neutral";
+
+            case "Wings":
+                string[] wings = { "Defense", "Shooting", "Defense", "Shooting" };
+                return wings[positionIndex];
+
+            case "Marshall":
+                string[] marshall = { "Shooting & Juke", "Neutral", "Neutral", "Neutral" };
+                return marshall[positionIndex];
+
+            case "Snake":
+                string[] snake = { "Shooting", "Neutral", "Shooting", "Neutral" };
+                return snake[positionIndex];
+
+            case "Forward":
+                string[] forward = { "Neutral", "Shooting", "Shooting", "Neutral" };
+                return forward[positionIndex];
+
+            case "Combo":
+                string[] combo = { "Weak Defense", "Shooting", "Shooting", "Weak Defense" };
+                return combo[positionIndex];
+
+            case "Horns":
+                string[] horns = { "Shooting", "Weak Defense", "Weak Defense", "Shooting" };
+                return horns[positionIndex];
+
+            case "Artillery":
+                string[] artillery = { "Weak Defense", "Shooting", "Shooting", "Weak Defense" };
+                return artillery[positionIndex];
+
+            case "Wall":
+                string[] wall = { "Defense", "Defense", "Defense", "Defense" };
+                return wall[positionIndex];
+
+            default:
+                return "Neutral";
+        }
     }
 }

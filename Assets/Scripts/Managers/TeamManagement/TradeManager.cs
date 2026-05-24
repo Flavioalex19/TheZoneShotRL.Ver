@@ -109,13 +109,18 @@ public class TradeManager : MonoBehaviour
             _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text =
                 TradeTeam.TeamName;
 
-            (attName0, att0, attName1, att1) = GetAttributeValuesForStyle(_gameManager.playerTeam._teamStyle, TradeTeam.playersListRoster[_playerToReceive]);
+            //(attName0, att0, attName1, att1) = GetAttributeValuesForStyle(_gameManager.playerTeam._teamStyle, TradeTeam.playersListRoster[_playerToReceive]);
+            attName0 = "OVR";
+            att0 = TradeTeam.playersListRoster[_playerToReceive].ovr;
+
+            attName1 = "Age";
+            att1 = TradeTeam.playersListRoster[_playerToReceive].Age;
 
             _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = att0.ToString();
             _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text = att1.ToString();
             _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(5).GetComponent<TextMeshProUGUI>().text = attName0;
             _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(6).GetComponent<TextMeshProUGUI>().text = attName1;
-
+            
             CalculateTradeCost(TradeTeam.playersListRoster[_playerToReceive]);
             _teamManagerUI.SetTradeGrade();
         }
@@ -133,11 +138,12 @@ public class TradeManager : MonoBehaviour
             tradeCost = 0;
             _teamManagerUI.SetTradeGrade(); // opcional: reseta grade
         }
+        /*
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = TradeTeam.playersListRoster[_playerToReceive].playerFirstName.ToString() +
             " " + TradeTeam.playersListRoster[_playerToReceive].playerLastName.ToString();
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = TradeTeam.playersListRoster[_playerToReceive].ovr.ToString();
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = TradeTeam.TeamName.ToString();
-        (attName0, att0, attName1, att1) = GetAttributeValuesForStyle(_gameManager.playerTeam._teamStyle, TradeTeam.playersListRoster[_playerToReceive]);
+        //(attName0, att0, attName1, att1) = GetAttributeValuesForStyle(_gameManager.playerTeam._teamStyle, TradeTeam.playersListRoster[_playerToReceive]);
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = att0.ToString();
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text = att1.ToString();
         _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(5).GetComponent<TextMeshProUGUI>().text = attName0;
@@ -146,20 +152,9 @@ public class TradeManager : MonoBehaviour
         CalculateTradeCost(TradeTeam.playersListRoster[_playerToReceive]);
         _teamManagerUI.SetTradeGrade();
         _teamManagerUI.SetPlayersTradeImages(_gameManager.playerTeam.playersListRoster[_playerToTradeIndex], TradeTeam.playersListRoster[_playerToReceive]);
-
+        */
     }
-    public (string attr1Name, int attr1Value, string attr2Name, int attr2Value) GetAttributeValuesForStyle(TeamStyle style, Player player)
-    {
-        return style switch
-        {
-            TeamStyle.Normal => ("Consistency", player.Consistency, "Awareness", player.Awareness),
-            TeamStyle.Brawler => ("Shooting", player.Shooting, "Awareness", player.Awareness),
-            TeamStyle.HyperDribbler => ("Juking", player.Juking, "Control", player.Control),
-            TeamStyle.PhaseDash => ("Control", player.Control, "Positioning", player.Positioning),
-            TeamStyle.RailShot => ("Shooting", player.Shooting, "Outside", player.Outside),
-            _ => ("Consistency", player.Consistency, "Awareness", player.Awareness)
-        };
-    }
+    
     public void SwapPlayersBetweenTeams(List<Player> TeamA, int playerAIndex, List<Player> TeamB, int playerBIndex)
     {
         if (TeamA == null || TeamB == null)

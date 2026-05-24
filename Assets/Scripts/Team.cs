@@ -5,15 +5,15 @@ using UnityEngine;
 
 public enum TeamStyle
 {
-    Normal,
-    Brawler,
-    HyperDribbler,
-    PhaseDash,
-    RailShot,
-    FutureSight,
-    PerfectPlay,
-    ShowTime,
-    CloneAttack
+    Free,
+    Wings,
+    Marshal,
+    Snake,
+    Forwards,
+    Combo,
+    Horn,
+    Artillery,
+    Wall
 
 }
 public class Team : MonoBehaviour

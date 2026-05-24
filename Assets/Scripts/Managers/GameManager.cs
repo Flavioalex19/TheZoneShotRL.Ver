@@ -444,6 +444,11 @@ public class GameManager : MonoBehaviour
             teamGO.transform.SetParent(transform);
             DontDestroyOnLoad(teamGO);
 
+            //protection
+            newTeam.Wins = 0;
+            newTeam.Draws = 0;
+            newTeam.Loses = 0;
+
             leagueTeams.Add(newTeam);
 
             Debug.Log($"[GameManager] Time criado e adicionado: {newTeam.TeamName}");
