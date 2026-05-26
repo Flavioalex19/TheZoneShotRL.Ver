@@ -709,9 +709,7 @@ public class MatchManager : MonoBehaviour
                     }
                 }
                 
-                //old cards creations!!!!!!!!!!!!!!!!!!!!!
                 _matchUI.OffesnivePanelOnOff(true);
-                //print(GetScoringChance(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, false) + " Is the cahnce of success");
                 _matchUI.SetScoringPercentage(ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone,0));
                 _matchUI.SetPassPercentage(PercentageMakePassToTeammate(Random.Range(0,4)));
                 _matchUI.SetJukePercentage(/*TryBeatDefenderAdvanceZone(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0)*/GetJukePercentage(playerWithTheBall,playerDefending,playerWithTheBall.CurrentZone));
@@ -721,8 +719,9 @@ public class MatchManager : MonoBehaviour
                 //_matchUI.SetJukePercentage();
                 _matchUI.SetDMGText(GetDamageValue(playerWithTheBall.CurrentZone));
                 uiManager.PlaybyPlayText("Wait for Player Action");
-                //Timeout call
-                //yield return StartCoroutine(WaitForTimeOut());
+
+                _matchUI.TeamStyleUpdate(currentFormation);//update team style
+                _matchUI.OffensivePanelAwayTeamUpdate(AwayTeam);//update away team player stamna and name
                 // Wait until player makes a choice
                 yield return new WaitUntil(() => _ChoosePass || _ChooseScoring || _ChooseToSpecialAtt || _ChooseBeatDefender || CanChooseCharge || CanChooseShove||_canCallTimeout == false);
 
@@ -1737,7 +1736,7 @@ public class MatchManager : MonoBehaviour
         float finalChance = rawChance * shootingBuffMultiplier;
 
         float staminaFactor = GetStaminaMultiplier(offense.CurrentStamina);
-        finalChance *= staminaFactor * 0.90f;//coeficente 
+        finalChance *= staminaFactor * 0.80f;//coeficente 
 
         float streakMultiplier = 1f;
         if (teamWithball.IsPlayerTeam)
@@ -1758,6 +1757,15 @@ public class MatchManager : MonoBehaviour
             streakMultiplier = 1f + (5 * 0.065f);
         }
         finalChance *= streakMultiplier;
+
+        //Bonus de formação - ataque
+        string bonusType = GetFormationBonus(teamWithball, offense);
+
+        // Aplica bônus se a formação favorece Shooting ou Juke
+        if (bonusType.Contains("Shooting") || bonusType.Contains("Shooting & Juke"))
+        {
+            finalChance *= 1.18f;   // +18% de eficiência
+        }
 
         return Mathf.Clamp(finalChance, 0.20f, 0.93f);
     }
@@ -2138,63 +2146,7 @@ public class MatchManager : MonoBehaviour
     }
     bool TryBeatDefenderAdvanceZone(Player offense, Player defense, int zone, int bonus = 0)
     {
-        /*
-        int offenseOVR = offense.SetOVR();
-        int defenseOVR = defense.SetOVR();
-
-        float adrenaline = teamWithball.IsPlayerTeam ? teamWithball.AdrenalineBar : 75f;
-        float adrenalineFactor = adrenaline / 100f;
-
-        float baseJuke = 0.68f;
-        float difficulty = teamWithball.IsPlayerTeam
-            ? 1f - (adrenalineFactor * 0.38f)
-            : 1f - (adrenalineFactor * 0.18f);
-
-        float offenseScore = (offense.Juking + offense.Control + offense.Consistency + offenseOVR / 4f) / 4f;
-        float defenseScore = (defense.Guarding + defense.Awareness + defense.Consistency + defenseOVR / 4f) / 4f;
-
-        float rawChance = offenseScore / (offenseScore + defenseScore + 45f);
-
-        // BUFF DO JUKE (facilitador forte)
-        float jukeBuffMultiplier = 1f + (buff_Juke / 100f);
-
-        float finalChance = rawChance * baseJuke * difficulty * jukeBuffMultiplier * (1f + bonus / 100f);
-
-        float staminaFactor = GetStaminaMultiplier(offense.CurrentStamina);
-        finalChance *= staminaFactor;
-        //if (consecutiveSuccesses >= 2) finalChance *= 1.15f;
-        float streakMultiplier = 1f;
-
-        if (teamWithball.IsPlayerTeam)
-        {
-            // Streak real do Player Team (0 a 10)
-            int streak = Mathf.Clamp(consecutiveSuccesses, 0, 10);
-            streakMultiplier = 1f + (streak * 0.055f);   // Máximo 25% de bônus no streak 10
-        }
-        else
-        {
-            // AI sempre tem streak fixo em 5
-            streakMultiplier = 1f + (5 * 0.025f);        // 12.5% fixo para AI
-        }
-
-        finalChance *= streakMultiplier;
-        finalChance = Mathf.Clamp(finalChance, 0.25f, 0.90f);
-        jukePercentage = finalChance;
-
-        bool success = Random.value < finalChance;
-
-        if (!success)
-        {
-            offense.CurrentZone = 0;
-            return false;
-        }
-
-        offense.CurrentZone = Mathf.Min(zone + 1, 2);
-        _matchUI.UpdatePlayerPlacements();
-        _matchUI.TurnOffPlayerButtons();
-
-        return true;
-        */
+        
         // ====================== JUKE CHECK (da imagem) ======================
         // Offense
         float X = 100f
@@ -2249,6 +2201,15 @@ public class MatchManager : MonoBehaviour
             streakMultiplier = 1f + (5 * 0.025f);
         }
         finalChance *= streakMultiplier;
+
+        //Bonus de formação - ataque
+        string bonusType = GetFormationBonus(teamWithball, offense);
+
+        // Aplica bônus de Juke
+        if (bonusType.Contains("Juke"))
+        {
+            finalChance *= 1.18f;   // +18% de eficiência
+        }
 
         finalChance = Mathf.Clamp(finalChance, 0.25f, 0.90f);
 
@@ -2859,7 +2820,7 @@ public class MatchManager : MonoBehaviour
             return "Neutral";
 
         // Pega o TeamStyle do time que tem a bola
-        string formation = teamWithBall._teamStyle.ToString();
+        string formation = /*teamWithBall._teamStyle.ToString()*/currentFormation;
 
         switch (formation)
         {
@@ -2875,28 +2836,44 @@ public class MatchManager : MonoBehaviour
                 return marshall[positionIndex];
 
             case "Snake":
-                string[] snake = { "Shooting", "Neutral", "Shooting", "Neutral" };
+                string[] snake = { "Shooting", "Shooting", "Neutral", "Neutral" };
                 return snake[positionIndex];
 
             case "Forward":
-                string[] forward = { "Neutral", "Shooting", "Shooting", "Neutral" };
+                string[] forward = { "Shooting", "Neutral", "Shooting", "Neutral" };
                 return forward[positionIndex];
 
             case "Combo":
-                string[] combo = { "Weak Defense", "Shooting", "Shooting", "Weak Defense" };
+                string[] combo = { "Juke", "Weak", "Shooting", "Weak" };
                 return combo[positionIndex];
 
             case "Horns":
-                string[] horns = { "Shooting", "Weak Defense", "Weak Defense", "Shooting" };
+                string[] horns = { "Weak", "Juke", "Weak", "Juke" };
                 return horns[positionIndex];
 
             case "Artillery":
-                string[] artillery = { "Weak Defense", "Shooting", "Shooting", "Weak Defense" };
+                string[] artillery = { "Shooting", "Weak", "Shooting", "Weak" };
                 return artillery[positionIndex];
 
             case "Wall":
                 string[] wall = { "Defense", "Defense", "Defense", "Defense" };
                 return wall[positionIndex];
+
+            case "Circle":
+                string[] circle = { "Pass", "Pass", "Pass", "Pass" };
+                return circle[positionIndex];
+
+            case "GiveAndGo":
+                string[] giveAndGo = { "Pass", "Juke", "Pass", "Juke"};
+                return giveAndGo[positionIndex];
+
+            case "GiveAndShoot":
+                string[] giveAndShoot = { "Shooting", "Pass", "Shooting", "Pass" };
+                return giveAndShoot[positionIndex];
+
+            case "Dynamic":
+                string[] dynamic = { "Pass", "Shooting", "Defense", "Juke"};
+                return dynamic[positionIndex];
 
             default:
                 return "Neutral";

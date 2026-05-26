@@ -13,8 +13,11 @@ public enum TeamStyle
     Combo,
     Horn,
     Artillery,
-    Wall
-
+    Wall,
+    Circle,
+    GiveAndGo,
+    GiveAndShoot,
+    Dynamic
 }
 public class Team : MonoBehaviour
 {

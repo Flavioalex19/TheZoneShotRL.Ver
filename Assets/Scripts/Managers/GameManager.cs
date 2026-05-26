@@ -510,7 +510,7 @@ public class GameManager : MonoBehaviour
         // Se a quantidade não bater, recria
         if (childTeamCount != fullTeamList.Count)
         {
-            Debug.Log($"[GameManager] Quantidade de times incorreta. Limpando e recriando...");
+            //Debug.Log($"[GameManager] Quantidade de times incorreta. Limpando e recriando...");
 
             leagueTeams.Clear();
             DestroyAllWithTag("Team");     // Remove todos os objetos com tag Team

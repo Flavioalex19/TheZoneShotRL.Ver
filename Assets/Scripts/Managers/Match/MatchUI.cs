@@ -107,13 +107,13 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Transform transform_statsArea;
     [SerializeField] Transform transform_gameStatsArea;
     [SerializeField] Transform transform_ActiveHomePlayers;
-    [SerializeField] TextMeshProUGUI text_playerWithTheBallName;
+    //[SerializeField] TextMeshProUGUI text_playerWithTheBallName;
     [SerializeField] Transform transform_playersZones;
     [SerializeField] Transform transform_ActiveAwayPlayers;
-    [SerializeField] TextMeshProUGUI text_PlayerwithTheBallJersey;
+    //[SerializeField] TextMeshProUGUI text_PlayerwithTheBallJersey;
     [SerializeField] TextMeshProUGUI text_PlayerArchtype;
     [SerializeField] Image image_playerWithTheBallPortrait;
-    [SerializeField] Image image_playerPersonality;
+    //[SerializeField] Image image_playerPersonality;
     [SerializeField] TextMeshProUGUI text_DefenderFirstName;
     [SerializeField] TextMeshProUGUI text_DefenderLastName;
     [SerializeField] public TextMeshProUGUI text_midChance;
@@ -123,6 +123,8 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Image image_adrenalineBar;
     [SerializeField] Image image_offensivePanel_awayTeamHpBAR;
     [SerializeField] TextMeshProUGUI text_currentDMG;
+    //Away Team
+    [SerializeField] Transform transform_OffensivePanel_awayTeamPlayers;
     Animator off_Animator;
     //debub
     [SerializeField] TextMeshProUGUI debugText_awayHp;
@@ -150,6 +152,10 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Animator _homeTeamAnimator;
     [SerializeField] Animator _awayTeamAnimator;
     [SerializeField] Animator _upgradePanel;
+
+    [Header("TeamStyle")]
+    [SerializeField] TextMeshProUGUI text_teamStyle_StyleName;
+    [SerializeField] Image image_teamStyle;
 
     [Header("ResultActionPanel")]
     [SerializeField] Animator _animatorResultPanel;
@@ -401,7 +407,7 @@ public class MatchUI : MonoBehaviour
     }
     public void PlayerWithTheBallOff()
     {
-        text_playerWithTheBallName.text = _matchManager.playerWithTheBall.playerFirstName + " " + _matchManager.playerWithTheBall.playerLastName;
+        //text_playerWithTheBallName.text = _matchManager.playerWithTheBall.playerFirstName + " " + _matchManager.playerWithTheBall.playerLastName;
     }
     //Scoreboards
     public void SetTheTeamTextForTheMatch()
@@ -475,8 +481,8 @@ public class MatchUI : MonoBehaviour
     public void UpdateOffensiveStats()
     {
         //print("UpdateStats");
-        text_playerWithTheBallName.text = _matchManager.playerWithTheBall.playerFirstName + " " + _matchManager.playerWithTheBall.playerLastName;
-        text_PlayerwithTheBallJersey.text = _matchManager.playerWithTheBall.J_Number.ToString();
+        //text_playerWithTheBallName.text = _matchManager.playerWithTheBall.playerFirstName + " " + _matchManager.playerWithTheBall.playerLastName;
+        //text_PlayerwithTheBallJersey.text = _matchManager.playerWithTheBall.J_Number.ToString();
         //Sprite alteration/update
         Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
         Sprite sprite = sprites[_matchManager.playerWithTheBall.ImageCharacterPortrait];
@@ -795,7 +801,7 @@ public class MatchUI : MonoBehaviour
                 break;
         }
         //_sprite = sprite;
-        image_playerPersonality.sprite = sprite;
+        //image_playerPersonality.sprite = sprite;
     }
     public void UseSpBtn()
     {
@@ -810,5 +816,18 @@ public class MatchUI : MonoBehaviour
     public void UpdateStreakValue(int value)
     {
         text_currentStreakVALUE.text = value.ToString();
+    }
+    public void TeamStyleUpdate(string teamStyle)
+    {
+        text_teamStyle_StyleName.text = teamStyle;
+        //imagem
+    }
+    public void OffensivePanelAwayTeamUpdate(Team awayTeam)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            transform_OffensivePanel_awayTeamPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = awayTeam.playersListRoster[i].playerLastName;
+            transform_OffensivePanel_awayTeamPlayers.GetChild(i).GetChild(3).GetComponent<Image>().fillAmount = awayTeam.playersListRoster[i].CurrentStamina / awayTeam.playersListRoster[i].MaxStamina;
+        }
     }
 }
