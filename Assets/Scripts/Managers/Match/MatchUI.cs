@@ -830,4 +830,6 @@ public class MatchUI : MonoBehaviour
             transform_OffensivePanel_awayTeamPlayers.GetChild(i).GetChild(3).GetComponent<Image>().fillAmount = awayTeam.playersListRoster[i].CurrentStamina / awayTeam.playersListRoster[i].MaxStamina;
         }
     }
+
+    //SkipBtn
 }

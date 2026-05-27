@@ -5,11 +5,15 @@ public enum CardStyle
 {
     Defense,
     Attack,
-    Player,
+    Juke,
     Stamina,
     Sp,
-    Juke,
-    Pass
+    Hit,
+    Pass,
+    Style,
+    AttackDefense,
+    AttackJuke,
+    Streak
 }
 [CreateAssetMenu(fileName = "NewGameCard", menuName = "ScriptableObjects/GameCard", order = 1)]
 public class GameCard : ScriptableObject
@@ -33,4 +37,7 @@ public class GameCard : ScriptableObject
 
     [Header("Card Effect Value")]
     public int modifyValue;
+
+    [Header("Card Formation")]
+    public string formation;
 }

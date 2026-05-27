@@ -32,25 +32,8 @@ public class CardDisplay : MonoBehaviour
     }
     void SetCardsValues()
     {
-        //Define the modify value
-        /*
-        switch (card.cardType)
-        {
-            case "Common":
-                card.modifyValue = 2;
-                break;
-            case "Bronze":
-                card.modifyValue = 3;
-                break;
-            case "Silver":
-                card.modifyValue = 5;
-                break;
-            case "Gold":
-                card.modifyValue = 10;
-                break;
-        }
-        */
-        text_cardName.text = card.name;
+        
+        text_cardName.text = card.cardName;
         text_cardType.text = card.cardType;
         text_cardDescription.text = card.cardDescription;
         image_cardImage.sprite = card.cardImage;
@@ -67,7 +50,7 @@ public class CardDisplay : MonoBehaviour
                 matchManager.buff_Atk += card.modifyValue;
                 
                 break;
-            case CardStyle.Player:
+            case CardStyle.Hit:
                
                 break;
             case CardStyle.Stamina:
@@ -77,13 +60,21 @@ public class CardDisplay : MonoBehaviour
                 }
                 break;
             case CardStyle.Sp:
-                matchManager.buff_SP += card.modifyValue;
+                //matchManager.buff_SP += card.modifyValue;
+                matchManager.HomeTeam.AdrenalineBar += card.modifyValue;
                 break;
             case CardStyle.Juke:
                 matchManager.buff_Juke += card.modifyValue;
                 break;
             case CardStyle.Pass:
                 matchManager.buff_Pass += card.modifyValue;
+                break;
+            case CardStyle.Style:
+                matchManager.currentFormation = card.formation;
+                break;
+            case CardStyle.AttackDefense:
+                matchManager.buff_Atk += card.modifyValue;
+                matchManager.buff_Defense += card.modifyValue;
                 break;
         }
         matchManager.canUseCards = false;

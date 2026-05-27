@@ -92,7 +92,7 @@ public class MatchManager : MonoBehaviour
     float jukePercentage;
     public int consecutiveSuccesses = 0;
 
-    [SerializeField] string currentFormation;
+    [SerializeField]public string currentFormation;
 
     private List<string> eventsList = new List<string>()
     {
@@ -129,6 +129,9 @@ public class MatchManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI _debugTimeoutText;
     [SerializeField] string DefenderName;
     public bool isSimulation = false;
+
+    //Skip/FastFoward
+    public bool isFastforward = false;
 
     bool _isOnSetupStage;//
     private void Awake()
@@ -1736,7 +1739,7 @@ public class MatchManager : MonoBehaviour
         float finalChance = rawChance * shootingBuffMultiplier;
 
         float staminaFactor = GetStaminaMultiplier(offense.CurrentStamina);
-        finalChance *= staminaFactor * 0.80f;//coeficente 
+        finalChance *= staminaFactor * 0.70f;//coeficente 
 
         float streakMultiplier = 1f;
         if (teamWithball.IsPlayerTeam)
@@ -2416,12 +2419,7 @@ public class MatchManager : MonoBehaviour
     //AI
     private AIAction AI_Tendency()
     {
-        /*
-        float passChance = PassEquation();
-        float jukeChance = CalculateJukeProbability(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone);
-        float shootChance = ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0);
-        float spChance = ActivateSpecialAttk(true);
-        */
+        
         float awareness = playerWithTheBall.Awareness;
         float shooting = playerWithTheBall.Shooting;
 
@@ -2446,6 +2444,25 @@ public class MatchManager : MonoBehaviour
             spChance = ActivateSpecialAttk(true) * (0.6f + adrenalineFactor * 0.4f);
         }
         ////////////////////////////////////////////
+        string bonusType = GetFormationBonus(teamWithball, playerWithTheBall);
+
+        // Aplica o bônus conforme o tipo retornado pela formação
+        if (bonusType.Contains("Shooting"))
+        {
+            shootChance *= 1.35f;   // Bônus forte para arremesso
+        }
+        else if (bonusType.Contains("Juke"))
+        {
+            jukeChance *= 1.40f;    // Bônus forte para juke/drible
+        }
+        else if (bonusType.Contains("Pass"))
+        {
+            passChance *= 1.30f;    // Bônus para passe
+        }
+        
+
+        ///////////////////////////////////////
+
         if (currentGamePossessons == 1 && !teamWithball.IsPlayerTeam)
         {
             int scoreDifference = HomeTeam.Score - AwayTeam.Score;
