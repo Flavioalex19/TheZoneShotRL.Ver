@@ -9,7 +9,7 @@ public enum TeamStyle
     Wings,
     Marshal,
     Snake,
-    Forwards,
+    Forward,
     Combo,
     Horn,
     Artillery,

@@ -125,6 +125,15 @@ public class MatchUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_currentDMG;
     //Away Team
     [SerializeField] Transform transform_OffensivePanel_awayTeamPlayers;
+    //Scoreboard
+    [SerializeField] Image image_off_HomeTeam;
+    [SerializeField] TextMeshProUGUI text_off_score_homeTeam;
+    [SerializeField] Image image_off_AwayTeam;
+    [SerializeField] TextMeshProUGUI text_off_score_awayTeam;
+    [SerializeField] TextMeshProUGUI text_off_currentPos;
+    //team styles
+    [SerializeField] Image image_CurrentTeamStyle;
+
     Animator off_Animator;
     //debub
     [SerializeField] TextMeshProUGUI debugText_awayHp;
@@ -147,6 +156,9 @@ public class MatchUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_victoryDefeatResult;
     [SerializeField] TextMeshProUGUI text_currentStreakVALUE;
     [SerializeField] Button advbtn;
+
+    [Header("Skip Button")]
+    [SerializeField] TextMeshProUGUI text_skipBtnText;
 
     [Header("Animators")]
     [SerializeField] Animator _homeTeamAnimator;
@@ -821,6 +833,12 @@ public class MatchUI : MonoBehaviour
     {
         text_teamStyle_StyleName.text = teamStyle;
         //imagem
+        Sprite sprite = null;
+        string style;
+        style = _matchManager.currentFormation;
+        sprite = Resources.Load<Sprite>("2D/Styles/" + style);
+        image_teamStyle.sprite = sprite;
+        print(style + " this is the style");
     }
     public void OffensivePanelAwayTeamUpdate(Team awayTeam)
     {
@@ -830,6 +848,34 @@ public class MatchUI : MonoBehaviour
             transform_OffensivePanel_awayTeamPlayers.GetChild(i).GetChild(3).GetComponent<Image>().fillAmount = awayTeam.playersListRoster[i].CurrentStamina / awayTeam.playersListRoster[i].MaxStamina;
         }
     }
+    public void UpdateOffensiveScoreBoard()
+    {
+        text_off_score_homeTeam.text = _matchManager.HomeTeam.Score.ToString();
+        text_off_score_awayTeam.text = _matchManager.AwayTeam.Score.ToString();
 
+        Sprite sprite = null;
+        string teamName;
+        teamName = _matchManager.HomeTeam.TeamName;
+        sprite = Resources.Load<Sprite>("2D/Team Logos/" + teamName);
+        image_off_HomeTeam.sprite = sprite;
+        Sprite sprite1;
+        string teamName1;
+        teamName1 = _matchManager.AwayTeam.TeamName;
+        sprite1 = Resources.Load<Sprite>("2D/Team Logos/" + teamName1);
+        image_off_AwayTeam.sprite = sprite1;
+    }
+    
     //SkipBtn
+    public void SkipActionFeedback()
+    {
+        _matchManager.IsFastforward = !_matchManager.IsFastforward;
+        if (_matchManager.IsFastforward)
+        {
+            text_skipBtnText.text = "On";
+        }
+        else
+        {
+            text_skipBtnText.text = "Off";
+        }
+    }
 }

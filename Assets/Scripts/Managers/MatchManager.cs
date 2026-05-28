@@ -131,7 +131,7 @@ public class MatchManager : MonoBehaviour
     public bool isSimulation = false;
 
     //Skip/FastFoward
-    public bool isFastforward = false;
+    public bool IsFastforward = false;
 
     bool _isOnSetupStage;//
     private void Awake()
@@ -312,6 +312,7 @@ public class MatchManager : MonoBehaviour
             ChoosePlayerToCarryBall();
             match = MatchStates.Possesion;
 
+            if(IsFastforward == false)
             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
 
             // Step 2: Player decides to pass or not
@@ -481,21 +482,7 @@ public class MatchManager : MonoBehaviour
         if(playerWithTheBall!=null) playerWithTheBall.HasTheBall = false;
 
         playerWithTheBall = null;
-        /*
-        int highestAwareness = int.MinValue;
-
-        for (int i = 0; i < 4; i++)
-        {
-            Player p = teamWithball.playersListRoster[i];
-            if (p.Awareness > highestAwareness)
-            {
-                highestAwareness = p.Awareness;
-                playerWithTheBall = p;
-                
-            }
-            
-        }
-        */
+        
         int randomIndex = UnityEngine.Random.Range(0, 4);
         playerWithTheBall = teamWithball.playersListRoster[randomIndex];
 
@@ -541,17 +528,7 @@ public class MatchManager : MonoBehaviour
                         currentGamePossessons++;
                     }
                 }
-                /*
-                if (currentGamePossessons <= 1)
-                {
-                    if(!isSimulation)uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " must shoot due to low possessions!");
-                    if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
-                    yield return Scoring(playerWithTheBall,true);
-                    currentGamePossessons--;
-                    
-                    yield break;
-                }
-                */
+                
                 else if (_canCallTimeout == false)
                 {
                     yield return StartCoroutine(WaitForTimeOut());
@@ -602,10 +579,17 @@ public class MatchManager : MonoBehaviour
                     case AIAction.Pass:
                         if (TryPassBall())
                         {
-                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                            if (IsFastforward==false)
+                            {
+                                if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                            }
+                            
                             if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                             SelectDefender();
-                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                            if (IsFastforward == false)
+                            {
+                                if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                            }
                             if (teamWithball.AdrenalineBar < teamWithball.AdrenalineBarFull) teamWithball.AdrenalineBar += adrenaline_addUp;
                             ResetDefensiveOptions();
                             continue; // continua loop pra próxima ação
@@ -613,12 +597,18 @@ public class MatchManager : MonoBehaviour
                         else
                         {
                             // pass fail  steal + switch
-                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                            if (IsFastforward == false)
+                            {
+                                if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                            }
                             playerWithTheBall.HasTheBall = false;
-                            if (!isSimulation) _matchUI.ResultActionPanel("S",3);
+                            if(IsFastforward == false) if (!isSimulation) _matchUI.ResultActionPanel("S",3);
                             SwitchPossession();
                             if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
-                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                            if (IsFastforward == false)
+                            {
+                                if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                            }
                             ResetDefensiveOptions();
                             yield break; 
                         }
@@ -637,9 +627,12 @@ public class MatchManager : MonoBehaviour
                             playerDefending.StealsMatch++;
                             if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos() + " Loses the ball to " + playerDefending.playerLastName);
                             playerWithTheBall.HasTheBall = false;
-                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                            if (IsFastforward == false)
+                            {
+                                if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                            }
                             ResetDefensiveOptions();
-                            if (!isSimulation) _matchUI.ResultActionPanel("S", 3);
+                            if(IsFastforward == false)if (!isSimulation) _matchUI.ResultActionPanel("S", 3);
                             SwitchPossession();
                             yield break; 
                         }
@@ -647,7 +640,10 @@ public class MatchManager : MonoBehaviour
 
                     case AIAction.Shoot:
                         if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ShootingText());
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
 
                         yield return Scoring(playerWithTheBall, true);
                         ResetDefensiveOptions();
@@ -656,7 +652,10 @@ public class MatchManager : MonoBehaviour
                     case AIAction.Special:
                         // Vazio por enquanto  fallback pra shoot
                         if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ShootingText());
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
 
                         yield return Scoring(playerWithTheBall, true);
                         ResetDefensiveOptions();
@@ -725,6 +724,7 @@ public class MatchManager : MonoBehaviour
 
                 _matchUI.TeamStyleUpdate(currentFormation);//update team style
                 _matchUI.OffensivePanelAwayTeamUpdate(AwayTeam);//update away team player stamna and name
+                _matchUI.UpdateOffensiveScoreBoard();
                 // Wait until player makes a choice
                 yield return new WaitUntil(() => _ChoosePass || _ChooseScoring || _ChooseToSpecialAtt || _ChooseBeatDefender || CanChooseCharge || CanChooseShove||_canCallTimeout == false);
 
@@ -732,15 +732,21 @@ public class MatchManager : MonoBehaviour
                 {
                     //_matchUI.UsedPlayerBtns();
                     _ChooseScoring = false;
-                    _matchUI.ActionPanelAnim(5, "Shoot");
+                    if(IsFastforward == false)_matchUI.ActionPanelAnim(5, "Shoot");
                     //Lose Stamina
                     StaminaLossByAction(playerWithTheBall);
-                    yield return new WaitForSeconds(1f);
+                    if(IsFastforward == false)yield return new WaitForSeconds(1f);
                     playerWithTheBall.HasTheBall = false;
-                    if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                    if (IsFastforward == false)
+                    {
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                    }
                     //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
                     uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ShootingText());
-                    if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                    if (IsFastforward == false)
+                    {
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                    }
                     //yield return Scoring(playerWithTheBall, false);!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if (!isSimulation) yield return ToScore(playerWithTheBall,playerDefending, HomeTeam);
                     //ResetChoices();
@@ -751,21 +757,30 @@ public class MatchManager : MonoBehaviour
                 {
                     //_matchUI.UsedPlayerBtns();
                     _ChoosePass = false;
-                    _matchUI.ActionPanelAnim(0, "Passing");
+                    if(IsFastforward == false)_matchUI.ActionPanelAnim(0, "Passing");
                     //Lose Stamina
                     StaminaLossByAction(playerWithTheBall);
                     yield return new WaitForSeconds(1f);
-                    if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                    if (IsFastforward == false)
+                    {
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                    }
                     if (MakePassToTeammate(passPlayerIndex))
                     {
                         RegisterSuccess();//register +streak
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         SelectDefender();
-                        if (!isSimulation) _matchUI.ResultActionPanel("S",1);
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
-                        if(HomeTeam.AdrenalineBar<HomeTeam.AdrenalineBarFull)HomeTeam.AdrenalineBar += adrenaline_addUp;
+                        if(IsFastforward == false)if (!isSimulation) _matchUI.ResultActionPanel("S",1);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
+                        if (HomeTeam.AdrenalineBar<HomeTeam.AdrenalineBarFull)HomeTeam.AdrenalineBar += adrenaline_addUp;
                         //staminaLoss
 
                         ResetChoices();
@@ -776,13 +791,19 @@ public class MatchManager : MonoBehaviour
                         ResetStreak();
                         playerDefending.StealsMatch++;
                         playerWithTheBall.HasTheBall = false;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         SwitchPossession();
                         _matchUI.OffesnivePanelOnOff(false);
-                        _matchUI.ResultActionPanel("F", 1);
+                        if(IsFastforward == false)_matchUI.ResultActionPanel("F", 1);
                         //uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         //ResetChoices();/////////////////
                         yield break;
                     }
@@ -793,18 +814,25 @@ public class MatchManager : MonoBehaviour
                     _ChooseToSpecialAtt = false;
                     _sp_numberOfSPActions--;
                     _matchUI.SetSkillPints();
-                    _matchUI.ActionPanelAnim(1, "Special");
+                    if (IsFastforward == false)
+                        _matchUI.ActionPanelAnim(1, "Special");
                     //Lose Stamina
                     StaminaLossByAction(playerWithTheBall);
                     yield return new WaitForSeconds(1f);
                     playerWithTheBall.HasTheBall = false;
-                    if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                    if (IsFastforward == false)
+                    {
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                    }
                     if (Random.Range(0f, 1f) < ActivateSpecialAttk(false))
                     {
                         int spPoints = 8;
                         //Add later the list of string for a success use o team abillity
                         uiManager.PlaybyPlayText("The team will use their special abillity");
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
 
                         teamWithball.Score += spPoints;
 
@@ -814,8 +842,11 @@ public class MatchManager : MonoBehaviour
                             CalculateDamageAndReduceHP(defendingTeam, playerWithTheBall.CurrentZone);
                         }
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + "has scored!");
-                        _matchUI.ResultActionPanel("S",0);
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if(IsFastforward == false)_matchUI.ResultActionPanel("S",0);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         SwitchPossession();
                         yield break;
                     }
@@ -824,8 +855,11 @@ public class MatchManager : MonoBehaviour
                     {
                         //Change this later for a list of string for a fail event
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + "Fail to use special team trait");
-                        _matchUI.ResultActionPanel("F",0);
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if(IsFastforward==false)_matchUI.ResultActionPanel("F",0);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         SwitchPossession();
                         yield break;
                     }
@@ -835,19 +869,26 @@ public class MatchManager : MonoBehaviour
                 else if (_ChooseBeatDefender)
                 {
                     //_matchUI.UsedPlayerBtns();
-                    _matchUI.ActionPanelAnim(7, "Juke");
+                    if (IsFastforward == false)
+                        _matchUI.ActionPanelAnim(7, "Juke");
                     //Lose Stamina
                     StaminaLossByAction(playerWithTheBall);
                     yield return new WaitForSeconds(1f);
                     if (TryBeatDefenderAdvanceZone(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone))
                     {
                         RegisterSuccess();//register +streak
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + "Pass the defender");
                         SelectDefender();
-                        _matchUI.ResultActionPanel("S",2);
+                        if(IsFastforward == false)_matchUI.ResultActionPanel("S",2);
                         if (HomeTeam.AdrenalineBar < HomeTeam.AdrenalineBarFull) HomeTeam.AdrenalineBar += adrenaline_addUp;
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         ResetChoices();
                         continue;
                     }
@@ -855,30 +896,47 @@ public class MatchManager : MonoBehaviour
                     {
                         ResetStreak();
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos());
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         playerWithTheBall.HasTheBall = false;
-                        _matchUI.ResultActionPanel("F",2);
+                        if(IsFastforward == false)_matchUI.ResultActionPanel("F",2);
                         SwitchPossession();
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         yield break;
                     }
                 }
                 else if (CanChooseShove)
                 {
                     //_matchUI.UsedPlayerBtns();
-                    _matchUI.ActionPanelAnim(9, "Shove");
+                    if (IsFastforward == false)
+                        _matchUI.ActionPanelAnim(9, "Shove");
                     //action panel
                     //Lose Stamina
                     StaminaLossByAction(playerWithTheBall);
-                    yield return new WaitForSeconds(_actionTimer);
+                    if (IsFastforward == false)
+                    {
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                    }
                     if (TryToShoveDefender(playerWithTheBall,playerDefending))
                     {
                         RegisterSuccess();
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + "Shoved " + playerDefending.playerLastName);
-                        _matchUI.ResultActionPanel("S", 2);
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                            _matchUI.ResultActionPanel("S", 2);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         ResetChoices();
                         continue;
 
@@ -888,12 +946,18 @@ public class MatchManager : MonoBehaviour
 
                         ResetStreak();
                         uiManager.PlaybyPlayText(_matchUI.LosesPos());
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         playerWithTheBall.HasTheBall = false;
-                        _matchUI.ResultActionPanel("F", 2);
+                        if(IsFastforward == false)_matchUI.ResultActionPanel("F", 2);
                         SwitchPossession();
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         yield break;
 
                     }
@@ -902,17 +966,28 @@ public class MatchManager : MonoBehaviour
                 }
                 else if (CanChooseCharge)
                 {
-                    _matchUI.ActionPanelAnim(8, "Charge");
-                    yield return new WaitForSeconds(_actionTimer);
+                    if (IsFastforward == false)
+                        _matchUI.ActionPanelAnim(8, "Charge");
+                    if (IsFastforward == false)
+                    {
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                    }
                     //_matchUI.UsedPlayerBtns();
                     uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " is Charging");
                     if (TryToChargeAdrenaline(playerWithTheBall, HomeTeam))
                     {
                         ResetChoices();
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " Charged the field!");
-                        _matchUI.ResultActionPanel("S", 2);//mudar
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                            _matchUI.ResultActionPanel("S", 2);//mudar
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         ResetChoices();
                         continue;
                     }
@@ -920,12 +995,18 @@ public class MatchManager : MonoBehaviour
                     {
                         ResetStreak();
                         uiManager.PlaybyPlayText(_matchUI.LosesPos());//fazer uma lista propria disso
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         playerWithTheBall.HasTheBall = false;
-                        _matchUI.ResultActionPanel("F", 2);
+                        if(IsFastforward==false)_matchUI.ResultActionPanel("F", 2);
                         SwitchPossession();
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
-                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        if (IsFastforward == false)
+                        {
+                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+                        }
                         yield break;
                     }
                     
@@ -1049,7 +1130,10 @@ public class MatchManager : MonoBehaviour
         player.CurrentZone = ChooseZone(player);
 
         if (!isSimulation) uiManager.PlaybyPlayText(player.playerLastName + " takes a shot from zone " + player.CurrentZone);
-        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+        if (IsFastforward == false)
+        {
+            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+        }
 
         //if is AI the momentum is 0
         int teamMomentum;
@@ -1098,15 +1182,21 @@ public class MatchManager : MonoBehaviour
             if (!isSimulation) uiManager.PlaybyPlayText(player.playerLastName + " Missed");
             if (!isSimulation)
             {
-                if (teamWithball != manager.playerTeam) _matchUI.ResultActionPanel("S", 3);
+                if(IsFastforward == false)if (teamWithball != manager.playerTeam) _matchUI.ResultActionPanel("S", 3);
             }
         }
         //currentGamePossessons--;
         playerWithTheBall.HasTheBall = false;
-        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+        if (IsFastforward == false)
+        {
+            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+        }
         player.CurrentZone = 0;
         SwitchPossession();
-        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+        if (IsFastforward == false)
+        {
+            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
+        }
     }
     int ChooseZone(Player player)
     {
@@ -2360,7 +2450,7 @@ public class MatchManager : MonoBehaviour
             playerWithTheBall.playerLastName + " takes a shot from Inside "
         );
 
-        yield return new WaitForSeconds(_actionTimer);
+        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
 
         // Momentum apenas para o time da casa
         int teamMomentum = (teamWithBall == HomeTeam) ? momentum : 0;
@@ -2390,7 +2480,7 @@ public class MatchManager : MonoBehaviour
             uiManager.PlaybyPlayText(
                 playerWithTheBall.playerLastName + " scored! Total: " + playerWithTheBall.PointsMatch
             );
-            _matchUI.ResultActionPanel("S",0);
+            if(IsFastforward == false)_matchUI.ResultActionPanel("S",0);
             if (HomeTeam.AdrenalineBar < HomeTeam.AdrenalineBarFull) HomeTeam.AdrenalineBar += adrenaline_addUp;
             //Damage Deal
             if (!isSimulation && teamWithball.IsPlayerTeam)
@@ -2404,10 +2494,10 @@ public class MatchManager : MonoBehaviour
             uiManager.PlaybyPlayText(
                 playerWithTheBall.playerLastName + " missed!"
             );
-            _matchUI.ResultActionPanel("F",0);
+            if(IsFastforward == false)_matchUI.ResultActionPanel("F",0);
         }
 
-        yield return new WaitForSeconds(_actionTimer);
+        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
 
         // Se quiser resetar a zona após o chute, deixe isso ativado
         playerWithTheBall.CurrentZone = 0;
