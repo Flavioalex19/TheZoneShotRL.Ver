@@ -852,6 +852,7 @@ public class MatchUI : MonoBehaviour
     {
         text_off_score_homeTeam.text = _matchManager.HomeTeam.Score.ToString();
         text_off_score_awayTeam.text = _matchManager.AwayTeam.Score.ToString();
+        text_off_currentPos.text =  _matchManager.currentGamePossessons.ToString();
 
         Sprite sprite = null;
         string teamName;

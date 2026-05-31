@@ -668,7 +668,7 @@ public class MatchManager : MonoBehaviour
             //_matchUI.OffesnivePanelOnOff(true);
             CanChooseDefenseAction = false;
 
-           
+            
             if (!isSimulation)
             {
                adrenaline_addUp = GetAdrenalineAddUp(HomeTeam);
@@ -693,6 +693,7 @@ public class MatchManager : MonoBehaviour
                 
             }   
             _matchUI.text_remainingCards.text = cardsFolder.childCount.ToString();
+            _matchUI.OffesnivePanelOnOff(true);
             while (true)
             {
                 if (!isSimulation) _matchUI.percentagePanel.SetActive(true);
@@ -796,7 +797,7 @@ public class MatchManager : MonoBehaviour
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         }
                         SwitchPossession();
-                        _matchUI.OffesnivePanelOnOff(false);
+                        //_matchUI.OffesnivePanelOnOff(false);
                         if(IsFastforward == false)_matchUI.ResultActionPanel("F", 1);
                         //uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
@@ -2159,6 +2160,14 @@ public class MatchManager : MonoBehaviour
             card.localPosition = Vector3.zero;
             card.localRotation = Quaternion.identity;
         }
+
+        //lvl of equipment determines the number of accessible cards
+        int cardRange =10;
+        if (manager.playerTeam.TeamEquipmentLvl < 2) cardRange = 12;
+        else if (manager.playerTeam.TeamEquipmentLvl >= 2 && manager.playerTeam.TeamEquipmentLvl < 4) cardRange = 18;
+        else if (manager.playerTeam.TeamEquipmentLvl >= 4) cardRange = cardsFolder.childCount;
+
+        
 
         // choose cards
         for (int i = 0; i < 3; i++)
