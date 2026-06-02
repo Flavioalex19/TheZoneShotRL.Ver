@@ -201,6 +201,7 @@ public class MatchManager : MonoBehaviour
         _actionTimer = _actionTimerReset;
         _matchUI.SetTheTeamTextForTheMatch();
         HomeTeam.Score = 0;
+        HomeTeam.match_hp = HomeTeam.match_hpMax;
         AwayTeam.Score = 0;
         AwayTeam.match_hp = AwayTeam.match_hpMax;
         HomeTeam.isOnDefenseBonus = false;
@@ -469,7 +470,7 @@ public class MatchManager : MonoBehaviour
             //print("Count Team");
             for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
             {
-                HomeTeam.playersListRoster[i].ContractYears--;
+                //HomeTeam.playersListRoster[i].ContractYears--;
             }
         }
         yield return new WaitForSeconds(5f);
@@ -505,7 +506,7 @@ public class MatchManager : MonoBehaviour
         if( teamWithball.IsPlayerTeam == false)
         {
             adrenaline_addUp = 20;
-            AwayTeam.AdrenalineBar = 50;
+            AwayTeam.AdrenalineBar = 0;
             if (!isSimulation) _matchUI.OffesnivePanelOnOff(false);
             CanChooseAction = false;
             
@@ -516,10 +517,14 @@ public class MatchManager : MonoBehaviour
                 HomeTeam.playersListRoster[i].CurrentZone = 0;
             }
             if (!isSimulation) _matchUI.UpdatePlayerPlacements();
-
+            
+            
             while (true)
             {
                 if (!isSimulation) _matchUI.percentagePanel.SetActive(false);
+                if (!isSimulation) _matchUI.HomeTeamHp();
+                if(!isSimulation) _matchUI.AwayTeamAdrenalineBar();
+                adrenaline_addUp = 20;
                 CanChooseAction = false;
                 if ((leagueManager.isOnR8 == true || leagueManager.isOnR4 == true || leagueManager.isOnFinals == true)&& currentGamePossessons <=1)
                 {
@@ -714,8 +719,8 @@ public class MatchManager : MonoBehaviour
                 
                 _matchUI.OffesnivePanelOnOff(true);
                 _matchUI.SetScoringPercentage(ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone,0));
-                _matchUI.SetPassPercentage(PercentageMakePassToTeammate(Random.Range(0,4)));
-                _matchUI.SetJukePercentage(/*TryBeatDefenderAdvanceZone(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0)*/GetJukePercentage(playerWithTheBall,playerDefending,playerWithTheBall.CurrentZone));
+                _matchUI.SetPassPercentage(PercentageMakePassToTeammate(GetRandomDifferentTeammateIndex(playerWithTheBall)));
+                _matchUI.SetJukePercentage(GetJukePercentage(playerWithTheBall,playerDefending,playerWithTheBall.CurrentZone));
                 _matchUI.SetSpPercentage(ActivateSpecialAttk(true));
                 _matchUI.text_midChance.text = "Mid: " + Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 1, 0) *100).ToString() + "%";
                 _matchUI.text_insChance.text = "Inside: " + Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 2, 0) * 100).ToString() + "%";
@@ -1626,7 +1631,7 @@ public class MatchManager : MonoBehaviour
             p.CareerSteals += p.StealsMatch;
             p.CareerGamesPlayed++;
             p.buff = 0;
-            if (teamA.IsPlayerTeam) p.ContractYears--;
+            //if (teamA.IsPlayerTeam) p.ContractYears--;
         }
         foreach (Player p in teamB.playersListRoster)
         {
@@ -1941,7 +1946,7 @@ public class MatchManager : MonoBehaviour
             //currentGamePossessons--;
         }
         teamWithball.AdrenalineBar = 0; // Zera a barra ao usar
-        currentGamePossessons--;
+        //currentGamePossessons--;
         return finalChance;
     }
     
@@ -2994,5 +2999,38 @@ public class MatchManager : MonoBehaviour
             default:
                 return "Neutral";
         }
+    }
+    public int GetRandomDifferentTeammateIndex(Player currentPlayer)
+    {
+        if (currentPlayer == null)
+        {
+            Debug.LogWarning("GetRandomDifferentTeammateIndex: currentPlayer é null!");
+            return 0; // fallback seguro
+        }
+
+        if (HomeTeam == null || HomeTeam.playersListRoster == null || HomeTeam.playersListRoster.Count < 2)
+        {
+            Debug.LogWarning("GetRandomDifferentTeammateIndex: HomeTeam inválido ou com menos de 2 jogadores!");
+            return 0;
+        }
+
+        // Encontra o índice atual do player na lista do HomeTeam
+        int currentIndex = HomeTeam.playersListRoster.IndexOf(currentPlayer);
+
+        if (currentIndex < 0 || currentIndex > 3)
+        {
+            Debug.LogWarning($"GetRandomDifferentTeammateIndex: Player {currentPlayer.playerLastName} não encontrado no roster do HomeTeam (índice {currentIndex})");
+            return 0; // fallback
+        }
+
+        // Gera um índice diferente do atual (0-3)
+        int newIndex;
+        do
+        {
+            newIndex = UnityEngine.Random.Range(0, 4); // 0 a 3
+        }
+        while (newIndex == currentIndex);
+
+        return newIndex;
     }
 }

@@ -33,7 +33,7 @@ public class Player : MonoBehaviour
     };
     private static readonly string[] secondNames = 
     {
-        "Smith","Wells", "Clark", "Parker", "Herbert", "Adams", "Taylor", "Walker", "Wilson", "Railey" , "Jonhson", "Brock", "Santos", "Gomes", "Castro", "Nunes", "Owen",
+        "Smith","Wells", "Clark", "Parker", "Herbert", "Adams", "Taylor", "Walker", "Wilson", "Railey" , "Johnson", "Brock", "Santos", "Gomes", "Castro", "Nunes", "Owen",
         "Young", "Hill", "Armstrong", "Roger", "Macmanus", "Salvi", "Free", "Freeman", "Strong", "Jager", "Cross", "Hunter", "Doyle", "Howard", "Malone", "Gray", "Summers",
         "Miller", "Von", "Yorke", "Clancy", "Tyson", "Collins", "King","Dent", "Barry", "Chambers", "Cole", "Jones", "Langley", "Lee", "Ross", "Souza","Hart", "Kane", "Law",
         "Rogers", "Newton", "Lewis", "Mckay", "Barnes", "Vincent", "Enies", "Wayne", "Burke", "Falcon", "Lamb", "Allen", "Connor", "Fray", "White", "Lane", "Morgan",

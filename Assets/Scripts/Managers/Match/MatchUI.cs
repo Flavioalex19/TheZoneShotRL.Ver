@@ -173,6 +173,10 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Animator _animatorResultPanel;
     [SerializeField] TextMeshProUGUI text_actionResultS;
     [SerializeField] TextMeshProUGUI text_actionResultF;
+
+    [Header("Defensive State")]
+    [SerializeField] Image image_defensive_AwayTeamAdrenalineBar;
+    [SerializeField] Image image_defensive_HomeTeamHpBar;
     private void Awake()
     {
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
@@ -878,5 +882,17 @@ public class MatchUI : MonoBehaviour
         {
             text_skipBtnText.text = "Off";
         }
+    }
+    //home hp bar
+    public void HomeTeamHp()
+    {
+        image_defensive_HomeTeamHpBar.fillAmount = _matchManager.HomeTeam.match_hp / _matchManager.HomeTeam.match_hpMax;
+    }
+    //away team adrenaline bar update
+    public void AwayTeamAdrenalineBar()
+    {
+        image_defensive_AwayTeamAdrenalineBar.fillAmount = _matchManager.AwayTeam.AdrenalineBar / _matchManager.AwayTeam.AdrenalineBarFull;
+
+
     }
 }
