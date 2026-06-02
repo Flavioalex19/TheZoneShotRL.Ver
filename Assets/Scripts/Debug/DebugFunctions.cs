@@ -41,4 +41,10 @@ public class DebugFunctions : MonoBehaviour
 
         matchManager.HomeTeam.Score = -50;
     }
+    public void HitKill()
+    {
+        MatchManager matchManager = GameObject.Find("MatchManager").GetComponent<MatchManager>();
+
+        matchManager.AwayTeam.match_hp = 0;
+    }
 }

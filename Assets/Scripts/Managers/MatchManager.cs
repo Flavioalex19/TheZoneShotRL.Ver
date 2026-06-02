@@ -323,8 +323,6 @@ public class MatchManager : MonoBehaviour
             // Step 3: Wait for final actions (e.g., scoring)
             if (!isSimulation) yield return StartCoroutine(WaitForTimeOut());
 
-            
-
             //Restore stamina on the bench
             if (currentGamePossessons>1) RestoreStaminaFromBench();
             //currentGamePossessons--;
@@ -336,6 +334,7 @@ public class MatchManager : MonoBehaviour
                     currentGamePossessons++;
                 }
             }
+            CheckKO();//virar ienumerator!!!!
         }
 
         // End of match logic
@@ -3032,5 +3031,15 @@ public class MatchManager : MonoBehaviour
         while (newIndex == currentIndex);
 
         return newIndex;
+    }
+    //check K.O
+    public void CheckKO()
+    {
+        if(HomeTeam.match_hp<=0 || AwayTeam.match_hp <= 0)
+        {
+            currentGamePossessons = 0;
+            if (HomeTeam.match_hp <= 0) AwayTeam.Score += 50;
+            if(AwayTeam.match_hp<=0)HomeTeam.Score += 50;
+        }
     }
 }

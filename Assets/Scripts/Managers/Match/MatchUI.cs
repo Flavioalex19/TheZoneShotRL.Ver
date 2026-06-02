@@ -155,6 +155,10 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Animator animator_endgame_Result;
     [SerializeField] TextMeshProUGUI text_victoryDefeatResult;
     [SerializeField] TextMeshProUGUI text_currentStreakVALUE;
+    [SerializeField] TextMeshProUGUI text_vicotryDefeatLine;
+    [SerializeField] Image image_victoryDefeatResult;
+    [SerializeField] Sprite sprite_victory;
+    [SerializeField] Sprite sprite_defeat;
     [SerializeField] Button advbtn;
 
     [Header("Skip Button")]
@@ -827,6 +831,16 @@ public class MatchUI : MonoBehaviour
     {
         animator_endgame_Result.SetTrigger("Go");
         text_victoryDefeatResult.text = textM;
+        if(textM == "Victory")
+        {
+            text_vicotryDefeatLine.text = "Great Result!!!";
+            image_victoryDefeatResult.sprite = sprite_victory;
+        }
+        else
+        {
+            text_vicotryDefeatLine.text = "We need to improve!";
+            image_victoryDefeatResult.sprite = sprite_defeat;
+        }
         
     }
     public void UpdateStreakValue(int value)
