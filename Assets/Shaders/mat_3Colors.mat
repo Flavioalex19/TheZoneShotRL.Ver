@@ -67,14 +67,14 @@ Material:
     m_Ints: []
     m_Floats:
     - _ColorMask: 15
-    - _HazeTransparency: 0.2
+    - _HazeTransparency: 0.1
     - _Intensity: 0.01
     - _InterferenceIntensity: 0.2
     - _InterferenceSpeed: -0.05
     - _InterferenceStep: 0.1
     - _QueueControl: -1
     - _QueueOffset: 0
-    - _RefractionAmount: -0.0175
+    - _RefractionAmount: 0.0125
     - _ShineIntensity: 1
     - _Speed: -0.05
     - _Stencil: 0
@@ -85,15 +85,16 @@ Material:
     - _Step: 0
     - _UIMaskSoftnessX: 1
     - _UIMaskSoftnessY: 1
+    - _UseRefraction: 1
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
     - _BlueSmoothstep: {r: 0, g: 1, b: 0, a: 0}
     - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
-    - _ColorA: {r: 0.22421387, g: 0, b: 1.4980392, a: 1}
-    - _ColorB: {r: 0.056651667, g: 0.51723135, b: 1.7207952, a: 1}
-    - _ColorC: {r: 0, g: 4.549021, b: 5.992157, a: 1}
+    - _ColorA: {r: 0, g: 0.9911022, b: 0.43965724, a: 1}
+    - _ColorB: {r: 0, g: 0.599691, b: 1.4980394, a: 1}
+    - _ColorC: {r: 0, g: 4.2370944, b: 1.8795934, a: 1}
     - _GreenSmoothstep: {r: 0, g: 0.5, b: 0, a: 0}
-    - _InterferenceNoiseScales: {r: 100, g: 7, b: 150, a: 30}
+    - _InterferenceNoiseScales: {r: 10, g: 7, b: 100, a: 30}
     - _InterferenceStep: {r: 0.1, g: 0.1, b: 0, a: 0}
     - _InterferenceWaving: {r: 2, g: 0.3, b: 0, a: 0}
     - _Noise_Scales: {r: 100, g: 7, b: 0, a: 0}
