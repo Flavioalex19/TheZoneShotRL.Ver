@@ -39,7 +39,7 @@ public class MatchUI : MonoBehaviour
 
     [Header("Action Button Area")]
     [SerializeField] GameObject _actionArea;
-    [SerializeField] GameObject _actionDefense;
+    [SerializeField]public GameObject _actionDefense;
 
     
     Substitutions _substitutions;
@@ -181,6 +181,11 @@ public class MatchUI : MonoBehaviour
     [Header("Defensive State")]
     [SerializeField] Image image_defensive_AwayTeamAdrenalineBar;
     [SerializeField] Image image_defensive_HomeTeamHpBar;
+
+    [Header("Defensive Panel")]
+    [SerializeField] TextMeshProUGUI text_defensivePanel_ShootPerc;
+    [SerializeField] TextMeshProUGUI text_defensivePanel_PassPerc;
+    [SerializeField] TextMeshProUGUI text_defensivePanel_JukePerc;
     private void Awake()
     {
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
@@ -227,6 +232,7 @@ public class MatchUI : MonoBehaviour
         {
             _actionArea.SetActive(false);
         }
+        /*
         if (_matchManager.CanChooseDefenseAction)
         {
             _actionDefense.SetActive(true);
@@ -235,6 +241,7 @@ public class MatchUI : MonoBehaviour
         {
             _actionDefense.SetActive(false);
         }
+        */
         //Debug Area
         if (GameObject.Find("DebugTextHome"))
         {
@@ -908,5 +915,23 @@ public class MatchUI : MonoBehaviour
         image_defensive_AwayTeamAdrenalineBar.fillAmount = _matchManager.AwayTeam.AdrenalineBar / _matchManager.AwayTeam.AdrenalineBarFull;
 
 
+    }
+    //Defensive Panel
+    public void ActivateDefensivePanel()
+    {
+        if (_matchManager.CanChooseDefenseAction)
+        {
+            _actionDefense.SetActive(true);
+        }
+        else
+        {
+            _actionDefense.SetActive(false);
+        }
+    }
+    public void DefensivePerc(float shootP, float passP, int jukeP)
+    {
+        text_defensivePanel_ShootPerc.text = Math.Round(shootP*100).ToString() + "%";
+        text_defensivePanel_PassPerc.text = Math.Round(passP * 100).ToString() + "%";
+        text_defensivePanel_JukePerc.text = jukeP.ToString() + "%";
     }
 }

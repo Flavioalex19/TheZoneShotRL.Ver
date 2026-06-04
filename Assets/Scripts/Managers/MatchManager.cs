@@ -69,8 +69,8 @@ public class MatchManager : MonoBehaviour
     [SerializeField] Button btn_spAttck;
     public bool CanChooseAction = true;
     public bool CanChooseDefenseAction = true;
-    public bool chooseDefenseTackle = false;
-    public bool chooseBlock = false;
+    public bool chooseToBlock = false;
+    public bool chooseToSteal = false;
     public bool chooseInterception = false;
     public bool CanChooseShove = false;
     public bool CanChooseCharge = false;
@@ -504,6 +504,7 @@ public class MatchManager : MonoBehaviour
         if (isSimulation) AISub();
         if( teamWithball.IsPlayerTeam == false)
         {
+            if(!isSimulation)AISub();
             adrenaline_addUp = 20;
             AwayTeam.AdrenalineBar = 0;
             if (!isSimulation) _matchUI.OffesnivePanelOnOff(false);
@@ -516,13 +517,16 @@ public class MatchManager : MonoBehaviour
                 HomeTeam.playersListRoster[i].CurrentZone = 0;
             }
             if (!isSimulation) _matchUI.UpdatePlayerPlacements();
-            
-            
+
+            if (!isSimulation) _matchUI.ActivateDefensivePanel();
+            _matchUI._actionDefense.SetActive(true);
             while (true)
             {
                 if (!isSimulation) _matchUI.percentagePanel.SetActive(false);
                 if (!isSimulation) _matchUI.HomeTeamHp();
                 if(!isSimulation) _matchUI.AwayTeamAdrenalineBar();
+                if(!isSimulation) _matchUI.ActivateDefensivePanel();
+                _matchUI._actionDefense.SetActive(true);
                 adrenaline_addUp = 20;
                 CanChooseAction = false;
                 if ((leagueManager.isOnR8 == true || leagueManager.isOnR4 == true || leagueManager.isOnFinals == true)&& currentGamePossessons <=1)
@@ -549,8 +553,8 @@ public class MatchManager : MonoBehaviour
                 {
                     //Defense wait for choice
                     CanChooseDefenseAction = true;
-                    chooseDefenseTackle = false;
-                    chooseBlock = false;
+                    chooseToBlock = false;
+                    chooseToSteal = false;
                     //Timeout
                     if (_canCallTimeout == false)
                     {
@@ -558,6 +562,9 @@ public class MatchManager : MonoBehaviour
                         ChoosePlayerToCarryBall();
                         yield break;
                     }
+                    _matchUI.DefensivePerc(ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0),
+                        PercentageMakePassToTeammate(GetRandomDifferentTeammateIndex(playerWithTheBall)),
+                        GetJukePercentage(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone));
                     if (!isSimulation) yield return WaitForDefenseAction();
                     CanChooseDefenseAction = false;
                     //chooseDefenseTackle = false;
@@ -698,13 +705,17 @@ public class MatchManager : MonoBehaviour
             }   
             _matchUI.text_remainingCards.text = cardsFolder.childCount.ToString();
             _matchUI.OffesnivePanelOnOff(true);
+            if (!isSimulation) _matchUI.ActivateDefensivePanel();
+            _matchUI._actionDefense.SetActive(false);
             while (true)
             {
+                if (!isSimulation) _matchUI.ActivateDefensivePanel();
                 if (!isSimulation) _matchUI.percentagePanel.SetActive(true);
                 if (!isSimulation) _matchUI.PlayerWithTheBallOff();
                 if (!isSimulation) _matchUI.PlayerWithBallButtonsOnOff();
                 if (!isSimulation) _matchUI.UpdatePlayerPlacements();
                 if (!isSimulation) _matchUI.UpdateStreakValue(consecutiveSuccesses);
+                _matchUI._actionDefense.SetActive(false);
                 //if(!isSimulation) _matchUI.ActivateAnimatorOffensivePanel();
                 //MatchEvents();
                 //CanChooseAction = true;
@@ -1079,17 +1090,17 @@ public class MatchManager : MonoBehaviour
     //Defense
     IEnumerator WaitForDefenseAction()
     {
-        yield return new WaitUntil(() => { return chooseDefenseTackle|| chooseBlock; });
-    }
-    public void ChooseTackle()
-    {
-        CanChooseDefenseAction = false;
-        chooseDefenseTackle = true;
+        yield return new WaitUntil(() => { return chooseToBlock|| chooseToSteal|| chooseInterception; });
     }
     public void ChooseBlock()
     {
         CanChooseDefenseAction = false;
-        chooseBlock = true;
+        chooseToBlock = true;
+    }
+    public void ChooseSteal()
+    {
+        CanChooseDefenseAction = false;
+        chooseToSteal = true;
     }
     public void ChooseInterception()
     {
@@ -1099,8 +1110,8 @@ public class MatchManager : MonoBehaviour
     public void ResetDefensiveOptions()
     {
         CanChooseDefenseAction = false;
-        chooseDefenseTackle = false;
-        chooseBlock = false;
+        chooseToBlock = false;
+        chooseToSteal = false;
         chooseInterception = false;
     }
     bool TryPassBall()
@@ -1683,8 +1694,8 @@ public class MatchManager : MonoBehaviour
         float rawChance = offenseScore / (offenseScore + defenseScore + 40f); // +40 evita extremos
 
         // === 5. Modificadores (tackle) ===
-        if (chooseDefenseTackle)
-            rawChance *= 0.90f; // -20%
+        if (chooseInterception)
+            rawChance *= 0.95f; // 
 
         // === 6. Bias principal: playerTeam mais difícil, AI mais fácil ===
         float finalChance = rawChance;
@@ -1781,8 +1792,8 @@ public class MatchManager : MonoBehaviour
             defenderQualityMultiplier = zone switch
             {
                 0 => 0.85f,   // Outside
-                1 => 0.75f,   // Mid
-                2 => 0.80f,   // Inside
+                1 => 0.90f,   // Mid
+                2 => 0.90f,   // Inside
                 _ => 0.80f
             };
         }
@@ -1791,8 +1802,8 @@ public class MatchManager : MonoBehaviour
             defenderQualityMultiplier = zone switch
             {
                 0 => 0.70f,
-                1 => 0.65f,
-                2 => 0.75f,
+                1 => 0.75f,
+                2 => 0.80f,
                 _ => 0.70f
             };
         }
@@ -1801,8 +1812,8 @@ public class MatchManager : MonoBehaviour
             defenderQualityMultiplier = zone switch
             {
                 0 => 0.55f,
-                1 => 0.50f,
-                2 => 0.60f,
+                1 => 0.60f,
+                2 => 0.70f,
                 _ => 0.55f
             };
         }
@@ -1863,6 +1874,9 @@ public class MatchManager : MonoBehaviour
         if (bonusType.Contains("Shooting") || bonusType.Contains("Shooting & Juke"))
         {
             finalChance *= 1.18f;   // +18% de eficiência
+        }
+        if (chooseToBlock)        {
+            finalChance *= 0.90f; // Debuff de 10% 
         }
 
         return Mathf.Clamp(finalChance, 0.20f, 0.93f);
@@ -2316,7 +2330,10 @@ public class MatchManager : MonoBehaviour
         {
             finalChance *= 1.18f;   // +18% de eficiência
         }
-
+        if (chooseToSteal)
+        {
+            finalChance *= 0.90f; // Debuff de 10% quando o defensor escolhe bloquear
+        }
         finalChance = Mathf.Clamp(finalChance, 0.25f, 0.90f);
 
         jukePercentage = finalChance;
@@ -2328,6 +2345,7 @@ public class MatchManager : MonoBehaviour
             offense.CurrentZone = 0;
             return false;   // Steal
         }
+
 
         offense.CurrentZone = Mathf.Min(zone + 1, 2);
         _matchUI.UpdatePlayerPlacements();
@@ -2522,70 +2540,70 @@ public class MatchManager : MonoBehaviour
     //AI
     private AIAction AI_Tendency()
     {
-        
+        // =====================================================
+        // 1. PRIORIDADE MÁXIMA: Adrenalina cheia  Special
+        // =====================================================
+        if (teamWithball.AdrenalineBar >= teamWithball.AdrenalineBarFull)
+        {
+            return AIAction.Special;
+        }
+
+        // =====================================================
+        // 2. Cálculo das chances baseado nos atributos do jogador
+        // =====================================================
         float awareness = playerWithTheBall.Awareness;
         float shooting = playerWithTheBall.Shooting;
+        float juking = playerWithTheBall.Juking;
 
-        float passChance = PassEquation() * (1f + (awareness / 100f) * 0.4f);     // Awareness aumenta chance de passe
-        float jukeChance = CalculateJukeProbability(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone);
-
-        // Se o jogador está fora da sua zona preferida, aumenta chance de Juke
-        int preferredZone = GetPreferredZone(playerWithTheBall); // função auxiliar simples
-        if (playerWithTheBall.CurrentZone < preferredZone && playerWithTheBall.CurrentZone < 2)
-        {
-            jukeChance *= 1.35f;   // Aumenta chance de driblar para avançar
-        }
-
+        // Chance base (usando as equações existentes  peso do atributo)
+        float passChance = PassEquation() * (1f + (awareness / 100f) * 0.55f);
         float shootChance = ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0)
-                            * (1f + (shooting / 100f) * 0.35f);   // Shooting aumenta chance de arremesso
+                            * (1f + (shooting / 100f) * 0.55f);
+        float jukeChance = CalculateJukeProbability(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone)
+                           * (1f + (juking / 100f) * 0.55f);
 
-        float spChance = 0f;
-        if (teamWithball.AdrenalineBar >= 50f)
-        {
-            // Quanto mais perto de 100, maior a chance de Special
-            float adrenalineFactor = (teamWithball.AdrenalineBar - 50f) / 50f;
-            spChance = ActivateSpecialAttk(true) * (0.6f + adrenalineFactor * 0.4f);
-        }
-        ////////////////////////////////////////////
+        // =====================================================
+        // 3. Bônus de Formação
+        // =====================================================
         string bonusType = GetFormationBonus(teamWithball, playerWithTheBall);
 
-        // Aplica o bônus conforme o tipo retornado pela formação
         if (bonusType.Contains("Shooting"))
-        {
-            shootChance *= 1.35f;   // Bônus forte para arremesso
-        }
+            shootChance *= 1.32f;
         else if (bonusType.Contains("Juke"))
-        {
-            jukeChance *= 1.40f;    // Bônus forte para juke/drible
-        }
+            jukeChance *= 1.38f;
         else if (bonusType.Contains("Pass"))
+            passChance *= 1.28f;
+
+        // =====================================================
+        // 4. Lógica de Zona (o coração da sua nova regra)
+        // Se o jogador está fora da zona preferida, ele tende a querer driblar (Juke)
+        // =====================================================
+        int preferredZone = GetPreferredZone(playerWithTheBall);
+
+        if (playerWithTheBall.CurrentZone != preferredZone && playerWithTheBall.CurrentZone < 2)
         {
-            passChance *= 1.30f;    // Bônus para passe
+            // Está fora da zona ideal  aumenta chance de Juke e reduz um pouco o Shoot
+            jukeChance *= 1.55f;
+            shootChance *= 0.70f;
         }
-        
 
-        ///////////////////////////////////////
-
+        // =====================================================
+        // 5. Lógica de Última Posse (mantida)
+        // =====================================================
         if (currentGamePossessons == 1 && !teamWithball.IsPlayerTeam)
         {
             int scoreDifference = HomeTeam.Score - AwayTeam.Score;
 
-            if (scoreDifference < 0)
+            if (scoreDifference < 0) // Está perdendo
             {
-                if (playerWithTheBall.CurrentZone < 2 && jukeChance > 0.25f)
-                {
-                    Debug.Log("AI Last Possession - Losing and zone < 2 - Forcing Juke");
-                    return AIAction.Juke;
-                }
+                if (playerWithTheBall.CurrentZone < 2)
+                    return AIAction.Juke; // Tenta avançar
                 else
-                {
-                    Debug.Log("AI Last Possession - Losing but zone = 2 - Trying Shoot");
                     return AIAction.Shoot;
-                }
             }
-            else if (scoreDifference == 0)
+            else if (scoreDifference == 0) // Empatado
             {
-                if (shootChance > 0.50f)
+                if (shootChance > 0.55f)
                     return AIAction.Shoot;
                 else if (playerWithTheBall.CurrentZone < 2)
                     return AIAction.Juke;
@@ -2594,7 +2612,9 @@ public class MatchManager : MonoBehaviour
             }
         }
 
-        float totalWeight = passChance + jukeChance + shootChance + spChance;
+        // 6. Seleção final ponderada
+
+        float totalWeight = passChance + jukeChance + shootChance;
 
         if (totalWeight <= 0f)
             return AIAction.Shoot;
@@ -2605,10 +2625,8 @@ public class MatchManager : MonoBehaviour
             return AIAction.Pass;
         else if (randomValue < passChance + jukeChance)
             return AIAction.Juke;
-        else if (randomValue < passChance + jukeChance + shootChance)
-            return AIAction.Shoot;
         else
-            return AIAction.Special;
+            return AIAction.Shoot;
     }
     private int GetPreferredZone(Player p)
     {
