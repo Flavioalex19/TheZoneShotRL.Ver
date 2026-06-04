@@ -741,6 +741,8 @@ public class MatchManager : MonoBehaviour
                 _matchUI.TeamStyleUpdate(currentFormation);//update team style
                 _matchUI.OffensivePanelAwayTeamUpdate(AwayTeam);//update away team player stamna and name
                 _matchUI.UpdateOffensiveScoreBoard();
+                //PerosnlaityCheck
+                yield return PersonalityCheck(playerWithTheBall);
                 // Wait until player makes a choice
                 yield return new WaitUntil(() => _ChoosePass || _ChooseScoring || _ChooseToSpecialAtt || _ChooseBeatDefender || CanChooseCharge || CanChooseShove||_canCallTimeout == false);
 
@@ -1078,7 +1080,7 @@ public class MatchManager : MonoBehaviour
     }
     public void ChooseCharge()
     {
-        print("I CHOOSE CHARGE!!!!");
+        //print("I CHOOSE CHARGE!!!!");
         CanChooseCharge = true;
         CanChooseAction = false;
     }
@@ -2287,11 +2289,11 @@ public class MatchManager : MonoBehaviour
         float baseJukeChance;
 
         if (jukeResult >= 100f)
-            baseJukeChance = 0.85f;     // Juke bem sucedido
+            baseJukeChance = 0.88f;     // Juke bem sucedido
         else if (jukeResult >= -99f)
-            baseJukeChance = 0.50f;     // Meio a meio (removido o "Nothing")
+            baseJukeChance = 0.55f;     // Meio a meio (removido o "Nothing")
         else
-            baseJukeChance = 0.25f;     // Steal (defesa vence)
+            baseJukeChance = 0.30f;     // Steal (defesa vence)
 
         // ====================== FATORES EXISTENTES (mantidos) ======================
         float adrenaline = teamWithball.IsPlayerTeam ? teamWithball.AdrenalineBar : 75f;
@@ -2333,6 +2335,10 @@ public class MatchManager : MonoBehaviour
         if (chooseToSteal)
         {
             finalChance *= 0.90f; // Debuff de 10% quando o defensor escolhe bloquear
+        }
+        if (!teamWithball.IsPlayerTeam)
+        {
+            finalChance *= 1.15f; // IA tem 15% mais facilidade para fazer Juke
         }
         finalChance = Mathf.Clamp(finalChance, 0.25f, 0.90f);
 
@@ -3058,6 +3064,94 @@ public class MatchManager : MonoBehaviour
             currentGamePossessons = 0;
             if (HomeTeam.match_hp <= 0) AwayTeam.Score += 50;
             if(AwayTeam.match_hp<=0)HomeTeam.Score += 50;
+        }
+    }
+    //personality
+    IEnumerator PersonalityCheck(Player player)
+    {
+        if (playerWithTheBall == null)
+        {
+            yield return null;
+            yield break;
+        }
+
+        int personality = playerWithTheBall.Personality;
+        float chance = 0f;
+
+        switch (personality)
+        {
+            case 0:
+                chance = 0f;
+                break;
+            case 1:
+                chance = 0f;
+                break;
+            case 2:
+                chance = 0f;           // Nada acontece
+                break;
+
+            case 3:
+                chance = 0.10f;
+                break;
+            case 4:
+                chance = 0.15f;        // 15% de chance
+                break;
+
+            case 5:
+                chance = 0.35f;        // 35% de chance
+                break;
+
+            default:
+                chance = 0f;
+                break;
+        }
+
+        // Sorteia se o evento vai acontecer
+        bool shouldTrigger = UnityEngine.Random.value < chance;
+
+        if (!shouldTrigger)
+        {
+            // Não aconteceu nada
+            yield return null;
+            yield break;
+        }
+        else
+        {
+            int randomAction = UnityEngine.Random.Range(0, 5);
+
+            switch (randomAction)
+            {
+                case 0:
+                    GetChoosePass();
+                    Debug.Log("[Personality Event] Forçou: Pass");
+                    break;
+
+                case 1:
+                    GetChooseScoring();
+                    Debug.Log("[Personality Event] Forçou: Scoring");
+                    break;
+
+                case 2:
+                    GetChooseBeatDefender();
+                    Debug.Log("[Personality Event] Forçou: Beat Defender (Juke)");
+                    break;
+
+                case 3:
+                    ChooseShove();
+                    Debug.Log("[Personality Event] Forçou: Shove");
+                    break;
+
+                case 4:
+                    ChooseCharge();
+                    Debug.Log("[Personality Event] Forçou: Charge");
+                    break;
+            }
+            // Espera o tempo de ação (como você pediu)
+            if (!isSimulation)
+            {
+                uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " seems like he's going to make his own decision.");
+                yield return new WaitForSeconds(_actionTimer);
+            }
         }
     }
 }
