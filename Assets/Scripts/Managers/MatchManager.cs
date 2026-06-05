@@ -91,6 +91,7 @@ public class MatchManager : MonoBehaviour
 
     float jukePercentage;
     public int consecutiveSuccesses = 0;
+    public bool isRogue = false;
 
     [SerializeField]public string currentFormation;
 
@@ -233,6 +234,7 @@ public class MatchManager : MonoBehaviour
         CanChooseAction = false;
         _matchUI.SetSkillPints();
         //print(AwayTeam.playersListRoster.Count + "Number of player i the roster of the away team");
+        //_matchUI.SetCrowdColors();
         StartCoroutine(RunMatchThenSimulate());
 
         
@@ -701,6 +703,10 @@ public class MatchManager : MonoBehaviour
                         canDraw = false;
                     }
                 }
+                else
+                {
+                    yield return PersonalityCheck(playerWithTheBall);
+                }
                 
             }   
             _matchUI.text_remainingCards.text = cardsFolder.childCount.ToString();
@@ -743,6 +749,7 @@ public class MatchManager : MonoBehaviour
                 _matchUI.UpdateOffensiveScoreBoard();
                 //PerosnlaityCheck
                 //yield return PersonalityCheck(playerWithTheBall);
+                yield return new WaitUntil(()=>isRogue == false);
                 // Wait until player makes a choice
                 yield return new WaitUntil(() => _ChoosePass || _ChooseScoring || _ChooseToSpecialAtt || _ChooseBeatDefender || CanChooseCharge || CanChooseShove||_canCallTimeout == false);
 
@@ -3112,13 +3119,18 @@ public class MatchManager : MonoBehaviour
         if (!shouldTrigger)
         {
             // Não aconteceu nada
+            isRogue = false;
             yield return null;
             yield break;
         }
         else
         {
+            _matchUI.ResultActionPanel("F", 4);
+            yield return new WaitForSeconds(_actionTimer);
+            uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " seems like he's going to make his own decision.");
+            yield return new WaitForSeconds(_actionTimer);
             int randomAction = UnityEngine.Random.Range(0, 5);
-
+            isRogue = true;
             switch (randomAction)
             {
                 case 0:
@@ -3149,9 +3161,8 @@ public class MatchManager : MonoBehaviour
             // Espera o tempo de ação (como você pediu)
             if (!isSimulation)
             {
-                uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " seems like he's going to make his own decision.");
-                _matchUI.ResultActionPanel("F",4);
                 yield return new WaitForSeconds(_actionTimer);
+                isRogue = false;
             }
         }
     }

@@ -77,6 +77,8 @@ public class Team : MonoBehaviour
     public bool isR4 = false;
     public bool isFinalist = false;
     public bool isChampion = false;//indicates if you clear the game with this team;
+    [ColorUsage(true, true)]
+    public Color TeamColor;
     private void Awake()
     {
        

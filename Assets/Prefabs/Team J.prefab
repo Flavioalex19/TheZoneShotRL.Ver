@@ -44,15 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47e81d07a4c1bab4e9b19bd033658eec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playersListRoster:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  playersListRoster: []
   _equipmentList:
   - Index: 0
     Name: Helmet
@@ -90,7 +82,7 @@ MonoBehaviour:
     MidBoost: 0
     OutBoost: 0
   TeamName: Arizona Phantom Hunters
-  IsPlayerTeam: 1
+  IsPlayerTeam: 0
   Moral: 65
   FrontOfficePoints: 30
   FansSupportPoints: 60
@@ -119,16 +111,7 @@ MonoBehaviour:
     the sharpest survive. The Hunters live for the chase, and they never stop until
     their prey is beaten and the dust settles."
   CoachName: Clint Potter
-  _schedule:
-  - {fileID: 247511481009705585, guid: bac72de72e83f3946b22b73c381a244a, type: 3}
-  - {fileID: 8985775287296533070, guid: c8d55af16177e3d4495d2057f2d13e53, type: 3}
-  - {fileID: 3835133189410921805, guid: 0068726d1c5df484f9dc2630e4468009, type: 3}
-  - {fileID: 4930805896377140774, guid: aeca574c5522f4645acfcfc17d6fd4d5, type: 3}
-  - {fileID: 4692404391865069018, guid: d0d8f7883d31ffb4193b26a1e65844d6, type: 3}
-  - {fileID: 3188942586306340408, guid: 7f9e7d1ae36d2414eade87402b912e57, type: 3}
-  - {fileID: 9142570226746684108, guid: 50a9d2ac7b6a1fc429b16d6db742e672, type: 3}
-  - {fileID: 3523512651790483354, guid: 878a046738525e74990ec310eb3fee11, type: 3}
-  - {fileID: 5283688353268470781, guid: c3f11cd17e65e3241bc8f28fdd2bece2, type: 3}
+  _schedule: []
   _teamStyle: 3
   HasPlayed: 0
   hasPossession: 0
@@ -139,7 +122,10 @@ MonoBehaviour:
   OBuff: 0
   AdrenalineBar: 0
   AdrenalineBarFull: 100
+  match_hp: 0
+  match_hpMax: 100
   isR8: 0
   isR4: 0
   isFinalist: 0
   isChampion: 0
+  TeamColor: {r: 5.6346707, g: 5.5015683, b: 0, a: 1}

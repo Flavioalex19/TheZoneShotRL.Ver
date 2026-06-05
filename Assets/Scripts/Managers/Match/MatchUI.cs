@@ -187,6 +187,9 @@ public class MatchUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_defensivePanel_ShootPerc;
     [SerializeField] TextMeshProUGUI text_defensivePanel_PassPerc;
     [SerializeField] TextMeshProUGUI text_defensivePanel_JukePerc;
+
+    [Header("Crowd")]
+    [SerializeField] Image material_crowd;
     private void Awake()
     {
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
@@ -623,7 +626,8 @@ public class MatchUI : MonoBehaviour
                 text_actionResultF.text = list_Opp_SucAttempt[Random.Range(0, list_Opp_SucAttempt.Count)];
                 break;
             case 4:
-                text_actionResultF.text = list_Personality[Random.Range(0, list_Opp_SucAttempt.Count)];
+                text_actionResultS.text = list_Personality[Random.Range(0, list_Personality.Count)];
+                text_actionResultF.text = list_Personality[Random.Range(0, list_Personality.Count)];
                 break;
         }
     }
@@ -940,5 +944,11 @@ public class MatchUI : MonoBehaviour
         text_defensivePanel_ShootPerc.text = Math.Round(shootP*100).ToString() + "%";
         text_defensivePanel_PassPerc.text = Math.Round(passP * 100).ToString() + "%";
         text_defensivePanel_JukePerc.text = jukeP.ToString() + "%";
+    }
+    //set crowd
+    public void SetCrowdColors()
+    {
+        material_crowd.material.SetColor("_ColorA",_matchManager.HomeTeam.TeamColor);
+        material_crowd.material.SetColor("_ColorB", _matchManager.AwayTeam.TeamColor);
     }
 }
