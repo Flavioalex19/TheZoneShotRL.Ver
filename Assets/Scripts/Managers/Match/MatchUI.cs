@@ -65,6 +65,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] List<string> list_Opp_SucAttempt = new List<string>();
     [SerializeField] List<string> list_ChargeLines = new List<string>();
     [SerializeField] List<string> list_Shove = new List<string>();
+    [SerializeField] List<string> list_Personality = new List<string>();
     public string gameAction = " ";
     public string ResultplayerAction = " ";
 
@@ -621,6 +622,9 @@ public class MatchUI : MonoBehaviour
                 text_actionResultS.text = list_Opp_FailedAttempt[Random.Range(0, list_Opp_FailedAttempt.Count)];
                 text_actionResultF.text = list_Opp_SucAttempt[Random.Range(0, list_Opp_SucAttempt.Count)];
                 break;
+            case 4:
+                text_actionResultF.text = list_Personality[Random.Range(0, list_Opp_SucAttempt.Count)];
+                break;
         }
     }
     public void ActivateVictoryDefeat(string endText)
@@ -834,9 +838,9 @@ public class MatchUI : MonoBehaviour
     {
         anim_Sp_Button_Activate.SetTrigger("Go");
     }
-    public void StartResultPanel(string textM)
+    public void StartResultPanel(string textM, string result)
     {
-        animator_endgame_Result.SetTrigger("Go");
+        //animator_endgame_Result.SetTrigger("Go");
         text_victoryDefeatResult.text = textM;
         if(textM == "Victory")
         {
@@ -848,7 +852,10 @@ public class MatchUI : MonoBehaviour
             text_vicotryDefeatLine.text = "We need to improve!";
             image_victoryDefeatResult.sprite = sprite_defeat;
         }
-        
+        if(result == "V") animator_endgame_Result.SetTrigger("Go");
+        else if( result == "D") animator_endgame_Result.SetTrigger("Defeat");
+        else animator_endgame_Result.SetTrigger("Draw");
+
     }
     public void UpdateStreakValue(int value)
     {

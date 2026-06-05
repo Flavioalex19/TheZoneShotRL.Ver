@@ -83,5 +83,6 @@ public class CardDisplay : MonoBehaviour
         this.transform.localPosition = Vector3.zero;
         this.transform.localRotation = Quaternion.identity;
         matchUI.UpdateCardsHand();
+        StartCoroutine(matchManager.PersonalityCheck(matchManager.playerWithTheBall));
     }
 }

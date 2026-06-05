@@ -373,7 +373,7 @@ public class MatchManager : MonoBehaviour
                     manager.playerTeam.isChampion = true;
                 }
                 //_matchUI.ActivateVictoryDefeat("Victory");
-                _matchUI.StartResultPanel("Victory");
+                _matchUI.StartResultPanel("Victory", "V");
             }
             
         }
@@ -391,7 +391,7 @@ public class MatchManager : MonoBehaviour
                     leagueManager.isGameOver = true;
                     //leagueManager.isOnR8 = false;
                 }
-                if (!isSimulation) _matchUI.StartResultPanel("Defeat"); //_matchUI.ActivateVictoryDefeat("Defeat");
+                if (!isSimulation) _matchUI.StartResultPanel("Defeat", "D"); //_matchUI.ActivateVictoryDefeat("Defeat");
             }
             
         }
@@ -401,7 +401,7 @@ public class MatchManager : MonoBehaviour
             AwayTeam.Moral -= 5;
             HomeTeam.Draws++;
             AwayTeam.Draws++;
-            if (HomeTeam.IsPlayerTeam) { _matchUI.StartResultPanel("Draw");/*_matchUI.ActivateVictoryDefeat("Draw"); */}
+            if (HomeTeam.IsPlayerTeam) { _matchUI.StartResultPanel("Draw","Draw");/*_matchUI.ActivateVictoryDefeat("Draw"); */}
             
         }
         
@@ -742,7 +742,7 @@ public class MatchManager : MonoBehaviour
                 _matchUI.OffensivePanelAwayTeamUpdate(AwayTeam);//update away team player stamna and name
                 _matchUI.UpdateOffensiveScoreBoard();
                 //PerosnlaityCheck
-                yield return PersonalityCheck(playerWithTheBall);
+                //yield return PersonalityCheck(playerWithTheBall);
                 // Wait until player makes a choice
                 yield return new WaitUntil(() => _ChoosePass || _ChooseScoring || _ChooseToSpecialAtt || _ChooseBeatDefender || CanChooseCharge || CanChooseShove||_canCallTimeout == false);
 
@@ -3067,7 +3067,7 @@ public class MatchManager : MonoBehaviour
         }
     }
     //personality
-    IEnumerator PersonalityCheck(Player player)
+    public IEnumerator PersonalityCheck(Player player)
     {
         if (playerWithTheBall == null)
         {
@@ -3150,6 +3150,7 @@ public class MatchManager : MonoBehaviour
             if (!isSimulation)
             {
                 uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " seems like he's going to make his own decision.");
+                _matchUI.ResultActionPanel("F",4);
                 yield return new WaitForSeconds(_actionTimer);
             }
         }
