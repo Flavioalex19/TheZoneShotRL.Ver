@@ -40,6 +40,7 @@ public class MatchUI : MonoBehaviour
     [Header("Action Button Area")]
     [SerializeField] GameObject _actionArea;
     [SerializeField]public GameObject _actionDefense;
+    [SerializeField] Animator animator_defensivePanel;
 
     
     Substitutions _substitutions;
@@ -930,14 +931,28 @@ public class MatchUI : MonoBehaviour
     //Defensive Panel
     public void ActivateDefensivePanel()
     {
+        /*
         if (_matchManager.CanChooseDefenseAction)
         {
-            _actionDefense.SetActive(true);
+            print("Open");
+            //_actionDefense.SetActive(true);
+            animator_defensivePanel.SetTrigger("Open");
         }
         else
         {
-            _actionDefense.SetActive(false);
+            print("cLOSE");
+            //_actionDefense.SetActive(false);
+            animator_defensivePanel.SetTrigger("Close");
         }
+        */
+    }
+    public void OpenDefensivePanel()
+    {
+        animator_defensivePanel.SetTrigger("Open");
+    }
+    public void CloseDefensivePanel()
+    {
+        animator_defensivePanel.SetTrigger("Close");
     }
     public void DefensivePerc(float shootP, float passP, int jukeP)
     {

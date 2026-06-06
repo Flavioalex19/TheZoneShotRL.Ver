@@ -7281,6 +7281,7 @@ MonoBehaviour:
   _awayTeamImage: {fileID: 417303669}
   _actionArea: {fileID: 1972640101}
   _actionDefense: {fileID: 1938015838}
+  animator_defensivePanel: {fileID: 525018549242389643}
   _panel_SubsPanel: {fileID: 1514963372}
   text_playerStarter: {fileID: 1590294859}
   text_playerBench: {fileID: 1512085055}
@@ -116480,7 +116481,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1056825720241719483, guid: 8e32d902e7cde7f43a8377ca3d1e288d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1948635300490739326, guid: 8e32d902e7cde7f43a8377ca3d1e288d, type: 3}
       propertyPath: m_fontColor.b
@@ -116534,6 +116535,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 154066590}
+    - target: {fileID: 2457390621623307236, guid: 8e32d902e7cde7f43a8377ca3d1e288d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: CloseDefensivePanel
+      objectReference: {fileID: 0}
     - target: {fileID: 3333595558748044619, guid: 8e32d902e7cde7f43a8377ca3d1e288d, type: 3}
       propertyPath: m_fontColor.b
       value: 1
@@ -116574,6 +116579,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 154066590}
+    - target: {fileID: 3420293931205300980, guid: 8e32d902e7cde7f43a8377ca3d1e288d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: CloseDefensivePanel
+      objectReference: {fileID: 0}
     - target: {fileID: 3811384075324880551, guid: 8e32d902e7cde7f43a8377ca3d1e288d, type: 3}
       propertyPath: m_fontColor.b
       value: 1
@@ -116638,6 +116647,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 154066590}
+    - target: {fileID: 7061520489545750103, guid: 8e32d902e7cde7f43a8377ca3d1e288d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: CloseDefensivePanel
+      objectReference: {fileID: 0}
     - target: {fileID: 7127567840704478419, guid: 8e32d902e7cde7f43a8377ca3d1e288d, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -116739,6 +116752,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8e32d902e7cde7f43a8377ca3d1e288d, type: 3}
+--- !u!95 &525018549242389643 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5807044296711029434, guid: 8e32d902e7cde7f43a8377ca3d1e288d, type: 3}
+  m_PrefabInstance: {fileID: 525018549242389642}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1207912100087838350
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.XR;
 //using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class MatchManager : MonoBehaviour
@@ -513,22 +514,28 @@ public class MatchManager : MonoBehaviour
             CanChooseAction = false;
             
             ai_currentNumberOfPasses = ai_maxNumberOfPasses;
-
+            CanChooseDefenseAction = true;
+            //_matchUI.ActivateDefensivePanel();
+            
             for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
             {
                 HomeTeam.playersListRoster[i].CurrentZone = 0;
             }
             if (!isSimulation) _matchUI.UpdatePlayerPlacements();
 
-            if (!isSimulation) _matchUI.ActivateDefensivePanel();
-            _matchUI._actionDefense.SetActive(true);
+            //if (!isSimulation) _matchUI.ActivateDefensivePanel();
+            //_matchUI._actionDefense.SetActive(true);
             while (true)
             {
                 if (!isSimulation) _matchUI.percentagePanel.SetActive(false);
                 if (!isSimulation) _matchUI.HomeTeamHp();
                 if(!isSimulation) _matchUI.AwayTeamAdrenalineBar();
-                if(!isSimulation) _matchUI.ActivateDefensivePanel();
-                _matchUI._actionDefense.SetActive(true);
+                CanChooseDefenseAction = true;
+                if(CanChooseDefenseAction) _matchUI.OpenDefensivePanel();
+
+                //if(!isSimulation) _matchUI.ActivateDefensivePanel();
+                //_matchUI.ActivateDefensivePanel();
+                //_matchUI._actionDefense.SetActive(true);
                 adrenaline_addUp = 20;
                 CanChooseAction = false;
                 if ((leagueManager.isOnR8 == true || leagueManager.isOnR4 == true || leagueManager.isOnFinals == true)&& currentGamePossessons <=1)
@@ -680,7 +687,7 @@ public class MatchManager : MonoBehaviour
         {
             //_matchUI.OffesnivePanelOnOff(true);
             CanChooseDefenseAction = false;
-
+            //ResetDefensiveOptions() ;
             
             if (!isSimulation)
             {
@@ -712,7 +719,7 @@ public class MatchManager : MonoBehaviour
             _matchUI.text_remainingCards.text = cardsFolder.childCount.ToString();
             _matchUI.OffesnivePanelOnOff(true);
             if (!isSimulation) _matchUI.ActivateDefensivePanel();
-            _matchUI._actionDefense.SetActive(false);
+            //_matchUI._actionDefense.SetActive(false);
             while (true)
             {
                 if (!isSimulation) _matchUI.ActivateDefensivePanel();
@@ -721,7 +728,7 @@ public class MatchManager : MonoBehaviour
                 if (!isSimulation) _matchUI.PlayerWithBallButtonsOnOff();
                 if (!isSimulation) _matchUI.UpdatePlayerPlacements();
                 if (!isSimulation) _matchUI.UpdateStreakValue(consecutiveSuccesses);
-                _matchUI._actionDefense.SetActive(false);
+                //_matchUI._actionDefense.SetActive(false);
                 //if(!isSimulation) _matchUI.ActivateAnimatorOffensivePanel();
                 //MatchEvents();
                 //CanChooseAction = true;
@@ -2556,7 +2563,7 @@ public class MatchManager : MonoBehaviour
     private AIAction AI_Tendency()
     {
         // =====================================================
-        // 1. PRIORIDADE MÁXIMA: Adrenalina cheia  Special
+        // PRIORIDADE 1: Adrenalina cheia  Special
         // =====================================================
         if (teamWithball.AdrenalineBar >= teamWithball.AdrenalineBarFull)
         {
@@ -2564,77 +2571,87 @@ public class MatchManager : MonoBehaviour
         }
 
         // =====================================================
-        // 2. Cálculo das chances baseado nos atributos do jogador
+        // PRIORIDADE 2: Fim de jogo + perdendo por bastante  Forçar Juke
+        // =====================================================
+        bool isLateGame = currentGamePossessons <= 3;
+        int scoreDiff = HomeTeam.Score - AwayTeam.Score; // Positivo = Home está ganhando
+        bool isAI = !teamWithball.IsPlayerTeam;
+
+        if (isLateGame && isAI && scoreDiff >= 4 && playerWithTheBall.CurrentZone < 2)
+        {
+            //Debug.Log("AI Late Game - Losing by 4+  Forçando Juke");
+            return AIAction.Juke;
+        }
+
+        // =====================================================
+        // PRIORIDADE 3: Lógica de Zona (novo)
+        // =====================================================
+        int currentZone = playerWithTheBall.CurrentZone;
+
+        // Zona 2 (Inside)  Sempre arremessa
+        if (currentZone == 2)
+        {
+            //Debug.Log("AI  Zona 2  Forçando Shoot");
+            return AIAction.Shoot;
+        }
+
+        // Zona 1 (Mid)  Forte tendência a arremessar (se não estiver perdendo muito)
+        if (currentZone == 1)
+        {
+            // Se estiver no final do jogo e perdendo por 4 ou mais, ainda tenta Juke
+            if (isLateGame && isAI && scoreDiff >= 4)
+            {
+                //Debug.Log("AI Zona 1  Late Game perdendo  Tenta Juke");
+                return AIAction.Juke;
+            }
+
+            // Caso contrário, forte tendência a Shoot na zona 1
+            //Debug.Log("AI  Zona 1  Tendência forte para Shoot");
+            return AIAction.Shoot;
+        }
+
+        // =====================================================
+        // PRIORIDADE 4: Zona 0 (Outside)  Comportamento normal ponderado
         // =====================================================
         float awareness = playerWithTheBall.Awareness;
         float shooting = playerWithTheBall.Shooting;
         float juking = playerWithTheBall.Juking;
 
-        // Chance base (usando as equações existentes  peso do atributo)
-        float passChance = PassEquation() * (1f + (awareness / 100f) * 0.55f);
+        float passChance = PassEquation() * (1f + (awareness / 100f) * 0.50f);
         float shootChance = ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0)
-                            * (1f + (shooting / 100f) * 0.55f);
+                            * (1f + (shooting / 100f) * 0.50f);
         float jukeChance = CalculateJukeProbability(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone)
-                           * (1f + (juking / 100f) * 0.55f);
+                           * (1f + (juking / 100f) * 0.50f);
 
-        // =====================================================
-        // 3. Bônus de Formação
-        // =====================================================
+        // Bônus de Formação
         string bonusType = GetFormationBonus(teamWithball, playerWithTheBall);
+        if (bonusType.Contains("Shooting")) shootChance *= 1.30f;
+        else if (bonusType.Contains("Juke")) jukeChance *= 1.35f;
+        else if (bonusType.Contains("Pass")) passChance *= 1.25f;
 
-        if (bonusType.Contains("Shooting"))
-            shootChance *= 1.32f;
-        else if (bonusType.Contains("Juke"))
-            jukeChance *= 1.38f;
-        else if (bonusType.Contains("Pass"))
-            passChance *= 1.28f;
-
-        // =====================================================
-        // 4. Lógica de Zona (o coração da sua nova regra)
-        // Se o jogador está fora da zona preferida, ele tende a querer driblar (Juke)
-        // =====================================================
+        // Lógica de Zona (fora da zona preferida)
         int preferredZone = GetPreferredZone(playerWithTheBall);
-
         if (playerWithTheBall.CurrentZone != preferredZone && playerWithTheBall.CurrentZone < 2)
         {
-            // Está fora da zona ideal  aumenta chance de Juke e reduz um pouco o Shoot
-            jukeChance *= 1.55f;
-            shootChance *= 0.70f;
+            jukeChance *= 1.50f;
+            shootChance *= 0.75f;
         }
 
-        // =====================================================
-        // 5. Lógica de Última Posse (mantida)
-        // =====================================================
-        if (currentGamePossessons == 1 && !teamWithball.IsPlayerTeam)
+        // Leve incentivo para a IA tentar Juke
+        if (isAI && playerWithTheBall.CurrentZone < 2)
         {
-            int scoreDifference = HomeTeam.Score - AwayTeam.Score;
-
-            if (scoreDifference < 0) // Está perdendo
-            {
-                if (playerWithTheBall.CurrentZone < 2)
-                    return AIAction.Juke; // Tenta avançar
-                else
-                    return AIAction.Shoot;
-            }
-            else if (scoreDifference == 0) // Empatado
-            {
-                if (shootChance > 0.55f)
-                    return AIAction.Shoot;
-                else if (playerWithTheBall.CurrentZone < 2)
-                    return AIAction.Juke;
-                else
-                    return AIAction.Shoot;
-            }
+            jukeChance *= 1.12f;
         }
 
-        // 6. Seleção final ponderada
+        // =====================================================
+        // Seleção final ponderada (Zona 0)
+        // =====================================================
+        float total = passChance + shootChance + jukeChance;
 
-        float totalWeight = passChance + jukeChance + shootChance;
-
-        if (totalWeight <= 0f)
+        if (total <= 0f)
             return AIAction.Shoot;
 
-        float randomValue = UnityEngine.Random.value * totalWeight;
+        float randomValue = Random.value * total;
 
         if (randomValue < passChance)
             return AIAction.Pass;
@@ -2665,43 +2682,30 @@ public class MatchManager : MonoBehaviour
     // Função auxiliar pra juke chance (idêntica à lógica do TryBeatDefender)
     private float CalculateJukeProbability(Player offense, Player defense, int zone)
     {
-        
-        int offenseOVR = /* cálculo OVR */85;
-        int defenseOVR = /* cálculo OVR */85;
 
-        float offenseAvg = (offense.Consistency + offense.Control + offense.Juking +
-                            GetZoneValue(offense, zone) + offenseOVR / 5f) / 4f;
+        if (offense == null || defense == null)
+            return 0.45f;
 
-        float offenseScore = offenseAvg + UnityEngine.Random.Range(-10f, 20f);
+        // === Cálculo Base ===
+        float jukingPower = offense.Juking;
+        float defensePower = (defense.Guarding + defense.Stealing) / 2f;
 
-        float defenseAvg = (defense.Consistency + defense.Guarding + defense.Stealing +
-                            GetZoneValue(defense, zone) + defenseOVR / 5f) / 5f;
+        // Chance base (pode ajustar o coeficiente 0.009f se quiser mais ou menos sensível)
+        float baseChance = 0.48f + (jukingPower - defensePower) * 0.009f;
 
-        float defenseMedianBonus = defenseAvg * 0.3f;
-        float defenseScore = defenseAvg + defenseMedianBonus;
+        // Clamp da chance base
+        baseChance = Mathf.Clamp(baseChance, 0.28f, 0.82f);
 
-        Team defendingTeam = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
-        if (!defendingTeam.IsPlayerTeam)
-            defenseScore *= 1.25f;
-
-        float rawChance = offenseScore / (offenseScore + defenseScore + 50f);
-
-        float finalChance = rawChance;
-
-        if (teamWithball.IsPlayerTeam)
+        // ====================== BÔNUS DA IA ======================
+        // A IA sempre tem um buff de ~18% de facilidade no Juke
+        if (teamWithball != null && !teamWithball.IsPlayerTeam)
         {
-            finalChance *= 0.85f;
-            if (buff_Juke > 0)
-                finalChance *= 1f + (buff_Juke / 100f);
+            baseChance *= 1.18f; // +18% de chance para a CPU
         }
-        else
-        {
-            finalChance *= 1.25f;
-            if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
-                finalChance *= 1.10f;
-        }
+        // ========================================================
 
-        return Mathf.Clamp(finalChance, 0.15f, 0.95f);
+        // Clamp final
+        return Mathf.Clamp(baseChance, 0.32f, 0.92f);
     }
     float PercentageMakePassToTeammate(int receiverIndex)
     {
