@@ -234,7 +234,7 @@ public class MatchManager : MonoBehaviour
         CanChooseAction = false;
         _matchUI.SetSkillPints();
         //print(AwayTeam.playersListRoster.Count + "Number of player i the roster of the away team");
-        //_matchUI.SetCrowdColors();
+        _matchUI.SetCrowdColors();
         StartCoroutine(RunMatchThenSimulate());
 
         
@@ -1832,13 +1832,13 @@ public class MatchManager : MonoBehaviour
         //float baseAccuracy = 0.68f; // valor padrão
 
         if (shotResult >= 200f) baseAccuracy = 0.93f;
-        else if (shotResult >= 150f) baseAccuracy = 0.88f;
-        else if (shotResult >= 100f) baseAccuracy = 0.82f;
-        else if (shotResult >= 50f) baseAccuracy = 0.76f;
-        else if (shotResult >= 0f) baseAccuracy = 0.71f;
-        else if (shotResult >= -50f) baseAccuracy = 0.65f;
-        else if (shotResult >= -100f) baseAccuracy = 0.58f;
-        else baseAccuracy = 0.50f; // valores negativos fortes
+        else if (shotResult >= 150f) baseAccuracy = 0.85f;
+        else if (shotResult >= 100f) baseAccuracy = 0.80f;
+        else if (shotResult >= 50f) baseAccuracy = 0.70f;
+        else if (shotResult >= 0f) baseAccuracy = 0.68f;
+        else if (shotResult >= -50f) baseAccuracy = 0.60f;
+        else if (shotResult >= -100f) baseAccuracy = 0.55f;
+        else baseAccuracy = 0.45f; // valores negativos fortes
 
         float adrenaline = teamWithball.IsPlayerTeam ? teamWithball.AdrenalineBar : 75f;
         float adrenalineFactor = adrenaline / 100f;
@@ -2296,11 +2296,11 @@ public class MatchManager : MonoBehaviour
         float baseJukeChance;
 
         if (jukeResult >= 100f)
-            baseJukeChance = 0.88f;     // Juke bem sucedido
+            baseJukeChance = 0.92f;     // Juke bem sucedido
         else if (jukeResult >= -99f)
-            baseJukeChance = 0.55f;     // Meio a meio (removido o "Nothing")
+            baseJukeChance = 0.65f;     // Meio a meio (removido o "Nothing")
         else
-            baseJukeChance = 0.30f;     // Steal (defesa vence)
+            baseJukeChance = 0.40f;     // Steal (defesa vence)
 
         // ====================== FATORES EXISTENTES (mantidos) ======================
         float adrenaline = teamWithball.IsPlayerTeam ? teamWithball.AdrenalineBar : 75f;
@@ -2346,6 +2346,8 @@ public class MatchManager : MonoBehaviour
         if (!teamWithball.IsPlayerTeam)
         {
             finalChance *= 1.15f; // IA tem 15% mais facilidade para fazer Juke
+            float cpuJukeAdvantage = !teamWithball.IsPlayerTeam ? 1.20f : 1.0f;
+            finalChance *= cpuJukeAdvantage;
         }
         finalChance = Mathf.Clamp(finalChance, 0.25f, 0.90f);
 

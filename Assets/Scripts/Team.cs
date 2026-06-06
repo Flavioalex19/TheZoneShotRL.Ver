@@ -11,7 +11,7 @@ public enum TeamStyle
     Snake,
     Forward,
     Combo,
-    Horn,
+    Horns,
     Artillery,
     Wall,
     Circle,
