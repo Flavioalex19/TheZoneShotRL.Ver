@@ -23,7 +23,7 @@ public class OptionsManager : MonoBehaviour
     private List<AudioSource> allAudioSources = new List<AudioSource>();
     private List<Resolution> availableResolutions;
 
-    private void Start()
+    private void Awake()
     {
         SetupVolumeSlider();
         SetupResolutionDropdown();

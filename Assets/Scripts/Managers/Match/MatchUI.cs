@@ -247,6 +247,7 @@ public class MatchUI : MonoBehaviour
             _actionDefense.SetActive(false);
         }
         */
+        HomeTeamHp();
         //Debug Area
         if (GameObject.Find("DebugTextHome"))
         {

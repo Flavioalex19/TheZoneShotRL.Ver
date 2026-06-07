@@ -135,6 +135,8 @@ public class MatchManager : MonoBehaviour
     //Skip/FastFoward
     public bool IsFastforward = false;
 
+    int lastDamgeValue = 0;
+
     bool _isOnSetupStage;//
     private void Awake()
     {
@@ -688,7 +690,7 @@ public class MatchManager : MonoBehaviour
             //_matchUI.OffesnivePanelOnOff(true);
             CanChooseDefenseAction = false;
             //ResetDefensiveOptions() ;
-            
+            lastDamgeValue = 0;
             if (!isSimulation)
             {
                adrenaline_addUp = GetAdrenalineAddUp(HomeTeam);
@@ -748,7 +750,8 @@ public class MatchManager : MonoBehaviour
                 _matchUI.text_midChance.text = "Mid: " + Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 1, 0) *100).ToString() + "%";
                 _matchUI.text_insChance.text = "Inside: " + Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 2, 0) * 100).ToString() + "%";
                 //_matchUI.SetJukePercentage();
-                _matchUI.SetDMGText(GetDamageValue(playerWithTheBall.CurrentZone));
+                //_matchUI.SetDMGText(GetDamageValue(playerWithTheBall.CurrentZone));
+                yield return DmgUp(lastDamgeValue, GetDamageValue(playerWithTheBall.CurrentZone));
                 uiManager.PlaybyPlayText("Wait for Player Action");
 
                 _matchUI.TeamStyleUpdate(currentFormation);//update team style
@@ -2747,10 +2750,10 @@ public class MatchManager : MonoBehaviour
         // === DANO BASE POR ZONA ===
         int baseDamage = zone switch
         {
-            0 => 12,   // Outside
-            1 => 16,   // Mid
-            2 => 22,   // Inside (mais perigoso)
-            _ => 12
+            0 => 15,   // Outside
+            1 => 20,   // Mid
+            2 => 25,   // Inside (mais perigoso)
+            _ => 15
         };
 
         // === MULTIPLICADOR POR ADRENALINA ===
@@ -2778,7 +2781,8 @@ public class MatchManager : MonoBehaviour
         else
             awayHP = Mathf.Max(0, awayHP - damageToApply);
 
-        Debug.Log($"Dano causado: {damageToApply} | Zona: {zone} | Adrenalina: {adrenaline} | HP restante: {(defendingTeam == HomeTeam ? homeHP : awayHP)}");
+        lastDamgeValue = 0;
+        //Debug.Log($"Dano causado: {damageToApply} | Zona: {zone} | Adrenalina: {adrenaline} | HP restante: {(defendingTeam == HomeTeam ? homeHP : awayHP)}");
     }
     private float GetStaminaMultiplier(int stamina)
     {
@@ -2787,15 +2791,15 @@ public class MatchManager : MonoBehaviour
         else if (stamina >= 40) return 0.80f;   // Médio
         else return 0.60f;   // Forte (abaixo de 40)
     }
-    private int GetDamageValue(int zone, bool isSP = false)
+    public int GetDamageValue(int zone, bool isSP = false)
     {
         // Dano base por zona
         int baseDamage = zone switch
         {
-            0 => 12,   // Outside
-            1 => 16,   // Mid
-            2 => 22,   // Inside
-            _ => 12
+            0 => 15,   // Outside
+            1 => 20,   // Mid
+            2 => 25,   // Inside
+            _ => 15
         };
 
         // Multiplicador pela adrenalina (0 a 100)
@@ -2814,7 +2818,18 @@ public class MatchManager : MonoBehaviour
         if (enemyHP < 40)
             finalDamage *= 0.85f;
 
+        lastDamgeValue = (int)finalDamage;
         return Mathf.RoundToInt(finalDamage);
+    }
+    public IEnumerator DmgUp(int startValue, int finalValue)
+    {
+        while(startValue <= finalValue)
+        {
+            _matchUI.SetDMGText(startValue);
+            yield return new WaitForSeconds(.15f);
+            startValue++;
+        }
+        yield return null;
     }
     private int GetFacilityBonus(int level)
     {

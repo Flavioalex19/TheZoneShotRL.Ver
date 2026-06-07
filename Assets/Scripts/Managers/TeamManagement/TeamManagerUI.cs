@@ -273,8 +273,9 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Animator animator_TrainingPanel;
     [SerializeField] Animator animator_ContractsPanel;
     [SerializeField] Animator animator_StandingsPanel;
-    
 
+    [Header("Game Options")]
+    [SerializeField] GameObject gb_optiosPanel;
     [SerializeField] GameObject tutorialPanel;
 
     [SerializeField] Button _closeGameForTestersBtn;
@@ -294,6 +295,7 @@ public class TeamManagerUI : MonoBehaviour
     }
     void Start()
     {
+        gb_optiosPanel.SetActive(false);
         if (leagueManager.isGameOver)
         {
             isGameOver = true;
