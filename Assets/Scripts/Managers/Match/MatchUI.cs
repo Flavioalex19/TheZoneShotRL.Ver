@@ -920,12 +920,12 @@ public class MatchUI : MonoBehaviour
     //home hp bar
     public void HomeTeamHp()
     {
-        image_defensive_HomeTeamHpBar.fillAmount = _matchManager.HomeTeam.match_hp / _matchManager.HomeTeam.match_hpMax;
+        image_defensive_HomeTeamHpBar.fillAmount =Mathf.Clamp01((float)_matchManager.HomeTeam.match_hp / _matchManager.HomeTeam.match_hpMax);
     }
     //away team adrenaline bar update
     public void AwayTeamAdrenalineBar()
     {
-        image_defensive_AwayTeamAdrenalineBar.fillAmount = _matchManager.AwayTeam.AdrenalineBar / _matchManager.AwayTeam.AdrenalineBarFull;
+        image_defensive_AwayTeamAdrenalineBar.fillAmount = Mathf.Clamp01((float)_matchManager.AwayTeam.AdrenalineBar / _matchManager.AwayTeam.AdrenalineBarFull) ;
 
 
     }

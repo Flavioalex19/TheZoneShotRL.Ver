@@ -1328,6 +1328,7 @@ public class TeamManagerUI : MonoBehaviour
             go_tradeFinished.SetActive(true);
             gameManager.playerTeam.FrontOfficePoints -= trade_costOfTrade;
             text_trade_frontoffeicePoints.text = gameManager.playerTeam.FrontOfficePoints.ToString();
+            print("current points: " + gameManager.playerTeam.FrontOfficePoints);
             for (int i = 0; i < gameManager.leagueTeams.Count; i++)
             {
                 gameManager.saveSystem.SaveTeamInfo(gameManager.leagueTeams[i]);

@@ -126,6 +126,8 @@ public class MatchManager : MonoBehaviour
     [Header("Hp-RogueliteElements")]
     [SerializeField] public int homeHP;
     [SerializeField] public int awayHP;
+    //charge
+    bool isOnChargeLimit = false;
     //UI Elemens test
     [Header("Debugs")]
     [SerializeField] TextMeshProUGUI _debugTimeoutText;
@@ -248,8 +250,8 @@ public class MatchManager : MonoBehaviour
         {
             btn_spAttck.interactable = false;
         }
-        if(playerWithTheBall!=null)
-        print(playerWithTheBall.CurrentStamina + " Mine stamina");
+        //if(playerWithTheBall!=null)
+        //print(playerWithTheBall.CurrentStamina + " Mine stamina");
     }
     // Update is called once per frame
     void FixedUpdate()
@@ -524,7 +526,7 @@ public class MatchManager : MonoBehaviour
                 HomeTeam.playersListRoster[i].CurrentZone = 0;
             }
             if (!isSimulation) _matchUI.UpdatePlayerPlacements();
-
+            //print("Home team hp is " + HomeTeam.match_hp);
             //if (!isSimulation) _matchUI.ActivateDefensivePanel();
             //_matchUI._actionDefense.SetActive(true);
             while (true)
@@ -533,6 +535,7 @@ public class MatchManager : MonoBehaviour
                 if (!isSimulation) _matchUI.HomeTeamHp();
                 if(!isSimulation) _matchUI.AwayTeamAdrenalineBar();
                 CanChooseDefenseAction = true;
+                if (!isSimulation) yield return new WaitForSeconds(1f);
                 if(CanChooseDefenseAction) _matchUI.OpenDefensivePanel();
 
                 //if(!isSimulation) _matchUI.ActivateDefensivePanel();
@@ -668,6 +671,7 @@ public class MatchManager : MonoBehaviour
                         }
 
                         yield return Scoring(playerWithTheBall, true);
+                        //yield return ToScore(playerWithTheBall, playerDefending, HomeTeam);
                         ResetDefensiveOptions();
                         yield break; 
 
@@ -689,6 +693,7 @@ public class MatchManager : MonoBehaviour
         {
             //_matchUI.OffesnivePanelOnOff(true);
             CanChooseDefenseAction = false;
+            isOnChargeLimit = true;
             //ResetDefensiveOptions() ;
             lastDamgeValue = 0;
             if (!isSimulation)
@@ -747,8 +752,8 @@ public class MatchManager : MonoBehaviour
                 _matchUI.SetPassPercentage(PercentageMakePassToTeammate(GetRandomDifferentTeammateIndex(playerWithTheBall)));
                 _matchUI.SetJukePercentage(GetJukePercentage(playerWithTheBall,playerDefending,playerWithTheBall.CurrentZone));
                 _matchUI.SetSpPercentage(ActivateSpecialAttk(true));
-                _matchUI.text_midChance.text = "Mid: " + Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 1, 0) *100).ToString() + "%";
-                _matchUI.text_insChance.text = "Inside: " + Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 2, 0) * 100).ToString() + "%";
+                _matchUI.text_midChance.text = Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 1, 0) *100).ToString() + "%";
+                _matchUI.text_insChance.text = Mathf.RoundToInt(ScoringEquation(playerWithTheBall, playerDefending, 2, 0) * 100).ToString() + "%";
                 //_matchUI.SetJukePercentage();
                 //_matchUI.SetDMGText(GetDamageValue(playerWithTheBall.CurrentZone));
                 yield return DmgUp(lastDamgeValue, GetDamageValue(playerWithTheBall.CurrentZone));
@@ -1204,11 +1209,15 @@ public class MatchManager : MonoBehaviour
             }
             if (teamWithball.AdrenalineBar < teamWithball.AdrenalineBarFull) teamWithball.AdrenalineBar += adrenaline_addUp;
             //Damage Deal
+            /*
             if (!isSimulation && teamWithball.IsPlayerTeam)
             {
                 Team defendingTeam = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
                 CalculateDamageAndReduceHP(defendingTeam, player.CurrentZone);
             }
+            */
+            Team defendingTeam = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
+            CalculateDamageAndReduceHP(defendingTeam, player.CurrentZone);
 
 
         }
@@ -2416,7 +2425,7 @@ public class MatchManager : MonoBehaviour
     }
     bool TryToChargeAdrenaline(Player playerWithBall, Team team)
     {
-        if (playerWithBall.CurrentStamina <= 25)
+        if (playerWithBall.CurrentStamina <= 25 || isOnChargeLimit == false)
         {
             return false; // Não tem stamina suficiente, falha
         }
@@ -2428,6 +2437,7 @@ public class MatchManager : MonoBehaviour
 
         team.AdrenalineBar += increaseValue; // Aumenta a barra em 25
                                   // Assuma que adrenalinebar tem um max, se necessário: team.adrenalinebar = Mathf.Min(team.adrenalinebar, maxAdrenaline);
+        isOnChargeLimit = false;
 
         return true;
     }
@@ -2777,12 +2787,16 @@ public class MatchManager : MonoBehaviour
 
         // Aplica o dano
         if (defendingTeam == HomeTeam)
-            homeHP = Mathf.Max(0, homeHP - damageToApply);
+        {
+            HomeTeam.match_hp = Mathf.Max(0, HomeTeam.match_hp - damageToApply);
+            homeHP = HomeTeam.match_hp;
+
+        }
         else
             awayHP = Mathf.Max(0, awayHP - damageToApply);
 
         lastDamgeValue = 0;
-        //Debug.Log($"Dano causado: {damageToApply} | Zona: {zone} | Adrenalina: {adrenaline} | HP restante: {(defendingTeam == HomeTeam ? homeHP : awayHP)}");
+        Debug.Log($"Dano causado: {damageToApply} | Zona: {zone} | Adrenalina: {adrenaline} | HP restante: {(defendingTeam == HomeTeam ? homeHP : awayHP)}");
     }
     private float GetStaminaMultiplier(int stamina)
     {
@@ -2826,7 +2840,7 @@ public class MatchManager : MonoBehaviour
         while(startValue <= finalValue)
         {
             _matchUI.SetDMGText(startValue);
-            yield return new WaitForSeconds(.15f);
+            yield return new WaitForSeconds(.015f);
             startValue++;
         }
         yield return null;
@@ -2834,17 +2848,17 @@ public class MatchManager : MonoBehaviour
     private int GetFacilityBonus(int level)
     {
         if (level >= 6)
-            return 40;           // Nivel 6 ou superior = 20 pontos fixos
+            return 30;           // Nivel 6 ou superior = 20 pontos fixos
 
         // Niveis 0 a 5 - Progressão racional e crescente
         switch (level)
         {
             case 0: return 5;
-            case 1: return 10;
-            case 2: return 15;
-            case 3: return 20;
-            case 4: return 25;
-            case 5: return 30;
+            case 1: return 5;
+            case 2: return 10;
+            case 3: return 15;
+            case 4: return 15;
+            case 5: return 25;
             default: return 5;   // segurança
         }
     }
