@@ -582,6 +582,7 @@ public class MatchManager : MonoBehaviour
                     if (!isSimulation) yield return WaitForDefenseAction();
                     CanChooseDefenseAction = false;
                     //chooseDefenseTackle = false;
+                    yield return new WaitForSeconds(1f);
                 }
 
 
@@ -1115,6 +1116,7 @@ public class MatchManager : MonoBehaviour
     IEnumerator WaitForDefenseAction()
     {
         yield return new WaitUntil(() => { return chooseToBlock|| chooseToSteal|| chooseInterception; });
+
     }
     public void ChooseBlock()
     {
