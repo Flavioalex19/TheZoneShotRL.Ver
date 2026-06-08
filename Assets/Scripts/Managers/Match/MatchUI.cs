@@ -883,7 +883,7 @@ public class MatchUI : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             transform_OffensivePanel_awayTeamPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = awayTeam.playersListRoster[i].playerLastName;
-            transform_OffensivePanel_awayTeamPlayers.GetChild(i).GetChild(3).GetComponent<Image>().fillAmount = awayTeam.playersListRoster[i].CurrentStamina / awayTeam.playersListRoster[i].MaxStamina;
+            transform_OffensivePanel_awayTeamPlayers.GetChild(i).GetChild(3).GetComponent<Image>().fillAmount =Mathf.Clamp01((float)awayTeam.playersListRoster[i].CurrentStamina / awayTeam.playersListRoster[i].MaxStamina) ;
         }
     }
     public void UpdateOffensiveScoreBoard()
@@ -932,20 +932,7 @@ public class MatchUI : MonoBehaviour
     //Defensive Panel
     public void ActivateDefensivePanel()
     {
-        /*
-        if (_matchManager.CanChooseDefenseAction)
-        {
-            print("Open");
-            //_actionDefense.SetActive(true);
-            animator_defensivePanel.SetTrigger("Open");
-        }
-        else
-        {
-            print("cLOSE");
-            //_actionDefense.SetActive(false);
-            animator_defensivePanel.SetTrigger("Close");
-        }
-        */
+        
     }
     public void OpenDefensivePanel()
     {
