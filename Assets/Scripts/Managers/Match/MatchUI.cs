@@ -877,7 +877,7 @@ public class MatchUI : MonoBehaviour
         //imagem
         Sprite sprite = null;
         string style;
-        style = _matchManager.HomeTeam._teamStyle.ToString();
+        style = _matchManager.currentFormation;
         sprite = Resources.Load<Sprite>("2D/Styles/" + style);
         image_teamStyle.sprite = sprite;
         image_timeout_style.sprite = sprite;

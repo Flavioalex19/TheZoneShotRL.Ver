@@ -58,12 +58,12 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
         }
         if(index >= 21 && index <= 40)
         {
-            print("Imge number 1");
+            
             spriteArchtype = sprites1[1];
         }
         if (index >= 41 && index <= 60)
         {
-            print("Imge number 1");
+            
             spriteArchtype = sprites1[2];
         }
         if (index >= 61 && index <= 80)

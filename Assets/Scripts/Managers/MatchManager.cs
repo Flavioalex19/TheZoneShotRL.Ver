@@ -127,7 +127,7 @@ public class MatchManager : MonoBehaviour
     [SerializeField] public int homeHP;
     [SerializeField] public int awayHP;
     //charge
-    bool isOnChargeLimit = false;
+    [SerializeField]bool isOnChargeLimit = false;
     //UI Elemens test
     [Header("Debugs")]
     [SerializeField] TextMeshProUGUI _debugTimeoutText;
@@ -241,6 +241,7 @@ public class MatchManager : MonoBehaviour
         _matchUI.SetSkillPints();
         //print(AwayTeam.playersListRoster.Count + "Number of player i the roster of the away team");
         _matchUI.SetCrowdColors();
+        currentFormation = HomeTeam._teamStyle.ToString();
         _matchUI.TeamStyleUpdate(HomeTeam._teamStyle.ToString());
         StartCoroutine(RunMatchThenSimulate());
 
@@ -513,7 +514,7 @@ public class MatchManager : MonoBehaviour
         if (isSimulation) AISub();
         if( teamWithball.IsPlayerTeam == false)
         {
-            if(!isSimulation)AISub();
+            
             adrenaline_addUp = 20;
             //AwayTeam.AdrenalineBar = 0;
             if (!isSimulation) _matchUI.OffesnivePanelOnOff(false);
@@ -696,7 +697,7 @@ public class MatchManager : MonoBehaviour
         {
             //_matchUI.OffesnivePanelOnOff(true);
             CanChooseDefenseAction = false;
-            isOnChargeLimit = true;
+            isOnChargeLimit = false;
             //ResetDefensiveOptions() ;
             lastDamgeValue = 0;
             if (!isSimulation)
@@ -1258,6 +1259,7 @@ public class MatchManager : MonoBehaviour
     void SwitchPossession()
     {
         if (!isSimulation) _matchUI.OffesnivePanelOnOff(false);
+        if (!isSimulation) AISub();
         ControlStamina(HomeTeam);
         ControlStamina(AwayTeam);
         playerWithTheBall = null;
@@ -2165,6 +2167,7 @@ public class MatchManager : MonoBehaviour
     }
     public void AISub()
     {
+        
         foreach (Team team in new[] { HomeTeam, AwayTeam })
         {
             if (!team.IsPlayerTeam)
@@ -2174,6 +2177,7 @@ public class MatchManager : MonoBehaviour
                     Player starter = team.playersListRoster[i];
                     if (starter.CurrentStamina < 75)
                     {
+                        print("Subs AI");
                         for (int j = 4; j < team.playersListRoster.Count; j++) // subs (4+)
                         {
                             Player sub = team.playersListRoster[j];
@@ -2429,7 +2433,7 @@ public class MatchManager : MonoBehaviour
     }
     bool TryToChargeAdrenaline(Player playerWithBall, Team team)
     {
-        if (playerWithBall.CurrentStamina <= 25 || isOnChargeLimit == false)
+        if (playerWithBall.CurrentStamina <= 25 || isOnChargeLimit == true)
         {
             return false; // Não tem stamina suficiente, falha
         }
@@ -2441,7 +2445,7 @@ public class MatchManager : MonoBehaviour
 
         team.AdrenalineBar += increaseValue; // Aumenta a barra em 25
                                   // Assuma que adrenalinebar tem um max, se necessário: team.adrenalinebar = Mathf.Min(team.adrenalinebar, maxAdrenaline);
-        isOnChargeLimit = false;
+        isOnChargeLimit = true;
 
         return true;
     }
@@ -2588,47 +2592,19 @@ public class MatchManager : MonoBehaviour
         }
 
         // =====================================================
-        // PRIORIDADE 2: Fim de jogo + perdendo por bastante  Forçar Juke
+        // PRIORIDADE 2: Fim de jogo + perdendo por bastante Forçar Juke
         // =====================================================
         bool isLateGame = currentGamePossessons <= 3;
-        int scoreDiff = HomeTeam.Score - AwayTeam.Score; // Positivo = Home está ganhando
+        int scoreDiff = HomeTeam.Score - AwayTeam.Score;
         bool isAI = !teamWithball.IsPlayerTeam;
 
         if (isLateGame && isAI && scoreDiff >= 4 && playerWithTheBall.CurrentZone < 2)
         {
-            //Debug.Log("AI Late Game - Losing by 4+  Forçando Juke");
             return AIAction.Juke;
         }
 
         // =====================================================
-        // PRIORIDADE 3: Lógica de Zona (novo)
-        // =====================================================
-        int currentZone = playerWithTheBall.CurrentZone;
-
-        // Zona 2 (Inside)  Sempre arremessa
-        if (currentZone == 2)
-        {
-            //Debug.Log("AI  Zona 2  Forçando Shoot");
-            return AIAction.Shoot;
-        }
-
-        // Zona 1 (Mid)  Forte tendência a arremessar (se não estiver perdendo muito)
-        if (currentZone == 1)
-        {
-            // Se estiver no final do jogo e perdendo por 4 ou mais, ainda tenta Juke
-            if (isLateGame && isAI && scoreDiff >= 4)
-            {
-                //Debug.Log("AI Zona 1  Late Game perdendo  Tenta Juke");
-                return AIAction.Juke;
-            }
-
-            // Caso contrário, forte tendência a Shoot na zona 1
-            //Debug.Log("AI  Zona 1  Tendência forte para Shoot");
-            return AIAction.Shoot;
-        }
-
-        // =====================================================
-        // PRIORIDADE 4: Zona 0 (Outside)  Comportamento normal ponderado
+        // CÁLCULO DAS CHANCES (agora funciona em todas as zonas)
         // =====================================================
         float awareness = playerWithTheBall.Awareness;
         float shooting = playerWithTheBall.Shooting;
@@ -2654,28 +2630,35 @@ public class MatchManager : MonoBehaviour
             shootChance *= 0.75f;
         }
 
-        // Leve incentivo para a IA tentar Juke
+        // Incentivo leve da IA para tentar Juke (apenas fora da zona 2)
         if (isAI && playerWithTheBall.CurrentZone < 2)
         {
             jukeChance *= 1.12f;
         }
 
         // =====================================================
-        // Seleção final ponderada (Zona 0)
+        // REGRA ZONA 2: Juke chance = 0 (não pode jukar dentro)
         // =====================================================
-        float total = passChance + shootChance + jukeChance;
+        if (playerWithTheBall.CurrentZone == 2)
+        {
+            jukeChance = 0f;
+        }
 
-        if (total <= 0f)
+        // =====================================================
+        // DECISÃO FINAL: Escolhe a ação com o MAIOR valor
+        // =====================================================
+        if (shootChance >= jukeChance && shootChance >= passChance)
+        {
             return AIAction.Shoot;
-
-        float randomValue = Random.value * total;
-
-        if (randomValue < passChance)
-            return AIAction.Pass;
-        else if (randomValue < passChance + jukeChance)
+        }
+        else if (jukeChance >= passChance)
+        {
             return AIAction.Juke;
+        }
         else
-            return AIAction.Shoot;
+        {
+            return AIAction.Pass;
+        }
     }
     private int GetPreferredZone(Player p)
     {
