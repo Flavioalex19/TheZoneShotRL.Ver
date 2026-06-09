@@ -189,6 +189,10 @@ public class MatchUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_defensivePanel_PassPerc;
     [SerializeField] TextMeshProUGUI text_defensivePanel_JukePerc;
 
+    [Header("Timeout Panel")]
+    [SerializeField] Image image_timeout_style;
+    
+
     [Header("Crowd")]
     [SerializeField] Image material_crowd;
     private void Awake()
@@ -873,10 +877,11 @@ public class MatchUI : MonoBehaviour
         //imagem
         Sprite sprite = null;
         string style;
-        style = _matchManager.currentFormation;
+        style = _matchManager.HomeTeam._teamStyle.ToString();
         sprite = Resources.Load<Sprite>("2D/Styles/" + style);
         image_teamStyle.sprite = sprite;
-        print(style + " this is the style");
+        image_timeout_style.sprite = sprite;
+        //print(style + " this is the style");
     }
     public void OffensivePanelAwayTeamUpdate(Team awayTeam)
     {

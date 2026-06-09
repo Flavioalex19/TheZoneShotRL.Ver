@@ -129,7 +129,10 @@ public class Player : MonoBehaviour
         //Debug.Log($"Generated Player: {firstName}, OVR: {ovr}");
     }
     //Generate player with ovr from 50-75
-
+    public void GenerateStarters()
+    {
+        GeneratePlayerByTier(45, 55, 60, 65);
+    }
     public void GenerateEarlyPlayer()
     {
         GeneratePlayerByTier(55, 65, 67, 73);

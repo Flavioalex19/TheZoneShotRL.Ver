@@ -204,6 +204,7 @@ public class MatchManager : MonoBehaviour
         }
         _matchUI.TeamImagesUpdate();
         //AwayTeam = HomeTeam._schedule[leagueManager.Week - 1];
+        
         _actionTimer = _actionTimerReset;
         _matchUI.SetTheTeamTextForTheMatch();
         HomeTeam.Score = 0;
@@ -240,6 +241,7 @@ public class MatchManager : MonoBehaviour
         _matchUI.SetSkillPints();
         //print(AwayTeam.playersListRoster.Count + "Number of player i the roster of the away team");
         _matchUI.SetCrowdColors();
+        _matchUI.TeamStyleUpdate(HomeTeam._teamStyle.ToString());
         StartCoroutine(RunMatchThenSimulate());
 
         
@@ -513,7 +515,7 @@ public class MatchManager : MonoBehaviour
         {
             if(!isSimulation)AISub();
             adrenaline_addUp = 20;
-            AwayTeam.AdrenalineBar = 0;
+            //AwayTeam.AdrenalineBar = 0;
             if (!isSimulation) _matchUI.OffesnivePanelOnOff(false);
             CanChooseAction = false;
             
@@ -2772,8 +2774,12 @@ public class MatchManager : MonoBehaviour
         float adrenaline = teamWithball.AdrenalineBar;           // 0 a 100
         float adrenalineMultiplier = 1f + (adrenaline / 100f) * 0.70f;   // Máximo +70% quando barra cheia
 
+        //sterak multi
+        int streak = Mathf.Min(consecutiveSuccesses, 10);
+        float streakMultiplier = 1f + (streak / 10f) * 0.25f;
+
         // Dano final antes de SP
-        float finalDamage = baseDamage * adrenalineMultiplier;
+        float finalDamage = baseDamage * adrenalineMultiplier * streakMultiplier;
 
         // Se for Special Attack (isSP), aumenta significativamente
         if (isSP)
@@ -2798,7 +2804,7 @@ public class MatchManager : MonoBehaviour
             awayHP = Mathf.Max(0, awayHP - damageToApply);
 
         lastDamgeValue = 0;
-        Debug.Log($"Dano causado: {damageToApply} | Zona: {zone} | Adrenalina: {adrenaline} | HP restante: {(defendingTeam == HomeTeam ? homeHP : awayHP)}");
+        //Debug.Log($"Dano causado: {damageToApply} | Zona: {zone} | Adrenalina: {adrenaline} | HP restante: {(defendingTeam == HomeTeam ? homeHP : awayHP)}");
     }
     private float GetStaminaMultiplier(int stamina)
     {

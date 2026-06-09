@@ -59,7 +59,7 @@ public class DraftUiManager : MonoBehaviour
 
             for (int i = 0; i < totalPicksPerTeam; i++)   // totalPicksPerTeam = 8
             {
-                Player newPlayer = CreateRandomPlayer();
+                Player newPlayer = CreateRandomPlayer(false);
                 team.playersListRoster.Add(newPlayer);
             }
         }
@@ -67,7 +67,7 @@ public class DraftUiManager : MonoBehaviour
         // 2. Gera os 15 jogadores que vão aparecer como botões para o player escolher
         for (int i = 0; i < extraPlayersForPlayer; i++)
         {
-            Player newPlayer = CreateRandomPlayer();
+            Player newPlayer = CreateRandomPlayer(true);
             GeneratePlayerDraftButton(newPlayer);
         }
 
@@ -76,7 +76,7 @@ public class DraftUiManager : MonoBehaviour
     }
 
     // Cria um jogador aleatório com tier
-    private Player CreateRandomPlayer()
+    private Player CreateRandomPlayer(bool isPlayerteam)
     {
         
         GameObject playerObject = Instantiate(_gameManager.playerPrefab);
@@ -93,50 +93,71 @@ public class DraftUiManager : MonoBehaviour
         
         // === LÓGICA DE GERAÇÃO BASEADA NOS NÍVEIS DESBLOQUEADOS ===
         float rand = Random.value;
-
-        if (!leagueManager.isOnDraftLVL0 && !leagueManager.isOnDraftLVL1 && !leagueManager.isOnDraftLVL2)
+        if (isPlayerteam)
         {
-            // Todas falsas  Piores jogadores (muitos End, poucos Early)
-            if (rand < 0.20f)
-                newPlayer.GenerateEarlyPlayer();      // 20% Early
-            else if (rand < 0.80f)
-                newPlayer.GenerateMidPlayer();        // 60% Mid
+            if (!leagueManager.isOnDraftLVL0 && !leagueManager.isOnDraftLVL1 && !leagueManager.isOnDraftLVL2)
+            {
+                // Todas falsas  Piores jogadores (muitos End, poucos Early)
+                /*
+                if (rand < 0.20f)
+                    newPlayer.GenerateEarlyPlayer();      // 20% Early
+                else if (rand < 0.80f)
+                    newPlayer.GenerateMidPlayer();        // 60% Mid
+                else
+                    newPlayer.GenerateEarlyPlayer();        // 20% End
+                */
+                if (rand < 50) newPlayer.GenerateStarters();
+                else newPlayer.GenerateEarlyPlayer();
+            }
+            else if (leagueManager.isOnDraftLVL0 && !leagueManager.isOnDraftLVL1 && !leagueManager.isOnDraftLVL2)
+            {
+                print("LVL1");
+                // Apenas LVL 0  Equilíbrio Early / Mid
+                if (rand < 0.50f)
+                    newPlayer.GenerateStarters();      // 50% Early
+                else
+                    newPlayer.GenerateEarlyPlayer();        // 50% Mid
+            }
+            else if (leagueManager.isOnDraftLVL1)
+            {
+                print("LVL2");
+                // LVL 1 desbloqueado  Mais Mid, menos Early, pouco End
+                if (rand < 0.20f)
+                    newPlayer.GenerateEarlyPlayer();      // 20% Early
+                else if (rand < 0.90f)
+                    newPlayer.GenerateMidPlayer();        // 70% Mid
+                else
+                    newPlayer.GenerateEarlyPlayer();        // 10% End
+            }
+            else if (leagueManager.isOnDraftLVL2)
+            {
+                print("LVL3");
+                // LVL 2 desbloqueado  Foco em Mid + bom End
+                if (rand < 0.10f)
+                    newPlayer.GenerateEarlyPlayer();      // 10% Early
+                else if (rand < 0.70f)
+                    newPlayer.GenerateMidPlayer();        // 80% Mid
+                else
+                    newPlayer.GenerateEndPlayer();        // 10% End
+            }
             else
-                newPlayer.GenerateEarlyPlayer();        // 20% End
+            {
+                print("Strange");
+                // Fallback (caso estranho)
+                newPlayer.GenerateStarters();
+            }
         }
-        else if (leagueManager.isOnDraftLVL0 && !leagueManager.isOnDraftLVL1 && !leagueManager.isOnDraftLVL2)
+        else
         {
-            // Apenas LVL 0  Equilíbrio Early / Mid
-            if (rand < 0.50f)
-                newPlayer.GenerateEarlyPlayer();      // 50% Early
-            else
-                newPlayer.GenerateMidPlayer();        // 50% Mid
-        }
-        else if (leagueManager.isOnDraftLVL1)
-        {
-            // LVL 1 desbloqueado  Mais Mid, menos Early, pouco End
-            if (rand < 0.20f)
-                newPlayer.GenerateEarlyPlayer();      // 20% Early
-            else if (rand < 0.90f)
-                newPlayer.GenerateMidPlayer();        // 70% Mid
-            else
-                newPlayer.GenerateEarlyPlayer();        // 10% End
-        }
-        else if (leagueManager.isOnDraftLVL2)
-        {
-            // LVL 2 desbloqueado  Foco em Mid + bom End
+            print("Isnot player team");
             if (rand < 0.10f)
                 newPlayer.GenerateEarlyPlayer();      // 10% Early
             else if (rand < 0.70f)
                 newPlayer.GenerateMidPlayer();        // 80% Mid
             else
-                newPlayer.GenerateEndPlayer();        // 10% End
+                newPlayer.GenerateEndPlayer();
         }
-        else
-        {
-            // Fallback (caso estranho)
-            newPlayer.GenerateMidPlayer();
-        }
+        
         return newPlayer;
     }
 
