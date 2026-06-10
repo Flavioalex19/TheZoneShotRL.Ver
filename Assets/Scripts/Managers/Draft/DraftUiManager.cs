@@ -195,12 +195,14 @@ public class DraftUiManager : MonoBehaviour
         var btnScript = newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>();
         btnScript.index = player.ImageCharacterPortrait;
         btnScript.playerAge = player.Age.ToString();
-        btnScript.playerSalary = player.Salary.ToString();
+        //btnScript.playerSalary = player.Salary.ToString();
         btnScript.PlayerOvr = player.ovr;
         btnScript.archtypeIndex = player.ImageCharacterPortrait;
         btnScript.personalityIndex = player.Personality;
         btnScript.personalitySprite = spriteP;
         btnScript.SetSprite();
+        btnScript.playerName = player.playerFirstName + " " + player.playerLastName;
+        btnScript.PlayerOvr = player.SetOVR();
     }
 
     private void AddPlayerToTeam(Player player, Button btn)

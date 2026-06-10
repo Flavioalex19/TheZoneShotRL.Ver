@@ -24,9 +24,10 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
     Image playerPortrait;
     Image playerArchtypeImage;
     Image playerPersonalityImage;
-    TextMeshProUGUI text_playerName;
     TextMeshProUGUI text_PlayerAge;
     TextMeshProUGUI text_PlayerSalary;
+    TextMeshProUGUI text_PlayerName;
+    TextMeshProUGUI text_PlayerOvr;
     GameManager gameManager;
     // Start is called before the first frame update
     void Start()
@@ -37,10 +38,12 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
             playerPortrait = GameObject.Find("Image_CurrentPlayerToSelect").GetComponent<Image>();
 
             //text_playerName = GameObject.Find("Text_PlayerName").GetComponent<TextMeshProUGUI>();
-            text_PlayerAge = GameObject.Find("Text_PlayerAge").GetComponent<TextMeshProUGUI>();
-            text_PlayerSalary = GameObject.Find("TextSalary").GetComponent<TextMeshProUGUI>();
+            text_PlayerAge = GameObject.Find("textDraftPlayerAge").GetComponent<TextMeshProUGUI>();
+            //text_PlayerSalary = GameObject.Find("TextSalary").GetComponent<TextMeshProUGUI>();
             playerArchtypeImage = GameObject.Find("ArchtypeImage").GetComponent<Image>();
             playerPersonalityImage = GameObject.Find("PersonalityImage").GetComponentInParent<Image>();
+            text_PlayerName = GameObject.Find("TextDraftPlayerName").GetComponent<TextMeshProUGUI>();
+            text_PlayerOvr = GameObject.Find("textPlayerOvr").GetComponent<TextMeshProUGUI>();
         }
         
 
@@ -80,9 +83,11 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
             playerPortrait.sprite = sprite;
             text_PlayerAge.text = playerAge;
             //text_playerName.text = playerName;
-            text_PlayerSalary.text = playerSalary;
+            //text_PlayerSalary.text = playerSalary;
             playerArchtypeImage.sprite = spriteArchtype;
             playerPersonalityImage.sprite = personalitySprite;
+            text_PlayerName.text = playerName;
+            text_PlayerOvr.text = PlayerOvr.ToString();
         }
             
     }
