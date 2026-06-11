@@ -739,28 +739,7 @@ public class MatchUI : MonoBehaviour
         }
 
     }
-    /*
-    public void ActivateAnimatorOffensivePanel()
-    {
-        print(off_Animator + "New offAnimator");
-        off_Animator.SetBool("On", true);
-    }
-    */
-    /*
-    public void UsedPlayerBtns()
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            if (_matchManager.HomeTeam.playersListRoster[i] == _matchManager.playerWithTheBall)
-            {
-                Animator animator = transform_ActiveHomePlayers.GetChild(i).GetChild(7).GetComponent<Animator>();
-                animator.SetBool("On", false);
-            }
-            
-            //print(_matchManager.HomeTeam.playersListRoster[i].playerLastName + " this is his zone: " + _matchManager.HomeTeam.playersListRoster[i].CurrentZone);
-        }
-    }
-    */
+    
     public void UpdatePlayerPlacements()
     {
         //print("Check position");
@@ -768,11 +747,7 @@ public class MatchUI : MonoBehaviour
         {
             if (_matchManager.HomeTeam.playersListRoster[i].CurrentZone > 0)
             {
-                //print("PLay is zoned(UPDATE) " + _matchManager.HomeTeam.playersListRoster[i].playerLastName);
-                /*
-                transform_ActiveHomePlayers.GetChild(i).position = 
-                    transform_ActiveHomePlayers.GetChild(i).GetChild(6).GetChild(_matchManager.HomeTeam.playersListRoster[i].CurrentZone).position;
-                */
+                print("Go to zone");
                 transform_ActiveHomePlayers.GetChild(i).position =
                     transform_playersZones.GetChild(i).GetChild(0).GetChild(_matchManager.HomeTeam.playersListRoster[i].CurrentZone).position;
             }

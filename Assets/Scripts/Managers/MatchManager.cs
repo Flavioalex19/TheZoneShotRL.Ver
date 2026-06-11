@@ -1,4 +1,5 @@
 using DG.Tweening.Core.Easing;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -696,6 +697,10 @@ public class MatchManager : MonoBehaviour
         else if (teamWithball.IsPlayerTeam)
         {
             //_matchUI.OffesnivePanelOnOff(true);
+            for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
+            {
+                HomeTeam.playersListRoster[i].CurrentZone = 0;
+            }
             CanChooseDefenseAction = false;
             isOnChargeLimit = false;
             //ResetDefensiveOptions() ;
@@ -723,7 +728,7 @@ public class MatchManager : MonoBehaviour
                 }
                 else
                 {
-                    yield return PersonalityCheck(playerWithTheBall);
+                    //yield return PersonalityCheck(playerWithTheBall);
                 }
                 
             }   
@@ -774,6 +779,7 @@ public class MatchManager : MonoBehaviour
 
                 if (_ChooseScoring)
                 {
+                    print("SCORE!!!!");
                     //_matchUI.UsedPlayerBtns();
                     _ChooseScoring = false;
                     if(IsFastforward == false)_matchUI.ActionPanelAnim(5, "Shoot");
@@ -800,6 +806,7 @@ public class MatchManager : MonoBehaviour
                 else if (_ChoosePass)
                 {
                     //_matchUI.UsedPlayerBtns();
+                    print("PASS!!!!");
                     _ChoosePass = false;
                     if(IsFastforward == false)_matchUI.ActionPanelAnim(0, "Passing");
                     //Lose Stamina
@@ -868,7 +875,7 @@ public class MatchManager : MonoBehaviour
                     {
                         if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                     }
-                    if (Random.Range(0f, 1f) < ActivateSpecialAttk(false))
+                    if (UnityEngine.Random.Range(0f, 1f) < ActivateSpecialAttk(false))
                     {
                         int spPoints = 8;
                         //Add later the list of string for a success use o team abillity
@@ -913,6 +920,7 @@ public class MatchManager : MonoBehaviour
                 else if (_ChooseBeatDefender)
                 {
                     //_matchUI.UsedPlayerBtns();
+                    print("JUKE!!!!");
                     if (IsFastforward == false)
                         _matchUI.ActionPanelAnim(7, "Juke");
                     //Lose Stamina
@@ -1147,7 +1155,7 @@ public class MatchManager : MonoBehaviour
     {
         //float passSuccessChance = Mathf.Clamp((playerWithTheBall.Awareness - 30f) / (99f - 30f), 0f, 1f);
 
-        if (Random.Range(0f, 1f) > PassEquation())
+        if (UnityEngine.Random.Range(0f, 1f) > PassEquation())
         {
             //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " made a bad pass! Possession lost.");
             if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos());
@@ -1161,7 +1169,7 @@ public class MatchManager : MonoBehaviour
 
         if (availableReceivers.Count == 0) return false;
 
-        Player receiver = availableReceivers[Random.Range(0, availableReceivers.Count)];
+        Player receiver = availableReceivers[UnityEngine.Random.Range(0, availableReceivers.Count)];
         playerWithTheBall.HasTheBall = false;
         receiver.HasTheBall = true;
         playerWithTheBall = receiver;
@@ -1187,7 +1195,7 @@ public class MatchManager : MonoBehaviour
 
         //print(teamMomentum + " is the teamMomentum" + teamWithball.TeamName);
 
-        bool hasScored = Random.Range(0f, 1f) < ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, teamMomentum);
+        bool hasScored = UnityEngine.Random.Range(0f, 1f) < ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, teamMomentum);
         //print(hasScored + " is the result of Shooting");
 
         if (hasScored)
@@ -1250,7 +1258,7 @@ public class MatchManager : MonoBehaviour
     int ChooseZone(Player player)
     {
         // 60% de chance do jogador ir para a zona preferida
-        if (Random.Range(0f, 1f) < 0.6f)
+        if (UnityEngine.Random.Range(0f, 1f) < 0.6f)
             return player.Zone;
 
         // Caso contrário, escolhe aleatoriamente entre 0 e 2
@@ -1296,7 +1304,7 @@ public class MatchManager : MonoBehaviour
             DefendingTeam = AwayTeam;
 
         // Pick a random player (excluding index 0)
-        int randomIndex = Random.Range(0, 4); // avoid 0
+        int randomIndex = UnityEngine.Random.Range(0, 4); // avoid 0
         Player newDefender = DefendingTeam.playersListRoster[randomIndex];
         //newDefender.CurrentZone = 0;
         DefenderName = newDefender.playerFirstName + " " + DefendingTeam.TeamName;
@@ -1588,13 +1596,13 @@ public class MatchManager : MonoBehaviour
             SelectDefender();
 
             // Simulação mais agressiva para ter mais pontuação
-            int actionsThisPossession = Random.Range(1, 4); // 1 a 3 ações por posse
+            int actionsThisPossession = UnityEngine.Random.Range(1, 4); // 1 a 3 ações por posse
 
             bool possessionEnded = false;
 
             for (int i = 0; i < actionsThisPossession && !possessionEnded; i++)
             {
-                float rand = Random.value;
+                float rand = UnityEngine.Random.value;
 
                 if (rand < 0.35f) // 35% chance de Pass
                 {
@@ -1638,7 +1646,7 @@ public class MatchManager : MonoBehaviour
         if ((leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals) && teamA.Score == teamB.Score)
         {
             // Se ainda estiver empatado, força um vencedor dando 2 pontos aleatórios
-            if (Random.value < 0.5f)
+            if (UnityEngine.Random.value < 0.5f)
                 teamA.Score += 2;
             else
                 teamB.Score += 2;
@@ -2226,7 +2234,7 @@ public class MatchManager : MonoBehaviour
         // choose cards
         for (int i = 0; i < 3; i++)
         {
-            int randomIndex = Random.Range(0, cardsFolder.childCount);
+            int randomIndex = UnityEngine.Random.Range(0, cardsFolder.childCount);
             Transform chosenCard = cardsFolder.GetChild(randomIndex);
 
             chosenCard.SetParent(cards_handCards);
@@ -2273,7 +2281,7 @@ public class MatchManager : MonoBehaviour
         finalChance *= staminaFactor;
         finalChance = Mathf.Clamp(finalChance, 0.38f, 0.94f);
 
-        if (Random.value > finalChance)
+        if (UnityEngine.Random.value > finalChance)
         {
             uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.LosesPos());
             playerWithTheBall.HasTheBall = false;
@@ -2306,8 +2314,8 @@ public class MatchManager : MonoBehaviour
         // ====================== JUKE CHECK ======================
         // Offense
         // RNG (1 a 50)
-        int rngOffense = Random.Range(1, 51);
-        int rngDefense = Random.Range(1, 51);
+        int rngOffense = UnityEngine.Random.Range(1, 51);
+        int rngDefense = UnityEngine.Random.Range(1, 51);
 
         // Cálculo do Offense
         float offenseValue = offense.Juking
@@ -2442,7 +2450,7 @@ public class MatchManager : MonoBehaviour
         float defenderScore = (defender.Defending + defender.Awareness + defender.Positioning) / 3f;
 
         // Adiciona elemento aleatório para chance (ex: -10 a +10)
-        float randomFactor = Random.Range(-10f, 10f);
+        float randomFactor = UnityEngine.Random.Range(-10f, 10f);
 
         // Calcula valor final: positivo = sucesso, negativo = falha
         float shoveValue = attackerScore - defenderScore + randomFactor;
@@ -2472,7 +2480,7 @@ public class MatchManager : MonoBehaviour
         playerWithBall.CurrentStamina -= 25; // Reduz 25 de stamina
         playerWithBall.CurrentStamina = Mathf.Max(0, playerWithBall.CurrentStamina); // Clamp para evitar negativo (embora >25 garanta)
 
-        int increaseValue = Random.Range(25, 35);
+        int increaseValue = UnityEngine.Random.Range(25, 35);
 
         team.AdrenalineBar += increaseValue; // Aumenta a barra em 25
                                   // Assuma que adrenalinebar tem um max, se necessário: team.adrenalinebar = Mathf.Min(team.adrenalinebar, maxAdrenaline);
@@ -2482,61 +2490,85 @@ public class MatchManager : MonoBehaviour
     }
     public int GetJukePercentage(Player offense, Player defense, int zone)
     {
-        // === CÁLCULO IDÊNTICO AO DA TryBeatDefenderAdvanceZone (sem o Random da decisão) ===
-        // 1. OVR na hora
-        int offenseOVR = Mathf.RoundToInt(
-            (offense.Shooting + offense.Inside + offense.Mid + offense.Outside +
-             offense.Awareness + offense.Defending + offense.Guarding + offense.Stealing +
-             offense.Juking + offense.Consistency + offense.Control + offense.Positioning) / 12f);
+        int rngOffense = UnityEngine.Random.Range(1, 51);
+        int rngDefense = UnityEngine.Random.Range(1, 51);
 
-        int defenseOVR = Mathf.RoundToInt(
-            (defense.Shooting + defense.Inside + defense.Mid + defense.Outside +
-             defense.Awareness + defense.Defending + defense.Guarding + defense.Stealing +
-             defense.Juking + defense.Consistency + defense.Control + defense.Positioning) / 12f);
+        // Cálculo do Offense
+        float offenseValue = offense.Juking
+                           + offense.Control
+                           + offense.Consistency
+                           + 100f
+                           + rngOffense;
 
-        // 2. Offense score
-        float offenseAvg = (offense.Consistency + offense.Control + offense.Juking +
-                            GetZoneValue(offense, zone) + offenseOVR / 5f) / 4f;
+        // Cálculo do Defense
+        float defenseValue = defense.Positioning
+                           + defense.Guarding
+                           + defense.Stealing
+                           + defense.Consistency
+                           + rngDefense;
 
-        float offenseScore = offenseAvg + UnityEngine.Random.Range(-10f, 20f); // mantém variabilidade leve pra UI variar um pouco
+        float jukeResult = offenseValue - defenseValue;
 
-        // 3. Defense score
-        float defenseAvg = (defense.Consistency + defense.Guarding + defense.Stealing +
-                            GetZoneValue(defense, zone) + defenseOVR / 5f) / 5f;
+        // ====================== CONVERSÃO DO RESULTADO ======================
+        bool success = jukeResult > 0;
 
-        float defenseMedianBonus = defenseAvg * 0.3f;
-        float defenseScore = defenseAvg + defenseMedianBonus;
+        // Calcula a porcentagem para a UI (baseado no resultado)
+        float baseJukeChance = Mathf.Clamp01((jukeResult + 50f) / 100f); // Normaliza para visual
 
-        // AI defende melhor
-        Team defendingTeam = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
-        if (!defendingTeam.IsPlayerTeam)
-            defenseScore *= 1.25f;
+        // ====================== FATORES EXISTENTES (mantidos) ======================
+        float adrenaline = teamWithball.IsPlayerTeam ? teamWithball.AdrenalineBar : 75f;
+        float adrenalineFactor = adrenaline / 100f;
+        float difficulty = teamWithball.IsPlayerTeam
+            ? 1f - (adrenalineFactor * 0.38f)
+            : 1f - (adrenalineFactor * 0.18f);
 
-        // 4. Chance base
-        float rawChance = offenseScore / (offenseScore + defenseScore + 50f);
+        float finalChance = baseJukeChance * difficulty;
 
-        // 5. Bias
-        float finalChance = rawChance;
+        float jukeBuffMultiplier = 1f + (buff_Juke / 100f);
+        finalChance *= jukeBuffMultiplier/* * (1f / 100f)*/;
 
+        float staminaFactor = GetStaminaMultiplier(offense.CurrentStamina);
+        finalChance *= staminaFactor;
+
+        float streakMultiplier = 1f;
         if (teamWithball.IsPlayerTeam)
         {
-            finalChance *= 0.85f;
-
-            if (buff_Juke > 0)
-                finalChance *= 1f + (buff_Juke / 100f);
+            int streak = Mathf.Clamp(consecutiveSuccesses, 0, 10);
+            streakMultiplier = 1f + (streak * 0.055f);
         }
         else
         {
-            finalChance *= 1.05f;
+            streakMultiplier = 1f + (5 * 0.025f);
+        }
+        finalChance *= streakMultiplier;
 
-            if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
-                finalChance *= 1.10f;
+        // ====================== BÔNUS DE FORMAÇÃO ======================
+        string bonusType = GetFormationBonus(teamWithball, offense);
+        if (bonusType.Contains("Juke"))
+        {
+            finalChance *= 1.18f;
         }
 
-        finalChance = Mathf.Clamp(finalChance, 0.15f, 0.95f);
+        if (chooseToSteal)
+        {
+            finalChance *= 0.90f;
+        }
 
-        // Retorna como % inteiro arredondado
-        return Mathf.RoundToInt(finalChance * 100f);
+        if (!teamWithball.IsPlayerTeam)
+        {
+            finalChance *= 1.20f; // Bônus da CPU (20%)
+        }
+
+        finalChance = Mathf.Clamp(finalChance, 0.28f, 0.92f);
+        jukePercentage = finalChance;
+        
+        // Clamp final
+        finalChance = Mathf.Clamp(finalChance, 0.28f, 0.92f);
+
+        // ====================== RETORNO COMO PORCENTAGEM ======================
+        int percentage = Mathf.RoundToInt(finalChance * 100f);
+
+        return percentage;
     }
 
     public IEnumerator ToScore(Player playerWithTheBall, Player playerDefending, Team teamWithBall)
@@ -2560,7 +2592,7 @@ public class MatchManager : MonoBehaviour
         // Momentum apenas para o time da casa
         int teamMomentum = (teamWithBall == HomeTeam) ? momentum : 0;
 
-        bool hasScored = Random.Range(0f, 1f) <
+        bool hasScored = UnityEngine.Random.Range(0f, 1f) <
             ScoringEquation(playerWithTheBall, playerDefending, zone, teamMomentum);
 
         if (hasScored)
@@ -2674,7 +2706,7 @@ public class MatchManager : MonoBehaviour
         {
             jukeChance = 0f;
         }
-
+        print("Chances for actions AI " + "sHOOT: " + shootChance + " juke: " + jukeChance + " PASS: " + passChance);
         // =====================================================
         // DECISÃO FINAL: Escolhe a ação com o MAIOR valor
         // =====================================================
@@ -2910,7 +2942,7 @@ public class MatchManager : MonoBehaviour
     private bool SimulatePass()
     {
         // Na simulação o passe é bem mais fácil e quase sempre dá certo
-        if (Random.value > 0.78f) // 78% de chance de sucesso no passe
+        if (UnityEngine.Random.value > 0.78f) // 78% de chance de sucesso no passe
         {
             playerDefending.StealsMatch++;
             playerWithTheBall.HasTheBall = false;
@@ -2931,7 +2963,7 @@ public class MatchManager : MonoBehaviour
     private bool SimulateJuke()
     {
         // Juke mais fácil na simulação para avançar de zona
-        if (Random.value < 0.72f) // 72% de chance de sucesso no juke
+        if (UnityEngine.Random.value < 0.72f) // 72% de chance de sucesso no juke
         {
             if (teamWithball.AdrenalineBar < teamWithball.AdrenalineBarFull)
                 teamWithball.AdrenalineBar += adrenaline_addUp;
@@ -2964,7 +2996,7 @@ public class MatchManager : MonoBehaviour
             if (diff < 0) shootChance += 0.18f; // força virada
         }
 
-        if (Random.value < shootChance)
+        if (UnityEngine.Random.value < shootChance)
         {
             int points = playerWithTheBall.CurrentZone == 0 ? 4 : (playerWithTheBall.CurrentZone == 1 ? 5 : 6);
             playerWithTheBall.PointsMatch += points;
@@ -2983,7 +3015,7 @@ public class MatchManager : MonoBehaviour
         // Special bem mais fácil na simulação
         float specialChance = 0.75f;
 
-        if (Random.value < specialChance)
+        if (UnityEngine.Random.value < specialChance)
         {
             int spPoints = 8;
             playerWithTheBall.PointsMatch += spPoints;
