@@ -2302,46 +2302,46 @@ public class MatchManager : MonoBehaviour
     }
     bool TryBeatDefenderAdvanceZone(Player offense, Player defense, int zone, int bonus = 0)
     {
-        
-        // ====================== JUKE CHECK (da imagem) ======================
+
+        // ====================== JUKE CHECK ======================
         // Offense
-        float X = 100f
-                  + (offense.Consistency * 0.1f)
-                  + (offense.Control * 0.1f)
-                  + (offense.Juking * 0.1f)
-                  + (zone * 10f)
-                  + 0f; // Positional Bonus Result (pode ser integrado depois se quiser)
+        // RNG (1 a 50)
+        int rngOffense = Random.Range(1, 51);
+        int rngDefense = Random.Range(1, 51);
 
-        // Defense (sem zone, conforme você pediu)
-        float Y = (defense.Consistency * 0.1f)
-                  + (defense.Guarding * 0.1f)
-                  + (defense.Stealing * 0.1f);
+        // Cálculo do Offense
+        float offenseValue = offense.Juking
+                           + offense.Control
+                           + offense.Consistency
+                           + 100f
+                           + rngOffense;
 
-        float jukeResult = X - Y;
+        // Cálculo do Defense
+        float defenseValue = defense.Positioning
+                           + defense.Guarding
+                           + defense.Stealing
+                           + defense.Consistency
+                           + rngDefense;
 
-        // ====================== CONVERSÃO DO RESULTADO EM CHANCE ======================
-        float baseJukeChance;
+        float jukeResult = offenseValue - defenseValue;
 
-        if (jukeResult >= 100f)
-            baseJukeChance = 0.92f;     // Juke bem sucedido
-        else if (jukeResult >= -99f)
-            baseJukeChance = 0.65f;     // Meio a meio (removido o "Nothing")
-        else
-            baseJukeChance = 0.40f;     // Steal (defesa vence)
+        // ====================== CONVERSÃO DO RESULTADO ======================
+        bool success = jukeResult > 0;
+
+        // Calcula a porcentagem para a UI (baseado no resultado)
+        float baseJukeChance = Mathf.Clamp01((jukeResult + 50f) / 100f); // Normaliza para visual
 
         // ====================== FATORES EXISTENTES (mantidos) ======================
         float adrenaline = teamWithball.IsPlayerTeam ? teamWithball.AdrenalineBar : 75f;
         float adrenalineFactor = adrenaline / 100f;
-
         float difficulty = teamWithball.IsPlayerTeam
             ? 1f - (adrenalineFactor * 0.38f)
             : 1f - (adrenalineFactor * 0.18f);
 
-        float rawChance = baseJukeChance * difficulty;
+        float finalChance = baseJukeChance * difficulty;
 
         float jukeBuffMultiplier = 1f + (buff_Juke / 100f);
-
-        float finalChance = rawChance * jukeBuffMultiplier * (1f + bonus / 100f);
+        finalChance *= jukeBuffMultiplier * (1f + bonus / 100f);
 
         float staminaFactor = GetStaminaMultiplier(offense.CurrentStamina);
         finalChance *= staminaFactor;
@@ -2357,7 +2357,7 @@ public class MatchManager : MonoBehaviour
             streakMultiplier = 1f + (5 * 0.025f);
         }
         finalChance *= streakMultiplier;
-
+        /*
         //Bonus de formação - ataque
         string bonusType = GetFormationBonus(teamWithball, offense);
 
@@ -2380,7 +2380,7 @@ public class MatchManager : MonoBehaviour
 
         jukePercentage = finalChance;
 
-        bool success = Random.value < finalChance;
+        success = Random.value < finalChance;
 
         if (!success)
         {
@@ -2393,6 +2393,37 @@ public class MatchManager : MonoBehaviour
         _matchUI.UpdatePlayerPlacements();
         _matchUI.TurnOffPlayerButtons();
         return true;   // Juke bem sucedido
+        */
+        string bonusType = GetFormationBonus(teamWithball, offense);
+        if (bonusType.Contains("Juke"))
+        {
+            finalChance *= 1.18f;
+        }
+
+        if (chooseToSteal)
+        {
+            finalChance *= 0.90f;
+        }
+
+        if (!teamWithball.IsPlayerTeam)
+        {
+            finalChance *= 1.20f; // Bônus da CPU (20%)
+        }
+
+        finalChance = Mathf.Clamp(finalChance, 0.28f, 0.92f);
+        jukePercentage = finalChance;
+
+        // ====================== RESULTADO FINAL ======================
+        if (!success)
+        {
+            offense.CurrentZone = 0;
+            return false; // Turnover / Steal
+        }
+
+        offense.CurrentZone = Mathf.Min(zone + 1, 2);
+        _matchUI.UpdatePlayerPlacements();
+        _matchUI.TurnOffPlayerButtons();
+        return true; // Juke bem sucedido
     }
     bool TryToShoveDefender(Player attacker, Player defender)
     {
