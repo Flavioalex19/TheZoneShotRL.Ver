@@ -516,7 +516,7 @@ public class MatchManager : MonoBehaviour
         if( teamWithball.IsPlayerTeam == false)
         {
             
-            adrenaline_addUp = 20;
+            adrenaline_addUp = 15;
             //AwayTeam.AdrenalineBar = 0;
             if (!isSimulation) _matchUI.OffesnivePanelOnOff(false);
             CanChooseAction = false;
@@ -649,6 +649,7 @@ public class MatchManager : MonoBehaviour
                         {
                             // juke success  continua posse (loop)
                             if (teamWithball.AdrenalineBar < teamWithball.AdrenalineBarFull) teamWithball.AdrenalineBar += adrenaline_addUp;
+                            uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " juke by the defender");
                             ResetDefensiveOptions();
                             continue;
                         }
@@ -676,8 +677,8 @@ public class MatchManager : MonoBehaviour
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         }
 
-                        yield return Scoring(playerWithTheBall, true);
-                        //yield return ToScore(playerWithTheBall, playerDefending, HomeTeam);
+                        //yield return Scoring(playerWithTheBall, true);
+                        yield return ToScore(playerWithTheBall, playerDefending, HomeTeam);
                         ResetDefensiveOptions();
                         yield break; 
 
@@ -689,7 +690,7 @@ public class MatchManager : MonoBehaviour
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         }
 
-                        yield return Scoring(playerWithTheBall, true);
+                        yield return ActivateSpecialAttk(true);
                         ResetDefensiveOptions();
                         yield break; 
                 }
@@ -1195,7 +1196,7 @@ public class MatchManager : MonoBehaviour
     }
     IEnumerator Scoring(Player player, bool isAI)
     {
-       
+        //print()
         // Jogador escolhe a zona (considerando a preferida)
         player.CurrentZone = ChooseZone(player);
 
@@ -2727,18 +2728,24 @@ public class MatchManager : MonoBehaviour
         // =====================================================
         // DECISÃO FINAL: Escolhe a ação com o MAIOR valor
         // =====================================================
+        
         if (shootChance >= jukeChance && shootChance >= passChance)
         {
+            print("Ai-Shoot");
             return AIAction.Shoot;
         }
         else if (jukeChance >= passChance)
         {
+            print("Ai-Juke");
             return AIAction.Juke;
         }
         else
         {
+            print("Ai-Pass");
             return AIAction.Pass;
         }
+        
+        
     }
     private int GetPreferredZone(Player p)
     {
