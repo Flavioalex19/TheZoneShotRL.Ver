@@ -29,7 +29,7 @@ public class Player : MonoBehaviour
         "Efrem", "Elliot", "Finn", "Flynt", "Fry", "Gavin", "Geoff", "Gilligan", "Glenn", "Hank","Alistair", "Benedict", "Harold", "Hercules", "Herman", "Hugh", "Hugo", "Iggy",
         "Igor", "Thiago", "Rod", "Ichiro", "Iniko", "Itashi", "J.B.", "J.D.", "J.T.", "J.R.", "Jacub", "Jarrett", "Jax", "Keith", "Keyshawn", "Kirk", "Lawrence", "Lee", "Leif",
         "Leigh", "Lemarcus", "Lennox", "Lenny", "Leonardo", "Levy", "Lionel", "Logan", "Lonnie", "Lowell", "L.P", "L.J", "Lucian", "Mackenzi", "Manny", "Marcel", "Marlon", "Marvin",
-        "Mason", "Nolan"
+        "Mason", "Nolan", "Jose"
     };
     private static readonly string[] secondNames = 
     {

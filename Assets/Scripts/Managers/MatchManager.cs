@@ -649,6 +649,7 @@ public class MatchManager : MonoBehaviour
                         {
                             // juke success  continua posse (loop)
                             if (teamWithball.AdrenalineBar < teamWithball.AdrenalineBarFull) teamWithball.AdrenalineBar += adrenaline_addUp;
+                            ResetDefensiveOptions();
                             continue;
                         }
                         else
@@ -1109,6 +1110,7 @@ public class MatchManager : MonoBehaviour
     }
     public void ChooseShove()
     {
+
         CanChooseShove = true;
         CanChooseAction = false;
     }
@@ -1127,22 +1129,36 @@ public class MatchManager : MonoBehaviour
     IEnumerator WaitForDefenseAction()
     {
         yield return new WaitUntil(() => { return chooseToBlock|| chooseToSteal|| chooseInterception; });
+        _matchUI.CloseDefensivePanel();
 
     }
     public void ChooseBlock()
     {
-        CanChooseDefenseAction = false;
-        chooseToBlock = true;
+        if (CanChooseDefenseAction) 
+        {
+            CanChooseDefenseAction = false;
+            chooseToBlock = true;
+        }
+           
     }
     public void ChooseSteal()
     {
-        CanChooseDefenseAction = false;
-        chooseToSteal = true;
+        if (CanChooseDefenseAction)
+        {
+            CanChooseDefenseAction = false;
+            chooseToSteal = true;
+        }
+        
     }
     public void ChooseInterception()
     {
-        CanChooseDefenseAction = false;
-        chooseInterception = true;
+        if (CanChooseDefenseAction) 
+        {
+            CanChooseDefenseAction = false;
+            chooseInterception = true;
+
+        }
+            
     }
     public void ResetDefensiveOptions()
     {
@@ -1150,6 +1166,7 @@ public class MatchManager : MonoBehaviour
         chooseToBlock = false;
         chooseToSteal = false;
         chooseInterception = false;
+        //_matchUI.CloseDefensivePanel();
     }
     bool TryPassBall()
     {
@@ -2676,7 +2693,7 @@ public class MatchManager : MonoBehaviour
         float passChance = PassEquation() * (1f + (awareness / 100f) * 0.50f);
         float shootChance = ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0)
                             * (1f + (shooting / 100f) * 0.50f);
-        float jukeChance = CalculateJukeProbability(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone)
+        float jukeChance = GetJukePercentage(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone)
                            * (1f + (juking / 100f) * 0.50f);
 
         // Bônus de Formação

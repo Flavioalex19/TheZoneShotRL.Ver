@@ -921,6 +921,7 @@ public class MatchUI : MonoBehaviour
     public void CloseDefensivePanel()
     {
         animator_defensivePanel.SetTrigger("Close");
+        StartCoroutine(WaitDisplay());
     }
     public void DefensivePerc(float shootP, float passP, int jukeP)
     {
@@ -933,5 +934,9 @@ public class MatchUI : MonoBehaviour
     {
         material_crowd.material.SetColor("_ColorA",_matchManager.HomeTeam.TeamColor);
         material_crowd.material.SetColor("_ColorB", _matchManager.AwayTeam.TeamColor);
+    }
+    IEnumerator  WaitDisplay()
+    {
+        yield return new WaitForSeconds(1f);
     }
 }
