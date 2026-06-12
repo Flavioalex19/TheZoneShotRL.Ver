@@ -690,7 +690,7 @@ public class MatchManager : MonoBehaviour
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         }
 
-                        yield return ActivateSpecialAttk(true);
+                        yield return /*ActivateSpecialAttk(true)*/ToScore(playerWithTheBall,playerDefending, teamWithball);
                         ResetDefensiveOptions();
                         yield break; 
                 }

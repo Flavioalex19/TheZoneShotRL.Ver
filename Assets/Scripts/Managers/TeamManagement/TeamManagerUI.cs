@@ -305,6 +305,8 @@ public class TeamManagerUI : MonoBehaviour
             if (gameManager.leagueTeams[i].isChampion == true &&
                 gameManager.leagueTeams[i].IsPlayerTeam == true)
             {
+                //legacy unlock - GOAT
+                leagueManager.CanDraftSpPlayer4 = true;
                 isGameOver = true;
                 break;
             }
@@ -315,6 +317,8 @@ public class TeamManagerUI : MonoBehaviour
 
             if (IsPlayerTeamInTop8())
             {
+                //leagacy unlock - silver runner
+                leagueManager.CanDrafSpPlayer0 = true;
                 leagueManager.isOnR8 = true;
             }
             else
@@ -342,7 +346,6 @@ public class TeamManagerUI : MonoBehaviour
             playoffManager.CreatePlayoffBracket();
         }
 
-        // Decisão final - agora funciona corretamente
         if (isGameOver == false)
         {
             _advBtn = GameObject.Find("Advance Button");
@@ -388,6 +391,10 @@ public class TeamManagerUI : MonoBehaviour
         }
         else
         {
+            //leagacy unlock-new draft player otions- early players
+            if(leagueManager.CanDraftlvl1 == false) leagueManager.CanDraftlvl1 = true;
+            //legacy unlock - 
+            if(leagueManager.isOnR4)leagueManager.CanDraftSpPlayer1 = true;
             ResultPanelCreation();
             btn_returnToMainScreen.onClick.RemoveAllListeners();
             btn_returnToMainScreen.onClick.AddListener(() => StartNewLeagueRun());
@@ -932,13 +939,13 @@ public class TeamManagerUI : MonoBehaviour
         transform_TeamPlayerAllStats.GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Mid.ToString();
         transform_TeamPlayerAllStats.GetChild(3).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Outside.ToString();
         transform_TeamPlayerAllStats.GetChild(4).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Awareness.ToString();
-        transform_TeamPlayerAllStats.GetChild(5).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Defending.ToString();
-        transform_TeamPlayerAllStats.GetChild(6).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Guarding.ToString();
-        transform_TeamPlayerAllStats.GetChild(7).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Stealing.ToString();
-        transform_TeamPlayerAllStats.GetChild(8).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Juking.ToString();
-        transform_TeamPlayerAllStats.GetChild(9).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Consistency.ToString();
-        transform_TeamPlayerAllStats.GetChild(10).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Control.ToString();
-        transform_TeamPlayerAllStats.GetChild(11).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Positioning.ToString();
+        transform_TeamPlayerAllStats.GetChild(5).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Consistency.ToString();
+        transform_TeamPlayerAllStats.GetChild(6).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Control.ToString();
+        transform_TeamPlayerAllStats.GetChild(7).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Juking.ToString();
+        transform_TeamPlayerAllStats.GetChild(8).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Positioning.ToString();
+        transform_TeamPlayerAllStats.GetChild(9).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Guarding.ToString();
+        transform_TeamPlayerAllStats.GetChild(10).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Stealing.ToString();
+        transform_TeamPlayerAllStats.GetChild(11).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Defending.ToString();
         //Portrait
         Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
         Sprite sprite = sprites[gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait];

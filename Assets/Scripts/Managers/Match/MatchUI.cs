@@ -275,14 +275,15 @@ public class MatchUI : MonoBehaviour
             text_CurrentDefensiveStyle.text = "Normal";
         }
         //Substitution Buttons
-        if (GameObject.Find("Starters"))
+        /*
+        if (GameObject.Find("StartersTimeOut"))
         {
-            for (int i = 0; i < GameObject.Find("Starters").transform.childCount; i++)
+            for (int i = 0; i < GameObject.Find("StartersTimeOut").transform.childCount; i++)
             {
-                GameObject.Find("Starters").transform.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerFirstName.ToString() + " "
+                GameObject.Find("StartersTimeOut").transform.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerFirstName.ToString() + " "
                     + _matchManager.HomeTeam.playersListRoster[i].playerLastName + " " + _matchManager.HomeTeam.playersListRoster[i].J_Number.ToString();
-                GameObject.Find("Starters").transform.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = "OVR " + _matchManager.HomeTeam.playersListRoster[i].ovr.ToString();
-                GameObject.Find("Starters").transform.GetChild(i).GetChild(2).GetChild(0).GetComponent<Image>().fillAmount =
+                GameObject.Find("StartersTimeOut").transform.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = "OVR " + _matchManager.HomeTeam.playersListRoster[i].ovr.ToString();
+                GameObject.Find("StartersTimeOut").transform.GetChild(i).GetChild(2).GetChild(0).GetComponent<Image>().fillAmount =
                     (float)_matchManager.HomeTeam.playersListRoster[i].CurrentStamina / (float)_matchManager.HomeTeam.playersListRoster[i].MaxStamina;
                 Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
                 switch (_matchManager.HomeTeam.playersListRoster[i + 4].Personality)
@@ -308,7 +309,7 @@ public class MatchUI : MonoBehaviour
                     default:
                         break;
                 }
-                GameObject.Find("Starters").transform.GetChild(i).GetChild(3).GetComponent<Image>().sprite = sprite;
+                GameObject.Find("StartersTimeOut").transform.GetChild(i).GetChild(3).GetComponent<Image>().sprite = sprite;
                 Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
                 Sprite spriteArch = null;
                 //spriteArchtype = sprites1[index];
@@ -331,10 +332,11 @@ public class MatchUI : MonoBehaviour
                 {
                     spriteArch = sprites1[3];
                 }
-                GameObject.Find("Starters").transform.GetChild(i).GetChild(4).GetComponent<Image>().sprite = spriteArch;
+                GameObject.Find("StartersTimeOut").transform.GetChild(i).GetChild(4).GetComponent<Image>().sprite = spriteArch;
                 //print(_matchManager.HomeTeam.playersListRoster[i].CurrentStamina + "thisis my stamina");
             }
         }
+        */
         if (GameObject.Find("Bench"))
         {
             for (int i = 0; i < GameObject.Find("Bench").transform.childCount; i++)
@@ -348,6 +350,7 @@ public class MatchUI : MonoBehaviour
                 //(float)_matchManager.HomeTeam.playersListRoster[i + 4].CurrentStamina / (float)_matchManager.HomeTeam.playersListRoster[i+4].MaxStamina;
             }
         }
+        /*
         for (int i = 0; i < _timeOutBenchPlayers.childCount; i++)
         {
             _timeOutBenchPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i + 4].playerLastName + " " 
@@ -403,6 +406,7 @@ public class MatchUI : MonoBehaviour
             }
             _timeOutBenchPlayers.GetChild(i).GetChild(4).GetComponent<Image>().sprite = spriteArch;
         }
+        */
         for (int i = 0; i < 4; i++)
         {
             //HomeTeams
@@ -938,5 +942,123 @@ public class MatchUI : MonoBehaviour
     IEnumerator  WaitDisplay()
     {
         yield return new WaitForSeconds(1f);
+    }
+    public void TimeoutStartsUpdateBtns()
+    {
+        if (GameObject.Find("StartersTimeOut"))
+        {
+            for (int i = 0; i < GameObject.Find("StartersTimeOut").transform.childCount; i++)
+            {
+                GameObject.Find("StartersTimeOut").transform.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerFirstName.ToString() + " "
+                    + _matchManager.HomeTeam.playersListRoster[i].playerLastName + " " + _matchManager.HomeTeam.playersListRoster[i].J_Number.ToString();
+                GameObject.Find("StartersTimeOut").transform.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = "OVR " + _matchManager.HomeTeam.playersListRoster[i].ovr.ToString();
+                GameObject.Find("StartersTimeOut").transform.GetChild(i).GetChild(2).GetChild(0).GetComponent<Image>().fillAmount =
+                    (float)_matchManager.HomeTeam.playersListRoster[i].CurrentStamina / (float)_matchManager.HomeTeam.playersListRoster[i].MaxStamina;
+                Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
+                switch (_matchManager.HomeTeam.playersListRoster[i].Personality)
+                {
+                    case 1:
+                        sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_01");
+                        break;
+                    case 2:
+                        sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_02");
+                        break;
+                    case 3:
+                        sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_03");
+                        break;
+
+                    case 4:
+                        sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_04");
+                        break;
+
+                    case 5:
+                        sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_05");
+                        break;
+
+                    default:
+                        break;
+                }
+                GameObject.Find("StartersTimeOut").transform.GetChild(i).GetChild(3).GetComponent<Image>().sprite = sprite;
+                Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
+                Sprite spriteArch = null;
+                //spriteArchtype = sprites1[index];
+
+                if (_matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait >= 0 || _matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait <= 20)
+                {
+                    spriteArch = sprites1[0];
+                }
+                if (_matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait >= 21 && _matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait <= 40)
+                {
+                    //print("Imge number 1");
+                    spriteArch = sprites1[1];
+                }
+                if (_matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait >= 41 && _matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait <= 60)
+                {
+                    //print("Imge number 1");
+                    spriteArch = sprites1[2];
+                }
+                if (_matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait >= 61 && _matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait <= 80)
+                {
+                    spriteArch = sprites1[3];
+                }
+                GameObject.Find("StartersTimeOut").transform.GetChild(i).GetChild(4).GetComponent<Image>().sprite = spriteArch;
+                //print(_matchManager.HomeTeam.playersListRoster[i].CurrentStamina + "thisis my stamina");
+            }
+        }
+        for (int i = 0; i < _timeOutBenchPlayers.childCount; i++)
+        {
+            _timeOutBenchPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i + 4].playerLastName + " "
+                + _matchManager.HomeTeam.playersListRoster[i + 4].J_Number;
+            _timeOutBenchPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i + 4].ovr.ToString();
+            _timeOutBenchPlayers.GetChild(i).GetChild(2).GetChild(0).GetComponent<Image>().fillAmount = (float)_matchManager.HomeTeam.playersListRoster[i + 4].CurrentStamina / (float)_matchManager.HomeTeam.playersListRoster[i + 4].MaxStamina;
+            Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
+            switch (_matchManager.HomeTeam.playersListRoster[i + 4].Personality)
+            {
+                case 1:
+                    sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_01");
+                    break;
+                case 2:
+                    sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_02");
+                    break;
+                case 3:
+                    sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_03");
+                    break;
+
+                case 4:
+                    sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_04");
+                    break;
+
+                case 5:
+                    sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_05");
+                    break;
+
+                default:
+                    break;
+            }
+            _timeOutBenchPlayers.GetChild(i).GetChild(3).GetComponent<Image>().sprite = sprite;
+            Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
+            Sprite spriteArch = null;
+            //spriteArchtype = sprites1[index];
+
+            if (_matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait >= 0 || _matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait <= 20)
+            {
+                spriteArch = sprites1[0];
+            }
+            if (_matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait >= 21 && _matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait <= 40)
+            {
+                //print("Imge number 1");
+                spriteArch = sprites1[1];
+            }
+            if (_matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait >= 41 && _matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait <= 60)
+            {
+                //print("Imge number 1");
+                spriteArch = sprites1[2];
+            }
+            if (_matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait >= 61 && _matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait <= 80)
+            {
+                spriteArch = sprites1[3];
+            }
+            _timeOutBenchPlayers.GetChild(i).GetChild(4).GetComponent<Image>().sprite = spriteArch;
+        }
     }
 }

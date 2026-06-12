@@ -40982,8 +40982,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _StarterPLayerSelected: {fileID: 0}
   _BenchPlayerSelected: {fileID: 0}
-  indexStarter: 0
-  indexBench: 0
+  indexStarter: -1
+  indexBench: -1
   _text_StartersNames:
   - {fileID: 348257791}
   - {fileID: 0}
@@ -40991,6 +40991,7 @@ MonoBehaviour:
   - {fileID: 0}
   text_playerStarter: {fileID: 1590294859}
   text_benchPlayer: {fileID: 1512085055}
+  debugcurrentplayers: []
 --- !u!1 &779248457
 GameObject:
   m_ObjectHideFlags: 0
@@ -82266,7 +82267,7 @@ GameObject:
   - component: {fileID: 1558506691}
   - component: {fileID: 1558506692}
   m_Layer: 5
-  m_Name: Starters
+  m_Name: StartersTimeOut
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

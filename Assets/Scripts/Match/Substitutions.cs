@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class Substitutions : MonoBehaviour
 {
     MatchManager matchManager;
+    MatchUI matchUI;
     public Player _StarterPLayerSelected;
     public Player _BenchPlayerSelected;
     [SerializeField]int indexStarter;
@@ -16,14 +17,21 @@ public class Substitutions : MonoBehaviour
     //ui teesting
     [SerializeField]TextMeshProUGUI text_playerStarter;
     [SerializeField] TextMeshProUGUI text_benchPlayer;
-
+    [SerializeField] List<string> debugcurrentplayers = new List<string>();
     Button confirmSwapBtn;
 
     private void Start()
     {
         matchManager = GameObject.Find("MatchManager").GetComponent<MatchManager>();
+        matchUI = GameObject.Find("MatchUIManager").GetComponent<MatchUI>();
         _StarterPLayerSelected = null;
         _BenchPlayerSelected = null;
+        matchUI.TimeoutStartsUpdateBtns();
+        for (int i = 0; i < matchManager.HomeTeam.playersListRoster.Count; i++)
+        {
+            debugcurrentplayers.Add(matchManager.HomeTeam.playersListRoster[i].playerLastName);
+        }
+
     }
    
     void TextNameUpdate()
@@ -35,17 +43,28 @@ public class Substitutions : MonoBehaviour
     }
     public void SwapPlayers()
     {
-        // Find the index of the first element with IsActive == true
-        indexStarter = matchManager.HomeTeam.playersListRoster.FindIndex(element => element == _StarterPLayerSelected);
-        indexBench = matchManager.HomeTeam.playersListRoster.FindIndex(element => element == _BenchPlayerSelected);
-        Player temp = matchManager.HomeTeam.playersListRoster[indexStarter];
-        matchManager.HomeTeam.playersListRoster[indexStarter] = matchManager.HomeTeam.playersListRoster[indexBench];
-        matchManager.HomeTeam.playersListRoster[indexBench] = temp;
-        _StarterPLayerSelected = null;
-        _BenchPlayerSelected = null;
-        text_playerStarter.text = " ";
-        text_benchPlayer.text = " ";
-
+        if (indexStarter != -1 || indexBench != -1) 
+        {
+            debugcurrentplayers.Clear();
+            // Find the index of the first element with IsActive == true
+            indexStarter = matchManager.HomeTeam.playersListRoster.FindIndex(element => element == _StarterPLayerSelected);
+            indexBench = matchManager.HomeTeam.playersListRoster.FindIndex(element => element == _BenchPlayerSelected);
+            Player temp = matchManager.HomeTeam.playersListRoster[indexStarter];
+            matchManager.HomeTeam.playersListRoster[indexStarter] = matchManager.HomeTeam.playersListRoster[indexBench];
+            matchManager.HomeTeam.playersListRoster[indexBench] = temp;
+            _StarterPLayerSelected = null;
+            _BenchPlayerSelected = null;
+            text_playerStarter.text = " ";
+            text_benchPlayer.text = " ";
+            indexBench = -1;
+            indexStarter = -1;
+            matchUI.TimeoutStartsUpdateBtns();
+            for (int i = 0; i < matchManager.HomeTeam.playersListRoster.Count; i++)
+            {
+                debugcurrentplayers.Add(matchManager.HomeTeam.playersListRoster[i].playerLastName);
+            }
+        }
+        
 
     }
     public void ChooseStarterToSwap(int index)
