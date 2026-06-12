@@ -678,7 +678,7 @@ public class MatchManager : MonoBehaviour
                         }
 
                         //yield return Scoring(playerWithTheBall, true);
-                        yield return ToScore(playerWithTheBall, playerDefending, HomeTeam);
+                        yield return ToScore(playerWithTheBall, playerDefending, AwayTeam);
                         ResetDefensiveOptions();
                         yield break; 
 

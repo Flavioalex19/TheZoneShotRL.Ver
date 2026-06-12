@@ -407,9 +407,9 @@ public class MatchUI : MonoBehaviour
         //text_playerWithTheBallName.text = _matchManager.playerWithTheBall.playerFirstName + " " + _matchManager.playerWithTheBall.playerLastName;
         //text_PlayerwithTheBallJersey.text = _matchManager.playerWithTheBall.J_Number.ToString();
         //Sprite alteration/update
-        Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
-        Sprite sprite = sprites[_matchManager.playerWithTheBall.ImageCharacterPortrait];
-        image_playerWithTheBallPortrait.sprite = sprite;
+        //Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
+        //Sprite sprite = sprites[_matchManager.playerWithTheBall.ImageCharacterPortrait];
+        //image_playerWithTheBallPortrait.sprite = sprite;
         PersonalityUpdate();
         //Current game stats
         transform_gameStatsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.PointsMatch.ToString();
