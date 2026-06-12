@@ -78,6 +78,7 @@ public class Player : MonoBehaviour
     #endregion
     [SerializeField] public GameObject bt_DraftInfo;
     public int ImageCharacterPortrait;
+    
 
     #region Match Variables
     public bool HasTheBall = false;

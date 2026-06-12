@@ -42,6 +42,16 @@ public class BtnTeamSelectionLegacy : MonoBehaviour
                 case 3:
                     if (leagueManager.CanDraftlvl3)leagueManager.isOnDraftLVL2 = true;
                     break;
+                case 4:
+                    if(leagueManager.CanDrafSpPlayer0)leagueManager.CanCreateLegend0 = true;
+                    break;
+                case 5:
+                    if(leagueManager.CanDraftSpPlayer1)leagueManager.CanCreateLegend1 = true;
+                    break;
+                case 6:
+                    if (leagueManager.CanDraftSpPlayer4) leagueManager.CanCreateLegend4 = true;
+                    break;
+
             }
         }
         

@@ -32,6 +32,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] IntroManager introManager;
 
     public GridLayoutGroup glg_draftNames;
+    //legends prefabs
+    public GameObject player_legend0;
+    public GameObject player_legend1;
+    public GameObject player_legend4;
     int currentTeamIndex = 0;
 
     int count = 0;//testing the transition to onli create ince time the players

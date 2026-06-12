@@ -70,7 +70,37 @@ public class DraftUiManager : MonoBehaviour
             Player newPlayer = CreateRandomPlayer(true);
             GeneratePlayerDraftButton(newPlayer);
         }
-
+        //3. Adiciona os legends ao time do player
+        if (leagueManager.CanCreateLegend0)
+        {
+            GameObject playerObject = Instantiate(_gameManager.player_legend0);
+            DontDestroyOnLoad(playerObject);
+            if (_gameManager != null)
+            {
+                playerObject.transform.SetParent(_gameManager.transform);
+            }
+            _gameManager.playerTeam.playersListRoster.Add(playerObject.GetComponent<Player>());
+        }
+        if (leagueManager.CanCreateLegend1)
+        {
+            GameObject playerObject = Instantiate(_gameManager.player_legend1);
+            DontDestroyOnLoad(playerObject);
+            if (_gameManager != null)
+            {
+                playerObject.transform.SetParent(_gameManager.transform);
+            }
+            _gameManager.playerTeam.playersListRoster.Add(playerObject.GetComponent<Player>());
+        }
+        if (leagueManager.CanCreateLegend4)
+        {
+            GameObject playerObject = Instantiate(_gameManager.player_legend4);
+            DontDestroyOnLoad(playerObject);
+            if (_gameManager != null)
+            {
+                playerObject.transform.SetParent(_gameManager.transform);
+            }
+            _gameManager.playerTeam.playersListRoster.Add(playerObject.GetComponent<Player>());
+        }
         // Atualiza UI inicial (mostra o time do player)
         UpdateCurrentTeamUI(_gameManager.playerTeam);
     }

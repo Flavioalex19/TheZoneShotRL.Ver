@@ -55,41 +55,7 @@ public class TeamSelectionManager : MonoBehaviour
     }
     public void AdvanceToDraft()
     {
-        /*
-        if (_gameManager.playerTeam == null)
-        {
-            Debug.LogError("playerTeam está null! Verifique se o time foi selecionado corretamente.");
-            return;
-        }
-
-        // FORMA MAIS SEGURA: Procura o time na lista leagueTeams pelo nome e seta IsPlayerTeam = true
-        bool teamFound = false;
-
-        foreach (Team team in _gameManager.leagueTeams)
-        {
-            if (team.TeamName == _gameManager.playerTeam.TeamName)
-            {
-                team.IsPlayerTeam = true;
-                _gameManager.playerTeam = team;     // Atualiza a referência principal
-                teamFound = true;
-                Debug.Log($"IsPlayerTeam definido como TRUE para: {team.TeamName}");
-                break;
-            }
-        }
-
-        if (!teamFound)
-        {
-            Debug.LogError("Não foi possível encontrar o time na lista leagueTeams!");
-            return;
-        }
-
-        // Resto do código
-        selectedTeam.CreateEquips();
-        _gameManager.mode = GameManager.GameMode.Draft;
-        _gameManager.ScheduleCreation(_gameManager.leagueTeams);
-
-        SceneManager.LoadScene("Draft");
-        */
+        
         if (_gameManager.playerTeam == null)
         {
             Debug.LogError("playerTeam está null! Verifique se o time foi selecionado corretamente.");
@@ -149,6 +115,9 @@ public class TeamSelectionManager : MonoBehaviour
         _leagueManager.isOnDraftLVL0 = false;
         _leagueManager.isOnDraftLVL1 = false;
         _leagueManager.isOnDraftLVL2 = false;
+        _leagueManager.CanCreateLegend0 = false;
+        _leagueManager.CanCreateLegend1 = false;
+        _leagueManager.CanCreateLegend4 = false;
 
     }
     //Debug Panel
@@ -157,6 +126,9 @@ public class TeamSelectionManager : MonoBehaviour
         _leagueManager.isOnDraftLVL0 = true;
         _leagueManager.isOnDraftLVL1 = true;
         _leagueManager.isOnDraftLVL2 = true;
+        _leagueManager.CanCreateLegend0 = true;
+        _leagueManager.CanCreateLegend1 = true;
+        _leagueManager.CanCreateLegend4 = true;
     }
     public void SetPlayerTeam(string selectedTeamName)
     {

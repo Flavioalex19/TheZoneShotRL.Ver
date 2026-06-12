@@ -65,6 +65,9 @@ public class LeagueManager : MonoBehaviour
     public bool isOnDraftLVL0 = false;
     public bool isOnDraftLVL1 = false;
     public bool isOnDraftLVL2 = false;
+    public bool CanCreateLegend0 = false;
+    public bool CanCreateLegend1 = false;
+    public bool CanCreateLegend4 = false;
 
 
     public bool TriggerWeek = false;

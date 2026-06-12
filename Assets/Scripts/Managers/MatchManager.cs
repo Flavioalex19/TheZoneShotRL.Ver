@@ -1086,7 +1086,7 @@ public class MatchManager : MonoBehaviour
             }
             
         }
-        currentGamePossessons--;
+        //currentGamePossessons--;
     }
     void ResetChoices()
     {
@@ -2639,7 +2639,8 @@ public class MatchManager : MonoBehaviour
             uiManager.PlaybyPlayText(
                 playerWithTheBall.playerLastName + " scored! Total: " + playerWithTheBall.PointsMatch
             );
-            if(IsFastforward == false)_matchUI.ResultActionPanel("S",0);
+            if(IsFastforward == false)if(teamWithball.IsPlayerTeam)_matchUI.ResultActionPanel("S",0);
+            if (IsFastforward == false) if (!teamWithball.IsPlayerTeam) _matchUI.ResultActionPanel("F", 0);
             if (HomeTeam.AdrenalineBar < HomeTeam.AdrenalineBarFull) HomeTeam.AdrenalineBar += adrenaline_addUp;
             //Damage Deal
             if (!isSimulation && teamWithball.IsPlayerTeam)

@@ -342,10 +342,17 @@ public class TeamManagerUI : MonoBehaviour
 
         if (leagueManager.isOnR8)
         {
-            print("Playoffs rackerts made");
+            //print("Playoffs rackerts made");
             playoffManager.CreatePlayoffBracket();
         }
-
+        if (leagueManager.isOnR4)
+        {
+            leagueManager.CanDraftlvl2 = true;
+        }
+        if (leagueManager.isOnFinals)
+        {
+            leagueManager.CanDraftlvl3 = true;
+        }
         if (isGameOver == false)
         {
             _advBtn = GameObject.Find("Advance Button");
@@ -853,10 +860,24 @@ public class TeamManagerUI : MonoBehaviour
         _text_playerNUmber.text = gameManager.playerTeam.playersListRoster[index].J_Number.ToString();
         text_playerAge.text = gameManager.playerTeam.playersListRoster[index].Age.ToString();
 
-        //Sprite alteration/update
-        Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
-        Sprite sprite = sprites[gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait];
-        _image_playerPortrait.sprite = sprite;
+        if (index < 190)
+        {
+            //Sprite alteration/update
+            Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
+            Sprite sprite = sprites[gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait];
+            _image_playerPortrait.sprite = sprite;
+        }
+        else
+        {
+            if (index == 200)
+            {
+                //Sprite alteration/update
+                
+                Sprite sprite = Resources.Load<Sprite>("2D/Characters/Legends/Legend_Silver_Final");
+                _image_playerPortrait.sprite = sprite;
+            }
+        }
+        
 
         //Contract Info
         _text_ContractInfo.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].ContractYears.ToString();
@@ -947,9 +968,24 @@ public class TeamManagerUI : MonoBehaviour
         transform_TeamPlayerAllStats.GetChild(10).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Stealing.ToString();
         transform_TeamPlayerAllStats.GetChild(11).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].Defending.ToString();
         //Portrait
-        Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
-        Sprite sprite = sprites[gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait];
-        image_teamPortraitPlayer.sprite = sprite;
+        if (gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait < 190)
+        {
+            Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
+            Sprite sprite = sprites[gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait];
+            image_teamPortraitPlayer.sprite = sprite;
+        }
+        else
+        {
+            if(gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait == 200)
+            {
+                
+                Sprite sprite = Resources.Load<Sprite>("2D/Characters/Legends/Legend_Silver_Final");
+                image_teamPortraitPlayer.sprite = sprite;
+                print(sprite);
+            }
+        }
+        
+       
         //Archtype
         Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
         Sprite archtypeSprite = null;
@@ -1049,14 +1085,25 @@ public class TeamManagerUI : MonoBehaviour
     }
     public void SetPlayersTradeImages(Player playerTeam, Player tradePlayer)
     {
+        
         //Sprite alteration/update
         Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
 
         Sprite sprite = sprites[playerTeam.ImageCharacterPortrait];
         image_playerTeam.sprite = sprite;
+        
 
         sprite = sprites[tradePlayer.ImageCharacterPortrait];
         image_playerToTrade.sprite = sprite;
+
+        //legends
+        if (playerTeam.ImageCharacterPortrait == 200)
+        {
+            //sprites = Resources.LoadAll<Sprite>("2D/Characters/Legends/Legend_Silver_Final.png");
+            sprite = Resources.Load<Sprite>("2D/Characters/Legends/Legend_Silver_Final");
+            image_playerTeam.sprite = sprite;
+
+        }
     }
     //New trade functions
     public void TradeSetMyPlayersBtns()
@@ -1092,9 +1139,21 @@ public class TeamManagerUI : MonoBehaviour
         text_trade_MyPlayerOVR.text = player.SetOVR().ToString();
         text_trade_MyPlayerAge.text = player.Age.ToString();
         //Portrait
-        Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
-        Sprite sprite = sprites[player.ImageCharacterPortrait];
-        image_trade_MyPlayerToTradePortrait.sprite = sprite;
+        if (player.ImageCharacterPortrait < 190)
+        {
+            Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
+            Sprite sprite = sprites[player.ImageCharacterPortrait];
+            image_trade_MyPlayerToTradePortrait.sprite = sprite;
+        }
+        else
+        {
+            if(player.ImageCharacterPortrait == 200)
+            {
+                Sprite sprite = Resources.Load<Sprite>("2D/Characters/Legends/Legend_Silver_Final");
+                image_trade_MyPlayerToTradePortrait.sprite = sprite;
+            }
+        }
+        
         //archtype
         Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
         Sprite archtypeSprite = null;
@@ -1255,9 +1314,20 @@ public class TeamManagerUI : MonoBehaviour
         text_trade_receiveOVR.text = player.SetOVR().ToString();
         text_trade_receiveAge.text = player.Age.ToString();
         //Portrait
-        Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
-        Sprite sprite = sprites[player.ImageCharacterPortrait];
-        image_trade_playerReceivePortrait.sprite = sprite;
+        if (player.ImageCharacterPortrait < 190)
+        {
+            Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
+            Sprite sprite = sprites[player.ImageCharacterPortrait];
+            image_trade_playerReceivePortrait.sprite = sprite;
+        }
+        else
+        {
+            if (player.ImageCharacterPortrait == 200)
+            {
+                Sprite sprite = Resources.Load<Sprite>("2D/Characters/Legends/Legend_Silver_Final");
+                image_trade_playerReceivePortrait.sprite = sprite;
+            }
+        }
         //archtype
         Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
         Sprite archtypeSprite = null;
@@ -1823,8 +1893,18 @@ public class TeamManagerUI : MonoBehaviour
         text_resultPanel_mvpPtsGame.text = (mvp.CareerPoints / mvp.CareerGamesPlayed).ToString();
         text_resultPanel_mvpStealsGames.text = (mvp.CareerSteals / mvp.CareerGamesPlayed).ToString();
         text_resultPanel_mvpGamesPlayed.text = mvp.CareerGamesPlayed.ToString();
-        Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
-        Sprite sprite = sprites[mvp.ImageCharacterPortrait];
+        if (mvp.ImageCharacterPortrait < 190)
+        {
+            Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
+            Sprite sprite = sprites[mvp.ImageCharacterPortrait];
+        }
+        else
+        {
+            if (mvp.ImageCharacterPortrait == 200)
+            {
+                Sprite sprite = Resources.Load<Sprite>("2D/Characters/Legends/Legend_Silver_Final");
+            }
+        }
 
     }
     //Find MVP
