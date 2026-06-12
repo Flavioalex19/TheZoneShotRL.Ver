@@ -827,6 +827,10 @@ public class MatchUI : MonoBehaviour
     }
     public void TimeoutStartsUpdateBtns()
     {
+        for (int i = 0; i < _matchManager.HomeTeam.playersListRoster.Count; i++)
+        {
+            _matchManager.HomeTeam.playersListRoster[i].CurrentStamina = _matchManager.HomeTeam.playersListRoster[i].MaxStamina;
+        }
         if (GameObject.Find("StartersTimeOut"))
         {
             for (int i = 0; i < GameObject.Find("StartersTimeOut").transform.childCount; i++)
