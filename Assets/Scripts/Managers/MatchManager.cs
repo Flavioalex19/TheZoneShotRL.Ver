@@ -690,7 +690,11 @@ public class MatchManager : MonoBehaviour
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         }
 
-                        yield return /*ActivateSpecialAttk(true)*/ToScore(playerWithTheBall,playerDefending, teamWithball);
+                        //yield return /*ActivateSpecialAttk(true)*/ToScore(playerWithTheBall,playerDefending, teamWithball);
+                        teamWithball.Score += 10;
+                        teamWithball.AdrenalineBar = 0;
+                        uiManager.PlaybyPlayText("What a special from the " + teamWithball.TeamName);
+                        if (IsFastforward == false) if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         ResetDefensiveOptions();
                         yield break; 
                 }

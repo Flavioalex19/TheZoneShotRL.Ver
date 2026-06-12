@@ -27,10 +27,7 @@ public class Substitutions : MonoBehaviour
         _StarterPLayerSelected = null;
         _BenchPlayerSelected = null;
         matchUI.TimeoutStartsUpdateBtns();
-        for (int i = 0; i < matchManager.HomeTeam.playersListRoster.Count; i++)
-        {
-            debugcurrentplayers.Add(matchManager.HomeTeam.playersListRoster[i].playerLastName);
-        }
+        
 
     }
    
@@ -45,7 +42,7 @@ public class Substitutions : MonoBehaviour
     {
         if (indexStarter != -1 || indexBench != -1) 
         {
-            debugcurrentplayers.Clear();
+            //debugcurrentplayers.Clear();
             // Find the index of the first element with IsActive == true
             indexStarter = matchManager.HomeTeam.playersListRoster.FindIndex(element => element == _StarterPLayerSelected);
             indexBench = matchManager.HomeTeam.playersListRoster.FindIndex(element => element == _BenchPlayerSelected);
@@ -59,10 +56,7 @@ public class Substitutions : MonoBehaviour
             indexBench = -1;
             indexStarter = -1;
             matchUI.TimeoutStartsUpdateBtns();
-            for (int i = 0; i < matchManager.HomeTeam.playersListRoster.Count; i++)
-            {
-                debugcurrentplayers.Add(matchManager.HomeTeam.playersListRoster[i].playerLastName);
-            }
+            
         }
         
 
