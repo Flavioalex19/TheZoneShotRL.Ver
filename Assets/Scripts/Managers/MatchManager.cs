@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -244,6 +245,7 @@ public class MatchManager : MonoBehaviour
         _matchUI.SetCrowdColors();
         currentFormation = HomeTeam._teamStyle.ToString();
         _matchUI.TeamStyleUpdate(HomeTeam._teamStyle.ToString());
+
         StartCoroutine(RunMatchThenSimulate());
 
         
@@ -275,6 +277,7 @@ public class MatchManager : MonoBehaviour
     }
     IEnumerator SetupGameplan()
     {
+
         //Wait for the intro to end
         for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
         {
@@ -284,7 +287,7 @@ public class MatchManager : MonoBehaviour
         {
             AwayTeam.playersListRoster[i].CurrentStamina = 100;
         }
-
+        //_matchUI.TimeoutStartsUpdateBtns();
         yield return new WaitUntil(()=> _isOnSetupStage == false);
     }
     IEnumerator GameFlow()
@@ -515,7 +518,10 @@ public class MatchManager : MonoBehaviour
         if (isSimulation) AISub();
         if( teamWithball.IsPlayerTeam == false)
         {
-            
+            for (int i = 0; i < AwayTeam.playersListRoster.Count; i++)
+            {
+                if (!isSimulation) if (AwayTeam.playersListRoster[i].HasTheBall) print(AwayTeam.playersListRoster[i].playerLastName + "has the ball");
+            }
             adrenaline_addUp = 15;
             //AwayTeam.AdrenalineBar = 0;
             if (!isSimulation) _matchUI.OffesnivePanelOnOff(false);
@@ -679,6 +685,7 @@ public class MatchManager : MonoBehaviour
 
                         //yield return Scoring(playerWithTheBall, true);
                         yield return ToScore(playerWithTheBall, playerDefending, AwayTeam);
+                        if (!isSimulation) HomeTeam.match_hp -= 20;//randomizar
                         ResetDefensiveOptions();
                         yield break; 
 
@@ -693,6 +700,7 @@ public class MatchManager : MonoBehaviour
                         //yield return /*ActivateSpecialAttk(true)*/ToScore(playerWithTheBall,playerDefending, teamWithball);
                         teamWithball.Score += 10;
                         teamWithball.AdrenalineBar = 0;
+                        if (!isSimulation) HomeTeam.match_hp -= 30;//randomizar
                         uiManager.PlaybyPlayText("What a special from the " + teamWithball.TeamName);
                         if (IsFastforward == false) if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         ResetDefensiveOptions();
@@ -744,6 +752,7 @@ public class MatchManager : MonoBehaviour
             //_matchUI._actionDefense.SetActive(false);
             while (true)
             {
+                _matchUI.TimeoutStartsUpdateBtns();
                 if (!isSimulation) _matchUI.ActivateDefensivePanel();
                 if (!isSimulation) _matchUI.percentagePanel.SetActive(true);
                 if (!isSimulation) _matchUI.PlayerWithTheBallOff();

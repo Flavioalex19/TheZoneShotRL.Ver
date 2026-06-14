@@ -73,6 +73,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Image image_teamPlayerPersonality;
     [SerializeField] Image image_TeamPlayerArchtype;
     [SerializeField] Transform transform_TeamPlayerAllStats;
+    [SerializeField] Animator _animator_team;
     Player currentPlayer;
     Sprite _sprite;
     
@@ -1036,6 +1037,20 @@ public class TeamManagerUI : MonoBehaviour
         }
         image_teamPlayerPersonality.sprite = personalitySprite;
     }
+    public void AnimCallTeamOpen()
+    {
+        if (_animator_team.GetBool("On")==false)
+        {
+            _animator_team.SetBool("On", true);
+        }
+    }
+    public void AnimCloseTeam()
+    {
+        if (_animator_team.GetBool("On") == true)
+        {
+            _animator_team.SetBool("On", false);
+        }
+    }
     //Trading
     public void SetTradePanel()
     {
@@ -1824,10 +1839,7 @@ public class TeamManagerUI : MonoBehaviour
     {
         animator_SchedulePanel.SetBool("On",On);
     }
-    public void TeamPanelAnim(bool On)
-    {
-        animator_TeamPanel.SetBool("On", On);
-    }
+    
     public void TradePanelAnimation(bool On)
     {
         animator_TradingPanel.SetBool("On", On);

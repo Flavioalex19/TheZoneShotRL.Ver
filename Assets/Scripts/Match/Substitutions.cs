@@ -26,8 +26,15 @@ public class Substitutions : MonoBehaviour
         matchUI = GameObject.Find("MatchUIManager").GetComponent<MatchUI>();
         _StarterPLayerSelected = null;
         _BenchPlayerSelected = null;
+        /*
+        for (int i = 0; i < matchManager.HomeTeam.playersListRoster.Count; i++)
+        {
+            matchManager.HomeTeam.playersListRoster[i].CurrentStamina = matchManager.HomeTeam.playersListRoster[i].MaxStamina;
+        }
         matchUI.TimeoutStartsUpdateBtns();
-        
+        */
+        matchUI.TimeoutStartsUpdateBtns();
+
 
     }
    
