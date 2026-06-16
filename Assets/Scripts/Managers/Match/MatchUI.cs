@@ -105,6 +105,8 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Animator animator_HandCards;
 
     [Header("OffensivePanel")]
+    [SerializeField] GameObject env_offensive;
+    [SerializeField] GameObject env_defensive;
     [SerializeField] GameObject panel_OffensivePanel;
     [SerializeField] Transform transform_statsArea;
     [SerializeField] Transform transform_gameStatsArea;
@@ -582,6 +584,16 @@ public class MatchUI : MonoBehaviour
         //print("Here");
         panel_OffensivePanel.SetActive(isOn);
         UpdateOffensiveStats();
+        if (isOn)
+        {
+            env_offensive.SetActive(true);
+            env_defensive.SetActive(false);
+        }
+        else
+        {
+            env_offensive.SetActive(false);
+            env_defensive.SetActive(true);
+        }
     }
     public void CallAnim()
     {
@@ -822,7 +834,7 @@ public class MatchUI : MonoBehaviour
     }
     public void TimeoutStartsUpdateBtns()
     {
-        print("GOOOOOO");
+        //print("GOOOOOO");
         for (int i = 0; i < debugTest.transform.childCount; i++)
         {
             debugTest.transform.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerFirstName.ToString() + " "
