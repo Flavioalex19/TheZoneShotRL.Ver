@@ -121,7 +121,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField]Player trade_playerToTrade;
     [SerializeField] public TextMeshProUGUI text_tradeCostOfTrade;
     [SerializeField] TextMeshProUGUI text_tradeWarningForNoTrade;
-    [SerializeField] TextMeshProUGUI text_trade_frontoffeicePoints;
+    [SerializeField] public TextMeshProUGUI text_trade_frontoffeicePoints;
     int trade_costOfTrade;
     Player trade_PlayerToReceive;
     int trade_teamIndex;

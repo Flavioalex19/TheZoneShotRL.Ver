@@ -107,9 +107,29 @@ public class TeamSelectionManager : MonoBehaviour
     public void ResetLegacyBtns()
     {
         legacy_currentPoints = 0;
+        text_legacyCurrentPoints.text = legacy_currentPoints.ToString();
+        /*
         for (int i = 0; i < transform_btnsLegacy.childCount; i++)
         {
-            transform_btnsLegacy.GetChild(i).GetComponent<BtnTeamSelectionLegacy>().Btn_legacy.interactable = true;
+            //transform_btnsLegacy.GetChild(i).GetComponent<BtnTeamSelectionLegacy>().Btn_legacy.interactable = true;
+        }
+        */
+        GameObject[] legacyObjects = GameObject.FindGameObjectsWithTag("Legacy");
+
+        int count = 0;
+
+        foreach (GameObject obj in legacyObjects)
+        {
+            // Tenta pegar o Button no próprio objeto ou em um filho
+            Button btn = obj.GetComponent<Button>();
+            if (btn == null)
+                btn = obj.GetComponentInChildren<Button>();
+
+            if (btn != null)
+            {
+                btn.interactable = true;
+                count++;
+            }
         }
         //reset league bonus for draft or season
         _leagueManager.isOnDraftLVL0 = false;

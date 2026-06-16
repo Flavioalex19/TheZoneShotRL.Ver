@@ -34,7 +34,8 @@ public class BtnTeamSelectionLegacy : MonoBehaviour
             switch (legacyIndex)
             {
                 case 1:
-                    if(leagueManager.CanDraftlvl1)leagueManager.isOnDraftLVL0 = true;
+                    if (leagueManager.CanDraftlvl1) leagueManager.isOnDraftLVL0 = true;
+                    else print("NO DRAFT 1");
                     break;
                 case 2:
                     if (leagueManager.CanDraftlvl2) leagueManager.isOnDraftLVL1 = true;

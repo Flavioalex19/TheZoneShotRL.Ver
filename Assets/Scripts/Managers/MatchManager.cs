@@ -704,6 +704,7 @@ public class MatchManager : MonoBehaviour
                         uiManager.PlaybyPlayText("What a special from the " + teamWithball.TeamName);
                         if (IsFastforward == false) if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         ResetDefensiveOptions();
+                        SwitchPossession();
                         yield break; 
                 }
             }
@@ -2663,7 +2664,7 @@ public class MatchManager : MonoBehaviour
             uiManager.PlaybyPlayText(
                 playerWithTheBall.playerLastName + " missed!"
             );
-            if(IsFastforward == false)_matchUI.ResultActionPanel("F",0);
+            if(IsFastforward == false)if(teamWithball.IsPlayerTeam)_matchUI.ResultActionPanel("F",0); else _matchUI.ResultActionPanel("S", 0);
         }
 
         if (!isSimulation) yield return new WaitForSeconds(_actionTimer);

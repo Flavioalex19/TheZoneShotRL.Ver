@@ -214,6 +214,7 @@ public class TradeManager : MonoBehaviour
 
             // Subtrai pontos (0 se for free)
             _gameManager.playerTeam.FrontOfficePoints -= finalCost;
+            _teamManagerUI.text_trade_frontoffeicePoints.text = _gameManager.playerTeam.FrontOfficePoints.ToString();
 
             // Mensagem de sucesso
             if (isFreeTrade)
