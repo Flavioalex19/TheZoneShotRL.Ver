@@ -74,7 +74,7 @@ Material:
     - _InterferenceStep: 0.1
     - _QueueControl: -1
     - _QueueOffset: 0
-    - _RefractionAmount: 0.005
+    - _RefractionAmount: -0.03
     - _ShineIntensity: 1
     - _Speed: -0.05
     - _Stencil: 0
@@ -83,9 +83,14 @@ Material:
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
     - _Step: 0
+    - _TransparencyThreshold: 0.24
     - _UIMaskSoftnessX: 1
     - _UIMaskSoftnessY: 1
     - _UseRefraction: 0
+    - _UseRefractionB: 1
+    - _UseRefractionG: 0
+    - _UseRefractionR: 0
+    - _Use_Refraction_R: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
     - _Alpha_Add: {r: 0, g: 0, b: 0.4, a: 0}
@@ -93,7 +98,7 @@ Material:
     - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
     - _ColorA: {r: 2, g: 0, b: 0, a: 1}
     - _ColorB: {r: 1.4980392, g: 0.3257861, b: 0, a: 1}
-    - _ColorC: {r: 0.071, g: 0.0064545437, b: 0.0064545437, a: 0.80784315}
+    - _ColorC: {r: 0.241, g: 0.0012049988, b: 0.0012049988, a: 1}
     - _GreenSmoothstep: {r: 0, g: 0.5, b: 0, a: 0}
     - _InterferenceNoiseScales: {r: 10, g: 7, b: 100, a: 30}
     - _InterferenceStep: {r: 0.1, g: 0.1, b: 0, a: 0}
