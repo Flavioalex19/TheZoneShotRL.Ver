@@ -2397,43 +2397,7 @@ public class MatchManager : MonoBehaviour
             streakMultiplier = 1f + (5 * 0.025f);
         }
         finalChance *= streakMultiplier;
-        /*
-        //Bonus de formação - ataque
-        string bonusType = GetFormationBonus(teamWithball, offense);
-
-        // Aplica bônus de Juke
-        if (bonusType.Contains("Juke"))
-        {
-            finalChance *= 1.18f;   // +18% de eficiência
-        }
-        if (chooseToSteal)
-        {
-            finalChance *= 0.90f; // Debuff de 10% quando o defensor escolhe bloquear
-        }
-        if (!teamWithball.IsPlayerTeam)
-        {
-            finalChance *= 1.15f; // IA tem 15% mais facilidade para fazer Juke
-            float cpuJukeAdvantage = !teamWithball.IsPlayerTeam ? 1.20f : 1.0f;
-            finalChance *= cpuJukeAdvantage;
-        }
-        finalChance = Mathf.Clamp(finalChance, 0.25f, 0.90f);
-
-        jukePercentage = finalChance;
-
-        success = Random.value < finalChance;
-
-        if (!success)
-        {
-            offense.CurrentZone = 0;
-            return false;   // Steal
-        }
-
-
-        offense.CurrentZone = Mathf.Min(zone + 1, 2);
-        _matchUI.UpdatePlayerPlacements();
-        _matchUI.TurnOffPlayerButtons();
-        return true;   // Juke bem sucedido
-        */
+       
         string bonusType = GetFormationBonus(teamWithball, offense);
         if (bonusType.Contains("Juke"))
         {
@@ -2447,7 +2411,7 @@ public class MatchManager : MonoBehaviour
 
         if (!teamWithball.IsPlayerTeam)
         {
-            finalChance *= 1.20f; // Bônus da CPU (20%)
+            finalChance *= 1.08f; // Bônus da CPU (20%)
         }
 
         finalChance = Mathf.Clamp(finalChance, 0.28f, 0.92f);
@@ -2688,28 +2652,74 @@ public class MatchManager : MonoBehaviour
         }
 
         // =====================================================
-        // PRIORIDADE 2: Fim de jogo + perdendo por bastante Forçar Juke
+        // VARIÁVEIS DE CONTEXTO
         // =====================================================
         bool isLateGame = currentGamePossessons <= 3;
-        int scoreDiff = HomeTeam.Score - AwayTeam.Score;
+        int scoreDiff = HomeTeam.Score - AwayTeam.Score; // Positivo = Home está ganhando
         bool isAI = !teamWithball.IsPlayerTeam;
+        int currentZone = playerWithTheBall.CurrentZone;
 
-        if (isLateGame && isAI && scoreDiff >= 4 && playerWithTheBall.CurrentZone < 2)
+        // =====================================================
+        // PRIORIDADE 2: VERIFICAÇÃO POR ZONA (NOVA LÓGICA)
+        // =====================================================
+        if (isAI)
         {
-            return AIAction.Juke;
+            // --- ZONA 2: Sempre arremessa ---
+            if (currentZone == 2)
+            {
+                return AIAction.Shoot;
+            }
+
+            // --- ZONA 1: Lógica inteligente de decisão ---
+            if (currentZone == 1)
+            {
+                // Está perdendo por 4 ou mais pontos  tenta avançar para Zona 2
+                if (scoreDiff >= 4)
+                {
+                    return AIAction.Juke;
+                }
+
+                // Está perdendo por 1 a 3 pontos
+                if (scoreDiff >= 1 && scoreDiff <= 3)
+                {
+                    if (isLateGame)
+                    {
+                        // Poucas posses restantes  melhor finalizar agora
+                        return AIAction.Shoot;
+                    }
+                    else
+                    {
+                        // Muitas posses  ainda tenta melhorar a posição
+                        return AIAction.Juke;
+                    }
+                }
+
+                // Empatado ou ganhando  prioriza arremesso
+                if (scoreDiff <= 0)
+                {
+                    return AIAction.Shoot;
+                }
+            }
+
+            // --- ZONA 0: Mais agressivo se estiver perdendo bastante ---
+            if (currentZone == 0 && scoreDiff >= 5)
+            {
+                // Está bem atrás no placar  tenta criar jogada
+                return AIAction.Juke;
+            }
         }
 
         // =====================================================
-        // CÁLCULO DAS CHANCES (agora funciona em todas as zonas)
+        // PRIORIDADE 3: Cálculo das Chances (Sistema Ponderado)
         // =====================================================
         float awareness = playerWithTheBall.Awareness;
         float shooting = playerWithTheBall.Shooting;
         float juking = playerWithTheBall.Juking;
 
         float passChance = PassEquation() * (1f + (awareness / 100f) * 0.50f);
-        float shootChance = ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone, 0)
+        float shootChance = ScoringEquation(playerWithTheBall, playerDefending, currentZone, 0)
                             * (1f + (shooting / 100f) * 0.50f);
-        float jukeChance = GetJukePercentage(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone)
+        float jukeChance = GetJukePercentage(playerWithTheBall, playerDefending, currentZone)
                            * (1f + (juking / 100f) * 0.50f);
 
         // Bônus de Formação
@@ -2720,47 +2730,51 @@ public class MatchManager : MonoBehaviour
 
         // Lógica de Zona (fora da zona preferida)
         int preferredZone = GetPreferredZone(playerWithTheBall);
-        if (playerWithTheBall.CurrentZone != preferredZone && playerWithTheBall.CurrentZone < 2)
+        if (currentZone != preferredZone && currentZone < 2)
         {
-            jukeChance *= 1.50f;
-            shootChance *= 0.75f;
-        }
-
-        // Incentivo leve da IA para tentar Juke (apenas fora da zona 2)
-        if (isAI && playerWithTheBall.CurrentZone < 2)
-        {
-            jukeChance *= 1.12f;
+            jukeChance *= 1.45f;
+            shootChance *= 0.78f;
         }
 
         // =====================================================
-        // REGRA ZONA 2: Juke chance = 0 (não pode jukar dentro)
+        // PRIORIDADE 4: Bias adicional se estiver PERDENDO
         // =====================================================
-        if (playerWithTheBall.CurrentZone == 2)
+        bool isLosing = isAI && scoreDiff > 0;
+
+        if (isLosing && currentZone < 2)
+        {
+            jukeChance *= 1.25f; // Aumenta tendência de avançar quando está atrás
+        }
+
+        // Zona 2 nunca juka
+        if (currentZone == 2)
         {
             jukeChance = 0f;
         }
-        print("Chances for actions AI " + "sHOOT: " + shootChance + " juke: " + jukeChance + " PASS: " + passChance);
+
         // =====================================================
-        // DECISÃO FINAL: Escolhe a ação com o MAIOR valor
+        // DECISÃO FINAL (Ponderada + Debug)
         // =====================================================
-        
-        if (shootChance >= jukeChance && shootChance >= passChance)
-        {
-            print("Ai-Shoot");
+        float total = passChance + shootChance + jukeChance;
+
+        if (total <= 0f)
             return AIAction.Shoot;
-        }
-        else if (jukeChance >= passChance)
-        {
-            print("Ai-Juke");
-            return AIAction.Juke;
-        }
-        else
-        {
-            print("Ai-Pass");
+
+        float randomValue = UnityEngine.Random.value * total;
+
+        // Debug das porcentagens
+        float passPercent = (passChance / total) * 100f;
+        float jukePercent = (jukeChance / total) * 100f;
+        float shootPercent = (shootChance / total) * 100f;
+
+        Debug.Log($"AI  PASS: {passPercent:F1}% | JUKE: {jukePercent:F1}% | SHOOT: {shootPercent:F1}%");
+
+        if (randomValue < passChance)
             return AIAction.Pass;
-        }
-        
-        
+        else if (randomValue < passChance + jukeChance)
+            return AIAction.Juke;
+        else
+            return AIAction.Shoot;
     }
     private int GetPreferredZone(Player p)
     {
