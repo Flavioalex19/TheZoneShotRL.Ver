@@ -52,10 +52,8 @@ public class MatchUI : MonoBehaviour
 
     [Header("Action Lines")]
     [SerializeField] List<string> list_ReceiveThePos = new List<string>();
-    [SerializeField] List<string> list_Passing = new List<string>();
     [SerializeField] List<string> list_Shooting = new List<string>();
     [SerializeField] List <string> list_LosesBall = new List<string>();
-    [SerializeField] List<string> list_Preparation = new List<string>();
     [SerializeField] List<string> list_successShoot = new List<string>();
     [SerializeField] List<string> list_FailShoot = new List<string>();
     [SerializeField] List<string> list_successJuke = new List<string>();
@@ -64,9 +62,11 @@ public class MatchUI : MonoBehaviour
     [SerializeField] List<string> list_failPass = new List<string>();
     [SerializeField] List<string> list_Opp_FailedAttempt = new List<string>();
     [SerializeField] List<string> list_Opp_SucAttempt = new List<string>();
-    [SerializeField] List<string> list_ChargeLines = new List<string>();
-    [SerializeField] List<string> list_Shove = new List<string>();
     [SerializeField] List<string> list_Personality = new List<string>();
+    [SerializeField] List<string> list_charge = new List<string>();
+    [SerializeField] List<string> list_chargeFail = new List<string>();
+    [SerializeField] List<string> list_shoveSucesses = new List<string>();
+    [SerializeField] List<string> list_shoveFail = new List<string>();
     public string gameAction = " ";
     public string ResultplayerAction = " ";
 
@@ -517,6 +517,14 @@ public class MatchUI : MonoBehaviour
             case 4:
                 text_actionResultS.text = list_Personality[Random.Range(0, list_Personality.Count)];
                 text_actionResultF.text = list_Personality[Random.Range(0, list_Personality.Count)];
+                break;
+            case 5:
+                text_actionResultS.text = list_shoveSucesses[Random.Range(0, list_shoveSucesses.Count)];
+                text_actionResultF.text = list_shoveFail[Random.Range(0, list_shoveFail.Count)];
+                break;
+            case 6:
+                text_actionResultS.text = list_charge[Random.Range(0, list_charge.Count)];
+                text_actionResultF.text = list_chargeFail[Random.Range(0, list_chargeFail.Count)];
                 break;
         }
     }

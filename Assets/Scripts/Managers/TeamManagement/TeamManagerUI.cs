@@ -445,18 +445,6 @@ public class TeamManagerUI : MonoBehaviour
             }
             UpdateFacilities();
         }
-         
-        
-        
-       
-
-        
-        /*
-        // Btns Animations (estas são seguras mesmo se playerTeam for null)
-        _animator_trade.SetBool("On", leagueManager.canTrade);
-        _animator_training.SetBool("On", leagueManager.canTrain);
-        _animator_contract.SetBool("On", leagueManager.canNegociateContract);
-        */
 
     }
     //GameOverReset
@@ -1054,14 +1042,7 @@ public class TeamManagerUI : MonoBehaviour
     //Trading
     public void SetTradePanel()
     {
-        /*
-        if(leagueManager.canTrade == true)
-        {
-            _tradePanel.SetActive(true);
-            SetTheTradingBtns();
-            
-        }
-        */
+        
         _tradePanel.SetActive(true);
         SetTheTradingBtns();
     }
@@ -1085,8 +1066,7 @@ public class TeamManagerUI : MonoBehaviour
     }
     public void SetTradeGrade()
     {
-        //print("To setTradeValue");
-        //if(tradeManager.TradeTeam !=null ) tradeManager.CalculateTradeCost(tradeManager.TradeTeam.playersListRoster[tradeManager._playerToReceive]);
+
         text_teamFrontOfficeGrade.text = tradeManager.tradeCost.ToString();
         text_currentFrontOfficePoints.text = gameManager.playerTeam.FrontOfficePoints.ToString();
 
@@ -1138,12 +1118,7 @@ public class TeamManagerUI : MonoBehaviour
             transform_tradeMyPlayersBtn.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text =
                 gameManager.playerTeam.playersListRoster[i].SetOVR().ToString();
         }
-        /*
-        if (leagueManager.canTrade == false)
-        {
-            go_tradeFinished.SetActive(true);
-        }
-        */
+
         text_trade_frontoffeicePoints.text = gameManager.playerTeam.FrontOfficePoints.ToString();
     }
     void TradePlayerToTradeSelected(Player player)

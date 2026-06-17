@@ -1000,7 +1000,7 @@ public class MatchManager : MonoBehaviour
                         }
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + "Shoved " + playerDefending.playerLastName);
                         if (IsFastforward == false)
-                            _matchUI.ResultActionPanel("S", 2);
+                            _matchUI.ResultActionPanel("S", 5);
                         if (IsFastforward == false)
                         {
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
@@ -1019,7 +1019,7 @@ public class MatchManager : MonoBehaviour
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         }
                         playerWithTheBall.HasTheBall = false;
-                        if(IsFastforward == false)_matchUI.ResultActionPanel("F", 2);
+                        if(IsFastforward == false)_matchUI.ResultActionPanel("F", 5);
                         SwitchPossession();
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         if (IsFastforward == false)
@@ -1051,7 +1051,7 @@ public class MatchManager : MonoBehaviour
                         }
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " Charged the field!");
                         if (IsFastforward == false)
-                            _matchUI.ResultActionPanel("S", 2);//mudar
+                            _matchUI.ResultActionPanel("S", 6);
                         if (IsFastforward == false)
                         {
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
@@ -1068,7 +1068,7 @@ public class MatchManager : MonoBehaviour
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         }
                         playerWithTheBall.HasTheBall = false;
-                        if(IsFastforward==false)_matchUI.ResultActionPanel("F", 2);
+                        if(IsFastforward==false)_matchUI.ResultActionPanel("F", 6);
                         SwitchPossession();
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         if (IsFastforward == false)

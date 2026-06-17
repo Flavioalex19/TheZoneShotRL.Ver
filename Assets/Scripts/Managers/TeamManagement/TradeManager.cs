@@ -39,10 +39,9 @@ public class TradeManager : MonoBehaviour
 
         if (_leagueManager.canTrade == true)
         {
-            // === NOVO: bloqueia re-roll se for o mesmo jogador já selecionado ===
+            //bloqueia re-roll se for o mesmo jogador já selecionado ===
             if (_playerToTradeIndex == playerIndex)
             {
-                // Já está selecionado  evita exploit de spam/re-roll
                 return;
             }
             // ==============================================================
@@ -54,7 +53,6 @@ public class TradeManager : MonoBehaviour
         }
         else
         {
-            //print("Out of trades");
         }
 
     }
@@ -109,7 +107,6 @@ public class TradeManager : MonoBehaviour
             _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text =
                 TradeTeam.TeamName;
 
-            //(attName0, att0, attName1, att1) = GetAttributeValuesForStyle(_gameManager.playerTeam._teamStyle, TradeTeam.playersListRoster[_playerToReceive]);
             attName0 = "OVR";
             att0 = TradeTeam.playersListRoster[_playerToReceive].ovr;
 
@@ -138,21 +135,7 @@ public class TradeManager : MonoBehaviour
             tradeCost = 0;
             _teamManagerUI.SetTradeGrade(); // opcional: reseta grade
         }
-        /*
-        _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = TradeTeam.playersListRoster[_playerToReceive].playerFirstName.ToString() +
-            " " + TradeTeam.playersListRoster[_playerToReceive].playerLastName.ToString();
-        _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = TradeTeam.playersListRoster[_playerToReceive].ovr.ToString();
-        _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = TradeTeam.TeamName.ToString();
-        //(attName0, att0, attName1, att1) = GetAttributeValuesForStyle(_gameManager.playerTeam._teamStyle, TradeTeam.playersListRoster[_playerToReceive]);
-        _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = att0.ToString();
-        _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text = att1.ToString();
-        _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(5).GetComponent<TextMeshProUGUI>().text = attName0;
-        _teamManagerUI.TradeReceivePlayerArea.transform.GetChild(6).GetComponent<TextMeshProUGUI>().text = attName1;
-
-        CalculateTradeCost(TradeTeam.playersListRoster[_playerToReceive]);
-        _teamManagerUI.SetTradeGrade();
-        _teamManagerUI.SetPlayersTradeImages(_gameManager.playerTeam.playersListRoster[_playerToTradeIndex], TradeTeam.playersListRoster[_playerToReceive]);
-        */
+        
     }
     
     public void SwapPlayersBetweenTeams(List<Player> TeamA, int playerAIndex, List<Player> TeamB, int playerBIndex)
@@ -162,16 +145,12 @@ public class TradeManager : MonoBehaviour
             Debug.LogError("One or both lists are null.");
             return;
         }
-
         Player PlayerA = TeamA[playerAIndex];
         Player PlayerB = TeamB[playerBIndex];
-
         // Swap
         TeamA[playerAIndex] = PlayerB;
         TeamB[playerBIndex] = PlayerA;
 
-        
-        //_gameManager.playerTeam.FrontOfficePoints -= CalculateTradeCost(PlayerB);
     }
     public void Trade()
     {
@@ -182,14 +161,8 @@ public class TradeManager : MonoBehaviour
             _teamManagerUI.SetTradeResultText("No player selected for trade.");
             return;
         }
-        /*
-        if (_leagueManager.canTrade == false)
-        {
-            _teamManagerUI.SetTradeResultText("You already made a trade this turn.");
-            return;
-        }
-        */
-        // === NOVO: chance de trade gratuita baseada no Front Office Level ===
+        
+        //chance de trade gratuita baseada no Front Office Level ===
         int finalCost = tradeCost;
         int frontOfficeLevel = _gameManager.playerTeam.OfficeLvl; // ajuste o nome do campo se for diferente (ex: FrontOfficeLvl, offideLvl, etc.)
         float freeChance = (frontOfficeLevel / 7f) * 0.45f; // 0% (lvl 0) até 45% (lvl 7)
@@ -268,7 +241,6 @@ public class TradeManager : MonoBehaviour
 
         // Nunca ultrapassar 80
         cost = Mathf.Min(cost, 80);
-        //print(cost + " This is the vos of the trade!!!!!!!!!!!!!!!!!!!!");
         tradeCost = cost;
         return tradeCost;
     }
