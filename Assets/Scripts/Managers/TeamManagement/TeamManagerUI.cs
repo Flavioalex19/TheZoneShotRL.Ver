@@ -433,16 +433,17 @@ public class TeamManagerUI : MonoBehaviour
             }
             if (GameObject.Find("FrontOfficePointsText"))
             {
-                GameObject.Find("FrontOfficePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FrontOfficePoints.ToString();
+                //GameObject.Find("FrontOfficePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FrontOfficePoints.ToString();
             }
             if (GameObject.Find("FanSupportPointsText"))
             {
-                GameObject.Find("FanSupportPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FansSupportPoints.ToString();
+                //GameObject.Find("FanSupportPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FansSupportPoints.ToString();
             }
             if (GameObject.Find("EffortPointsText"))
             {
-                GameObject.Find("EffortPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.EffortPoints.ToString();
+                //GameObject.Find("EffortPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.EffortPoints.ToString();
             }
+            text_teamStyle.text = gameManager.playerTeam.CurrentBudget.ToString();
             UpdateFacilities();
         }
 
@@ -507,10 +508,10 @@ public class TeamManagerUI : MonoBehaviour
         // Moral
         if (GameObject.Find("MoralePointsText") != null)
             GameObject.Find("MoralePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.Moral.ToString();
-
+        /*
         // Front Office
         if (GameObject.Find("FrontOfficePointsText") != null)
-            GameObject.Find("FrontOfficePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FrontOfficePoints.ToString();
+            //GameObject.Find("FrontOfficePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FrontOfficePoints.ToString();
 
         // Fan Support
         if (GameObject.Find("FanSupportPointsText") != null)
@@ -519,6 +520,7 @@ public class TeamManagerUI : MonoBehaviour
         // Effort Points
         if (GameObject.Find("EffortPointsText") != null)
             GameObject.Find("EffortPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.EffortPoints.ToString();
+        */
     }
     //Btn Animations
 
@@ -1054,7 +1056,7 @@ public class TeamManagerUI : MonoBehaviour
             _trade_btn_PlayersFronControlledTeam.GetChild(i).GetComponent<Btn_TradeBtn>().player = gameManager.playerTeam.playersListRoster[i];
             //print(gameManager.playerTeam.playersListRoster[i] + "player on the trade btn" + gameManager.playerTeam.playersListRoster[i].playerLastName);
             int index = gameManager.playerTeam.playersListRoster.IndexOf(gameManager.playerTeam.playersListRoster[i]);
-            _trade_btn_PlayersFronControlledTeam.GetChild(i).GetComponent<Button>().onClick.AddListener(() => tradeManager.SetPlayerToTrade(index));
+            //_trade_btn_PlayersFronControlledTeam.GetChild(i).GetComponent<Button>().onClick.AddListener(() => tradeManager.SetPlayerToTrade(index));
 
             _trade_btn_PlayersFronControlledTeam.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = 
                 gameManager.playerTeam.playersListRoster[i].playerFirstName.ToString();
@@ -1068,7 +1070,7 @@ public class TeamManagerUI : MonoBehaviour
     {
 
         text_teamFrontOfficeGrade.text = tradeManager.tradeCost.ToString();
-        text_currentFrontOfficePoints.text = gameManager.playerTeam.FrontOfficePoints.ToString();
+        text_currentFrontOfficePoints.text = gameManager.playerTeam.CurrentBudget.ToString();
 
 
     }
@@ -1119,7 +1121,7 @@ public class TeamManagerUI : MonoBehaviour
                 gameManager.playerTeam.playersListRoster[i].SetOVR().ToString();
         }
 
-        text_trade_frontoffeicePoints.text = gameManager.playerTeam.FrontOfficePoints.ToString();
+        text_trade_frontoffeicePoints.text = gameManager.playerTeam.CurrentBudget.ToString();
     }
     void TradePlayerToTradeSelected(Player player)
     {
@@ -1257,7 +1259,7 @@ public class TeamManagerUI : MonoBehaviour
                 targetPlayer = candidates[UnityEngine.Random.Range(0, candidates.Count)];
             }
             Debug.Log("Jogador selecionado: " + targetPlayer.playerLastName);
-            int cost = TradeCalculateCost(targetPlayer);
+            int cost = TradeCalculateCost(myPlayer,targetPlayer);
             // Instancia botão
             GameObject buttonObj = Instantiate(prefab_TradePlayerOptionToTradeFor, transform_tradeBtnOptions);
             if (buttonObj == null)
@@ -1379,7 +1381,7 @@ public class TeamManagerUI : MonoBehaviour
     }
     public void TradeSwapPlayers()
     {
-        if(gameManager.playerTeam.FrontOfficePoints - trade_costOfTrade > 0)
+        if(gameManager.playerTeam.CurrentBudget - trade_costOfTrade > 0)
         {
             // Remove playerA de teamA
             gameManager.playerTeam.playersListRoster.Remove(trade_playerToTrade);
@@ -1393,9 +1395,9 @@ public class TeamManagerUI : MonoBehaviour
             //leagueManager.canTrade = false;
             //turn oon panel
             go_tradeFinished.SetActive(true);
-            gameManager.playerTeam.FrontOfficePoints -= trade_costOfTrade;
-            text_trade_frontoffeicePoints.text = gameManager.playerTeam.FrontOfficePoints.ToString();
-            print("current points: " + gameManager.playerTeam.FrontOfficePoints);
+            gameManager.playerTeam.CurrentBudget -= trade_costOfTrade;
+            text_trade_frontoffeicePoints.text = gameManager.playerTeam.CurrentBudget.ToString();
+            //print("current points: " + gameManager.playerTeam.CurrentBudget);
             for (int i = 0; i < gameManager.leagueTeams.Count; i++)
             {
                 gameManager.saveSystem.SaveTeamInfo(gameManager.leagueTeams[i]);
@@ -1409,8 +1411,9 @@ public class TeamManagerUI : MonoBehaviour
 
 
     }
-    int TradeCalculateCost(Player player)
+    int TradeCalculateCost(Player player, Player targetPlayer)
     {
+        /*
         int ovr = player.SetOVR();
         int baseCost;
         if (ovr < 70)
@@ -1433,6 +1436,25 @@ public class TeamManagerUI : MonoBehaviour
         int discount = financeLvl;  // Simples: reduz por lvl (max -7)
         int cost = Mathf.Max(0, baseCost - discount);  // Evita negativo
         return cost;
+        */
+        if (player == null || targetPlayer == null)
+            return 500;
+
+        int ovrDiff = targetPlayer.SetOVR() - player.SetOVR(); // Diferença de OVR
+
+        if (ovrDiff >= 15)
+        {
+            return 1000; // Diferença muito grande
+        }
+        else if (ovrDiff >= 10)
+        {
+            // Varia entre 500 e 800
+            return UnityEngine.Random.Range(500, 801);
+        }
+        else
+        {
+            return 500; // Diferença pequena ou negativa
+        }
     }
     public void ClearTradeTargetUI()
     {
@@ -1478,7 +1500,7 @@ public class TeamManagerUI : MonoBehaviour
     }
     public void SetTrainingGrade()
     {
-        _text_TrainingGrade.text = gameManager.playerTeam.EffortPoints.ToString();
+        _text_TrainingGrade.text = gameManager.playerTeam.CurrentBudget.ToString();
         
     }
     //Standings
@@ -1516,7 +1538,7 @@ public class TeamManagerUI : MonoBehaviour
             contract_PlayerbuttonsArea.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].ContractYears.ToString();
             contract_PlayerbuttonsArea.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].SetOVR().ToString();
         }
-        contract_text_currentFrontOfficePoints.text = gameManager.playerTeam.FansSupportPoints.ToString();
+        contract_text_currentFrontOfficePoints.text = gameManager.playerTeam.CurrentBudget.ToString();
     }
     public void UpdatePlayerContract(int index)
     {
@@ -1547,7 +1569,7 @@ public class TeamManagerUI : MonoBehaviour
         // === NOVA VERIFICAÇÃO: Front Office Points suficientes? ===
         int cost = ContractValue(p);
 
-        if (gameManager.playerTeam.FansSupportPoints < cost)
+        if (gameManager.playerTeam.CurrentBudget < cost)
         {
             contract_resultNegotiationText.text = "We don't have enough Front Office Points for this.";
             UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
@@ -1608,7 +1630,7 @@ public class TeamManagerUI : MonoBehaviour
             p.Salary += salaryIncrease;
 
             // Debita o custo do Fansupport Points
-            gameManager.playerTeam.FansSupportPoints -= ContractValue(p);
+            gameManager.playerTeam.CurrentBudget -= ContractValue(p);
 
             gameManager.playerTeam.CurrentSalary += salaryIncrease;
             _text_CurrentTeamSalary.text = gameManager.playerTeam.CurrentSalary.ToString();
@@ -1621,7 +1643,7 @@ public class TeamManagerUI : MonoBehaviour
             contract_resultNegotiationText.text = "Damn! We can't come to an agreement with " + p.playerLastName + ". Maybe he needs some time to think...";
             UpdateAssistancePortrait(transform_contract_AssistancePortrait, false);
         }
-        contract_text_currentFrontOfficePoints.text = gameManager.playerTeam.FansSupportPoints.ToString();
+        contract_text_currentFrontOfficePoints.text = gameManager.playerTeam.CurrentBudget.ToString();
         UpdateMoralAndPointsTexts();
         ContractButtonsUpdate();
         contract_asstancePanel.SetActive(true);
@@ -2022,7 +2044,7 @@ public class TeamManagerUI : MonoBehaviour
         // Moral, Front Office, Fan Support, Effort
         if (GameObject.Find("MoralePointsText") != null)
             GameObject.Find("MoralePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.Moral.ToString();
-
+        /*
         if (GameObject.Find("FrontOfficePointsText") != null)
             GameObject.Find("FrontOfficePointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.FrontOfficePoints.ToString();
 
@@ -2031,6 +2053,7 @@ public class TeamManagerUI : MonoBehaviour
 
         if (GameObject.Find("EffortPointsText") != null)
             GameObject.Find("EffortPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.EffortPoints.ToString();
+        */
 
         // Facilities
         UpdateFacilities();

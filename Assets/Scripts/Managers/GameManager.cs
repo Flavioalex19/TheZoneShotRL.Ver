@@ -129,9 +129,10 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < leagueTeams.Count; i++)
             {
                 leagueTeams[i].Moral = leagueTeams[i].fixMoral;
-                leagueTeams[i].FansSupportPoints = leagueTeams[i].fixFans;
-                leagueTeams[i].FrontOfficePoints = leagueTeams[i].fixFrontOffice;
-                leagueTeams[i].EffortPoints = leagueTeams[i].fixEffort;
+                //leagueTeams[i].FansSupportPoints = leagueTeams[i].fixFans;
+                //leagueTeams[i].FrontOfficePoints = leagueTeams[i].fixFrontOffice;
+                //leagueTeams[i].EffortPoints = leagueTeams[i].fixEffort;
+                leagueTeams[i].CurrentBudget = leagueTeams[i].BudgetReset;
                 leagueTeams[i].IsPlayerTeam = false;
                 leagueTeams[i].Wins = 0;
                 leagueTeams[i].Draws = 0;
@@ -326,9 +327,12 @@ public class GameManager : MonoBehaviour
                 {
                     leagueTeams[i].playersListRoster.Clear();
                     leagueTeams[i].Moral = leagueTeams[i].fixMoral;
+                    /*
                     leagueTeams[i].FrontOfficePoints = leagueTeams[i].fixFrontOffice;
                     leagueTeams[i].FansSupportPoints = leagueTeams[i].fixFansSupport;
                     leagueTeams[i].EffortPoints = leagueTeams[i].fixEffort;
+                    */
+                    leagueTeams[i].CurrentBudget = leagueTeams[i].BudgetReset;
                     leagueTeams[i].Wins = 0;
                     leagueTeams[i].Loses = 0;
                     leagueTeams[i].Draws = 0;

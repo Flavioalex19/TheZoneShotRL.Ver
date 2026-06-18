@@ -32,7 +32,7 @@ public class TradeManager : MonoBehaviour
 
         _gameManager.playerTeam = _playerTeam;
     }
-
+    /*
     public void SetPlayerToTrade(int playerIndex)
     {
         _trade_currentPlayerToTrade = GameObject.Find("TPT").GetComponent<TextMeshProUGUI>();
@@ -244,4 +244,5 @@ public class TradeManager : MonoBehaviour
         tradeCost = cost;
         return tradeCost;
     }
+    */
 }

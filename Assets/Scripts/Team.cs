@@ -28,9 +28,13 @@ public class Team : MonoBehaviour
     public bool IsPlayerTeam = false;
     int MoralReset = 100;
     public int Moral;
+    /*
     public int FrontOfficePoints;
     public int FansSupportPoints;
     public int EffortPoints;
+    */
+    public int CurrentBudget;
+    public int BudgetReset;
     public int Wins;
     public int Loses;
     public int Draws;

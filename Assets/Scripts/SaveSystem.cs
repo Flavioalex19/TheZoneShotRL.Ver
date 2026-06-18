@@ -134,9 +134,12 @@ public class SaveSystem : MonoBehaviour
 
         team.IsPlayerTeam = teamData.isPlayerControlled;
         team.Moral = teamData.teamMoral;
+        /*
         team.FrontOfficePoints = teamData.teamFrontOffice;
         team.FansSupportPoints = teamData.teamFansSupport;
         team.EffortPoints = teamData.teamEffort;
+        */
+        team.CurrentBudget = teamData.teamBudget;
 
         team.Wins = teamData.win;
         team.Draws = teamData.draw;

@@ -9,6 +9,7 @@ public class TeamSelectionManager : MonoBehaviour
 {
     GameManager _gameManager;
     LeagueManager _leagueManager;
+    [SerializeField] Transform transform_btnTeamsSelection;
     public TextMeshProUGUI TeamInfo;
     public TextMeshProUGUI TeamStyle;
     public TextMeshProUGUI TeamCoach;
@@ -36,7 +37,10 @@ public class TeamSelectionManager : MonoBehaviour
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         _leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
         legacy_currentPoints = 0;
-        
+        for (int i = 0; i < _gameManager.leagueTeams.Count; i++)
+        {
+            transform_btnTeamsSelection.GetChild(i).GetComponent<btnTeamSelection>().team = _gameManager.leagueTeams[i];
+        }
 
     }
 

@@ -428,7 +428,7 @@ public class MatchManager : MonoBehaviour
             if (HomeTeam.OfficeLvl >= 0)
             {
                 int bonus = GetFacilityBonus(HomeTeam.MarketingLvl);
-                HomeTeam.FrontOfficePoints += bonus;
+                //HomeTeam.FrontOfficePoints += bonus;
             }
 
             // FINANCES - Salary Cap
@@ -442,14 +442,14 @@ public class MatchManager : MonoBehaviour
             if (HomeTeam.MarketingLvl >= 0)
             {
                 int bonus = GetFacilityBonus(HomeTeam.MarketingLvl);
-                HomeTeam.FansSupportPoints += bonus;
+                //HomeTeam.FansSupportPoints += bonus;
             }
 
             // ARENA - Morale
             if (HomeTeam.ArenaLvl >= 0)
             {
                 int bonus = GetFacilityBonus(HomeTeam.MarketingLvl);
-                HomeTeam.Moral += bonus;
+                HomeTeam.Moral += 15;
                 HomeTeam.Moral = Mathf.Clamp(HomeTeam.Moral, 0, 100);
             }
 
@@ -457,7 +457,7 @@ public class MatchManager : MonoBehaviour
             if (HomeTeam.MedicalLvl >= 0)
             {
                 int bonus = GetFacilityBonus(HomeTeam.MarketingLvl);
-                HomeTeam.EffortPoints += bonus;
+                //HomeTeam.EffortPoints += bonus;
             }
 
         }

@@ -55,19 +55,55 @@ public class TrainingManager : MonoBehaviour
     {
         teamManagerUI._trainingResultPanel.SetActive(true);
         int cost = 0;
-        if (effort == 0) cost = 20;
-        else if (effort == 1) cost = 40;
-        else cost = 50;
+        if (effort == 0)
+            cost = 200;      // Treino leve
+        else if (effort == 1)
+            cost = 300;      // Treino médio
+        else
+            cost = 400;      // Treino pesado (effort 2+)
+                             // ============================================================================
 
-        //discount based on financaes facilty
-        int financesDiscount = 0;
-        if (gameManager.playerTeam.FinancesLvl > 0)
+        // ====================== DESCONTO DO FINANCES FACILITY ======================
+        int financesLvl = gameManager.playerTeam.FinancesLvl;
+        float discountPercent = 0f;
+
+        if (financesLvl >= 7)
+            discountPercent = 0.25f;      // 25%
+        else if (financesLvl >= 5)
+            discountPercent = 0.15f;      // 15%
+        else if (financesLvl >= 3)
+            discountPercent = 0.10f;      // 10%
+        else if (financesLvl >= 1)
+            discountPercent = 0.05f;      // 5%
+
+        int discountAmount = Mathf.RoundToInt(cost * discountPercent);
+        cost -= discountAmount;
+        // ============================================================================
+
+        // ====================== CHANCE DE TREINO GRÁTIS (OFFICE LEVEL) ======================
+        int officeLvl = gameManager.playerTeam.OfficeLvl;
+        float freeChance = 0f;
+
+        if (officeLvl >= 7)
+            freeChance = 0.25f;      // 40% de chance de ser grátis
+        else if (officeLvl >= 5)
+            freeChance = 0.15f;      // 25%
+        else if (officeLvl >= 3)
+            freeChance = 0.10f;      // 15%
+        else if (officeLvl >= 1)
+            freeChance = 0.05f;      // 8%
+
+        if (Random.value < freeChance)
         {
-            financesDiscount = Mathf.Min(30, gameManager.playerTeam.FinancesLvl * 4); // máx 30 no lvl 7+
+            cost = 0;
+            Debug.Log("[Training] Treino saiu de graça graças ao Office Level!");
         }
-        cost = Mathf.Max(10, cost - financesDiscount);
+        // ====================================================================================
 
-        if (gameManager.playerTeam.EffortPoints > cost && _trainingTypeIndex > -1)
+        // Garante que o custo não fique negativo
+        cost = Mathf.Max(0, cost);
+
+        if (gameManager.playerTeam.CurrentBudget > cost && _trainingTypeIndex > -1)
         {
             Player player = gameManager.playerTeam.playersListRoster[playerIndex];
             // === Lista dos atributos do grupo selecionado ===
@@ -98,20 +134,68 @@ public class TrainingManager : MonoBehaviour
                 teamManagerUI._textDrillSelected.text = "Invalid training type selected.";
                 return;
             }
-            int equipmentLvl = gameManager.playerTeam.TeamEquipmentLvl; // Assuma que existe essa propriedade
-            int minBoost = Mathf.Max(1, equipmentLvl / 2);
-            int maxBoostExclusive = Mathf.Min(8, equipmentLvl + 3);
-            if (equipmentLvl >= 4)
+            int equipmentLvl = gameManager.playerTeam.TeamEquipmentLvl;
+            int playerAge = player.Age;
+            int personality = player.Personality;
+
+            // === BASE BOOST POR IDADE ===
+            int baseMin = 1;
+            int baseMax = 3; // padrão para jogadores mais novos
+
+            if (playerAge >= 30)
+            {
+                baseMax = 2; // jogadores de 30+ têm limite menor
+            }
+            else if (playerAge >= 26 && playerAge <= 29)
+            {
+                baseMax = 2; // meio termo
+            }
+
+            // Aplica Equipment Level em cima da base de idade
+            int minBoost = Mathf.Max(1, baseMin + (equipmentLvl / 2));
+            int maxBoostExclusive = Mathf.Min(8, baseMax + equipmentLvl);
+
+            // Bônus extra de Equipment em níveis altos
+            if (equipmentLvl >= 5)
             {
                 minBoost += 1;
-                maxBoostExclusive += 2;
+                maxBoostExclusive += 1;
             }
-            //int minBoost = Mathf.Max(1, equipmentLvl / 2); // Ex: lvl 0=1, lvl 7=3
-            //int maxBoostExclusive = Mathf.Min(6, equipmentLvl + 2); // Ex: lvl 0=2 (boost 1), lvl 7=6 (boost 1-5)
-            int personality = player.Personality;  // 1-5, assume maior = melhor boost
-            minBoost += Mathf.Max(0, (personality - 1) / 2);  // Ex: +0 para 1, +2 para 5
-            maxBoostExclusive += personality - 1;  // Ex: +0 para 1, +4 para 5 (aumenta range)
-                                                   // === Selecionar atributos baseados em effort ===
+
+            // === BÔNUS / PENALIDADE POR PERSONALIDADE ===
+            if (personality >= 4) // Personalidade 4 e 5 = mais ofensivo
+            {
+                if (_trainingTypeIndex == 2) // Shooting training
+                {
+                    minBoost += 1;
+                    maxBoostExclusive += 2;
+                }
+            }
+            else if (personality == 2 || personality == 3) // Personalidade 2 e 3 = bom em shooting
+            {
+                if (_trainingTypeIndex == 2) // Shooting training
+                {
+                    minBoost += 1;
+                    maxBoostExclusive += 1;
+                }
+            }
+            else if (personality == 1) // Personalidade 1 = melhor em defesa
+            {
+                if (_trainingTypeIndex == 1) // Defense training
+                {
+                    minBoost += 1;
+                    maxBoostExclusive += 2;
+                }
+            }
+
+            // === REDUÇÃO POR MORAL BAIXO ===
+            if (gameManager.playerTeam.Moral < 20)
+            {
+                minBoost = Mathf.Max(1, minBoost - 1);
+                maxBoostExclusive = Mathf.Max(2, maxBoostExclusive - 2);
+                Debug.Log("Training effect reduced due to low morale.");
+            }
+            //======================================================================
             List<TrainingAttribute> selectedAttributes = new List<TrainingAttribute>();
             if (effort == 0)
             {
@@ -159,7 +243,7 @@ public class TrainingManager : MonoBehaviour
             leagueManager.canTrain = false;
             teamManagerUI.SetTrainingGrade();
             player.UpdateOVR();
-            gameManager.playerTeam.EffortPoints -= cost;
+            gameManager.playerTeam.CurrentBudget -= cost;
             teamManagerUI.UpdateMoralAndPointsTexts();
             gameManager.saveSystem.SaveLeague();
             for (int i = 0; i < gameManager.leagueTeams.Count; i++)
@@ -168,6 +252,7 @@ public class TrainingManager : MonoBehaviour
             }
             targetAttributes.Clear();
             selectedAttributes.Clear();
+            teamManagerUI.SetTrainingGrade();
         }
         else
         {
@@ -178,8 +263,7 @@ public class TrainingManager : MonoBehaviour
     {
         if(leagueManager.canTrain == false)
         {
-            //teamManagerUI._trainengCompletePanel.SetActive(true);
-            //drillChoosed.text = "training session completed";
+
         }
     }
     public void SetTrainingType(int index)

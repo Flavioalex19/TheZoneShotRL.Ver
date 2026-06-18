@@ -88,6 +88,7 @@ public class TeamData
     public int teamFrontOffice;
     public int teamFansSupport;
     public int teamEffort;
+    public int teamBudget;
     public List<Team> teamSchedule = new List<Team>();
     public List<string> scheduleTeamNames;
     public LeagueManagerData leagueData;
@@ -111,9 +112,12 @@ public class TeamData
         teamName = team.TeamName;  // Assuming Team script has a team name
         isPlayerControlled = team.IsPlayerTeam;
         teamMoral = team.Moral;
+        /*
         teamFrontOffice = team.FrontOfficePoints;
         teamFansSupport = team.FansSupportPoints;
         teamEffort = team.EffortPoints;
+        */
+        teamBudget = team.CurrentBudget;
         win = team.Wins;
         lost = team.Loses;
         draw = team.Draws;
