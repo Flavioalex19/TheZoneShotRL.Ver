@@ -708,6 +708,7 @@ public class MatchManager : MonoBehaviour
                         yield break; 
                 }
             }
+            //yield return new WaitForSeconds(1.25f);
         }
         else if (teamWithball.IsPlayerTeam)
         {
