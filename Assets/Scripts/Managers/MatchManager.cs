@@ -366,7 +366,7 @@ public class MatchManager : MonoBehaviour
                 if (leagueManager.isOnR8 && leagueManager.isOnR4 == false && leagueManager.isOnFinals == false)
                 {
                     //leagueManager.isOnR4 = true;
-                    print("Pass to R4!!!!!!!!!!!!!!!!!!!");
+                    //print("Pass to R4!!!!!!!!!!!!!!!!!!!");
                     leagueManager.List_R4Teams.Add(HomeTeam);
                     //leagueManager.isOnR8 = false;
                 }
@@ -386,6 +386,8 @@ public class MatchManager : MonoBehaviour
                 {
                     manager.playerTeam.isChampion = true;
                 }
+                HomeTeam.WinningStreak ++;
+                HomeTeam.LosingStreak =0;
                 //_matchUI.ActivateVictoryDefeat("Victory");
                 _matchUI.StartResultPanel("Victory", "V");
             }
@@ -406,6 +408,8 @@ public class MatchManager : MonoBehaviour
                     //leagueManager.isOnR8 = false;
                 }
                 if (!isSimulation) _matchUI.StartResultPanel("Defeat", "D"); //_matchUI.ActivateVictoryDefeat("Defeat");
+                HomeTeam.WinningStreak = 0;
+                HomeTeam.LosingStreak ++;
             }
             
         }
@@ -415,7 +419,9 @@ public class MatchManager : MonoBehaviour
             AwayTeam.Moral -= 5;
             HomeTeam.Draws++;
             AwayTeam.Draws++;
-            if (HomeTeam.IsPlayerTeam) { _matchUI.StartResultPanel("Draw","Draw");/*_matchUI.ActivateVictoryDefeat("Draw"); */}
+            if (HomeTeam.IsPlayerTeam) { _matchUI.StartResultPanel("Draw","Draw");/*_matchUI.ActivateVictoryDefeat("Draw"); */HomeTeam.WinningStreak = 0;
+                HomeTeam.LosingStreak=0;
+            }
             
         }
         
@@ -459,7 +465,7 @@ public class MatchManager : MonoBehaviour
                 int bonus = GetFacilityBonus(HomeTeam.MarketingLvl);
                 //HomeTeam.EffortPoints += bonus;
             }
-
+            BudgetIncrease();
         }
         HomeTeam.HasPlayed = true;
         AwayTeam.HasPlayed = true;
@@ -1680,9 +1686,9 @@ public class MatchManager : MonoBehaviour
         {
             // Se ainda estiver empatado, força um vencedor dando 2 pontos aleatórios
             if (UnityEngine.Random.value < 0.5f)
-                teamA.Score += 2;
+                teamA.Score += 4;
             else
-                teamB.Score += 2;
+                teamB.Score += 4;
 
             //Debug.Log("[SimulateMatchInstant] Empate resolvido em playoffs com +2 pontos aleatórios");
         }
@@ -1693,13 +1699,15 @@ public class MatchManager : MonoBehaviour
             teamA.Moral += 15;
             teamA.Wins++;
             teamB.Loses++;
+            
         }
         else if (teamA.Score < teamB.Score)
         {
-            teamA.Moral -= 15;
-            teamB.Moral += 15;
+            teamA.Moral -= 10;
+            teamB.Moral += 10;
             teamA.Loses++;
             teamB.Wins++;
+            
         }
         else
         {
@@ -1707,6 +1715,7 @@ public class MatchManager : MonoBehaviour
             teamB.Moral -= 5;
             teamA.Draws++;
             teamB.Draws++;
+            
         }
 
         // Career stats + contract
@@ -2969,6 +2978,16 @@ public class MatchManager : MonoBehaviour
             case 5: return 25;
             default: return 5;   // segurança
         }
+    }
+    void BudgetIncrease()
+    {
+        int increaseValue = 100;
+        if (manager.playerTeam.MarketingLvl > 0 && manager.playerTeam.MarketingLvl <= 3) increaseValue = 200;
+        else if (manager.playerTeam.MarketingLvl > 3 && manager.playerTeam.MarketingLvl <= 5) increaseValue = 400;
+        else if (manager.playerTeam.MarketingLvl > 5 && manager.playerTeam.MarketingLvl <= 7) increaseValue = 700;
+        else if (manager.playerTeam.MarketingLvl > 7) increaseValue = 900;
+        else increaseValue = 100;
+        manager.playerTeam.CurrentBudget += increaseValue;
     }
     //streak functions
     private void RegisterSuccess()

@@ -38,6 +38,8 @@ public class Team : MonoBehaviour
     public int Wins;
     public int Loses;
     public int Draws;
+    public int WinningStreak = 0;
+    public int LosingStreak = 0;
     public int SalaryCapReset = 100;
     public int SalaryCap = 100;
     public int CurrentSalary = 0;

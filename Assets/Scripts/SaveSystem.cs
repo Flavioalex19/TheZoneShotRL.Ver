@@ -144,6 +144,9 @@ public class SaveSystem : MonoBehaviour
         team.Wins = teamData.win;
         team.Draws = teamData.draw;
         team.Loses = teamData.lost;
+        team.WinningStreak = teamData.WStreak;
+        team.LosingStreak = teamData.LSteak;
+
 
         team.CurrentSalary = teamData.cap;
 

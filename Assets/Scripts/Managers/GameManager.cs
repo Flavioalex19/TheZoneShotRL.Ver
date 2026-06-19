@@ -124,7 +124,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("[GameManager] Nenhum save encontrado - Inicializando valores padrão");
+            //Debug.Log("[GameManager] Nenhum save encontrado - Inicializando valores padrão");
 
             for (int i = 0; i < leagueTeams.Count; i++)
             {
@@ -133,6 +133,8 @@ public class GameManager : MonoBehaviour
                 //leagueTeams[i].FrontOfficePoints = leagueTeams[i].fixFrontOffice;
                 //leagueTeams[i].EffortPoints = leagueTeams[i].fixEffort;
                 leagueTeams[i].CurrentBudget = leagueTeams[i].BudgetReset;
+                leagueTeams[i].WinningStreak = 0;
+                leagueTeams[i].LosingStreak = 0;
                 leagueTeams[i].IsPlayerTeam = false;
                 leagueTeams[i].Wins = 0;
                 leagueTeams[i].Draws = 0;
@@ -333,6 +335,8 @@ public class GameManager : MonoBehaviour
                     leagueTeams[i].EffortPoints = leagueTeams[i].fixEffort;
                     */
                     leagueTeams[i].CurrentBudget = leagueTeams[i].BudgetReset;
+                    leagueTeams[i].WinningStreak = 0;
+                    leagueTeams[i].LosingStreak = 0;
                     leagueTeams[i].Wins = 0;
                     leagueTeams[i].Loses = 0;
                     leagueTeams[i].Draws = 0;

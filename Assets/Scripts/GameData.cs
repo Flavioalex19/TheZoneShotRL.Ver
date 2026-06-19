@@ -95,6 +95,8 @@ public class TeamData
     public int win;
     public int lost;
     public int draw;
+    public int WStreak;
+    public int LSteak;
     public int cap;
     public int offices;
     public int finances;
@@ -121,6 +123,8 @@ public class TeamData
         win = team.Wins;
         lost = team.Loses;
         draw = team.Draws;
+        WStreak = team.WinningStreak;
+        LSteak = team.LosingStreak;
         cap = team.CurrentSalary;
         offices = team.OfficeLvl;
         finances = team.FinancesLvl;
