@@ -2755,7 +2755,16 @@ public class MatchManager : MonoBehaviour
         {
             jukeChance *= 1.25f; // Aumenta tendência de avançar quando está atrás
         }
+        //pass
+        if (isAI && isLosing && !isLateGame && currentZone < 2)
+        {
+            passChance *= 1.30f; // Incentiva passar mais quando está atrás no meio do jogo
 
+            if (playerWithTheBall.Shooting < 65 && playerWithTheBall.Juking < 65)
+            {
+                passChance *= 1.20f; // Bônus extra se o próprio jogador for ruim no ataque
+            }
+        }
         // Zona 2 nunca juka
         if (currentZone == 2)
         {

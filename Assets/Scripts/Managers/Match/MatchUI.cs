@@ -295,17 +295,14 @@ public class MatchUI : MonoBehaviour
             //AwayTeams
             transform_ActiveAwayPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].J_Number.ToString();
             transform_ActiveAwayPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].playerLastName.ToString();
-
+            
+                
 
         }
         image_adrenalineBar.fillAmount = (float)gameManager.playerTeam.AdrenalineBar / (float)gameManager.playerTeam.AdrenalineBarFull;
         image_offensivePanel_awayTeamHpBAR.fillAmount = (float)_matchManager.awayHP / (float)100;
 
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            _matchManager.awayHP -= 20;
-            debugText_awayHp.text = _matchManager.awayHP.ToString();
-        }
+        
 
         //UpdateOffensiveStats();
     }
@@ -400,14 +397,8 @@ public class MatchUI : MonoBehaviour
     }
     public void UpdateOffensiveStats()
     {
-        //print("UpdateStats");
-        //text_playerWithTheBallName.text = _matchManager.playerWithTheBall.playerFirstName + " " + _matchManager.playerWithTheBall.playerLastName;
-        //text_PlayerwithTheBallJersey.text = _matchManager.playerWithTheBall.J_Number.ToString();
-        //Sprite alteration/update
-        //Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
-        //Sprite sprite = sprites[_matchManager.playerWithTheBall.ImageCharacterPortrait];
-        //image_playerWithTheBallPortrait.sprite = sprite;
-        PersonalityUpdate();
+
+        //PersonalityUpdate();
         //Current game stats
         transform_gameStatsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.PointsMatch.ToString();
         transform_gameStatsArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.playerWithTheBall.StealsMatch.ToString();
@@ -592,10 +583,44 @@ public class MatchUI : MonoBehaviour
         //print("Here");
         panel_OffensivePanel.SetActive(isOn);
         UpdateOffensiveStats();
+        Sprite sprite = null;
         if (isOn)
         {
             env_offensive.SetActive(true);
             env_defensive.SetActive(false);
+            for (int i = 0; i < transform_ActiveHomePlayers.childCount; i++)
+            {
+                
+                //PersonalityUpdate(gameManager.playerTeam.playersListRoster[i], transform_ActiveHomePlayers.GetChild(i).GetChild(8).GetComponent<Image>());
+                //Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
+                switch (_matchManager.HomeTeam.playersListRoster[i].Personality)
+                {
+                    case 1:
+                        sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_01");
+                        break;
+                    case 2:
+                        sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_02");
+                        break;
+                    case 3:
+                        sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_03");
+                        break;
+
+                    case 4:
+                        sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_04");
+                        break;
+
+                    case 5:
+                        sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_05");
+                        break;
+
+                    default:
+                        break;
+                }
+                transform_ActiveHomePlayers.GetChild(i).GetChild(8).GetComponent<Image>().sprite = sprite;
+                //print(transform_ActiveHomePlayers.GetChild(i).GetChild(8).name);
+                
+            }
+            
         }
         else
         {
@@ -690,11 +715,11 @@ public class MatchUI : MonoBehaviour
         sprite1 = Resources.Load<Sprite>("2D/Team Logos/" + teamName1);
         _awayTeamImage.sprite = sprite1;
     }
-    void PersonalityUpdate()
+    void PersonalityUpdate(Player player, Image image)
     {
         //Personality Icons
         Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
-        switch (_matchManager.playerWithTheBall.Personality)
+        switch (/*_matchManager.playerWithTheBall.Personality*/player.Personality)
         {
             case 1:
                 sprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_01");
@@ -717,6 +742,7 @@ public class MatchUI : MonoBehaviour
             default:
                 break;
         }
+        image.sprite = sprite;
         //_sprite = sprite;
         //image_playerPersonality.sprite = sprite;
     }
