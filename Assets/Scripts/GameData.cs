@@ -29,6 +29,7 @@ public class PlayerData
     public int yearsC;
     public int salaryPlayer;
     public int persona;
+    public int matchBuff;
     public int imageIndex;
     public int jNum;
     public int zone;
@@ -37,6 +38,7 @@ public class PlayerData
     public int c_steals;
     public int c_fieldGoal;
     public int c_fieldGoalsMade;
+    public int c_blocks;
     public int b_buff;
     public Player p_bond;
     
@@ -62,6 +64,7 @@ public class PlayerData
         yearsC = player.ContractYears;
         salaryPlayer = player.Salary;
         persona = player.Personality;
+        matchBuff = player.MatchBuff;
         imageIndex = player.ImageCharacterPortrait;
         jNum = player.J_Number;
         zone = player.Zone;
@@ -70,6 +73,7 @@ public class PlayerData
         c_steals = player.CareerSteals;
         c_fieldGoal = player.CareerFieldGoalAttempted;
         c_fieldGoalsMade = player.CareerFieldGoalMade;
+        c_blocks = player.CareerBlocks;
         b_buff = player.buff;
         p_bond = player.bondPlayer;
         

@@ -85,6 +85,8 @@ public class Team : MonoBehaviour
     public bool isChampion = false;//indicates if you clear the game with this team;
     [ColorUsage(true, true)]
     public Color TeamColor;
+
+    [SerializeField] Team RivalTeam;
     private void Awake()
     {
        

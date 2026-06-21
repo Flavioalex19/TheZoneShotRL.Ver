@@ -16,11 +16,14 @@ public class EventsManager : MonoBehaviour
     public Image eventImage0;   // ImageIcon1
     public Image eventImage1;   // ImageIcon0
 
+    Player playerSelected;
+
     void Awake()
     {
         leagueManager = FindFirstObjectByType<LeagueManager>();
         gameManager = FindFirstObjectByType<GameManager>();
         teamManagerUI = FindFirstObjectByType<TeamManagerUI>();
+        playerSelected = GetRandomPlayer();
     }
 
     // ====================== FUNÇÃO PRINCIPAL (chamada pelo TeamManagerUI) ======================
@@ -66,49 +69,52 @@ public class EventsManager : MonoBehaviour
         leagueManager.eventOptions.Add(new EventOption
         {
             Index = 0,
-            Description = "Boss, local TV wants a quick hit before the match. Respond in a more humorous way or straight tactics?",
-            Choice1 = "Fun & Relatable <color=#FFD700>Marketing +1</color>",
-            Choice2 = "Pro & Tactical <color=#FFD700>Office +1</color>",
+            Description = "Boss, ZenithFlux wants to sponsor the team. " +
+            "They're offering either a big cash injection into the facility or a heavy marketing campaign.",
+            Choice1 = "Structure the project financially - <color=#FFD700>Finances lvl Up +1</color>",
+            Choice2 = "Start Marketing Campaing - <color=#FFD700>Office +1</color>",
             btnIndex0 = 3,
             btnIndex1 = 0,
             Modifier = 1,
-            eventType = EventType.Interview
+            eventType = EventType.Sponsor
         });
 
         leagueManager.eventOptions.Add(new EventOption
         {
             Index = 1,
-            Description = "City council just emailed a one-time youth grant. Take it and shout it out, or funnel it to the stadium?",
-            Choice1 = "Accept & Promote Locally <color=#FFD700>Marketing +1</color>",
-            Choice2 = "Redirect to Facility Upgrade <color=#FFD700>Arena +1</color>",
+            Description = "Helix-Cell brand wants to partner with us. They can supply state-of-the-art training equipment or offer a specific training plan for the team",
+            Choice1 = "Upgrade the gear - <color=#FFD700>Team Equipment Lvl Up +1</color>",
+            Choice2 = "Special Trainning Session - <color=#FFD700>Player Match bonus +5% </color>" + playerSelected.playerLastName,
             btnIndex0 = 3,
             btnIndex1 = 1,
             Modifier = 1,
-            eventType = EventType.ReplyToEmails
+            eventType = EventType.Sponsor
         });
 
         leagueManager.eventOptions.Add(new EventOption
         {
             Index = 2,
             Modifier = 1,
-            Description = "Players are voting on locker room upgrades. Smart tech or recovery pods?",
-            Choice1 = "Smart Lockers & Charging Stations <color=#FFD700>Team Equipment +1</color>",
-            Choice2 = "Better Recovery Pods <color=#FFD700>MedCare +1</color>",
+            Description = "X-Zest is open to a bigger package. " +
+            "We can lock in a brand new gear or go heavy on marketing hype plus on-court performance bonuses.",
+            Choice1 = "Smart Lockers & Charging Stations <color=#FFD700>Team Equipment lvl up</color>",
+            Choice2 = "Better marketing is always a good idea <color=#FFD700>Marketing lvl up</color>",
             btnIndex0 = 5,
             btnIndex1 = 1,
-            eventType = EventType.TeamMeeting
+            eventType = EventType.Sponsor
         });
 
         leagueManager.eventOptions.Add(new EventOption
         {
             Index = 3,
-            Description = "Energy drink brand on the line—standard cash deal or premium with player product?",
-            Choice1 = "Standard Deal + Cash <color=#FFD700>Finances +1</color>",
-            Choice2 = "Premium Deal + Product for Players <color=#FFD700>Team Equipment +1</color>",
+            Description = "Vox Media: I’d like to know if the temperament of one of your players might be interfering with your planning.",
+            Choice1 = "Sometimes a player struggles to make adjustments; nothing beats a conversation to sort things out. - " +
+            "<color=#FFD700>Change Personality: </color>" + playerSelected.playerLastName + " " + playerSelected.SetOVR().ToString(),
+            Choice2 = "Handle the situation politely and protect the player - <color=#FFD700> Shooting Bonus for next match + 5% </color>",
             Modifier = 1,
             btnIndex0 = 0,
             btnIndex1 = 5,
-            eventType = EventType.Sponsor
+            eventType = EventType.Interview
         });
 
         leagueManager.eventOptions.Add(new EventOption
@@ -126,9 +132,9 @@ public class EventsManager : MonoBehaviour
         leagueManager.eventOptions.Add(new EventOption
         {
             Index = 5,
-            Description = "Helix cell is offering bulk gear discount—expires today. Stock up or lock in future credit?",
-            Choice1 = "Stock Up Now <color=#FFD700>Team Equipment +1</color>",
-            Choice2 = "Negotiate for Future Credit <color=#FFD700>Finances +1</color>",
+            Description = "Weekly team meeting. There's some tension in the locker room. We can address the conflicts or run a focused tactical session.",
+            Choice1 = "Deal with problematic player - <color=#FFD700>Change player personality </color>" + playerSelected.playerLastName + " Ovr:" +playerSelected.SetOVR(),
+            Choice2 = "Run tactical session <color=#FFD700>Train Player </color>" + playerSelected.playerLastName + " Ovr:" + playerSelected.SetOVR(),
             Modifier = 1,
             btnIndex0 = 5,
             btnIndex1 = 0,
@@ -138,40 +144,141 @@ public class EventsManager : MonoBehaviour
         leagueManager.eventOptions.Add(new EventOption
         {
             Index = 6,
-            Description = "Bank wants to fund a new VIP area. Luxury skybox or family zone?",
-            Choice1 = "Luxury Skybox <color=#FFD700>Arena +1</color>",
-            Choice2 = "Family Zone with Kids Area <color=#FFD700>Marketing +1</color>",
+            Description = "Internal meeting to improve how the team works. We can focus on better organization or direct player development.",
+            Choice1 = "Improve organization <color=#FFD700>Office Level Up</color>",
+            Choice2 = "Focus on player development <color=#FFD700>Stats Level Up</color>",
+            btnIndex0 = 10,
+            btnIndex1 = 11,
             Modifier = 1,
-            btnIndex0 = 1,
-            btnIndex1 = 3,
             eventType = EventType.TeamMeeting
         });
 
         leagueManager.eventOptions.Add(new EventOption
         {
             Index = 7,
-            Description = "Maintenance found extra space under the stands. Physio suite or merch shop?",
-            Choice1 = "Convert to Physio Suite <color=#FFD700>MedCare +1</color>",
-            Choice2 = "Add Merch Pop-Up Shop <color=#FFD700>Marketing +1</color>",
+            Description = "R&D finished new prototypes. We can implement new training equipment or new training methods.",
+            Choice1 = "Implement new equipment <color=#FFD700>Equips Level Up</color>",
+            Choice2 = "Adopt new training methods <color=#FFD700>Stats Level Up</color>",
+            btnIndex0 = 12,
+            btnIndex1 = 13,
             Modifier = 1,
-            btnIndex0 = 1,
-            btnIndex1 = 3,
-            eventType = EventType.ReplyToEmails
+            eventType = EventType.RnD
         });
 
+        // R&D 8
         leagueManager.eventOptions.Add(new EventOption
         {
             Index = 8,
-            Description = "HyperMetrics XY is offering free analytics—if we upgrade servers. Take it or sell access?",
-            Choice1 = "Take the Suite + Upgrade Servers <color=#FFD700>Office +1</color>",
-            Choice2 = "Sell the Suite Access to League <color=#FFD700>Finances +1</color>",
+            Description = "Research on in-game performance is ready. We can create performance routines or focus on specific technical improvements.",
+            Choice1 = "Create performance routines <color=#FFD700>Player Buff</color>",
+            Choice2 = "Improve shooting, doke and passing <color=#FFD700>Match Bonus (Shooting/Doke/Pass)</color>",
+            btnIndex0 = 14,
+            btnIndex1 = 15,
             Modifier = 1,
-            btnIndex0 = 0,
-            btnIndex1 = 3,
-            eventType = EventType.Sponsor
+            eventType = EventType.RnD
+        });
+        // Operations 9
+        leagueManager.eventOptions.Add(new EventOption
+        {
+            Index = 9,
+            Description = "Daily operations meeting. We can focus on financial efficiency and administration or strengthen medical protocols.",
+            Choice1 = "Improve financial efficiency <color=#FFD700>Finances Level Up</color>",
+            Choice2 = "Strengthen medical protocols <color=#FFD700>Medicare Level Up</color>",
+            btnIndex0 = 16,
+            btnIndex1 = 17,
+            Modifier = 1,
+            eventType = EventType.Operations
         });
 
-        Debug.Log($"[EventsManager] {leagueManager.eventOptions.Count} eventos criados.");
+        // Operations 10
+        leagueManager.eventOptions.Add(new EventOption
+        {
+            Index = 10,
+            Description = "Operational review. We need to decide between improving office organization or focusing on arena maintenance.",
+            Choice1 = "Improve office organization <color=#FFD700>Office Level Up</color>",
+            Choice2 = "Focus on arena maintenance <color=#FFD700>Arena Level Up</color>",
+            btnIndex0 = 18,
+            btnIndex1 = 19,
+            Modifier = 1,
+            eventType = EventType.Operations
+        });
+        // Networking 11
+        leagueManager.eventOptions.Add(new EventOption
+        {
+            Index = 11,
+            Description = "Networking event with other GMs. We can open doors to new sponsors or look for trade opportunities.",
+            Choice1 = "Pursue new sponsors <color=#FFD700>New Sponsor Access</color>",
+            Choice2 = "Look for trade opportunities <color=#FFD700>Trade Bonus</color>",
+            btnIndex0 = 20,
+            btnIndex1 = 21,
+            Modifier = 1,
+            eventType = EventType.Networking
+        });
+
+        // Networking 12
+        leagueManager.eventOptions.Add(new EventOption
+        {
+            Index = 12,
+            Description = "Networking with media and influencers. We can work on the team's image or generate extra marketing momentum.",
+            Choice1 = "Work on team image <color=#FFD700>Change Personality</color>",
+            Choice2 = "Generate marketing momentum <color=#FFD700>Marketing Level Up</color>",
+            btnIndex0 = 22,
+            btnIndex1 = 23,
+            Modifier = 1,
+            eventType = EventType.Networking
+        });
+        // Email 13
+        leagueManager.eventOptions.Add(new EventOption
+        {
+            Index = 13,
+            Description = "You received an email from an agent and the board. It can give a quick boost or be used to trigger something bigger.",
+            Choice1 = "Quick motivation boost <color=#FFD700>Small Player Buff</color>",
+            Choice2 = "Trigger a bigger opportunity <color=#FFD700>Trigger Next Event</color>",
+            btnIndex0 = 24,
+            btnIndex1 = 25,
+            Modifier = 1,
+            eventType = EventType.Emails
+        });
+
+        // Email 14
+        leagueManager.eventOptions.Add(new EventOption
+        {
+            Index = 14,
+            Description = "Email with feedback from fans and media. We can give light personality feedback or a small marketing push.",
+            Choice1 = "Light personality feedback <color=#FFD700>Light Personality Change</color>",
+            Choice2 = "Small marketing push <color=#FFD700>Small Marketing Level Up</color>",
+            btnIndex0 = 26,
+            btnIndex1 = 27,
+            Modifier = 1,
+            eventType = EventType.Emails
+        });
+        // Structure 15
+        leagueManager.eventOptions.Add(new EventOption
+        {
+            Index = 15,
+            Description = "Long-term strategic meeting. We can invest in player development or improve office organization.",
+            Choice1 = "Invest in player development <color=#FFD700>Long-term Stats Growth</color>",
+            Choice2 = "Improve office organization <color=#FFD700>Office Level Up</color>",
+            btnIndex0 = 28,
+            btnIndex1 = 29,
+            Modifier = 1,
+            eventType = EventType.Structure
+        });
+
+        // Structure 16
+        leagueManager.eventOptions.Add(new EventOption
+        {
+            Index = 16,
+            Description = "Long-term planning. We need to choose between expanding the arena or strengthening financial foundations.",
+            Choice1 = "Expand the arena <color=#FFD700>Arena Level Up</color>",
+            Choice2 = "Strengthen long-term finances <color=#FFD700>Finances Level Up</color>",
+            btnIndex0 = 30,
+            btnIndex1 = 31,
+            Modifier = 1,
+            eventType = EventType.Structure
+        });
+
+        //Debug.Log($"[EventsManager] {leagueManager.eventOptions.Count} eventos criados.");
     }
 
     // ====================== ETAPA 1: Botões de Tipo ======================
@@ -273,28 +380,28 @@ public class EventsManager : MonoBehaviour
         switch (eventOption.Index)
         {
             case 0:
-                if (indexOfChoice == 0) gameManager.playerTeam.MarketingLvl++;
+                if (indexOfChoice == 0) gameManager.playerTeam.FinancesLvl++;
                 else gameManager.playerTeam.OfficeLvl++;
                 break;
             case 1:
-                if (indexOfChoice == 0) gameManager.playerTeam.MarketingLvl++;
-                else gameManager.playerTeam.ArenaLvl++;
+                if (indexOfChoice == 0) gameManager.playerTeam.TeamEquipmentLvl++;
+                else PlayerBuff(playerSelected, 5);
                 break;
             case 2:
                 if (indexOfChoice == 0) gameManager.playerTeam.TeamEquipmentLvl++;
-                else gameManager.playerTeam.MedicalLvl++;
+                else gameManager.playerTeam.MarketingLvl++;
                 break;
             case 3:
-                if (indexOfChoice == 0) gameManager.playerTeam.FinancesLvl++;
-                else gameManager.playerTeam.TeamEquipmentLvl++;
+                if (indexOfChoice == 0) ChangePlayerPersonality(playerSelected);
+                else PlayerBuff(playerSelected, 5);
                 break;
             case 4:
                 if (indexOfChoice == 0) gameManager.playerTeam.MedicalLvl++;
                 else gameManager.playerTeam.ArenaLvl++;
                 break;
             case 5:
-                if (indexOfChoice == 0) gameManager.playerTeam.TeamEquipmentLvl++;
-                else gameManager.playerTeam.FinancesLvl++;
+                if (indexOfChoice == 0) ChangePlayerPersonality(playerSelected);
+                else PlayerBuff(playerSelected, 5);
                 break;
             case 6:
                 if (indexOfChoice == 0) gameManager.playerTeam.ArenaLvl++;
@@ -305,6 +412,38 @@ public class EventsManager : MonoBehaviour
                 else gameManager.playerTeam.MarketingLvl++;
                 break;
             case 8:
+                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
+                else gameManager.playerTeam.FinancesLvl++;
+                break;
+            case 9:
+                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
+                else gameManager.playerTeam.FinancesLvl++;
+                break; 
+            case 10:
+                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
+                else gameManager.playerTeam.FinancesLvl++;
+                break;
+            case 11:
+                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
+                else gameManager.playerTeam.FinancesLvl++;
+                break;
+            case 12:
+                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
+                else gameManager.playerTeam.FinancesLvl++;
+                break; 
+            case 13:
+                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
+                else gameManager.playerTeam.FinancesLvl++;
+                break;
+            case 14:
+                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
+                else gameManager.playerTeam.FinancesLvl++;
+                break;
+            case 15:
+                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
+                else gameManager.playerTeam.FinancesLvl++;
+                break;
+            case 16:
                 if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
                 else gameManager.playerTeam.FinancesLvl++;
                 break;
@@ -357,4 +496,56 @@ public class EventsManager : MonoBehaviour
             Debug.LogWarning($"Imagem não encontrada: {eventName}");
         }
     }
+    public string ChangePlayerPersonality(Player player)
+    {
+        if (player == null)
+        {
+            Debug.LogWarning("[GameManager] Não foi possível alterar personalidade: player é nulo.");
+            return "";
+        }
+
+        // ====================== LÓGICA DE ALTERAÇÃO DE PERSONALIDADE ======================
+        if (player.Personality == 1)
+        {
+            // Personalidade 1 só pode aumentar
+            player.Personality = 2;
+        }
+        else if (player.Personality == 5)
+        {
+            // Personalidade 5 volta para 1 (ciclo)
+            player.Personality = 1;
+        }
+        else
+        {
+            // Para personalidades 2, 3 e 4: aumenta ou diminui aleatoriamente
+            if (UnityEngine.Random.value < 0.5f)
+            {
+                player.Personality += 1;
+            }
+            else
+            {
+                player.Personality -= 1;
+            }
+        }
+        // ================================================================================
+
+        string fullName = $"{player.playerFirstName} {player.playerLastName}";
+
+        Debug.Log($"[GameManager] Personalidade de {fullName} alterada para {player.Personality}");
+
+        return fullName;
+    }
+    public Player GetRandomPlayer()
+    {
+        if (gameManager.playerTeam == null || gameManager.playerTeam.playersListRoster == null || gameManager.playerTeam.playersListRoster.Count == 0)
+            return null;
+
+        int randomIndex = UnityEngine.Random.Range(0, gameManager.playerTeam.playersListRoster.Count);
+        return gameManager.playerTeam.playersListRoster[randomIndex];
+    }
+    public void PlayerBuff(Player player, int value)
+    {
+        player.MatchBuff = value;
+    }
+
 }

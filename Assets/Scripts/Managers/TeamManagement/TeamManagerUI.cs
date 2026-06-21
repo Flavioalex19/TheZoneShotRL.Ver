@@ -1381,7 +1381,7 @@ public class TeamManagerUI : MonoBehaviour
     }
     public void TradeSwapPlayers()
     {
-        if(gameManager.playerTeam.CurrentBudget - trade_costOfTrade > 0)
+        if(gameManager.playerTeam.CurrentBudget - trade_costOfTrade >= 0)
         {
             // Remove playerA de teamA
             gameManager.playerTeam.playersListRoster.Remove(trade_playerToTrade);

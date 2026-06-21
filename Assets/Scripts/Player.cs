@@ -65,12 +65,15 @@ public class Player : MonoBehaviour
     public int Zone;
     #region Hidden Variables
     public int Personality;//1 to 5 , 1-calm and 5-Agressive 
+    public int MatchBuff=0;
     //CareerStats
     public int CareerGamesPlayed = 0;
     public int CareerPoints = 0;
     public int CareerSteals = 0;
     public int CareerFieldGoalAttempted = 0;
     public int CareerFieldGoalMade = 0;
+    public int CareerBlocks = 0;
+    
     //PlayerEvents/Team stats
     public Player bondPlayer = null;
     public int buff = 0;

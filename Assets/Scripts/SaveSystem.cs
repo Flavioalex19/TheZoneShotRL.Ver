@@ -195,6 +195,7 @@ public class SaveSystem : MonoBehaviour
             p.Salary = pd.salaryPlayer;
 
             p.Personality = pd.persona;
+            p.MatchBuff = pd.matchBuff;
             p.ImageCharacterPortrait = pd.imageIndex;
             p.J_Number = pd.jNum;
 
@@ -204,7 +205,9 @@ public class SaveSystem : MonoBehaviour
             p.CareerGamesPlayed = pd.c_gamesPlayed;
             p.CareerPoints = pd.c_pointsMade;
             p.CareerSteals = pd.c_steals;
-
+            p.CareerBlocks = pd.c_blocks;
+            p.CareerFieldGoalAttempted = pd.c_fieldGoal;
+            p.CareerFieldGoalMade = pd.c_fieldGoalsMade;
             // AQUI O JOGADOR ENTRA NO TIME 
             team.playersListRoster.Add(p);
         }

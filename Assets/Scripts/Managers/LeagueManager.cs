@@ -218,7 +218,7 @@ public class LeagueManager : MonoBehaviour
             btnIndex0 = 3,
             btnIndex1 = 1,
             Modifier = 1,
-            eventType = EventType.ReplyToEmails
+            eventType = EventType.Emails
         });
         eventOptions.Add(new EventOption
         {
@@ -295,7 +295,7 @@ public class LeagueManager : MonoBehaviour
             Modifier = 1,
             btnIndex0 = 1,// MUDAR BTN MEDCARE
             btnIndex1 = 3,
-            eventType = EventType.ReplyToEmails
+            eventType = EventType.Emails
 
         });
         eventOptions.Add(new EventOption
@@ -659,8 +659,12 @@ public class EventOption
 public enum EventType
 {
     Interview,
-    ReplyToEmails,
+    Emails,
     TeamMeeting,
-    Sponsor
+    Sponsor,
+    RnD,
+    Operations,
+    Networking,
+    Structure
 }
 
