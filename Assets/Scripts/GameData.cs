@@ -112,6 +112,10 @@ public class TeamData
     public bool isTop4;
     public bool FinalTeam;
     public bool WinC;
+    public int bShoot;
+    public int bJuke;
+    public int bPass;
+    public int bDefense;
 
     public TeamData(Team team, LeagueManager leagueManager)
     {
@@ -140,6 +144,10 @@ public class TeamData
         isTop4 = team.isR4;
         FinalTeam = team.isFinalist;
         WinC = team.isChampion;
+        bShoot = team.bonus_Shoot;
+        bJuke = team.bonus_Juke;
+        bPass = team.bonus_Pass;
+        bDefense = team.bonus_Defense;
         foreach (Player player in team.playersListRoster)
         {
             playersListData.Add(new PlayerData(player));

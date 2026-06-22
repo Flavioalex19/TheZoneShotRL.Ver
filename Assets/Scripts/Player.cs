@@ -41,7 +41,7 @@ public class Player : MonoBehaviour
         "Acker", "Alderman", "Allerdale", "Asimov", "Applegarth", "Ashburn", "Axford", "Backman", "Ballard", "Barlow", "Baron", "Barrick", "Barrowcliff", "Bartholomew", "Batara",
         "Baumann", "Bayfield", "Beaver", "Beckett", "Beckford", "Beesley", "Behrens", "Bellamy", "Bellington", "Bender", "Bendett", "Benson", "Bernstein", "Bertolini", "Blackford",
         "Blanc", "Bledsoe", "Borchardt", "Breakspear", "Breakwell", "Chevallier", "Christensen", "Christopher", "Clarkson", "Clemens", "Colby", "Cook", "Grimmes", "Ramos","Graham",
-        "Simmons", "Jane", "Clason", "Assis", "Paxton", "Powers"
+        "Simmons", "Jane", "Clason", "Assis", "Paxton", "Powers", "Dick", "Todd"
     };
     [SerializeField] public string playerFirstName;
     [SerializeField] public string playerLastName;
@@ -135,21 +135,21 @@ public class Player : MonoBehaviour
     //Generate player with ovr from 50-75
     public void GenerateStarters()
     {
-        GeneratePlayerByTier(45, 55, 60, 65);
+        GeneratePlayerByTier(45, 55, 60, 70);
     }
     public void GenerateEarlyPlayer()
     {
-        GeneratePlayerByTier(55, 65, 67, 73);
+        GeneratePlayerByTier(55, 65, 70, 75);
     }
 
     public void GenerateMidPlayer()
     {
-        GeneratePlayerByTier(65, 70, 75, 80);
+        GeneratePlayerByTier(60, 70, 75, 85);
     }
 
     public void GenerateEndPlayer()
     {
-        GeneratePlayerByTier(75, 89, 85, 90);
+        GeneratePlayerByTier(75, 89, 85, 95);
     }
 
     private void GeneratePlayerByTier(int minLow, int maxLow, int minHigh, int maxHigh)

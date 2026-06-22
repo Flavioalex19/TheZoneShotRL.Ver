@@ -162,6 +162,11 @@ public class SaveSystem : MonoBehaviour
         team.isFinalist = teamData.FinalTeam;
         team.isChampion = teamData.WinC;
 
+        team.bonus_Shoot = teamData.bShoot;
+        team.bonus_Juke = teamData.bJuke;
+        team.bonus_Pass = teamData.bPass;
+        team.bonus_Defense = teamData.bDefense;
+
         // ---------- LOAD DOS JOGADORES ----------
         foreach (PlayerData pd in teamData.playersListData)
         {

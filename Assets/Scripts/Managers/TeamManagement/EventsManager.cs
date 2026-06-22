@@ -120,9 +120,9 @@ public class EventsManager : MonoBehaviour
         leagueManager.eventOptions.Add(new EventOption
         {
             Index = 4,
-            Description = "Vox media in a podcast is asking what the team needs most. Med staff or fan support?",
-            Choice1 = "We need better medical support <color=#FFD700>MedCare +1</color>",
-            Choice2 = "Fan experience comes first <color=#FFD700>Arena +1</color>",
+            Description = "Vox media: You have an important game this week; how are you and the team handling it?",
+            Choice1 = "Day-to-day, staying focused on our work <color=#FFD700>Team Buff (Shooting)</color>",
+            Choice2 = "Focus on the fundamentals <color=#FFD700>Match buff(Shoot or Pass or Juke)</color>",
             Modifier = 1,
             btnIndex0 = 0,
             btnIndex1 = 0,
@@ -147,8 +147,8 @@ public class EventsManager : MonoBehaviour
             Description = "Internal meeting to improve how the team works. We can focus on better organization or direct player development.",
             Choice1 = "Improve organization <color=#FFD700>Office Level Up</color>",
             Choice2 = "Focus on player development <color=#FFD700>Stats Level Up</color>",
-            btnIndex0 = 10,
-            btnIndex1 = 11,
+            btnIndex0 = 1,
+            btnIndex1 = 0,
             Modifier = 1,
             eventType = EventType.TeamMeeting
         });
@@ -159,8 +159,8 @@ public class EventsManager : MonoBehaviour
             Description = "R&D finished new prototypes. We can implement new training equipment or new training methods.",
             Choice1 = "Implement new equipment <color=#FFD700>Equips Level Up</color>",
             Choice2 = "Adopt new training methods <color=#FFD700>Stats Level Up</color>",
-            btnIndex0 = 12,
-            btnIndex1 = 13,
+            btnIndex0 = 0,
+            btnIndex1 = 1,
             Modifier = 1,
             eventType = EventType.RnD
         });
@@ -171,9 +171,9 @@ public class EventsManager : MonoBehaviour
             Index = 8,
             Description = "Research on in-game performance is ready. We can create performance routines or focus on specific technical improvements.",
             Choice1 = "Create performance routines <color=#FFD700>Player Buff</color>",
-            Choice2 = "Improve shooting, doke and passing <color=#FFD700>Match Bonus (Shooting/Doke/Pass)</color>",
-            btnIndex0 = 14,
-            btnIndex1 = 15,
+            Choice2 = "Improve shooting or joke or passing <color=#FFD700>Match Bonus (Shooting/Joke/Pass)</color>",
+            btnIndex0 = 1,
+            btnIndex1 = 0,
             Modifier = 1,
             eventType = EventType.RnD
         });
@@ -184,8 +184,8 @@ public class EventsManager : MonoBehaviour
             Description = "Daily operations meeting. We can focus on financial efficiency and administration or strengthen medical protocols.",
             Choice1 = "Improve financial efficiency <color=#FFD700>Finances Level Up</color>",
             Choice2 = "Strengthen medical protocols <color=#FFD700>Medicare Level Up</color>",
-            btnIndex0 = 16,
-            btnIndex1 = 17,
+            btnIndex0 = 1,
+            btnIndex1 = 0,
             Modifier = 1,
             eventType = EventType.Operations
         });
@@ -197,8 +197,8 @@ public class EventsManager : MonoBehaviour
             Description = "Operational review. We need to decide between improving office organization or focusing on arena maintenance.",
             Choice1 = "Improve office organization <color=#FFD700>Office Level Up</color>",
             Choice2 = "Focus on arena maintenance <color=#FFD700>Arena Level Up</color>",
-            btnIndex0 = 18,
-            btnIndex1 = 19,
+            btnIndex0 = 0,
+            btnIndex1 = 1,
             Modifier = 1,
             eventType = EventType.Operations
         });
@@ -206,11 +206,11 @@ public class EventsManager : MonoBehaviour
         leagueManager.eventOptions.Add(new EventOption
         {
             Index = 11,
-            Description = "Networking event with other GMs. We can open doors to new sponsors or look for trade opportunities.",
-            Choice1 = "Pursue new sponsors <color=#FFD700>New Sponsor Access</color>",
-            Choice2 = "Look for trade opportunities <color=#FFD700>Trade Bonus</color>",
-            btnIndex0 = 20,
-            btnIndex1 = 21,
+            Description = "Networking event with other GMs. We can gather some interesting infos about other teams.",
+            Choice1 = "Focus on your rival, to seek any breaches <color=#FFD700>vsRival Bonus++</color>",
+            Choice2 = "Focus on the meeting to improve the team <color=#FFD700>Team Bonus</color>",
+            btnIndex0 = 0,
+            btnIndex1 = 1,
             Modifier = 1,
             eventType = EventType.Networking
         });
@@ -222,8 +222,8 @@ public class EventsManager : MonoBehaviour
             Description = "Networking with media and influencers. We can work on the team's image or generate extra marketing momentum.",
             Choice1 = "Work on team image <color=#FFD700>Change Personality</color>",
             Choice2 = "Generate marketing momentum <color=#FFD700>Marketing Level Up</color>",
-            btnIndex0 = 22,
-            btnIndex1 = 23,
+            btnIndex0 = 2,
+            btnIndex1 = 3,
             Modifier = 1,
             eventType = EventType.Networking
         });
@@ -231,11 +231,11 @@ public class EventsManager : MonoBehaviour
         leagueManager.eventOptions.Add(new EventOption
         {
             Index = 13,
-            Description = "You received an email from an agent and the board. It can give a quick boost or be used to trigger something bigger.",
-            Choice1 = "Quick motivation boost <color=#FFD700>Small Player Buff</color>",
-            Choice2 = "Trigger a bigger opportunity <color=#FFD700>Trigger Next Event</color>",
-            btnIndex0 = 24,
-            btnIndex1 = 25,
+            Description = "You received an email from an agent and the board. It can give a quick training or be used to traing new sets.",
+            Choice1 = "Intense training <color=#FFD700>Match Buff</color>",
+            Choice2 = "Train a new set <color=#FFD700>TeamBuff</color>",
+            btnIndex0 = 2,
+            btnIndex1 = 1,
             Modifier = 1,
             eventType = EventType.Emails
         });
@@ -396,8 +396,8 @@ public class EventsManager : MonoBehaviour
                 else PlayerBuff(playerSelected, 5);
                 break;
             case 4:
-                if (indexOfChoice == 0) gameManager.playerTeam.MedicalLvl++;
-                else gameManager.playerTeam.ArenaLvl++;
+                if (indexOfChoice == 0) TeamBuff();
+                else MatchBuff(5);
                 break;
             case 5:
                 if (indexOfChoice == 0) ChangePlayerPersonality(playerSelected);
@@ -408,32 +408,32 @@ public class EventsManager : MonoBehaviour
                 else gameManager.playerTeam.MarketingLvl++;
                 break;
             case 7:
-                if (indexOfChoice == 0) gameManager.playerTeam.MedicalLvl++;
-                else gameManager.playerTeam.MarketingLvl++;
+                if (indexOfChoice == 0) gameManager.playerTeam.TeamEquipmentLvl++;
+                else LevelUpPlayer(playerSelected);
                 break;
             case 8:
-                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
-                else gameManager.playerTeam.FinancesLvl++;
+                if (indexOfChoice == 0) PlayerBuff(playerSelected,5);
+                else MatchBuff(5);
                 break;
             case 9:
-                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
-                else gameManager.playerTeam.FinancesLvl++;
+                if (indexOfChoice == 0) gameManager.playerTeam.FinancesLvl++;
+                else gameManager.playerTeam.MedicalLvl++;
                 break; 
             case 10:
                 if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
-                else gameManager.playerTeam.FinancesLvl++;
+                else gameManager.playerTeam.ArenaLvl++;
                 break;
             case 11:
-                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
-                else gameManager.playerTeam.FinancesLvl++;
+                if (indexOfChoice == 0) VsRivals();
+                else TeamBuff();
                 break;
             case 12:
-                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
-                else gameManager.playerTeam.FinancesLvl++;
+                if (indexOfChoice == 0) ChangePlayerPersonality(playerSelected);
+                else gameManager.playerTeam.MarketingLvl++;
                 break; 
             case 13:
-                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
-                else gameManager.playerTeam.FinancesLvl++;
+                if (indexOfChoice == 0)MatchBuff(5);
+                else TeamBuff();
                 break;
             case 14:
                 if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
@@ -547,5 +547,62 @@ public class EventsManager : MonoBehaviour
     {
         player.MatchBuff = value;
     }
+    public void TeamBuff()
+    {
+        //gameManager.playerTeam.
+    }
+    public void MatchBuff(int value)
+    {
+        int index = 0;
+        index = (int)UnityEngine.Random.Range(0,3);
+        switch (index) 
+        {
+            case 0:
+                gameManager.playerTeam.bonus_Shoot = value;
+                break; 
+            case 1:
+                gameManager.playerTeam.bonus_Juke = value;
+                break;
+            case 2:
+                gameManager.playerTeam.bonus_Pass = value;
+                break;
+            case 3:
+                gameManager.playerTeam.bonus_Defense = value;
+                break;
+                
 
+        }
+    }
+    public void LevelUpPlayer(Player player)
+    {
+        if (player == null)
+        {
+            Debug.LogWarning("LevelUpPlayer: Player é nulo!");
+            return;
+        }
+
+        // Aumenta todos os atributos em +1 (limitando em 99)
+        player.Awareness = Mathf.Min(player.Awareness + 1, 99);
+        player.Juking = Mathf.Min(player.Juking + 1, 99);
+        player.Control = Mathf.Min(player.Control + 1, 99);
+        player.Consistency = Mathf.Min(player.Consistency + 1, 99);
+
+        player.Shooting = Mathf.Min(player.Shooting + 1, 99);
+        player.Inside = Mathf.Min(player.Inside + 1, 99);
+        player.Mid = Mathf.Min(player.Mid + 1, 99);
+        player.Outside = Mathf.Min(player.Outside + 1, 99);
+
+        player.Defending = Mathf.Min(player.Defending + 1, 99);
+        player.Stealing = Mathf.Min(player.Stealing + 1, 99);
+        player.Guarding = Mathf.Min(player.Guarding + 1, 99);
+
+        // Atualiza o OVR do jogador após o level up
+        player.UpdateOVR();
+
+        Debug.Log($"[Level Up] {player.playerFirstName} {player.playerLastName} recebeu +1 em todos os atributos.");
+    }
+    void VsRivals()
+    {
+
+    }
 }
