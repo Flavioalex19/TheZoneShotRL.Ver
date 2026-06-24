@@ -1,0 +1,104 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7169952622461635921
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1557286111948581817}
+  - component: {fileID: 2986542375150832205}
+  m_Layer: 0
+  m_Name: Team Q
+  m_TagString: Team
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1557286111948581817
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7169952622461635921}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2986542375150832205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7169952622461635921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47e81d07a4c1bab4e9b19bd033658eec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Team
+  playersListRoster: []
+  _equipmentList: []
+  TeamName: Wisconsin Sages
+  IsPlayerTeam: 0
+  Moral: 0
+  CurrentBudget: 0
+  BudgetReset: 550
+  Wins: 0
+  Loses: 0
+  Draws: 0
+  WinningStreak: 0
+  LosingStreak: 0
+  SalaryCapReset: 100
+  SalaryCap: 100
+  CurrentSalary: 0
+  OfficeLvl: 0
+  FinancesLvl: 0
+  MarketingLvl: 0
+  TeamEquipmentLvl: 0
+  ArenaLvl: 0
+  MedicalLvl: 0
+  fixMoral: 50
+  fixFans: 0
+  fixFrontOffice: 0
+  fixFansSupport: 0
+  fixEffort: 0
+  fixSalaryCap: 100
+  Description: 'Experience is the best teacher, is what they often say. Well, the
+    coaches of the Wisconsin Sages have plenty of experience, and they really know
+    how to train a young squad up to their max potential. This team is known for
+    their strategic offense: Passing to find the best matchup, and juking to get
+    inside and create the best shot they can. As a middle of the road unit the past
+    few years, they are looking to turn things around  and bring home the championship
+    for their fans.'
+  CoachName: Bob Wedge
+  _schedule: []
+  _teamStyle: 9
+  HasPlayed: 0
+  hasPossession: 0
+  Score: 0
+  isOnDefenseBonus: 0
+  hasHDefense: 0
+  Dbuff: 0
+  OBuff: 0
+  AdrenalineBar: 0
+  AdrenalineBarFull: 100
+  match_hp: 0
+  match_hpMax: 100
+  bonus_Shoot: 0
+  bonus_Juke: 0
+  bonus_Pass: 0
+  bonus_Defense: 0
+  isR8: 0
+  isR4: 0
+  isFinalist: 0
+  isChampion: 0
+  TeamColor: {r: 0, g: 0, b: 0, a: 0}
+  RivalTeam: {fileID: 0}
