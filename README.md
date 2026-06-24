@@ -10,7 +10,7 @@ The game puts heavy emphasis on **player agency**. Every choice — from draft p
 
 ### Key Gameplay Pillars
 - **Roguelite Structure & Legacy**: Full seasons with high stakes. Failure teaches you, and persistent meta-progression (unlocks, legacy bonuses, knowledge) rewards smart experimentation across runs.
-- **Team Management & Roster Building**: Draft, trade, and develop players with distinct playstyles and synergies (Brawler, HyperDribbler, and other archetypes). Optimize your squad for different strategies.
+- **Team Management & Roster Building**: Draft, trade, and develop players with distinct playstyles(forward, Horns, and other playstyles). Optimize your squad for different strategies.
 - **Facility & HQ Upgrades**: Use weekly events and resources to improve training facilities, medical care, scouting, and other support systems that directly impact your team’s performance.
 - **Card-Driven Matches & Coaching**: During games, play cards to boost your team and make dynamic coaching decisions based on player skills (shooting, passing, juking/dribbling). Adrenaline mechanics and risky plays add tension and replayability.
 - **Meaningful Choices & Emergent Stories**: Strong focus on cause-and-effect. A bad draft or wrong in-game call can end a promising run — but brilliant adaptation can create legendary comebacks and championship teams.
