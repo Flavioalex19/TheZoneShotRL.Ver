@@ -17,7 +17,7 @@ public class TeamSelectionManager : MonoBehaviour
     public Transform _teamStatsArea;
     [SerializeField] TextMeshProUGUI _debugCurrentTeam;
     [SerializeField] TextMeshProUGUI _text_selectedTeamOnConfirmation;
-
+    [SerializeField] Animator animator_ToDraft;
     [SerializeField] Team selectedTeam;
     [Header("Legacy")]
     [SerializeField] Transform transform_btnsLegacy;
@@ -40,6 +40,7 @@ public class TeamSelectionManager : MonoBehaviour
         for (int i = 0; i < _gameManager.leagueTeams.Count; i++)
         {
             transform_btnTeamsSelection.GetChild(i).GetComponent<btnTeamSelection>().team = _gameManager.leagueTeams[i];
+            _gameManager.leagueTeams[i].CurrentBudget = _gameManager.leagueTeams[i].BudgetReset;
         }
 
     }
@@ -101,6 +102,13 @@ public class TeamSelectionManager : MonoBehaviour
 
         _gameManager.mode = GameManager.GameMode.Draft;
 
+        //SceneManager.LoadScene("Draft");
+        StartCoroutine(TranstionToDraft());
+    }
+    IEnumerator TranstionToDraft()
+    {
+        animator_ToDraft.SetTrigger("Go");
+        yield return new WaitForSeconds(3f);
         SceneManager.LoadScene("Draft");
     }
     public void ClearCurrentSelectedTeamText()

@@ -216,6 +216,9 @@ public class LeagueManagerData
     public bool draftLvl1;
     public bool draftLvl2;
     public bool draftLvl3;
+    public bool budgetB0;
+    public bool budgetB1;
+    public bool budgetB2;
     public bool spPlayer0;
     public bool spPlayer1;
     public bool spPlayer2;
@@ -223,6 +226,9 @@ public class LeagueManagerData
     public bool spPlayer4;
     public bool fBonus0;
     public bool fBonus1;
+    public bool fBonus2;
+    public int champRow;
+    public int champTol;
     //public bool fBonus2;
 
 
@@ -244,16 +250,23 @@ public class LeagueManagerData
         draftLvl1 = leagueManager.CanDraftlvl1;
         draftLvl2 = leagueManager.CanDraftlvl2;
         draftLvl3 = leagueManager.CanDraftlvl3;
+        budgetB0 = leagueManager.CanBudgetBuff0;
+        budgetB1 = leagueManager.CanBudgetBuff1;
+        budgetB2 = leagueManager.CanBudgetBuff2;
         spPlayer0 = leagueManager.CanDrafSpPlayer0;
         spPlayer1 = leagueManager.CanDraftSpPlayer1;
         spPlayer2 = leagueManager.CanDraftlvl2;
         spPlayer3 = leagueManager.CanDraftSpPlayer3;
         spPlayer4 = leagueManager.CanDraftSpPlayer4;
-        fBonus0 = leagueManager.FacilitieBonus0;
-        fBonus1 = leagueManager.FacilitieBonus1;
+        fBonus0 = leagueManager.CanFacilitieBonus0;
+        fBonus1 = leagueManager.CanFacilitieBonus1;
+        fBonus2 = leagueManager.CanFacilitieBonus2;
 
         R8Names = leagueManager.List_R8Teams.Select(t => t.TeamName).ToList();
         R4Names = leagueManager.List_R4Teams.Select(t => t.TeamName).ToList();
         FinalNames = leagueManager.List_Finalist.Select(t => t.TeamName).ToList();
+
+        champRow = leagueManager.ChampionShipInARow;
+        champTol = leagueManager.TotalChampionships;
     }
 }

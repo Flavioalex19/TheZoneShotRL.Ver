@@ -89,13 +89,19 @@ public class SaveSystem : MonoBehaviour
         lm.CanDraftlvl1 = data.draftLvl1;
         lm.CanDraftlvl2 = data.draftLvl2;
         lm.CanDraftlvl3 = data.draftLvl3;
+        lm.CanBudgetBuff0 = data.budgetB0;
+        lm.CanBudgetBuff1 = data.budgetB1;
+        lm.CanBudgetBuff2 = data.budgetB2;
         lm.CanDraftSpPlayer1 = data.spPlayer1;
         lm.CanDrafSpPlayer0 = data.spPlayer0;
         lm.CanDraftSpPlayer2 = data.spPlayer2;
         lm.CanDraftSpPlayer3 = data.spPlayer3;
         lm.CanDraftSpPlayer4 = data.spPlayer4;
-        lm.FacilitieBonus0 = data.fBonus0;
-        lm.FacilitieBonus1 = data.fBonus1;
+        lm.CanFacilitieBonus0 = data.fBonus0;
+        lm.CanFacilitieBonus1 = data.fBonus1;
+        lm.CanFacilitieBonus2 = data.fBonus2;
+        lm.TotalChampionships = data.champTol;
+        lm.ChampionShipInARow = data.champRow;
 
         // ---------- PLAYOFFS ----------
         lm.List_R8Teams.Clear();
@@ -391,8 +397,8 @@ public class SaveSystem : MonoBehaviour
         leagueManager.CanDraftSpPlayer2 = false;
         leagueManager.CanDraftSpPlayer3 = false;
         leagueManager.CanDraftSpPlayer4 = false;
-        leagueManager.FacilitieBonus0 = false;
-        leagueManager.FacilitieBonus1 = false;
+        leagueManager.CanFacilitieBonus0 = false;
+        leagueManager.CanFacilitieBonus1 = false;
         for (int i = 0; i < gameManager.leagueTeams.Count; i++)
         {
             gameManager.leagueTeams[i].isChampion = false;
@@ -513,8 +519,8 @@ public class SaveSystem : MonoBehaviour
         lm.CanDraftSpPlayer4 = false;
 
         // Reset de Facility Bonuses
-        lm.FacilitieBonus0 = false;
-        lm.FacilitieBonus1 = false;
+        lm.CanFacilitieBonus0 = false;
+        lm.CanFacilitieBonus1 = false;
 
         // Reset de opções legacy (se ainda estiver usando)
         lm.isOnDraftLVL0 = false;

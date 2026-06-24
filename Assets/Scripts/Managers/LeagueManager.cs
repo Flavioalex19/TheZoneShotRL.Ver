@@ -54,20 +54,32 @@ public class LeagueManager : MonoBehaviour
     public bool CanDraftlvl1 = false;
     public bool CanDraftlvl2 = false;
     public bool CanDraftlvl3 = false;
+    public bool CanBudgetBuff0 = false;
+    public bool CanBudgetBuff1 = false;
+    public bool CanBudgetBuff2 = false;
     public bool CanDrafSpPlayer0 = false;
     public bool CanDraftSpPlayer1 = false;
     public bool CanDraftSpPlayer2 = false;
     public bool CanDraftSpPlayer3 = false;
     public bool CanDraftSpPlayer4 = false;
-    public bool FacilitieBonus0 = false;
-    public bool FacilitieBonus1 = false;
+    public bool CanFacilitieBonus0 = false;
+    public bool CanFacilitieBonus1 = false;
+    public bool CanFacilitieBonus2 = false;
     //legacyOptions
     public bool isOnDraftLVL0 = false;
     public bool isOnDraftLVL1 = false;
     public bool isOnDraftLVL2 = false;
+    public bool isBudgetBuff0 = false;
+    public bool isFacility0 = false;
+    public bool isFacility1 = false;
+    public bool isFacility2 = false;
     public bool CanCreateLegend0 = false;
     public bool CanCreateLegend1 = false;
     public bool CanCreateLegend4 = false;
+
+    //Legacy triggers
+    public int ChampionShipInARow = 0;
+    public int TotalChampionships = 0;
 
 
     public bool TriggerWeek = false;
@@ -640,6 +652,39 @@ public class LeagueManager : MonoBehaviour
         {
             Debug.LogWarning("playerTeam é null durante HandleFreeAgents no LeagueManager.");
         }
+    }
+    public void UnlockLegacy(int index)
+    {
+        switch (index) 
+        {
+            case 0:
+                CanDraftlvl1 = true;//finish the season
+                break;
+            case 1:
+                CanDraftlvl2 = true;//win first championship
+                break;
+            case 2:
+                CanDraftlvl3 = true;//10 championships
+                break;
+            case 3:
+                CanBudgetBuff0 = true;//>1200 budget currency
+                break;  
+            case 4:
+                CanBudgetBuff1 = true;//qualify for the playoffs
+                break;
+            case 5:
+                CanBudgetBuff2 = true;//end season with more than 1500 budget points
+                break;
+            case 6:
+                CanFacilitieBonus0 = true;// all facilites are abouve lvl 3
+                break;
+            case 7:
+                CanFacilitieBonus1 = true;// end a season with a lesit 2 facilites above lvl 5
+                break;
+            case 8:
+                CanFacilitieBonus2 = true;// end a season with 5 faciliteis above lvl 4
+                break;
+        }      
     }
 
 }

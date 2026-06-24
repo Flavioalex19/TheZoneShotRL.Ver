@@ -405,6 +405,8 @@ public class MatchManager : MonoBehaviour
                 if (leagueManager.isOnR8 || leagueManager.isOnR4 || leagueManager.isOnFinals)
                 {
                     leagueManager.isGameOver = true;
+                    leagueManager.ChampionShipInARow = 0;
+                    leagueManager.TotalChampionships = 0;
                     //leagueManager.isOnR8 = false;
                 }
                 if (!isSimulation) _matchUI.StartResultPanel("Defeat", "D"); //_matchUI.ActivateVictoryDefeat("Defeat");

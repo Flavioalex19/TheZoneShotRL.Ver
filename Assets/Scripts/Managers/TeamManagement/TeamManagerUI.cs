@@ -306,20 +306,22 @@ public class TeamManagerUI : MonoBehaviour
             if (gameManager.leagueTeams[i].isChampion == true &&
                 gameManager.leagueTeams[i].IsPlayerTeam == true)
             {
-                //legacy unlock - GOAT
-                leagueManager.CanDraftSpPlayer4 = true;
+                leagueManager.TotalChampionships++;
+                leagueManager.ChampionShipInARow++;
+                //legacy unlock - candraft2
+                leagueManager.CanDraftlvl2 = true;
                 isGameOver = true;
                 break;
             }
         }
-       
+        if (leagueManager.TotalChampionships == 10) leagueManager.UnlockLegacy(2);
         if (leagueManager.Week >= gameManager.leagueTeams.Count)
         {
 
             if (IsPlayerTeamInTop8())
             {
-                //leagacy unlock - silver runner
-                leagueManager.CanDrafSpPlayer0 = true;
+                //legacy unlock - BudgetBuff0
+                leagueManager.CanBudgetBuff0 = true;
                 leagueManager.isOnR8 = true;
             }
             else
@@ -399,10 +401,10 @@ public class TeamManagerUI : MonoBehaviour
         }
         else
         {
-            //leagacy unlock-new draft player otions- early players
+            //legacy unlock-new draft player otions- early players
             if(leagueManager.CanDraftlvl1 == false) leagueManager.CanDraftlvl1 = true;
             //legacy unlock - 
-            if(leagueManager.isOnR4)leagueManager.CanDraftSpPlayer1 = true;
+            //if(leagueManager.isOnR4)leagueManager.CanDraftlvl1 = true;
             ResultPanelCreation();
             btn_returnToMainScreen.onClick.RemoveAllListeners();
             btn_returnToMainScreen.onClick.AddListener(() => StartNewLeagueRun());
