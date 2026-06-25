@@ -231,13 +231,17 @@ public class MatchManager : MonoBehaviour
         {
             HomeTeam.playersListRoster[i].PointsMatch = 0;
             HomeTeam.playersListRoster[i].StealsMatch = 0;
-            HomeTeam.playersListRoster[i].isInjured = false;
+            //HomeTeam.playersListRoster[i].isInjured = false;
+            HomeTeam.playersListRoster[i].FieldGoalsAtt = 0;
+            HomeTeam.playersListRoster[i].FieldGoalsMade = 0;
         }
         for (int i = 0; i < AwayTeam.playersListRoster.Count; i++)
         {
             AwayTeam.playersListRoster[i].PointsMatch = 0;
             AwayTeam.playersListRoster[i].StealsMatch= 0;
-            AwayTeam.playersListRoster[i].isInjured= false;
+            //wayTeam.playersListRoster[i].isInjured= false;
+            AwayTeam.playersListRoster[i].FieldGoalsAtt = 0;
+            AwayTeam.playersListRoster[i].FieldGoalsMade = 0;
         }
         CanChooseAction = false;
         _matchUI.SetSkillPints();
@@ -478,12 +482,16 @@ public class MatchManager : MonoBehaviour
             HomeTeam.playersListRoster[i].CareerSteals += HomeTeam.playersListRoster[i].StealsMatch;
             HomeTeam.playersListRoster[i].CareerGamesPlayed++;
             HomeTeam.playersListRoster[i].buff = 0;
+            HomeTeam.playersListRoster[i].CareerFieldGoalMade += HomeTeam.playersListRoster[i].FieldGoalsMade;
+            HomeTeam.playersListRoster[i].CareerFieldGoalAttempted += HomeTeam.playersListRoster[i].FieldGoalsAtt;
         }
         for (int i = 0; i < AwayTeam.playersListRoster.Count; i++)
         {
             AwayTeam.playersListRoster[i].CareerPoints += AwayTeam.playersListRoster[i].PointsMatch;
             AwayTeam.playersListRoster[i].CareerSteals += AwayTeam.playersListRoster[i].StealsMatch;
             AwayTeam.playersListRoster[i].CareerGamesPlayed++;
+            AwayTeam.playersListRoster[i].CareerFieldGoalMade += AwayTeam.playersListRoster[i].FieldGoalsMade;
+            AwayTeam.playersListRoster[i].CareerFieldGoalAttempted += AwayTeam.playersListRoster[i].FieldGoalsAtt;
         }
         //Reduce the contract for the players
         if (HomeTeam.IsPlayerTeam)
@@ -1769,6 +1777,8 @@ public class MatchManager : MonoBehaviour
             p.CareerSteals += p.StealsMatch;
             p.CareerGamesPlayed++;
             p.buff = 0;
+            p.CareerFieldGoalMade += p.FieldGoalsMade;
+            p.CareerFieldGoalAttempted += p.FieldGoalsAtt;
             //if (teamA.IsPlayerTeam) p.ContractYears--;
         }
         foreach (Player p in teamB.playersListRoster)
@@ -1776,6 +1786,8 @@ public class MatchManager : MonoBehaviour
             p.CareerPoints += p.PointsMatch;
             p.CareerSteals += p.StealsMatch;
             p.CareerGamesPlayed++;
+            p.CareerFieldGoalMade += p.FieldGoalsMade;
+            p.CareerFieldGoalAttempted += p.FieldGoalsAtt;
         }
 
         teamA.HasPlayed = true;
@@ -2625,7 +2637,7 @@ public class MatchManager : MonoBehaviour
     {
         ResetStreak();
         int zone = playerWithTheBall.CurrentZone;
-
+        playerWithTheBall.FieldGoalsAtt++;
         if(zone == 0)
         uiManager.PlaybyPlayText(
             playerWithTheBall.playerLastName + " takes a shot from Outside "
@@ -2647,6 +2659,7 @@ public class MatchManager : MonoBehaviour
 
         if (hasScored)
         {
+            playerWithTheBall.FieldGoalsMade++;
             if (zone == 0)
             {
                 playerWithTheBall.PointsMatch += 4;
@@ -3094,7 +3107,7 @@ public class MatchManager : MonoBehaviour
     private void SimulateShoot()
     {
         playerWithTheBall.CurrentZone = ChooseZone(playerWithTheBall);
-
+        playerWithTheBall.FieldGoalsAtt++;
         // Chance de acerto bem maior na simulação
         float shootChance = 0.68f; // base
 
@@ -3113,7 +3126,7 @@ public class MatchManager : MonoBehaviour
             int points = playerWithTheBall.CurrentZone == 0 ? 4 : (playerWithTheBall.CurrentZone == 1 ? 5 : 6);
             playerWithTheBall.PointsMatch += points;
             teamWithball.Score += points;
-
+            playerWithTheBall.FieldGoalsMade++;
             Team defending = teamWithball == HomeTeam ? AwayTeam : HomeTeam;
             CalculateDamageAndReduceHP(defending, playerWithTheBall.CurrentZone);
         }

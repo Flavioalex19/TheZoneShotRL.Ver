@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using System.Drawing;
 
 public class EventsManager : MonoBehaviour
 {
@@ -10,11 +11,15 @@ public class EventsManager : MonoBehaviour
     private TeamManagerUI teamManagerUI;
 
     [Header("Referências UI - Arraste no Inspector")]
-    public Transform ChoiceButtonsTransform;        // Painel com os 2 botões de tipo de evento
-    public Transform EventChoiceButtonsTransform;   // Painel com os 2 botões de escolha (Choice1 / Choice2)
+    public Transform ChoiceButtonsTransform;        
 
-    public Image eventImage0;   // ImageIcon1
-    public Image eventImage1;   // ImageIcon0
+    public Transform EventChoiceButtonsTransform;   
+
+
+    public Image eventImage0;   
+
+    public Image eventImage1;   
+
 
     Player playerSelected;
 
@@ -31,11 +36,11 @@ public class EventsManager : MonoBehaviour
     {
         if (leagueManager == null || gameManager == null)
         {
-            Debug.LogError("[EventsManager] LeagueManager ou GameManager não encontrado!");
+            //Debug.LogError("[EventsManager] LeagueManager ou GameManager não encontrado!");
             return;
         }
 
-        Debug.Log("[EventsManager] Iniciando Nova Semana de Eventos...");
+        //Debug.Log("[EventsManager] Iniciando Nova Semana de Eventos...");
 
         leagueManager.canTrain = true;
         leagueManager.canTrade = true;
@@ -73,8 +78,8 @@ public class EventsManager : MonoBehaviour
             "They're offering either a big cash injection into the facility or a heavy marketing campaign.",
             Choice1 = "Structure the project financially - <color=#FFD700>Finances lvl Up +1</color>",
             Choice2 = "Start Marketing Campaing - <color=#FFD700>Office +1</color>",
-            btnIndex0 = 3,
-            btnIndex1 = 0,
+            btnIndex0 =11,
+            btnIndex1 = 2,
             Modifier = 1,
             eventType = EventType.Sponsor
         });
@@ -85,9 +90,9 @@ public class EventsManager : MonoBehaviour
             Description = "Helix-Cell brand wants to partner with us. They can supply state-of-the-art training equipment or offer a specific training plan for the team",
             Choice1 = "Upgrade the gear - <color=#FFD700>Team Equipment Lvl Up +1</color>",
             Choice2 = "Special Trainning Session - <color=#FFD700>Player Match bonus +5% </color>" + playerSelected.playerLastName,
-            btnIndex0 = 3,
+            btnIndex0 = 13,
             btnIndex1 = 1,
-            Modifier = 1,
+            Modifier = 0,
             eventType = EventType.Sponsor
         });
 
@@ -99,8 +104,8 @@ public class EventsManager : MonoBehaviour
             "We can lock in a brand new gear or go heavy on marketing hype plus on-court performance bonuses.",
             Choice1 = "Smart Lockers & Charging Stations <color=#FFD700>Team Equipment lvl up</color>",
             Choice2 = "Better marketing is always a good idea <color=#FFD700>Marketing lvl up</color>",
-            btnIndex0 = 5,
-            btnIndex1 = 1,
+            btnIndex0 = 13,
+            btnIndex1 = 9,
             eventType = EventType.Sponsor
         });
 
@@ -112,8 +117,8 @@ public class EventsManager : MonoBehaviour
             "<color=#FFD700>Change Personality: </color>" + playerSelected.playerLastName + " " + playerSelected.SetOVR().ToString(),
             Choice2 = "Handle the situation politely and protect the player - <color=#FFD700> Shooting Bonus for next match + 5% </color>",
             Modifier = 1,
-            btnIndex0 = 0,
-            btnIndex1 = 5,
+            btnIndex0 = 3,
+            btnIndex1 = 7,
             eventType = EventType.Interview
         });
 
@@ -124,7 +129,7 @@ public class EventsManager : MonoBehaviour
             Choice1 = "Day-to-day, staying focused on our work <color=#FFD700>Team Buff (Shooting)</color>",
             Choice2 = "Focus on the fundamentals <color=#FFD700>Match buff(Shoot or Pass or Juke)</color>",
             Modifier = 1,
-            btnIndex0 = 0,
+            btnIndex0 = 7,
             btnIndex1 = 0,
             eventType = EventType.Interview
         });
@@ -136,8 +141,8 @@ public class EventsManager : MonoBehaviour
             Choice1 = "Deal with problematic player - <color=#FFD700>Change player personality </color>" + playerSelected.playerLastName + " Ovr:" +playerSelected.SetOVR(),
             Choice2 = "Run tactical session <color=#FFD700>Train Player </color>" + playerSelected.playerLastName + " Ovr:" + playerSelected.SetOVR(),
             Modifier = 1,
-            btnIndex0 = 5,
-            btnIndex1 = 0,
+            btnIndex0 = 3,
+            btnIndex1 = 7,
             eventType = EventType.Sponsor
         });
 
@@ -147,8 +152,8 @@ public class EventsManager : MonoBehaviour
             Description = "Internal meeting to improve how the team works. We can focus on better organization or direct player development.",
             Choice1 = "Improve organization <color=#FFD700>Office Level Up</color>",
             Choice2 = "Focus on player development <color=#FFD700>Stats Level Up</color>",
-            btnIndex0 = 1,
-            btnIndex1 = 0,
+            btnIndex0 = 2,
+            btnIndex1 = 4,
             Modifier = 1,
             eventType = EventType.TeamMeeting
         });
@@ -159,8 +164,8 @@ public class EventsManager : MonoBehaviour
             Description = "R&D finished new prototypes. We can implement new training equipment or new training methods.",
             Choice1 = "Implement new equipment <color=#FFD700>Equips Level Up</color>",
             Choice2 = "Adopt new training methods <color=#FFD700>Stats Level Up</color>",
-            btnIndex0 = 0,
-            btnIndex1 = 1,
+            btnIndex0 = 13,
+            btnIndex1 = 6,
             Modifier = 1,
             eventType = EventType.RnD
         });
@@ -172,7 +177,7 @@ public class EventsManager : MonoBehaviour
             Description = "Research on in-game performance is ready. We can create performance routines or focus on specific technical improvements.",
             Choice1 = "Create performance routines <color=#FFD700>Player Buff</color>",
             Choice2 = "Improve shooting or joke or passing <color=#FFD700>Match Bonus (Shooting/Joke/Pass)</color>",
-            btnIndex0 = 1,
+            btnIndex0 = 4,
             btnIndex1 = 0,
             Modifier = 1,
             eventType = EventType.RnD
@@ -184,8 +189,8 @@ public class EventsManager : MonoBehaviour
             Description = "Daily operations meeting. We can focus on financial efficiency and administration or strengthen medical protocols.",
             Choice1 = "Improve financial efficiency <color=#FFD700>Finances Level Up</color>",
             Choice2 = "Strengthen medical protocols <color=#FFD700>Medicare Level Up</color>",
-            btnIndex0 = 1,
-            btnIndex1 = 0,
+            btnIndex0 = 11,
+            btnIndex1 = 1,
             Modifier = 1,
             eventType = EventType.Operations
         });
@@ -197,8 +202,8 @@ public class EventsManager : MonoBehaviour
             Description = "Operational review. We need to decide between improving office organization or focusing on arena maintenance.",
             Choice1 = "Improve office organization <color=#FFD700>Office Level Up</color>",
             Choice2 = "Focus on arena maintenance <color=#FFD700>Arena Level Up</color>",
-            btnIndex0 = 0,
-            btnIndex1 = 1,
+            btnIndex0 = 2,
+            btnIndex1 = 9,
             Modifier = 1,
             eventType = EventType.Operations
         });
@@ -209,8 +214,8 @@ public class EventsManager : MonoBehaviour
             Description = "Networking event with other GMs. We can gather some interesting infos about other teams.",
             Choice1 = "Focus on your rival, to seek any breaches <color=#FFD700>vsRival Bonus++</color>",
             Choice2 = "Focus on the meeting to improve the team <color=#FFD700>Team Bonus</color>",
-            btnIndex0 = 0,
-            btnIndex1 = 1,
+            btnIndex0 = 5,
+            btnIndex1 = 7,
             Modifier = 1,
             eventType = EventType.Networking
         });
@@ -222,8 +227,8 @@ public class EventsManager : MonoBehaviour
             Description = "Networking with media and influencers. We can work on the team's image or generate extra marketing momentum.",
             Choice1 = "Work on team image <color=#FFD700>Change Personality</color>",
             Choice2 = "Generate marketing momentum <color=#FFD700>Marketing Level Up</color>",
-            btnIndex0 = 2,
-            btnIndex1 = 3,
+            btnIndex0 = 4,
+            btnIndex1 = 11,
             Modifier = 1,
             eventType = EventType.Networking
         });
@@ -234,8 +239,8 @@ public class EventsManager : MonoBehaviour
             Description = "You received an email from an agent and the board. It can give a quick training or be used to traing new sets.",
             Choice1 = "Intense training <color=#FFD700>Match Buff</color>",
             Choice2 = "Train a new set <color=#FFD700>TeamBuff</color>",
-            btnIndex0 = 2,
-            btnIndex1 = 1,
+            btnIndex0 = 0,
+            btnIndex1 = 4,
             Modifier = 1,
             eventType = EventType.Emails
         });
@@ -245,10 +250,10 @@ public class EventsManager : MonoBehaviour
         {
             Index = 14,
             Description = "Email with feedback from fans and media. We can give light personality feedback or a small marketing push.",
-            Choice1 = "Light personality feedback <color=#FFD700>Light Personality Change</color>",
+            Choice1 = "Light personality feedback <color=#FFD700>Personality Change </color>" +  playerSelected.playerLastName + " Ovr:" +playerSelected.SetOVR(),
             Choice2 = "Small marketing push <color=#FFD700>Small Marketing Level Up</color>",
-            btnIndex0 = 26,
-            btnIndex1 = 27,
+            btnIndex0 = 3,
+            btnIndex1 = 11,
             Modifier = 1,
             eventType = EventType.Emails
         });
@@ -259,8 +264,8 @@ public class EventsManager : MonoBehaviour
             Description = "Long-term strategic meeting. We can invest in player development or improve office organization.",
             Choice1 = "Invest in player development <color=#FFD700>Long-term Stats Growth</color>",
             Choice2 = "Improve office organization <color=#FFD700>Office Level Up</color>",
-            btnIndex0 = 28,
-            btnIndex1 = 29,
+            btnIndex0 = 6,
+            btnIndex1 = 2,
             Modifier = 1,
             eventType = EventType.Structure
         });
@@ -272,8 +277,8 @@ public class EventsManager : MonoBehaviour
             Description = "Long-term planning. We need to choose between expanding the arena or strengthening financial foundations.",
             Choice1 = "Expand the arena <color=#FFD700>Arena Level Up</color>",
             Choice2 = "Strengthen long-term finances <color=#FFD700>Finances Level Up</color>",
-            btnIndex0 = 30,
-            btnIndex1 = 31,
+            btnIndex0 = 9,
+            btnIndex1 = 11,
             Modifier = 1,
             eventType = EventType.Structure
         });

@@ -17,6 +17,7 @@ public class TeamManagerUI : MonoBehaviour
 
     [Header("Intro")]
     [SerializeField] TextMeshProUGUI _text_NameTeam;
+    [SerializeField] TextMeshProUGUI text_currentCurrency;
 
     [Header("Events Panel")]
     [SerializeField] GameObject _panelEventsTypes;
@@ -239,7 +240,9 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] GameObject resultPanel;
     [SerializeField] Animator animator_resultPanel;
     [SerializeField] Button btn_returnToMainScreen;
-    
+    [SerializeField] private Image image_playerTeamLogo;   
+    [SerializeField] private Image image_mvpTeamLogo;
+
 
     [SerializeField] Image image_resultPanel_teamLogo;
     [SerializeField] TextMeshProUGUI text_resultPanel_teamName;
@@ -446,6 +449,7 @@ public class TeamManagerUI : MonoBehaviour
                 //GameObject.Find("EffortPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.EffortPoints.ToString();
             }
             text_teamStyle.text = gameManager.playerTeam.CurrentBudget.ToString();
+            text_currentCurrency.text = gameManager.playerTeam.CurrentBudget.ToString();
             UpdateFacilities();
         }
 
@@ -1878,6 +1882,7 @@ public class TeamManagerUI : MonoBehaviour
     //Result team panel
     public void ResultPanelCreation()
     {
+        /*
         if(isGameOver == false)
         {
             
@@ -1914,7 +1919,84 @@ public class TeamManagerUI : MonoBehaviour
                 Sprite sprite = Resources.Load<Sprite>("2D/Characters/Legends/Legend_Silver_Final");
             }
         }
+        */
+        if (isGameOver == false)
+        {
+            // Pode deixar vazio ou colocar alguma lógica futura
+        }
 
+        resultPanel.SetActive(true);
+        animator_resultPanel.SetTrigger("Go");
+
+        btn_returnToMainScreen.onClick.RemoveAllListeners();
+        btn_returnToMainScreen.onClick.AddListener(() => ResetRun());
+        btn_returnToMainScreen.onClick.AddListener(() => gameManager.ResetRunTeams());
+        btn_returnToMainScreen.onClick.AddListener(() => gameManager.saveSystem.ResetForNewLeagueRun());
+
+        // ==================== TEAM RESULTS ====================
+        int index = leagueManager.Standings.IndexOf(gameManager.playerTeam);
+        text_resultPanel_teamPlacement.text = index.ToString();
+        text_resultPanel_teamWins.text = gameManager.playerTeam.Wins.ToString();
+        text_resultPanel_teamDraws.text = gameManager.playerTeam.Draws.ToString();
+        text_resultPanel_teamDefeats.text = gameManager.playerTeam.Loses.ToString();
+
+        // ==================== PLAYER TEAM LOGO ====================
+        if (image_playerTeamLogo != null)
+        {
+            Sprite playerLogo = Resources.Load<Sprite>("2D/Team Logos/" + gameManager.playerTeam.TeamName);
+            if (playerLogo != null)
+                image_playerTeamLogo.sprite = playerLogo;
+            else
+                Debug.LogWarning("Logo do time do jogador não encontrado: " + gameManager.playerTeam.TeamName);
+        }
+
+        // ==================== MVP ====================
+        mvp = FindMVP();
+
+        if (mvp != null)
+        {
+            text_resultPanel_mvpName.text = mvp.playerFirstName + " " + mvp.playerLastName;
+            text_resultPanel_mvpPtsGame.text = (mvp.CareerPoints / mvp.CareerGamesPlayed).ToString();
+            text_resultPanel_mvpStealsGames.text = (mvp.CareerSteals / mvp.CareerGamesPlayed).ToString();
+            text_resultPanel_mvpGamesPlayed.text = mvp.CareerGamesPlayed.ToString();
+
+            // ==================== MVP TEAM LOGO ====================
+            if (image_mvpTeamLogo != null)
+            {
+                // Encontra o time do MVP
+                Team mvpTeam = null;
+                foreach (Team team in gameManager.leagueTeams)
+                {
+                    if (team.playersListRoster.Contains(mvp))
+                    {
+                        mvpTeam = team;
+                        break;
+                    }
+                }
+
+                if (mvpTeam != null)
+                {
+                    Sprite mvpLogo = Resources.Load<Sprite>("2D/Team Logos/" + mvpTeam.TeamName);
+                    if (mvpLogo != null)
+                        image_mvpTeamLogo.sprite = mvpLogo;
+                    else
+                        Debug.LogWarning("Logo do time do MVP não encontrado: " + mvpTeam.TeamName);
+                }
+            }
+
+            // ==================== MVP PORTRAIT ====================
+            if (mvp.ImageCharacterPortrait < 190)
+            {
+                Sprite[] sprites = Resources.LoadAll<Sprite>("2D/Characters/Alpha/Players");
+                Sprite sprite = sprites[mvp.ImageCharacterPortrait];
+                // image_mvpPortrait.sprite = sprite; // descomente se tiver essa variável
+            }
+            else if (mvp.ImageCharacterPortrait == 200)
+            {
+                Sprite sprite = Resources.Load<Sprite>("2D/Characters/Legends/Legend_Silver_Final");
+                // image_mvpPortrait.sprite = sprite; // descomente se tiver essa variável
+            }
+        }
     }
     //Find MVP
     public Player FindMVP()

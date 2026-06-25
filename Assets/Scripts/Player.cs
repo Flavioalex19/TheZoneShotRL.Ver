@@ -88,6 +88,8 @@ public class Player : MonoBehaviour
     public int CurrentZone = 0;
     public int PointsMatch = 0;
     public int StealsMatch = 0;
+    public int FieldGoalsMade= 0;
+    public int FieldGoalsAtt= 0;
     public bool IsStun = false;
     public int MaxStamina = 100;
     public int CurrentStamina;
