@@ -54,6 +54,8 @@ MonoBehaviour:
   Wins: 1
   Loses: 0
   Draws: 0
+  WinningStreak: 0
+  LosingStreak: 0
   SalaryCapReset: 100
   SalaryCap: 100
   CurrentSalary: 270
@@ -70,9 +72,18 @@ MonoBehaviour:
   fixEffort: 50
   fixSalaryCap: 0
   Description: From the field to the court, the Kansas Corn Cutters maintain a tradition
-    of developing talented players to their full potential. Cultivate and harvest
+    of developing talented players to their full potential. "Cultivate and harvest"
     is the team motto! Every player on this team is developed in hopes to bring fruits
     to this city and organization.
+  loc_Description:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   CoachName: Farmer Dwight
   _schedule: []
   _teamStyle: 1
@@ -87,8 +98,16 @@ MonoBehaviour:
   AdrenalineBarFull: 100
   match_hp: 0
   match_hpMax: 100
+  bonus_Shoot: 0
+  bonus_Juke: 0
+  bonus_Pass: 0
+  bonus_Defense: 0
   isR8: 0
   isR4: 0
   isFinalist: 0
   isChampion: 0
   TeamColor: {r: 3.9999995, g: 2.7025363, b: 0.11200022, a: 1}
+  RivalTeam: {fileID: 0}
+  references:
+    version: 2
+    RefIds: []

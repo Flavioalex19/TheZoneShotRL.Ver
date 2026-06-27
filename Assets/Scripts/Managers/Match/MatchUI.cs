@@ -905,21 +905,25 @@ public class MatchUI : MonoBehaviour
             Sprite spriteArch = null;
             //spriteArchtype = sprites1[index];
 
-            if (_matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait >= 0 || _matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait <= 20)
+            if (/*_matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait >= 0 || _matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait <= 20*/
+                _matchManager.HomeTeam.playersListRoster[i].TraitIndex == 0)
             {
                 spriteArch = sprites1[0];
             }
-            if (_matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait >= 21 && _matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait <= 40)
+            if (/*_matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait >= 21 && _matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait <= 40*/
+                _matchManager.HomeTeam.playersListRoster[i].TraitIndex == 1)
             {
                 //print("Imge number 1");
                 spriteArch = sprites1[1];
             }
-            if (_matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait >= 41 && _matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait <= 60)
+            if (/*_matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait >= 41 && _matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait <= 60*/
+                _matchManager.HomeTeam.playersListRoster[i].TraitIndex == 2)
             {
                 //print("Imge number 1");
                 spriteArch = sprites1[2];
             }
-            if (_matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait >= 61 && _matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait <= 80)
+            if (/*_matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait >= 61 && _matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait <= 80*/
+                _matchManager.HomeTeam.playersListRoster[i].TraitIndex == 3)
             {
                 spriteArch = sprites1[3];
             }
@@ -961,21 +965,25 @@ public class MatchUI : MonoBehaviour
             Sprite spriteArch = null;
             //spriteArchtype = sprites1[index];
 
-            if (_matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait >= 0 || _matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait <= 20)
+            if (/*_matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait >= 0 || _matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait <= 20*/
+                _matchManager.HomeTeam.playersListRoster[i].TraitIndex == 0)
             {
                 spriteArch = sprites1[0];
             }
-            if (_matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait >= 21 && _matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait <= 40)
+            if (/*_matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait >= 21 && _matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait <= 40*/
+                _matchManager.HomeTeam.playersListRoster[i].TraitIndex == 1)
             {
                 //print("Imge number 1");
                 spriteArch = sprites1[1];
             }
-            if (_matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait >= 41 && _matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait <= 60)
+            if (/*_matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait >= 41 && _matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait <= 60*/
+                _matchManager.HomeTeam.playersListRoster[i].TraitIndex == 2)
             {
                 //print("Imge number 1");
                 spriteArch = sprites1[2];
             }
-            if (_matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait >= 61 && _matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait <= 80)
+            if (/*_matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait >= 61 && _matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait <= 80*/
+                _matchManager.HomeTeam.playersListRoster[i].TraitIndex == 3)
             {
                 spriteArch = sprites1[3];
             }

@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
-
+using UnityEditor.Localization;
+using UnityEngine.Localization;
 
 public enum TeamStyle
 {
@@ -61,6 +63,7 @@ public class Team : MonoBehaviour
     public int fixSalaryCap= 100;
     //Atrributes
     [SerializeField]public string Description;
+    [SerializeField] LocalizedString loc_Description;
     public string CoachName;
     [SerializeField]public  List<Team> _schedule = new List<Team>();
     [SerializeField]public TeamStyle _teamStyle;

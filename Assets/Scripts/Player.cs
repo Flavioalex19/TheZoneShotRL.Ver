@@ -63,6 +63,7 @@ public class Player : MonoBehaviour
     public int Salary;
     public int J_Number;
     public int Zone;
+    public int TraitIndex;
     #region Hidden Variables
     public int Personality;//1 to 5 , 1-calm and 5-Agressive 
     public int MatchBuff=0;
@@ -127,6 +128,7 @@ public class Player : MonoBehaviour
         playerFirstName = names[Random.Range(0, names.Length)];
         playerLastName = secondNames[Random.Range(0,secondNames.Length)];
         Age = Random.Range(20, 34);
+        TraitIndex = Random.Range(0, 3);
         //ImageCharacterPortrait = Random.Range(0, 7);
         ImageCharacterPortrait = Random.Range(0, 30);
         GenerateContract();
@@ -161,10 +163,10 @@ public class Player : MonoBehaviour
         Personality = Random.Range(1, 6); // 1 a 5
 
         // Define atributos específicos baseado no portrait
-        bool isShootingSpec = ImageCharacterPortrait <= 20;
-        bool isJukingSpec = ImageCharacterPortrait >= 21 && ImageCharacterPortrait <= 40;
-        bool isControlSpec = ImageCharacterPortrait >= 41 && ImageCharacterPortrait <= 60;
-        bool isDefendingSpec = ImageCharacterPortrait >= 61 && ImageCharacterPortrait <= 80;
+        bool isShootingSpec = /*ImageCharacterPortrait <= 20*/TraitIndex==0;
+        bool isJukingSpec = /*ImageCharacterPortrait >= 21 && ImageCharacterPortrait <= 40*/TraitIndex == 1;
+        bool isControlSpec = /*ImageCharacterPortrait >= 41 && ImageCharacterPortrait <= 60*/TraitIndex == 2;
+        bool isDefendingSpec = /*ImageCharacterPortrait >= 61 && ImageCharacterPortrait <= 80*/TraitIndex == 3;
 
         // Gera atributos
         Shooting = isShootingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);

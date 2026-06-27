@@ -987,21 +987,25 @@ public class TeamManagerUI : MonoBehaviour
         Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
         Sprite archtypeSprite = null;
         
-        if (gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait >= 0 || gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait < 20)
+        if (/*gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait >= 0 || gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait < 20*/
+            gameManager.playerTeam.playersListRoster[index].TraitIndex == 0)
         {
             archtypeSprite = sprites1[0];
         }
-        if (gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait >= 21 && gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait <= 40)
+        if (/*gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait >= 21 && gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait <= 40*/
+            gameManager.playerTeam.playersListRoster[index].TraitIndex == 1)
         {
             
             archtypeSprite = sprites1[1];
         }
-        if (gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait >= 41 && gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait <= 60)
+        if (/*gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait >= 41 && gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait <= 60*/
+            gameManager.playerTeam.playersListRoster[index].TraitIndex == 2)
         {
             
             archtypeSprite = sprites1[2];
         }
-        if (gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait >= 61 && gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait <= 80)
+        if (/*gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait >= 61 && gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait <= 80*/
+            gameManager.playerTeam.playersListRoster[index].TraitIndex == 3)
         {
             archtypeSprite = sprites1[3];
         }
@@ -1156,21 +1160,21 @@ public class TeamManagerUI : MonoBehaviour
         Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
         Sprite archtypeSprite = null;
 
-        if (player.ImageCharacterPortrait >= 0 || player.ImageCharacterPortrait < 20)
+        if (/*player.ImageCharacterPortrait >= 0 || player.ImageCharacterPortrait < 20*/player.TraitIndex == 0)
         {
             archtypeSprite = sprites1[0];
         }
-        if (player.ImageCharacterPortrait >= 21 && player.ImageCharacterPortrait <= 40)
+        if (/*player.ImageCharacterPortrait >= 21 && player.ImageCharacterPortrait <= 40*/player.TraitIndex == 1)
         {
 
             archtypeSprite = sprites1[1];
         }
-        if (player.ImageCharacterPortrait >= 41 && player.ImageCharacterPortrait <= 60)
+        if (/*player.ImageCharacterPortrait >= 41 && player.ImageCharacterPortrait <= 60*/player.TraitIndex == 2)
         {
 
             archtypeSprite = sprites1[2];
         }
-        if (player.ImageCharacterPortrait >= 61 && player.ImageCharacterPortrait <= 80)
+        if (/*player.ImageCharacterPortrait >= 61 && player.ImageCharacterPortrait <= 80*/player.TraitIndex == 3)
         {
             archtypeSprite = sprites1[3];
         }
@@ -1330,21 +1334,21 @@ public class TeamManagerUI : MonoBehaviour
         Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
         Sprite archtypeSprite = null;
 
-        if (player.ImageCharacterPortrait >= 0 || player.ImageCharacterPortrait < 20)
+        if (/*player.ImageCharacterPortrait >= 0 || player.ImageCharacterPortrait < 20*/player.TraitIndex == 0)
         {
             archtypeSprite = sprites1[0];
         }
-        if (player.ImageCharacterPortrait >= 21 && player.ImageCharacterPortrait <= 40)
+        if (/*player.ImageCharacterPortrait >= 21 && player.ImageCharacterPortrait <= 40*/player.TraitIndex == 1)
         {
 
             archtypeSprite = sprites1[1];
         }
-        if (player.ImageCharacterPortrait >= 41 && player.ImageCharacterPortrait <= 60)
+        if (/*player.ImageCharacterPortrait >= 41 && player.ImageCharacterPortrait <= 60*/player.TraitIndex == 2)
         {
 
             archtypeSprite = sprites1[2];
         }
-        if (player.ImageCharacterPortrait >= 61 && player.ImageCharacterPortrait <= 80)
+        if (/*player.ImageCharacterPortrait >= 61 && player.ImageCharacterPortrait <= 80*/player.TraitIndex == 3)
         {
             archtypeSprite = sprites1[3];
         }

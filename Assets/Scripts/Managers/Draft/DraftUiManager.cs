@@ -19,7 +19,7 @@ public class DraftUiManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_currentTeamSalary;
 
     [SerializeField] GridLayoutGroup glg_draftNames;
-    
+    [SerializeField] Animator animator_transition;
     private int currentTeamIndex = 0;
     private int totalPicksPerTeam = 8;
     private int extraPlayersForPlayer = 15;
@@ -294,6 +294,13 @@ public class DraftUiManager : MonoBehaviour
         leagueManager.CanStartANewRun = false;
         leagueManager.canGenerateEvents = true;
         leagueManager.canStartANewWeek = true;
+        //SceneManager.LoadScene("MyTeamScreen");
+        StartCoroutine(WaitCutSceneToEnd());
+    }
+    IEnumerator WaitCutSceneToEnd()
+    {
+        animator_transition.SetTrigger("Go");
+        yield return new WaitForSeconds(2.5f);
         SceneManager.LoadScene("MyTeamScreen");
     }
 }
