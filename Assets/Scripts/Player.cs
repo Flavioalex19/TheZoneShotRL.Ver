@@ -162,7 +162,7 @@ public class Player : MonoBehaviour
         ImageCharacterPortrait = Random.Range(0, 80); // 0 a 35
         Personality = Random.Range(1, 6); // 1 a 5
 
-        // Define atributos específicos baseado no portrait
+        // Define atributos específicos baseado no trait
         bool isShootingSpec = /*ImageCharacterPortrait <= 20*/TraitIndex==0;
         bool isJukingSpec = /*ImageCharacterPortrait >= 21 && ImageCharacterPortrait <= 40*/TraitIndex == 1;
         bool isControlSpec = /*ImageCharacterPortrait >= 41 && ImageCharacterPortrait <= 60*/TraitIndex == 2;
@@ -196,9 +196,6 @@ public class Player : MonoBehaviour
         GenerateContract();
         buff = 0;
         bondPlayer = null;
-
-        // Debug opcional
-        // Debug.Log($"Gerado player (Portrait: {ImageCharacterPortrait}, OVR: {ovr})");
     }
     void GenerateContract()
     {

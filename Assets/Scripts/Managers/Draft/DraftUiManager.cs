@@ -20,6 +20,7 @@ public class DraftUiManager : MonoBehaviour
 
     [SerializeField] GridLayoutGroup glg_draftNames;
     [SerializeField] Animator animator_transition;
+    [SerializeField] BtnSelectionHandler btn_selectionHandler;
     private int currentTeamIndex = 0;
     private int totalPicksPerTeam = 8;
     private int extraPlayersForPlayer = 15;
@@ -70,6 +71,8 @@ public class DraftUiManager : MonoBehaviour
             Player newPlayer = CreateRandomPlayer(true);
             GeneratePlayerDraftButton(newPlayer);
         }
+        //LayoutRebuilder.ForceRebuildLayoutImmediate(glg_draftNames.GetComponent<RectTransform>());
+        //glg_draftNames.enabled = false;
         //3. Adiciona os legends ao time do player
         if (leagueManager.CanCreateLegend0)
         {
@@ -233,6 +236,8 @@ public class DraftUiManager : MonoBehaviour
         btnScript.SetSprite();
         btnScript.playerName = player.playerFirstName + " " + player.playerLastName;
         btnScript.PlayerOvr = player.SetOVR();
+
+        btn_selectionHandler.GetSelectabes().Add(newButton.GetComponent<Button>());
     }
 
     private void AddPlayerToTeam(Player player, Button btn)

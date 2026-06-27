@@ -449,10 +449,10 @@ public class TeamManagerUI : MonoBehaviour
                 //GameObject.Find("EffortPointsText").GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.EffortPoints.ToString();
             }
             text_teamStyle.text = gameManager.playerTeam.CurrentBudget.ToString();
-            text_currentCurrency.text = gameManager.playerTeam.CurrentBudget.ToString();
+            
             UpdateFacilities();
         }
-
+        text_currentCurrency.text = gameManager.playerTeam.CurrentBudget.ToString();
     }
     //GameOverReset
     public void ResetRun()

@@ -162,12 +162,12 @@ public class MatchManager : MonoBehaviour
         playerTeamWin = false;
         CanChooseDefenseAction = false;
         momentum = 0;
-        buff_Atk = 0;
-        buff_Defense = 0;
-        buff_Pass = 0;
+        buff_Atk = manager.playerTeam.bonus_Shoot;
+        buff_Defense = manager.playerTeam.bonus_Defense;
+        buff_Pass = manager.playerTeam.bonus_Pass;
         buff_SP = 0;
         buff_Stamina = 0;
-        buff_Juke = 0;
+        buff_Juke = manager.playerTeam.bonus_Juke;
         homeHP = 100;
         awayHP = 100;
         //Reset the teams to play
@@ -496,6 +496,10 @@ public class MatchManager : MonoBehaviour
         //Reduce the contract for the players
         if (HomeTeam.IsPlayerTeam)
         {
+            HomeTeam.bonus_Shoot = 0;
+            HomeTeam.bonus_Pass = 0;
+            HomeTeam.bonus_Juke = 0;
+            HomeTeam.bonus_Defense = 0;
             //print("Count Team");
             for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
             {

@@ -5866,7 +5866,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1260001745}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.15968765
+  m_Size: 0.3193753
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6234,6 +6234,7 @@ MonoBehaviour:
   text_currentTeamSalary: {fileID: 0}
   glg_draftNames: {fileID: 335450511}
   animator_transition: {fileID: 1500694008}
+  btn_selectionHandler: {fileID: 1634258455}
 --- !u!1 &1128975979
 GameObject:
   m_ObjectHideFlags: 0
@@ -8772,7 +8773,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1117051402921378457, guid: 461a966784530ea47978af13e788cc8b, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -194.72186
+      value: -194.7218
       objectReference: {fileID: 0}
     - target: {fileID: 1117051402921378457, guid: 461a966784530ea47978af13e788cc8b, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -9411,6 +9412,53 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1634258453
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1634258454}
+  - component: {fileID: 1634258455}
+  m_Layer: 0
+  m_Name: ButtonManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1634258454
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1634258453}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1634258455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1634258453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fa6b9a4d6e8e1d429075bcc30176f74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BtnSelectionHandler
+  Selectables: []
+  _selectedAnimScale: 1.1
+  _scaleDuration: 0.25
 --- !u!1 &1640855650
 GameObject:
   m_ObjectHideFlags: 0
@@ -13477,6 +13525,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1110340508}
+  - {fileID: 1634258454}
   - {fileID: 519420032}
   - {fileID: 619394802}
   - {fileID: 2266283239957732296}

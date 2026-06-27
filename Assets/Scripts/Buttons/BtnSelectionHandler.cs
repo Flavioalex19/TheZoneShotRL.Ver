@@ -146,5 +146,8 @@ public class BtnSelectionHandler : MonoBehaviour
         }
         _lastHovered = null; // Clear the reference
     }
-    
+    public List<Selectable> GetSelectabes()
+    {
+        return Selectables;
+    }   
 }
