@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
     int currentTeamIndex = 0;
 
     int count = 0;//testing the transition to onli create ince time the players
-
+    public bool isDemostration = false;
     //public Team playerTeam;
     public Team playerTeam
     {

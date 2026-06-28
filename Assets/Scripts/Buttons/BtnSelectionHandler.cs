@@ -5,12 +5,22 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using DG.Tweening;
+using TMPro;
 
 public class BtnSelectionHandler : MonoBehaviour
 {
 
     [Header("References")]
     public List<Selectable> Selectables = new List<Selectable>();
+
+    [Header("Text and color text")]
+    [SerializeField] List<TextMeshProUGUI> list_text_highlight = new List<TextMeshProUGUI>();
+    [ColorUsage(true, true)]
+    [SerializeField] Color color0;
+    [ColorUsage(true, true)]
+    [SerializeField] Color color1;
+    [ColorUsage(true, true)]
+    [SerializeField] Color color2;
 
     [Header("Animations Variables")]
     [SerializeField] protected float _selectedAnimScale = 1.1f;

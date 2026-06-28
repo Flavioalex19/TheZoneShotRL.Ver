@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 using System.Drawing;
+using System;
 
 public class EventsManager : MonoBehaviour
 {
@@ -10,15 +11,17 @@ public class EventsManager : MonoBehaviour
     private GameManager gameManager;
     private TeamManagerUI teamManagerUI;
 
+    private Dictionary<int, Action<EventOption, int>> eventEffects = new Dictionary<int, Action<EventOption, int>>();
+
     [Header("Referências UI - Arraste no Inspector")]
-    public Transform ChoiceButtonsTransform;        
+    public Transform ChoiceButtonsTransform;
 
-    public Transform EventChoiceButtonsTransform;   
+    public Transform EventChoiceButtonsTransform;
 
 
-    public Image eventImage0;   
+    public Image eventImage0;
 
-    public Image eventImage1;   
+    public Image eventImage1;
 
 
     Player playerSelected;
@@ -29,6 +32,7 @@ public class EventsManager : MonoBehaviour
         gameManager = FindFirstObjectByType<GameManager>();
         teamManagerUI = FindFirstObjectByType<TeamManagerUI>();
         playerSelected = GetRandomPlayer();
+
     }
 
     // ====================== FUNÇÃO PRINCIPAL (chamada pelo TeamManagerUI) ======================
@@ -39,7 +43,7 @@ public class EventsManager : MonoBehaviour
             //Debug.LogError("[EventsManager] LeagueManager ou GameManager não encontrado!");
             return;
         }
-
+        RegisterEventEffects();
         //Debug.Log("[EventsManager] Iniciando Nova Semana de Eventos...");
 
         leagueManager.canTrain = true;
@@ -78,7 +82,7 @@ public class EventsManager : MonoBehaviour
             "They're offering either a big cash injection into the facility or a heavy marketing campaign.",
             Choice1 = "Structure the project financially - <color=#FFD700>Finances lvl Up +1</color>",
             Choice2 = "Start Marketing Campaing - <color=#FFD700>Office +1</color>",
-            btnIndex0 =11,
+            btnIndex0 = 11,
             btnIndex1 = 2,
             Modifier = 1,
             eventType = EventType.Sponsor
@@ -138,7 +142,7 @@ public class EventsManager : MonoBehaviour
         {
             Index = 5,
             Description = "Weekly team meeting. There's some tension in the locker room. We can address the conflicts or run a focused tactical session.",
-            Choice1 = "Deal with problematic player - <color=#FFD700>Change player personality </color>" + playerSelected.playerLastName + " Ovr:" +playerSelected.SetOVR(),
+            Choice1 = "Deal with problematic player - <color=#FFD700>Change player personality </color>" + playerSelected.playerLastName + " Ovr:" + playerSelected.SetOVR(),
             Choice2 = "Run tactical session <color=#FFD700>Train Player </color>" + playerSelected.playerLastName + " Ovr:" + playerSelected.SetOVR(),
             Modifier = 1,
             btnIndex0 = 3,
@@ -250,7 +254,7 @@ public class EventsManager : MonoBehaviour
         {
             Index = 14,
             Description = "Email with feedback from fans and media. We can give light personality feedback or a small marketing push.",
-            Choice1 = "Light personality feedback <color=#FFD700>Personality Change </color>" +  playerSelected.playerLastName + " Ovr:" +playerSelected.SetOVR(),
+            Choice1 = "Light personality feedback <color=#FFD700>Personality Change </color>" + playerSelected.playerLastName + " Ovr:" + playerSelected.SetOVR(),
             Choice2 = "Small marketing push <color=#FFD700>Small Marketing Level Up</color>",
             btnIndex0 = 3,
             btnIndex1 = 11,
@@ -295,11 +299,11 @@ public class EventsManager : MonoBehaviour
             return;
         }
 
-        EventType randomEvent0 = (EventType)Random.Range(0, System.Enum.GetValues(typeof(EventType)).Length);
+        EventType randomEvent0 = (EventType)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EventType)).Length);
         EventType randomEvent1;
         do
         {
-            randomEvent1 = (EventType)Random.Range(0, System.Enum.GetValues(typeof(EventType)).Length);
+            randomEvent1 = (EventType)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(EventType)).Length);
         }
         while (randomEvent1 == randomEvent0);
 
@@ -339,7 +343,7 @@ public class EventsManager : MonoBehaviour
 
         if (filteredEvents.Count == 0) return;
 
-        EventOption event1 = filteredEvents[Random.Range(0, filteredEvents.Count)];
+        EventOption event1 = filteredEvents[UnityEngine.Random.Range(0, filteredEvents.Count)];
 
         if (EventChoiceButtonsTransform == null) return;
 
@@ -358,7 +362,7 @@ public class EventsManager : MonoBehaviour
 
         EventChoiceButtonsTransform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = event1.Choice1;
         EventChoiceButtonsTransform.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = event1.Choice2;
-        
+
         // Sprites dos botões de escolha
         List<Sprite> spriteList = new List<Sprite>(Resources.LoadAll<Sprite>("2D/UI/Team Management/WeekEventsButtons/Official"));
         if (spriteList.Count >= 2)
@@ -373,6 +377,7 @@ public class EventsManager : MonoBehaviour
     // ====================== APLICA O EFEITO (exatamente o switch que você mandou) ======================
     public void AddOnClick(EventOption eventOption, int indexOfChoice)
     {
+        /*
         if (eventOption == null) return;
 
         // Garante que o playerTeam está setado
@@ -417,13 +422,13 @@ public class EventsManager : MonoBehaviour
                 else LevelUpPlayer(playerSelected);
                 break;
             case 8:
-                if (indexOfChoice == 0) PlayerBuff(playerSelected,5);
+                if (indexOfChoice == 0) PlayerBuff(playerSelected, 5);
                 else MatchBuff(5);
                 break;
             case 9:
                 if (indexOfChoice == 0) gameManager.playerTeam.FinancesLvl++;
                 else gameManager.playerTeam.MedicalLvl++;
-                break; 
+                break;
             case 10:
                 if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
                 else gameManager.playerTeam.ArenaLvl++;
@@ -435,9 +440,9 @@ public class EventsManager : MonoBehaviour
             case 12:
                 if (indexOfChoice == 0) ChangePlayerPersonality(playerSelected);
                 else gameManager.playerTeam.MarketingLvl++;
-                break; 
+                break;
             case 13:
-                if (indexOfChoice == 0)MatchBuff(5);
+                if (indexOfChoice == 0) MatchBuff(5);
                 else TeamBuff();
                 break;
             case 14:
@@ -456,7 +461,7 @@ public class EventsManager : MonoBehaviour
                 break;
         }
 
-        
+
 
         // Limpa após uso
         leagueManager.eventOptions.Clear();
@@ -478,6 +483,39 @@ public class EventsManager : MonoBehaviour
         {
             gameManager.saveSystem.SaveTeamInfo(gameManager.leagueTeams[i]);
         }
+        */
+        if (eventOption == null) return;
+
+        if (eventEffects.TryGetValue(eventOption.Index, out var action))
+        {
+            action.Invoke(eventOption, indexOfChoice);
+        }
+        else
+        {
+            Debug.LogWarning($"[EventsManager] Nenhum efeito registrado para o evento de índice {eventOption.Index}");
+        }
+
+        // Limpa após uso
+        leagueManager.eventOptions.Clear();
+
+        if (EventChoiceButtonsTransform != null)
+            EventChoiceButtonsTransform.gameObject.SetActive(false);
+
+        // Atualiza UI
+        if (teamManagerUI != null)
+        {
+            teamManagerUI.UpdateHeadquartersUI();
+            leagueManager.HandleFreeAgents();
+        }
+
+        // Salva
+        gameManager.saveSystem.SaveLeague();
+        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
+        {
+            gameManager.saveSystem.SaveTeamInfo(gameManager.leagueTeams[i]);
+        }
+
+        Debug.Log($"[EventsManager] Efeito aplicado - Index {eventOption.Index}, Escolha {indexOfChoice}");
     }
 
     public void SetEventImage(string eventName, Image eventImage)
@@ -559,12 +597,12 @@ public class EventsManager : MonoBehaviour
     public void MatchBuff(int value)
     {
         int index = 0;
-        index = (int)UnityEngine.Random.Range(0,3);
-        switch (index) 
+        index = (int)UnityEngine.Random.Range(0, 3);
+        switch (index)
         {
             case 0:
                 gameManager.playerTeam.bonus_Shoot = value;
-                break; 
+                break;
             case 1:
                 gameManager.playerTeam.bonus_Juke = value;
                 break;
@@ -574,7 +612,7 @@ public class EventsManager : MonoBehaviour
             case 3:
                 gameManager.playerTeam.bonus_Defense = value;
                 break;
-                
+
 
         }
     }
@@ -609,5 +647,128 @@ public class EventsManager : MonoBehaviour
     void VsRivals()
     {
 
+    }
+    private void RegisterEventEffects()
+    {
+        eventEffects.Clear();
+
+        // Evento 0
+        eventEffects.Add(0, (ev, choice) =>
+        {
+            if (choice == 0) gameManager.playerTeam.FinancesLvl++;
+            else gameManager.playerTeam.OfficeLvl++;
+        });
+
+        // Evento 1
+        eventEffects.Add(1, (ev, choice) =>
+        {
+            if (choice == 0) gameManager.playerTeam.TeamEquipmentLvl++;
+            else PlayerBuff(playerSelected, 5);
+        });
+
+        // Evento 2
+        eventEffects.Add(2, (ev, choice) =>
+        {
+            if (choice == 0) gameManager.playerTeam.TeamEquipmentLvl++;
+            else gameManager.playerTeam.MarketingLvl++;
+        });
+
+        // Evento 3
+        eventEffects.Add(3, (ev, choice) =>
+        {
+            if (choice == 0) ChangePlayerPersonality(playerSelected);
+            else PlayerBuff(playerSelected, 5);
+        });
+
+        // Evento 4
+        eventEffects.Add(4, (ev, choice) =>
+        {
+            if (choice == 0) TeamBuff();
+            else MatchBuff(5);
+        });
+
+        // Evento 5
+        eventEffects.Add(5, (ev, choice) =>
+        {
+            if (choice == 0) ChangePlayerPersonality(playerSelected);
+            else PlayerBuff(playerSelected, 5);
+        });
+
+        // Evento 6
+        eventEffects.Add(6, (ev, choice) =>
+        {
+            if (choice == 0) gameManager.playerTeam.ArenaLvl++;
+            else gameManager.playerTeam.MarketingLvl++;
+        });
+
+        // Evento 7
+        eventEffects.Add(7, (ev, choice) =>
+        {
+            if (choice == 0) gameManager.playerTeam.TeamEquipmentLvl++;
+            else LevelUpPlayer(playerSelected);
+        });
+
+        // Evento 8
+        eventEffects.Add(8, (ev, choice) =>
+        {
+            if (choice == 0) PlayerBuff(playerSelected, 5);
+            else MatchBuff(5);
+        });
+
+        // Evento 9
+        eventEffects.Add(9, (ev, choice) =>
+        {
+            if (choice == 0) gameManager.playerTeam.FinancesLvl++;
+            else gameManager.playerTeam.MedicalLvl++;
+        });
+
+        // Evento 10
+        eventEffects.Add(10, (ev, choice) =>
+        {
+            if (choice == 0) gameManager.playerTeam.OfficeLvl++;
+            else gameManager.playerTeam.ArenaLvl++;
+        });
+
+        // Evento 11
+        eventEffects.Add(11, (ev, choice) =>
+        {
+            if (choice == 0) VsRivals();
+            else TeamBuff();
+        });
+
+        // Evento 12
+        eventEffects.Add(12, (ev, choice) =>
+        {
+            if (choice == 0) ChangePlayerPersonality(playerSelected);
+            else gameManager.playerTeam.MarketingLvl++;
+        });
+
+        // Evento 13
+        eventEffects.Add(13, (ev, choice) =>
+        {
+            if (choice == 0) MatchBuff(5);
+            else TeamBuff();
+        });
+
+        // Evento 14
+        eventEffects.Add(14, (ev, choice) =>
+        {
+            if (choice == 0) gameManager.playerTeam.OfficeLvl++;
+            else gameManager.playerTeam.FinancesLvl++;
+        });
+
+        // Evento 15
+        eventEffects.Add(15, (ev, choice) =>
+        {
+            if (choice == 0) gameManager.playerTeam.OfficeLvl++;
+            else gameManager.playerTeam.FinancesLvl++;
+        });
+
+        // Evento 16
+        eventEffects.Add(16, (ev, choice) =>
+        {
+            if (choice == 0) gameManager.playerTeam.OfficeLvl++;
+            else gameManager.playerTeam.FinancesLvl++;
+        });
     }
 }
