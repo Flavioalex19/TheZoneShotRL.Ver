@@ -110,9 +110,9 @@ public class MatchUI : MonoBehaviour
     [SerializeField] GameObject panel_OffensivePanel;
     [SerializeField] Transform transform_statsArea;
     [SerializeField] Transform transform_gameStatsArea;
-    [SerializeField] Transform transform_ActiveHomePlayers;
+    [SerializeField] public Transform transform_ActiveHomePlayers;
     //[SerializeField] TextMeshProUGUI text_playerWithTheBallName;
-    [SerializeField] Transform transform_playersZones;
+    [SerializeField] public Transform transform_playersZones;
     [SerializeField] Transform transform_ActiveAwayPlayers;
     //[SerializeField] TextMeshProUGUI text_PlayerwithTheBallJersey;
     [SerializeField] TextMeshProUGUI text_PlayerArchtype;

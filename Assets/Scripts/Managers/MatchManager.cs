@@ -1,3 +1,4 @@
+using DG.Tweening;
 using DG.Tweening.Core.Easing;
 using System;
 using System.Collections;
@@ -9,6 +10,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR;
+using DG.Tweening;
 //using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class MatchManager : MonoBehaviour
@@ -711,24 +713,7 @@ public class MatchManager : MonoBehaviour
                         yield break; 
 
                     case AIAction.Special:
-                        /*
-                        // Vazio por enquanto  fallback pra shoot
-                        if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ShootingText());
-                        if (IsFastforward == false)
-                        {
-                            if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
-                        }
 
-                        ToScore(playerWithTheBall,playerDefending, teamWithball);
-                        teamWithball.Score += 10;
-                        teamWithball.AdrenalineBar = 0;
-                        if (!isSimulation) HomeTeam.match_hp -= 30;//randomizar
-                        uiManager.PlaybyPlayText("What a special from the " + teamWithball.TeamName);
-                        if (IsFastforward == false) if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
-                        ResetDefensiveOptions();
-                        SwitchPossession();
-                        yield break; 
-                        */
                         if (!isSimulation) uiManager.PlaybyPlayText("Special Move from " + playerWithTheBall.playerLastName + "!");
 
                         if (IsFastforward == false)
@@ -822,18 +807,6 @@ public class MatchManager : MonoBehaviour
                 if (!isSimulation) _matchUI.PlayerWithBallButtonsOnOff();
                 if (!isSimulation) _matchUI.UpdatePlayerPlacements();
                 if (!isSimulation) _matchUI.UpdateStreakValue(consecutiveSuccesses);
-                //_matchUI._actionDefense.SetActive(false);
-                //if(!isSimulation) _matchUI.ActivateAnimatorOffensivePanel();
-                //MatchEvents();
-                //CanChooseAction = true;
-                /*
-                if ((leagueManager.isOnR8 == true || leagueManager.isOnR4 == true || leagueManager.isOnFinals == true) && currentGamePossessons <= 1)
-                {
-                    if (HomeTeam.Score == AwayTeam.Score)
-                    {
-                        currentGamePossessons++;
-                    }
-                }*/
                 
                 _matchUI.OffesnivePanelOnOff(true);
                 _matchUI.SetScoringPercentage(ScoringEquation(playerWithTheBall, playerDefending, playerWithTheBall.CurrentZone,0));
@@ -885,7 +858,6 @@ public class MatchManager : MonoBehaviour
                 else if (_ChoosePass)
                 {
                     //_matchUI.UsedPlayerBtns();
-                    print("PASS!!!!");
                     _ChoosePass = false;
                     if(IsFastforward == false)_matchUI.ActionPanelAnim(0, "Passing");
                     //Lose Stamina
@@ -902,7 +874,6 @@ public class MatchManager : MonoBehaviour
                         {
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         }
-                        //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " prepares for next action.");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                         SelectDefender();
                         if(IsFastforward == false)if (!isSimulation) _matchUI.ResultActionPanel("S",1);
@@ -998,8 +969,6 @@ public class MatchManager : MonoBehaviour
                 }
                 else if (_ChooseBeatDefender)
                 {
-                    //_matchUI.UsedPlayerBtns();
-                    print("JUKE!!!!");
                     if (IsFastforward == false)
                         _matchUI.ActionPanelAnim(7, "Juke");
                     //Lose Stamina
@@ -2495,6 +2464,37 @@ public class MatchManager : MonoBehaviour
         }
 
         offense.CurrentZone = Mathf.Min(zone + 1, 2);
+        //New/verofy
+        int newZone = Mathf.Min(zone + 1, 2);
+        offense.CurrentZone = newZone;
+
+        // ====================== MOVIMENTO SUAVE DO JOGADOR (APENAS PLAYER TEAM) ======================
+        if (teamWithball.IsPlayerTeam && !isSimulation)
+        {
+            int playerIndex = HomeTeam.playersListRoster.IndexOf(offense);
+
+            if (playerIndex >= 0 && playerIndex < 4)
+            {
+                // Pega as referências do MatchUI
+                Transform playerUI = _matchUI.transform_ActiveHomePlayers.GetChild(playerIndex);
+                Transform targetZone = _matchUI.transform_playersZones
+                                            .GetChild(playerIndex)
+                                            .GetChild(0)
+                                            .GetChild(newZone);
+
+                // Atualiza o visual da zona imediatamente (esconde/mostra elemento)
+                if (newZone > 1)
+                    playerUI.GetChild(7).GetChild(3).gameObject.SetActive(false);
+                else
+                    playerUI.GetChild(7).GetChild(3).gameObject.SetActive(true);
+
+                // Inicia o movimento suave
+                StartCoroutine(MovePlayerToZone(playerUI, targetZone.position));
+
+                return true; // Já chamamos o UpdatePlayerPlacements dentro da coroutine
+            }
+        }
+        
         _matchUI.UpdatePlayerPlacements();
         _matchUI.TurnOffPlayerButtons();
         return true; // Juke bem sucedido
@@ -3383,5 +3383,29 @@ public class MatchManager : MonoBehaviour
                 isRogue = false;
             }
         }
+    }
+    private IEnumerator MovePlayerToZone(Transform playerUI, Vector3 targetPosition)
+    {
+        float duration = 2f;           // Tempo do movimento (ajuste como quiser)
+        float elapsed = 0f;
+        Vector3 startPosition = playerUI.position;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            // Movimento suave
+            playerUI.position = Vector3.Lerp(startPosition, targetPosition, t);
+
+            yield return null;
+        }
+
+        // Garante que chegue exatamente no destino
+        playerUI.position = targetPosition;
+
+        // Depois do movimento, atualiza o restante da UI
+        _matchUI.UpdatePlayerPlacements();
+        _matchUI.TurnOffPlayerButtons();
     }
 }

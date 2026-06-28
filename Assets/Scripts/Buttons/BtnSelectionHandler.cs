@@ -103,6 +103,10 @@ public class BtnSelectionHandler : MonoBehaviour
         };
         PointerExit.callback.AddListener(OnPointExit);
         trigger.triggers.Add(PointerExit);
+
+        EventTrigger.Entry clickEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick };
+        clickEntry.callback.AddListener(OnPointerClick);
+        trigger.triggers.Add(clickEntry);
     }
 
     public void OnSelect(BaseEventData eventData)
@@ -131,6 +135,9 @@ public class BtnSelectionHandler : MonoBehaviour
             // ADDED: Store the hovered selectable.
             _lastHovered = pointerEventData.pointerEnter.GetComponent<Selectable>();
 
+            //Change color text
+            ChangeTextColor(pointerEventData.pointerEnter, color1);
+
             if (GameObject.Find("SoundTrack Buttons Source"))
             {
                 AudioSource audioSource = GameObject.Find("SoundTrack Buttons Source").GetComponent<AudioSource>();
@@ -141,23 +148,61 @@ public class BtnSelectionHandler : MonoBehaviour
     }
     public void OnPointExit(BaseEventData eventData)
     {
-        /*
-        PointerEventData pointerEventData = eventData as PointerEventData;
-        if (pointerEventData != null)
-        {
-            pointerEventData.selectedObject = null;
-        }
-        */
         // Use the stored _lastHovered instead of pointerEventData.pointerEnter.
         if (_lastHovered != null && _scales.ContainsKey(_lastHovered))
         {
             _scaleDownTween?.Kill(); // Kill any running tween
             _scaleDownTween = _lastHovered.transform.DOScale(_scales[_lastHovered], _scaleDuration);
+
+            //Change color text
+            ChangeTextColor(_lastHovered.gameObject, color0);
         }
-        _lastHovered = null; // Clear the reference
+        if (_lastHovered.transition == Selectable.Transition.ColorTint)
+        {
+            // Opção mais confiável: força a transição de cor de volta para Normal
+            _lastHovered.targetGraphic.CrossFadeColor(
+                _lastHovered.colors.normalColor,
+                0.1f,           // duração da transição
+                true,
+                true
+            );
+        }
+        else
+        {
+            // Caso use outro tipo de transição (SpriteSwap ou Animation)
+            _lastHovered.OnDeselect(null);
+        }
+        //_lastHovered = null; // Clear the reference
     }
     public List<Selectable> GetSelectabes()
     {
         return Selectables;
-    }   
+    }
+    private void ChangeTextColor(GameObject target, Color newColor)
+    {
+        if (target == null) return;
+
+        TextMeshProUGUI[] texts = target.GetComponentsInChildren<TextMeshProUGUI>(true);
+
+        foreach (TextMeshProUGUI text in texts)
+        {
+            text.color = newColor;
+        }
+    }
+    public void OnPointerClick(BaseEventData eventData)
+    {
+        if (eventData.selectedObject == null) return;
+
+        Transform target = eventData.selectedObject.transform;
+
+        // Mata tweens anteriores para evitar conflito
+        target.DOKill();
+
+        // Animação de clique: Diminui - Volta ao normal
+        target.DOScale(_scales[eventData.selectedObject.GetComponent<Selectable>()] * 0.30f, 0.08f)
+              .OnComplete(() =>
+              {
+                  target.DOScale(_scales[eventData.selectedObject.GetComponent<Selectable>()], 0.15f);
+              });
+    }
 }
