@@ -151,6 +151,10 @@ public class MatchManager : MonoBehaviour
         _sp_numberOfSPActions = manager.playerTeam.ArenaLvl;
         if (manager.playerTeam.ArenaLvl == 0) _sp_numberOfSPActions = 1;
         if (manager.playerTeam.ArenaLvl > 5) _sp_numberOfSPActions = 5;
+        for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
+        {
+            HomeTeam.playersListRoster[i].CurrentStamina = HomeTeam.playersListRoster[i].MaxStamina;
+        }
         //_sp_numberOfSPActions = manager.playerTeam.FansSupportPoints / 20;
         //print(_sp_numberOfSPActions + " Here");
     }
@@ -2464,6 +2468,7 @@ public class MatchManager : MonoBehaviour
         }
 
         offense.CurrentZone = Mathf.Min(zone + 1, 2);
+        
         //New/verofy
         int newZone = Mathf.Min(zone + 1, 2);
         offense.CurrentZone = newZone;
@@ -3405,7 +3410,7 @@ public class MatchManager : MonoBehaviour
         playerUI.position = targetPosition;
 
         // Depois do movimento, atualiza o restante da UI
-        _matchUI.UpdatePlayerPlacements();
+        //_matchUI.UpdatePlayerPlacements();
         _matchUI.TurnOffPlayerButtons();
     }
 }

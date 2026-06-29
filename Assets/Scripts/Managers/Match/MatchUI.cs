@@ -868,14 +868,11 @@ public class MatchUI : MonoBehaviour
     }
     public void TimeoutStartsUpdateBtns()
     {
-        //print("GOOOOOO");
         for (int i = 0; i < debugTest.transform.childCount; i++)
         {
             debugTest.transform.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].playerFirstName.ToString() + " "
                 + _matchManager.HomeTeam.playersListRoster[i].playerLastName + " " + _matchManager.HomeTeam.playersListRoster[i].J_Number.ToString();
             debugTest.transform.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = "OVR " + _matchManager.HomeTeam.playersListRoster[i].ovr.ToString();
-            //GameObject.Find("StartersTimeOut").transform.GetChild(i).GetChild(2).GetChild(0).GetComponent<Image>().fillAmount =
-            //(float)_matchManager.HomeTeam.playersListRoster[i].CurrentStamina / (float)_matchManager.HomeTeam.playersListRoster[i].MaxStamina;
             Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
             switch (_matchManager.HomeTeam.playersListRoster[i].Personality)
             {
@@ -904,37 +901,17 @@ public class MatchUI : MonoBehaviour
             Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
             Sprite spriteArch = null;
             //spriteArchtype = sprites1[index];
-
-            if (/*_matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait >= 0 || _matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait <= 20*/
-                _matchManager.HomeTeam.playersListRoster[i].TraitIndex == 0)
-            {
-                spriteArch = sprites1[0];
-            }
-            if (/*_matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait >= 21 && _matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait <= 40*/
-                _matchManager.HomeTeam.playersListRoster[i].TraitIndex == 1)
-            {
-                //print("Imge number 1");
-                spriteArch = sprites1[1];
-            }
-            if (/*_matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait >= 41 && _matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait <= 60*/
-                _matchManager.HomeTeam.playersListRoster[i].TraitIndex == 2)
-            {
-                //print("Imge number 1");
-                spriteArch = sprites1[2];
-            }
-            if (/*_matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait >= 61 && _matchManager.HomeTeam.playersListRoster[i].ImageCharacterPortrait <= 80*/
-                _matchManager.HomeTeam.playersListRoster[i].TraitIndex == 3)
-            {
-                spriteArch = sprites1[3];
-            }
-            debugTest.transform.GetChild(i).GetChild(4).GetComponent<Image>().sprite = spriteArch;
-            //print(_matchManager.HomeTeam.playersListRoster[i].CurrentStamina + "thisis my stamina");
+            leagueManager.FindTraitSprite(spriteArch, _matchManager.HomeTeam.playersListRoster[i]);
+            Sprite archetypeSprite = leagueManager.FindTraitSprite(spriteArch,_matchManager.HomeTeam.playersListRoster[i]);
+            debugTest.transform.GetChild(i).GetChild(4).GetComponent<Image>().sprite = archetypeSprite;
         }
         for (int i = 0; i < _timeOutBenchPlayers.childCount; i++)
         {
             _timeOutBenchPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i + 4].playerLastName + " "
                 + _matchManager.HomeTeam.playersListRoster[i + 4].J_Number;
             _timeOutBenchPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i + 4].ovr.ToString();
+            //_matchManager.HomeTeam.playersListRoster[i + 4].CurrentStamina = _matchManager.HomeTeam.playersListRoster[i + 4].MaxStamina;
+            print(_matchManager.HomeTeam.playersListRoster[i + 4].CurrentStamina + " Stasmina pf the bench player");
             _timeOutBenchPlayers.GetChild(i).GetChild(2).GetChild(0).GetComponent<Image>().fillAmount = (float)_matchManager.HomeTeam.playersListRoster[i + 4].CurrentStamina / (float)_matchManager.HomeTeam.playersListRoster[i + 4].MaxStamina;
             Sprite sprite = null; //= Resources.Load<Sprite>("Assets/Resources/2D/Player Personalities/UI_icon_Personalite_01.png");
             switch (_matchManager.HomeTeam.playersListRoster[i + 4].Personality)
@@ -963,31 +940,9 @@ public class MatchUI : MonoBehaviour
             _timeOutBenchPlayers.GetChild(i).GetChild(3).GetComponent<Image>().sprite = sprite;
             Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
             Sprite spriteArch = null;
-            //spriteArchtype = sprites1[index];
+            Sprite archetypeSprite = leagueManager.FindTraitSprite(spriteArch, _matchManager.HomeTeam.playersListRoster[i + 4]);
+            _timeOutBenchPlayers.GetChild(i).GetChild(4).GetComponent<Image>().sprite = archetypeSprite;
 
-            if (/*_matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait >= 0 || _matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait <= 20*/
-                _matchManager.HomeTeam.playersListRoster[i].TraitIndex == 0)
-            {
-                spriteArch = sprites1[0];
-            }
-            if (/*_matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait >= 21 && _matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait <= 40*/
-                _matchManager.HomeTeam.playersListRoster[i].TraitIndex == 1)
-            {
-                //print("Imge number 1");
-                spriteArch = sprites1[1];
-            }
-            if (/*_matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait >= 41 && _matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait <= 60*/
-                _matchManager.HomeTeam.playersListRoster[i].TraitIndex == 2)
-            {
-                //print("Imge number 1");
-                spriteArch = sprites1[2];
-            }
-            if (/*_matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait >= 61 && _matchManager.HomeTeam.playersListRoster[i + 4].ImageCharacterPortrait <= 80*/
-                _matchManager.HomeTeam.playersListRoster[i].TraitIndex == 3)
-            {
-                spriteArch = sprites1[3];
-            }
-            _timeOutBenchPlayers.GetChild(i).GetChild(4).GetComponent<Image>().sprite = spriteArch;
         }
     }
 }

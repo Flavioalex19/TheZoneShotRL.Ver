@@ -45,35 +45,35 @@ public class Player : MonoBehaviour
     };
     [SerializeField] public string playerFirstName;
     [SerializeField] public string playerLastName;
-    public int Age;
+    [SerializeField]public int Age;
     [SerializeField] public int ovr;
-    public int Shooting;
-    public int Inside;
-    public int Mid;
-    public int Outside;
-    public int Awareness;
-    public int Defending;
-    public int Guarding;
-    public int Stealing;
-    public int Juking;
-    public int Consistency;
-    public int Control;
-    public int Positioning;
-    public int ContractYears;
-    public int Salary;
-    public int J_Number;
+    [SerializeField]public int Shooting;
+    [SerializeField] public int Inside;
+    [SerializeField] public int Mid;
+    [SerializeField] public int Outside;
+    [SerializeField] public int Awareness;
+    [SerializeField] public int Defending;
+    [SerializeField] public int Guarding;
+    [SerializeField] public int Stealing;
+    [SerializeField] public int Juking;
+    [SerializeField] public int Consistency;
+    [SerializeField] public int Control;
+    [SerializeField] public int Positioning;
+    [SerializeField] public int ContractYears;
+    [SerializeField] public int Salary;
+    [SerializeField] public int J_Number;
     public int Zone;
-    public int TraitIndex;
+    [SerializeField] public int TraitIndex;
     #region Hidden Variables
-    public int Personality;//1 to 5 , 1-calm and 5-Agressive 
-    public int MatchBuff=0;
+    [SerializeField] public int Personality;//1 to 5 , 1-calm and 5-Agressive 
+    [SerializeField] public int MatchBuff=0;
     //CareerStats
-    public int CareerGamesPlayed = 0;
-    public int CareerPoints = 0;
-    public int CareerSteals = 0;
-    public int CareerFieldGoalAttempted = 0;
-    public int CareerFieldGoalMade = 0;
-    public int CareerBlocks = 0;
+    [SerializeField] public int CareerGamesPlayed = 0;
+    [SerializeField] public int CareerPoints = 0;
+    [SerializeField] public int CareerSteals = 0;
+    [SerializeField] public int CareerFieldGoalAttempted = 0;
+    [SerializeField] public int CareerFieldGoalMade = 0;
+    [SerializeField] public int CareerBlocks = 0;
     
     //PlayerEvents/Team stats
     public Player bondPlayer = null;
@@ -193,6 +193,8 @@ public class Player : MonoBehaviour
         playerFirstName = names[Random.Range(0, names.Length)];
         playerLastName = secondNames[Random.Range(0, secondNames.Length)];
         Age = Random.Range(20, 34);
+        TraitIndex = Random.Range(0, 8);
+        print(TraitIndex + " This is the trait index");
         GenerateContract();
         buff = 0;
         bondPlayer = null;

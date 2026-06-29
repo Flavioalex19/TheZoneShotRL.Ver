@@ -56,7 +56,7 @@ public class CardDisplay : MonoBehaviour
             case CardStyle.Stamina:
                 for (int i = 0; i < matchManager.teamWithball.playersListRoster.Count; i++)
                 {
-                    matchManager.teamWithball.playersListRoster[i].CurrentStamina += card.modifyValue * 2;
+                    matchManager.teamWithball.playersListRoster[i].CurrentStamina += card.modifyValue;
                 }
                 break;
             case CardStyle.Sp:

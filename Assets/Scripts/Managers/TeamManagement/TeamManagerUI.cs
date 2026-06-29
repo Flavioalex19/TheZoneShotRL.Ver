@@ -986,30 +986,8 @@ public class TeamManagerUI : MonoBehaviour
         //Archtype
         Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
         Sprite archtypeSprite = null;
-        
-        if (/*gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait >= 0 || gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait < 20*/
-            gameManager.playerTeam.playersListRoster[index].TraitIndex == 0)
-        {
-            archtypeSprite = sprites1[0];
-        }
-        if (/*gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait >= 21 && gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait <= 40*/
-            gameManager.playerTeam.playersListRoster[index].TraitIndex == 1)
-        {
-            
-            archtypeSprite = sprites1[1];
-        }
-        if (/*gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait >= 41 && gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait <= 60*/
-            gameManager.playerTeam.playersListRoster[index].TraitIndex == 2)
-        {
-            
-            archtypeSprite = sprites1[2];
-        }
-        if (/*gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait >= 61 && gameManager.playerTeam.playersListRoster[index].ImageCharacterPortrait <= 80*/
-            gameManager.playerTeam.playersListRoster[index].TraitIndex == 3)
-        {
-            archtypeSprite = sprites1[3];
-        }
-        image_TeamPlayerArchtype.sprite = archtypeSprite;
+        leagueManager.FindTraitSprite(archtypeSprite, gameManager.playerTeam.playersListRoster[index]);
+        image_TeamPlayerArchtype.sprite = /*archtypeSprite*/leagueManager.FindTraitSprite(archtypeSprite, gameManager.playerTeam.playersListRoster[index]);
         //Personality
         Sprite personalitySprite = null;
         switch (gameManager.playerTeam.playersListRoster[index].Personality)
@@ -1159,26 +1137,8 @@ public class TeamManagerUI : MonoBehaviour
         //archtype
         Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
         Sprite archtypeSprite = null;
-
-        if (/*player.ImageCharacterPortrait >= 0 || player.ImageCharacterPortrait < 20*/player.TraitIndex == 0)
-        {
-            archtypeSprite = sprites1[0];
-        }
-        if (/*player.ImageCharacterPortrait >= 21 && player.ImageCharacterPortrait <= 40*/player.TraitIndex == 1)
-        {
-
-            archtypeSprite = sprites1[1];
-        }
-        if (/*player.ImageCharacterPortrait >= 41 && player.ImageCharacterPortrait <= 60*/player.TraitIndex == 2)
-        {
-
-            archtypeSprite = sprites1[2];
-        }
-        if (/*player.ImageCharacterPortrait >= 61 && player.ImageCharacterPortrait <= 80*/player.TraitIndex == 3)
-        {
-            archtypeSprite = sprites1[3];
-        }
-        image_trade_MyPlayerArchtype.sprite = archtypeSprite;
+        leagueManager.FindTraitSprite(archtypeSprite, player);
+        image_trade_MyPlayerArchtype.sprite = /*archtypeSprite*/leagueManager.FindTraitSprite(archtypeSprite, player);
         //personality
         Sprite personalitySprite = null;
         switch (player.Personality)
@@ -1333,26 +1293,9 @@ public class TeamManagerUI : MonoBehaviour
         //archtype
         Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
         Sprite archtypeSprite = null;
-
-        if (/*player.ImageCharacterPortrait >= 0 || player.ImageCharacterPortrait < 20*/player.TraitIndex == 0)
-        {
-            archtypeSprite = sprites1[0];
-        }
-        if (/*player.ImageCharacterPortrait >= 21 && player.ImageCharacterPortrait <= 40*/player.TraitIndex == 1)
-        {
-
-            archtypeSprite = sprites1[1];
-        }
-        if (/*player.ImageCharacterPortrait >= 41 && player.ImageCharacterPortrait <= 60*/player.TraitIndex == 2)
-        {
-
-            archtypeSprite = sprites1[2];
-        }
-        if (/*player.ImageCharacterPortrait >= 61 && player.ImageCharacterPortrait <= 80*/player.TraitIndex == 3)
-        {
-            archtypeSprite = sprites1[3];
-        }
-        image_trade_receiveArchtype.sprite = archtypeSprite;
+        leagueManager.FindTraitSprite(archtypeSprite, player);
+        
+        image_trade_receiveArchtype.sprite =/* archtypeSprite*/leagueManager.FindTraitSprite(archtypeSprite, player);
         text_tradeCostOfTrade.text = trade_costOfTrade.ToString();
         //personality
         Sprite personalitySprite = null;

@@ -686,7 +686,12 @@ public class LeagueManager : MonoBehaviour
                 break;
         }      
     }
-
+    public Sprite FindTraitSprite(Sprite SendSprite,Player player)
+    {
+        Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
+        return sprites1[(int)player.TraitIndex];
+        
+    }
 }
 [System.Serializable]
 public class EventOption

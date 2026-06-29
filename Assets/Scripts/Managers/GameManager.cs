@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     public List<Team> leagueTeams = new List<Team>();
     //public Team team; // Reference to the Team object
     public GameObject playerPrefab; // Prefab to instantiate new players
+    public Player playerprefab2;
     public SaveSystem saveSystem; // Reference to the SaveSystem
     public static GameManager Instance { get; private set; }
 
@@ -76,6 +77,7 @@ public class GameManager : MonoBehaviour
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
         uiManager = GameObject.Find("UIManager").GetComponent<UiManager>();
         mode = GameMode.MainMenu;
+        playerprefab2 = playerPrefab.GetComponent<Player>();
         //NewTeamsForRun();
         if (leagueManager.CanStartANewRun)
         {
@@ -116,7 +118,7 @@ public class GameManager : MonoBehaviour
             // Load the saved team data into the newly created teams
             for (int i = 0; i < leagueTeams.Count; i++)
             {
-                saveSystem.LoadTeamInfo(leagueTeams[i], playerPrefab);
+                saveSystem.LoadTeamInfo(leagueTeams[i], /*playerPrefab*/playerprefab2);
 
                 if (leagueTeams[i].IsPlayerTeam)
                     playerTeam = leagueTeams[i];

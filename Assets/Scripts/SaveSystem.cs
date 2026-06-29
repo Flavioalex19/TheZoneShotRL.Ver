@@ -125,7 +125,7 @@ public class SaveSystem : MonoBehaviour
             if (t != null) lm.List_Finalist.Add(t);
         }
     }
-    public void LoadTeamInfo(Team team, GameObject playerPrefab)
+    public void LoadTeamInfo(Team team, Player playerPrefab)
     {
         string filePath = GetSavePath(team.TeamName);
         if (!File.Exists(filePath)) return;
@@ -176,10 +176,13 @@ public class SaveSystem : MonoBehaviour
         // ---------- LOAD DOS JOGADORES ----------
         foreach (PlayerData pd in teamData.playersListData)
         {
-            GameObject go = Instantiate(playerPrefab);
-            Player p = go.AddComponent<Player>();
+            //GameObject go = Instantiate(playerPrefab);
+            //Player p = go.AddComponent<Player>();
             //go.transform.SetParent(GameManager.transform);  // Ou um objeto persistente
-            DontDestroyOnLoad(go);
+           
+            Player p = Instantiate(playerPrefab);
+
+            DontDestroyOnLoad(p);
             //Player p = new Player();
 
             p.playerFirstName = pd.firstName;
@@ -209,7 +212,7 @@ public class SaveSystem : MonoBehaviour
             p.MatchBuff = pd.matchBuff;
             p.ImageCharacterPortrait = pd.imageIndex;
             p.J_Number = pd.jNum;
-
+            p.TraitIndex = pd.trait;
             p.Zone = pd.zone;
             p.CurrentZone = 0;
 

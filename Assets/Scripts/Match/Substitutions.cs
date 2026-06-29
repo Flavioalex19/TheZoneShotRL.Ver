@@ -62,10 +62,10 @@ public class Substitutions : MonoBehaviour
             text_benchPlayer.text = " ";
             indexBench = -1;
             indexStarter = -1;
-            matchUI.TimeoutStartsUpdateBtns();
+            
             
         }
-        
+        matchUI.TimeoutStartsUpdateBtns();
 
     }
     public void ChooseStarterToSwap(int index)
