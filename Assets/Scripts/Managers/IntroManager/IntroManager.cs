@@ -15,6 +15,7 @@ public class IntroManager : MonoBehaviour
     [SerializeField] Button btn_career;
     [SerializeField] Button btn_resetLeague;
     [SerializeField] Button btn_clearSave;
+    [SerializeField] GameObject go_OptionsMenu;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,6 +23,7 @@ public class IntroManager : MonoBehaviour
         leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
         _canProgressToMainMenu = false;
         _canPressEnter = false;
+        go_OptionsMenu.SetActive(false);
         btn_career.onClick.AddListener(() => _gameManager.AdvanceToDraft());
         btn_resetLeague.onClick.AddListener(() => leagueManager.ResetLeagueHistoryMode());//mudar para savesystem.ClearLeagueProgress
         btn_clearSave.onClick.AddListener(() => ClearCurrentSave());

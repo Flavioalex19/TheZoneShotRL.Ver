@@ -446,8 +446,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4699962332542736028}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -522,7 +522,7 @@ RectTransform:
   m_Father: {fileID: 1376811733659692691}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1551,7 +1551,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5645030352786448581}
+        m_TargetAssemblyTypeName: OptionsManager, Assembly-CSharp
+        m_MethodName: ToggleFullScreen
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 1
 --- !u!1 &3215844791830901566
 GameObject:
@@ -1597,11 +1609,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae3d64c5c0e8674ba142e651a4cc363, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  masterVolumeSlider: {fileID: 5475379942503006729}
-  resolutionDropdown: {fileID: 0}
+  volumeSlider: {fileID: 5475379942503006729}
+  sfxTag: SFX
   brightnessSlider: {fileID: 1270760024807141543}
-  quitButton: {fileID: 2573321808818571361}
-  windowedToggle: {fileID: 3986462349506955814}
+  brightnessOverlay: {fileID: 0}
+  fullscreenToggle: {fileID: 494154489667703181}
+  resolutionDropdown: {fileID: 0}
+  isFullscreen: 1
 --- !u!1 &3227539147257377816
 GameObject:
   m_ObjectHideFlags: 0
@@ -2033,8 +2047,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8446153882781417318}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2414,7 +2428,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Window Mode
+  m_Text: FULLSCREEN
 --- !u!1 &4899769854703036067
 GameObject:
   m_ObjectHideFlags: 0
@@ -2571,7 +2585,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 6445904149833282541}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
@@ -2753,7 +2767,7 @@ RectTransform:
   m_Father: {fileID: 9016121689246803441}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -3058,7 +3072,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4932812944925026528
 RectTransform:
   m_ObjectHideFlags: 0

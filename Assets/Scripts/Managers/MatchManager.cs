@@ -141,6 +141,8 @@ public class MatchManager : MonoBehaviour
     //Skip/FastFoward
     public bool IsFastforward = false;
 
+    public bool isAutoJuke= false;
+
     int lastDamgeValue = 0;
 
     bool _isOnSetupStage;//
@@ -155,8 +157,7 @@ public class MatchManager : MonoBehaviour
         {
             HomeTeam.playersListRoster[i].CurrentStamina = HomeTeam.playersListRoster[i].MaxStamina;
         }
-        //_sp_numberOfSPActions = manager.playerTeam.FansSupportPoints / 20;
-        //print(_sp_numberOfSPActions + " Here");
+        
     }
     // Start is called before the first frame update
     void Start()
@@ -835,7 +836,6 @@ public class MatchManager : MonoBehaviour
 
                 if (_ChooseScoring)
                 {
-                    print("SCORE!!!!");
                     //_matchUI.UsedPlayerBtns();
                     _ChooseScoring = false;
                     if(IsFastforward == false)_matchUI.ActionPanelAnim(5, "Shoot");
@@ -847,21 +847,17 @@ public class MatchManager : MonoBehaviour
                     {
                         if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                     }
-                    //uiManager.PlaybyPlayText(playerWithTheBall.playerFirstName + " goes for the score!");
                     uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ShootingText());
                     if (IsFastforward == false)
                     {
                         if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                     }
-                    //yield return Scoring(playerWithTheBall, false);!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if (!isSimulation) yield return ToScore(playerWithTheBall,playerDefending, HomeTeam);
-                    //ResetChoices();
                     if (!isSimulation) yield break;
                     
                 }
                 else if (_ChoosePass)
                 {
-                    //_matchUI.UsedPlayerBtns();
                     _ChoosePass = false;
                     if(IsFastforward == false)_matchUI.ActionPanelAnim(0, "Passing");
                     //Lose Stamina
@@ -873,7 +869,7 @@ public class MatchManager : MonoBehaviour
                     }
                     if (MakePassToTeammate(passPlayerIndex))
                     {
-                        RegisterSuccess();//register +streak
+                        RegisterSuccess();
                         if (IsFastforward == false)
                         {
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
@@ -886,7 +882,6 @@ public class MatchManager : MonoBehaviour
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         }
                         if (HomeTeam.AdrenalineBar<HomeTeam.AdrenalineBarFull)HomeTeam.AdrenalineBar += adrenaline_addUp;
-                        //staminaLoss
 
                         ResetChoices();
                         continue;
@@ -895,13 +890,12 @@ public class MatchManager : MonoBehaviour
                     {
                         ResetStreak();
                         playerDefending.StealsMatch++;
-                        playerWithTheBall.HasTheBall = false;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        playerWithTheBall.HasTheBall = false;
                         if (IsFastforward == false)
                         {
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         }
                         SwitchPossession();
-                        //_matchUI.OffesnivePanelOnOff(false);
                         if(IsFastforward == false)_matchUI.ResultActionPanel("F", 1);
                         //uiManager.PlaybyPlayText(teamWithball.TeamName + " has the ball.");
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
@@ -975,6 +969,7 @@ public class MatchManager : MonoBehaviour
                 {
                     if (IsFastforward == false)
                         _matchUI.ActionPanelAnim(7, "Juke");
+                    if (!isSimulation) yield return new WaitForSeconds(1.2f);
                     //Lose Stamina
                     StaminaLossByAction(playerWithTheBall);
                     yield return new WaitForSeconds(1f);
@@ -985,6 +980,7 @@ public class MatchManager : MonoBehaviour
                         {
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         }
+                        if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                         uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + "Pass the defender");
                         SelectDefender();
                         if(IsFastforward == false)_matchUI.ResultActionPanel("S",2);
@@ -2461,7 +2457,7 @@ public class MatchManager : MonoBehaviour
         jukePercentage = finalChance;
 
         // ====================== RESULTADO FINAL ======================
-        if (!success)
+        if (!success/*|| isAutoJuke == false*/)
         {
             offense.CurrentZone = 0;
             return false; // Turnover / Steal
@@ -2470,36 +2466,9 @@ public class MatchManager : MonoBehaviour
         offense.CurrentZone = Mathf.Min(zone + 1, 2);
         
         //New/verofy
-        int newZone = Mathf.Min(zone + 1, 2);
-        offense.CurrentZone = newZone;
-
-        // ====================== MOVIMENTO SUAVE DO JOGADOR (APENAS PLAYER TEAM) ======================
-        if (teamWithball.IsPlayerTeam && !isSimulation)
-        {
-            int playerIndex = HomeTeam.playersListRoster.IndexOf(offense);
-
-            if (playerIndex >= 0 && playerIndex < 4)
-            {
-                // Pega as referências do MatchUI
-                Transform playerUI = _matchUI.transform_ActiveHomePlayers.GetChild(playerIndex);
-                Transform targetZone = _matchUI.transform_playersZones
-                                            .GetChild(playerIndex)
-                                            .GetChild(0)
-                                            .GetChild(newZone);
-
-                // Atualiza o visual da zona imediatamente (esconde/mostra elemento)
-                if (newZone > 1)
-                    playerUI.GetChild(7).GetChild(3).gameObject.SetActive(false);
-                else
-                    playerUI.GetChild(7).GetChild(3).gameObject.SetActive(true);
-
-                // Inicia o movimento suave
-                StartCoroutine(MovePlayerToZone(playerUI, targetZone.position));
-
-                return true; // Já chamamos o UpdatePlayerPlacements dentro da coroutine
-            }
-        }
-        
+        //int newZone = Mathf.Min(zone + 1, 2);
+        //offense.CurrentZone = newZone;
+        print(offense.playerLastName + " " + offense.CurrentZone);
         _matchUI.UpdatePlayerPlacements();
         _matchUI.TurnOffPlayerButtons();
         return true; // Juke bem sucedido

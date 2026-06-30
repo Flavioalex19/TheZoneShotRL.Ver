@@ -140,7 +140,7 @@ public class TrainingManager : MonoBehaviour
 
             // === BASE BOOST POR IDADE ===
             int baseMin = 1;
-            int baseMax = 3; // padrão para jogadores mais novos
+            int baseMax = 5; // padrão para jogadores mais novos
 
             if (playerAge >= 30)
             {
@@ -148,7 +148,7 @@ public class TrainingManager : MonoBehaviour
             }
             else if (playerAge >= 26 && playerAge <= 29)
             {
-                baseMax = 2; // meio termo
+                baseMax = 3; // meio termo
             }
 
             // Aplica Equipment Level em cima da base de idade

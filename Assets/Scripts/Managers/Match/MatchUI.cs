@@ -673,7 +673,8 @@ public class MatchUI : MonoBehaviour
         {
             if (_matchManager.HomeTeam.playersListRoster[i].CurrentZone > 0)
             {
-                print("Go to zone");
+                MoveUIObject(transform_ActiveHomePlayers.GetChild(i).transform, 
+                    transform_playersZones.GetChild(i).GetChild(0).GetChild(_matchManager.HomeTeam.playersListRoster[i].CurrentZone).transform,1f);
                 transform_ActiveHomePlayers.GetChild(i).position =
                     transform_playersZones.GetChild(i).GetChild(0).GetChild(_matchManager.HomeTeam.playersListRoster[i].CurrentZone).position;
             }
@@ -944,5 +945,56 @@ public class MatchUI : MonoBehaviour
             _timeOutBenchPlayers.GetChild(i).GetChild(4).GetComponent<Image>().sprite = archetypeSprite;
 
         }
+    }
+    public void MoveUIObject(Transform objectToMove, Transform targetPosition, float duration = 0.5f)
+    {
+        if (objectToMove == null || targetPosition == null)
+        {
+            Debug.LogWarning("MoveUIObject: Um dos Transforms está nulo!");
+            return;
+        }
+
+        StartCoroutine(MoveCoroutine(objectToMove, targetPosition.position, duration));
+    }
+
+    private IEnumerator MoveCoroutine(Transform obj, Vector3 targetWorldPosition, float duration)
+    {
+        /*
+        float elapsed = 0f;
+        Vector3 startPosition = obj.position;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            // Movimento suave 
+            obj.position = Vector3.Lerp(startPosition, targetWorldPosition, t);
+
+            yield return null;
+        }
+
+        // Garante que o objeto chegue exatamente na posição final
+        obj.position = targetWorldPosition;
+        */
+        float elapsed = 0f;
+        Vector3 startPosition = obj.position;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            // ====================== SMOOTHSTEP (Ease In Out) ======================
+            // Essa é a função da imagem (Smoothstep)
+            float smoothT = t * t * (3f - 2f * t);
+            // =====================================================================
+
+            obj.position = Vector3.Lerp(startPosition, targetWorldPosition, smoothT);
+            yield return null;
+        }
+
+        // Garante que chegue exatamente no destino
+        obj.position = targetWorldPosition;
     }
 }

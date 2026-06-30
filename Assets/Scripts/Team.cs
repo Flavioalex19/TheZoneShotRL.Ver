@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityEditor.Localization;
 using UnityEngine.Localization;
 
 public enum TeamStyle

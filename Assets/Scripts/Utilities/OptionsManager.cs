@@ -5,185 +5,188 @@ using UnityEngine.UI;
 
 public class OptionsManager : MonoBehaviour
 {
-    [Header("Audio")]
-    [SerializeField] private Slider masterVolumeSlider;
+    
+    [Header("Referências")]
+    [Tooltip("Arraste aqui o Slider que vai controlar o volume dos SFX")]
+    public Slider volumeSlider;
 
-    [Header("Resolution")]
-    [SerializeField] private Dropdown resolutionDropdown;
+    [Header("Configuração")]
+    [Tooltip("Tag que os objetos com AudioSource de SFX devem ter")]
+    public string sfxTag = "sfx";
+    private const string VOLUME_KEY = "SFX_Volume";
+    private float currentVolume = 1f;
 
-    [Header("Brightness")]
-    [SerializeField] private Slider brightnessSlider;
+    [Header("=== BRIGHTNESS ===")]
+    public Slider brightnessSlider;
+    public Image brightnessOverlay;
+    private const string BRIGHTNESS_KEY = "Brightness";
+    private float currentBrightness = 0.85f;
 
-    [Header("Buttons")]
-    [SerializeField] private Button quitButton;
+    [Header("=== FULLSCREEN ===")]
+    public Toggle fullscreenToggle;
+    public Dropdown resolutionDropdown;
+    public bool isFullscreen = true;
+    private const string FULLSCREEN_KEY = "IsFullScreen";
 
-    [Header("Window Mode")]
-    [SerializeField] private Toggle windowedToggle;
-
-    private List<AudioSource> allAudioSources = new List<AudioSource>();
-    private List<Resolution> availableResolutions;
-
+    private List<Resolution> uniqueResolutions = new List<Resolution>();
     private void Awake()
     {
-        SetupVolumeSlider();
-        SetupResolutionDropdown();
-        SetupQuitButton();
-        SetupBrightnessSlider();
-        SetupWindowModeToggle();
-    }
-
-    // ====================== MASTER VOLUME ======================
-    private void SetupVolumeSlider()
-    {
-        if (masterVolumeSlider == null) return;
-
-        // Sempre carrega o valor salvo (ou usa 1.0 como padrão)
-        float savedVolume = PlayerPrefs.GetFloat("MasterVolume", 1f);
-        masterVolumeSlider.value = savedVolume;
-
-        // Aplica imediatamente em TODOS os áudios da cena
-        ApplyVolumeToAllAudioSources(savedVolume);
-
-        // Listener do slider
-        masterVolumeSlider.onValueChanged.AddListener(SetMasterVolume);
-    }
-    private void ApplyVolumeToAllAudioSources(float volume)
-    {
-        // Pega TODOS os AudioSource da cena (incluindo os inativos)
-        AudioSource[] allSources = FindObjectsOfType<AudioSource>(true);
-
-        foreach (AudioSource source in allSources)
+        // Carrega o volume salvo só uma vez
+        currentVolume = PlayerPrefs.GetFloat(VOLUME_KEY, 1f);
+        ApplyVolume(currentVolume);
+        //ApplyVolumeToAllSFX(currentVolume);
+        if (resolutionDropdown != null && uniqueResolutions.Count == 0)
         {
-            if (source != null)
-                source.volume = volume;
+            PopulateResolutions();
+        }
+        if (fullscreenToggle != null)
+        {
+            fullscreenToggle.isOn = isFullscreen;
+        }
+        currentBrightness = PlayerPrefs.GetFloat(BRIGHTNESS_KEY, 0.85f);
+        ApplyBrightness(currentBrightness);
+        if (PlayerPrefs.HasKey(FULLSCREEN_KEY))
+        {
+            isFullscreen = PlayerPrefs.GetInt(FULLSCREEN_KEY) == 1;
         }
 
-        Debug.Log($"Volume aplicado em {allSources.Length} AudioSources. Valor: {volume:F2}");
-    }
-    public void SetMasterVolume(float volume)
-    {
-       
-        // Salva o valor
-        PlayerPrefs.SetFloat("MasterVolume", volume);
-        PlayerPrefs.Save();
+        Screen.fullScreen = isFullscreen;
 
-        // Aplica em todos os áudios
-        ApplyVolumeToAllAudioSources(volume);
-    }
-
-    // ====================== RESOLUÇÃO ======================
-    private void SetupResolutionDropdown()
-    {
-        if (resolutionDropdown == null) return;
-
-        availableResolutions = new List<Resolution>(Screen.resolutions);
-        resolutionDropdown.ClearOptions();
-
-        List<string> options = new List<string>();
-        int currentIndex = 0;
-
-        for (int i = 0; i < availableResolutions.Count; i++)
+        if (fullscreenToggle != null)
         {
-            string option = $"{availableResolutions[i].width} x {availableResolutions[i].height}";
-            options.Add(option);
+            fullscreenToggle.isOn = isFullscreen;
+        }
+    }
+    private void Update()
+    {
+        if(isFullscreen)
+        Screen.fullScreen = true;
+        else Screen.fullScreen = false;
+    }
+    private void OnEnable()
+    {
+        // Aplica os valores salvos
+        ApplyVolume(currentVolume);
+        ApplyBrightness(currentBrightness);
 
-            if (availableResolutions[i].width == Screen.currentResolution.width &&
-                availableResolutions[i].height == Screen.currentResolution.height)
-            {
-                currentIndex = i;
-            }
+        // === VOLUME ===
+        if (volumeSlider != null)
+        {
+            volumeSlider.value = currentVolume;
+            volumeSlider.onValueChanged.RemoveListener(SetVolume);
+            volumeSlider.onValueChanged.AddListener(SetVolume);
         }
 
-        resolutionDropdown.AddOptions(options);
-        resolutionDropdown.value = currentIndex;
-        resolutionDropdown.RefreshShownValue();
+        // === BRIGHTNESS ===
+        if (brightnessSlider != null)
+        {
+            brightnessSlider.value = currentBrightness;
+            brightnessSlider.onValueChanged.RemoveListener(SetBrightness);
+            brightnessSlider.onValueChanged.AddListener(SetBrightness);
+        }
 
-        resolutionDropdown.onValueChanged.AddListener(ChangeResolution);
+        // === FULLSCREEN ===
+        
+
+        // === RESOLUTION ===
+        
     }
 
-    public void ChangeResolution(int index)
-    {
-        if (index < 0 || index >= availableResolutions.Count) return;
-
-        Resolution res = availableResolutions[index];
-        Screen.SetResolution(res.width, res.height, Screen.fullScreen);
-        Debug.Log($"Resolução alterada para: {res.width} x {res.height}");
-    }
-    // ====================== BRIGHTNESS ======================
-    private void SetupBrightnessSlider()
-    {
-        if (brightnessSlider == null) return;
-
-        // Carrega valor salvo (padrão = 1.0)
-        float savedBrightness = PlayerPrefs.GetFloat("Brightness", 1f);
-        brightnessSlider.value = savedBrightness;
-
-        // Aplica imediatamente
-        SetBrightness(savedBrightness);
-
-        // Listener do slider
-        brightnessSlider.onValueChanged.AddListener(SetBrightness);
-    }
-
-    public void SetBrightness(float value)
-    {
-        // Salva preferência
-        PlayerPrefs.SetFloat("Brightness", value);
-        PlayerPrefs.Save();
-
-        // Aplica brilho na tela (usando Gamma / Color Adjustment)
-        RenderSettings.ambientLight = new Color(value, value, value, 1f);
-
-        // Alternativa mais moderna (funciona melhor em alguns projetos):
-        // Camera.main.GetComponent<UnityEngine.Rendering.Universal.ColorAdjustments>()?.active = true;
-        // (Se estiver usando URP, pode ajustar via Post-Processing)
-
-        Debug.Log($"Brightness definido para: {value:F2}");
-    }
-    // ====================== WINDOW MODE (Fullscreen / Windowed) ======================
-    private void SetupWindowModeToggle()
-    {
-        if (windowedToggle == null) return;
-
-        // Carrega o estado salvo (padrão = Fullscreen)
-        bool isWindowed = PlayerPrefs.GetInt("WindowedMode", 0) == 1;
-        windowedToggle.isOn = isWindowed;
-
-        // Aplica imediatamente
-        SetWindowMode(isWindowed);
-
-        // Listener do Toggle
-        windowedToggle.onValueChanged.AddListener(SetWindowMode);
-    }
-
-    public void SetWindowMode(bool isWindowed)
-    {
-        // Salva a preferência
-        PlayerPrefs.SetInt("WindowedMode", isWindowed ? 1 : 0);
-        PlayerPrefs.Save();
-
-        // Aplica o modo de tela
-        Screen.fullScreen = !isWindowed;
-
-        Debug.Log($"Modo de tela alterado: {(isWindowed ? "Windowed" : "Fullscreen")}");
-    }
-    // ====================== QUIT ======================
-    private void SetupQuitButton()
-    {
-        if (quitButton != null)
-            quitButton.onClick.AddListener(QuitGame);
-    }
-
-    public void QuitGame()
-    {
-        Debug.Log("Saindo do jogo...");
-        Application.Quit();
-    }
-
-    // Salva volume ao desativar o painel
     private void OnDisable()
     {
-        if (masterVolumeSlider != null)
-            PlayerPrefs.SetFloat("MasterVolume", masterVolumeSlider.value);
+        if (volumeSlider != null) volumeSlider.onValueChanged.RemoveListener(SetVolume);
+        if (brightnessSlider != null) brightnessSlider.onValueChanged.RemoveListener(SetBrightness);
+        //if (fullscreenToggle != null) fullscreenToggle.onValueChanged.RemoveListener(SetFullscreen);
+        if (resolutionDropdown != null) resolutionDropdown.onValueChanged.RemoveListener(SetResolution);
+    }
+
+    // ==================== VOLUME ====================
+    public void SetVolume(float value)
+    {
+        currentVolume = Mathf.Clamp01(value);
+        ApplyVolume(currentVolume);
+
+        PlayerPrefs.SetFloat(VOLUME_KEY, currentVolume);
+        PlayerPrefs.Save();
+    }
+
+    private void ApplyVolume(float vol)
+    {
+        AudioListener.volume = vol;
+
+        GameObject[] sfxObjects = GameObject.FindGameObjectsWithTag(sfxTag);
+        foreach (GameObject obj in sfxObjects)
+        {
+            AudioSource src = obj.GetComponent<AudioSource>();
+            if (src != null) src.volume = vol;
+        }
+    }
+
+    // ==================== BRIGHTNESS ====================
+    public void SetBrightness(float value)
+    {
+        currentBrightness = Mathf.Clamp01(value);
+        ApplyBrightness(currentBrightness);
+
+        PlayerPrefs.SetFloat(BRIGHTNESS_KEY, currentBrightness);
+        PlayerPrefs.Save();
+    }
+
+    private void ApplyBrightness(float value)
+    {
+        if (brightnessOverlay == null) return;
+
+        float alpha = 1f - value;
+        Color c = brightnessOverlay.color;
+        c.a = alpha;
+        brightnessOverlay.color = c;
+    }
+
+    // ==================== FULLSCREEN ====================
+    public void ToggleFullScreen()
+    {
+        isFullscreen = !isFullscreen;
+        Screen.fullScreen = isFullscreen;
+        PlayerPrefs.SetInt(FULLSCREEN_KEY, isFullscreen ? 1 : 0);
+        PlayerPrefs.Save();
+        //Debug.Log("Fullscreen = " + isFullscreen);
+    }
+
+    // ==================== RESOLUTION ====================
+    private void PopulateResolutions()
+    {
+        uniqueResolutions.Clear();
+        resolutionDropdown.ClearOptions();
+
+        HashSet<string> seen = new HashSet<string>();
+        foreach (Resolution res in Screen.resolutions)
+        {
+            string key = res.width + "x" + res.height;
+            if (!seen.Contains(key))
+            {
+                seen.Add(key);
+                uniqueResolutions.Add(res);
+                resolutionDropdown.options.Add(new Dropdown.OptionData(key));
+            }
+        }
+    }
+
+    private int FindCurrentResolutionIndex()
+    {
+        for (int i = 0; i < uniqueResolutions.Count; i++)
+        {
+            if (uniqueResolutions[i].width == Screen.width && uniqueResolutions[i].height == Screen.height)
+                return i;
+        }
+        return 0;
+    }
+
+    public void SetResolution(int index)
+    {
+        if (index < 0 || index >= uniqueResolutions.Count) return;
+
+        Resolution res = uniqueResolutions[index];
+        FullScreenMode mode = Screen.fullScreenMode;
+        Screen.SetResolution(res.width, res.height, mode);
     }
 }
