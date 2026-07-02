@@ -226,11 +226,13 @@ public class DraftUiManager : MonoBehaviour
         }
 
         var btnScript = newButton.GetComponent<BtnDraftUpdateCurrentPlayerToSelect>();
+        btnScript.btn_draft_playerInfo = player;
         btnScript.index = player.ImageCharacterPortrait;
         btnScript.playerAge = player.Age.ToString();
         //btnScript.playerSalary = player.Salary.ToString();
         btnScript.PlayerOvr = player.ovr;
-        btnScript.archtypeIndex = player.ImageCharacterPortrait;
+        btnScript.archtypeIndex = player.TraitIndex;
+        //btnScript.btn_draft_playerInfo = player;
         btnScript.personalityIndex = player.Personality;
         btnScript.personalitySprite = spriteP;
         btnScript.SetSprite();

@@ -18,6 +18,7 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
     public int archtypeIndex;
     public int personalityIndex;
     public Sprite personalitySprite;
+    public Player btn_draft_playerInfo;
 
     Sprite sprite;
     Sprite spriteArchtype;
@@ -29,11 +30,13 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
     TextMeshProUGUI text_PlayerName;
     TextMeshProUGUI text_PlayerOvr;
     GameManager gameManager;
+    LeagueManager leagueManager;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        if(gameManager.mode == GameManager.GameMode.Draft)
+        leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
+        if (gameManager.mode == GameManager.GameMode.Draft)
         {
             playerPortrait = GameObject.Find("Image_CurrentPlayerToSelect").GetComponent<Image>();
 
@@ -54,7 +57,7 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
         sprite = sprites[index];
         Sprite[] sprites1 = Resources.LoadAll<Sprite>("2D/UI/Archtype");
         //spriteArchtype = sprites1[index];
-        
+        /*
         if(index >=0 || index < 20)
         {
             spriteArchtype = sprites1[0];
@@ -73,7 +76,9 @@ public class BtnDraftUpdateCurrentPlayerToSelect : MonoBehaviour, IPointerEnterH
         {
             spriteArchtype = sprites1[3];
         }
-        
+        */
+        if(btn_draft_playerInfo!=null)
+        spriteArchtype = leagueManager.FindTraitSprite(spriteArchtype, btn_draft_playerInfo);
     }
 
     public void OnPointerEnter(PointerEventData eventData)

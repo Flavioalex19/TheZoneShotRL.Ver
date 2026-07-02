@@ -367,8 +367,8 @@ public class EventsManager : MonoBehaviour
         List<Sprite> spriteList = new List<Sprite>(Resources.LoadAll<Sprite>("2D/UI/Team Management/WeekEventsButtons/Official"));
         if (spriteList.Count >= 2)
         {
-            EventChoiceButtonsTransform.GetChild(0).GetComponent<Image>().sprite = spriteList[0];
-            EventChoiceButtonsTransform.GetChild(1).GetComponent<Image>().sprite = spriteList[1];
+            EventChoiceButtonsTransform.GetChild(0).GetComponent<Image>().sprite = spriteList[event1.btnIndex0];
+            EventChoiceButtonsTransform.GetChild(1).GetComponent<Image>().sprite = spriteList[event1.btnIndex1];
         }
 
         GameObject.Find("EventText").GetComponent<TextMeshProUGUI>().text = event1.Description.ToString();
