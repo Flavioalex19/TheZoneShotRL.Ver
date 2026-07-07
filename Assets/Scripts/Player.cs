@@ -161,7 +161,7 @@ public class Player : MonoBehaviour
         // Primeiro: Portrait e Personality
         ImageCharacterPortrait = Random.Range(0, 80); // 0 a 35
         Personality = Random.Range(1, 6); // 1 a 5
-
+        int traitBonus = 5;
         // Define atributos específicos baseado no trait
         bool isShootingSpec = /*ImageCharacterPortrait <= 20*/TraitIndex==0;
         bool isJukingSpec = /*ImageCharacterPortrait >= 21 && ImageCharacterPortrait <= 40*/TraitIndex == 1;
@@ -169,21 +169,21 @@ public class Player : MonoBehaviour
         bool isDefendingSpec = /*ImageCharacterPortrait >= 61 && ImageCharacterPortrait <= 80*/TraitIndex == 3;
 
         // Gera atributos
-        Shooting = isShootingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
-        Inside = isShootingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
-        Mid = isShootingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
-        Outside = isShootingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
+        Shooting = isShootingSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
+        Inside = isShootingSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
+        Mid = isShootingSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
+        Outside = isShootingSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
 
-        Juking = isJukingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
-        Stealing = isJukingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
-        Consistency = isJukingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
+        Juking = isJukingSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
+        Stealing = isJukingSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
+        Consistency = isJukingSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
 
-        Control = isControlSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
-        Awareness = isControlSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
+        Control = isControlSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
+        Awareness = isControlSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
 
-        Defending = isDefendingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
-        Guarding = isDefendingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
-        Positioning = isDefendingSpec ? Random.Range(minHigh, maxHigh + 1) : Random.Range(minLow, maxLow + 1);
+        Defending = isDefendingSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
+        Guarding = isDefendingSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
+        Positioning = isDefendingSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
 
         // Calcula OVR (média arredondada)
         int sum = Shooting + Inside + Mid + Outside + Awareness + Defending + Guarding + Stealing + Juking + Consistency + Control + Positioning;

@@ -21,6 +21,7 @@ public class DraftUiManager : MonoBehaviour
     [SerializeField] GridLayoutGroup glg_draftNames;
     [SerializeField] Animator animator_transition;
     [SerializeField] BtnSelectionHandler btn_selectionHandler;
+    [SerializeField] Image image_playerTeam;
     private int currentTeamIndex = 0;
     private int totalPicksPerTeam = 8;
     private int extraPlayersForPlayer = 15;
@@ -34,6 +35,9 @@ public class DraftUiManager : MonoBehaviour
         if (leagueManager == null)
             leagueManager = GameObject.Find("League/Season Manager").GetComponent<LeagueManager>();
 
+        Sprite sprite;
+        sprite = Resources.Load<Sprite>("2D/Team Logos/" + _gameManager.playerTeam.TeamName);
+        image_playerTeam.sprite = sprite;
         GenerateDraftPlayers();
     }
 
@@ -281,7 +285,7 @@ public class DraftUiManager : MonoBehaviour
             {
                 Player p = _gameManager.playerTeam.playersListRoster[i];
                 _playersFromOnTheClockTeamArea.GetChild(i).GetComponent<TextMeshProUGUI>().text =
-                    p.playerFirstName + " " + p.playerLastName;
+                    p.playerFirstName + " " + p.playerLastName + " OVR:" + p.SetOVR();
             }
             else
             {

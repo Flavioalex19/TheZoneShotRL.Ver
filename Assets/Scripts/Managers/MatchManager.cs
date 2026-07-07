@@ -1808,7 +1808,7 @@ public class MatchManager : MonoBehaviour
 
         // === 5. Modificadores (tackle) ===
         if (chooseInterception)
-            rawChance *= 0.95f; // 
+            rawChance *= 0.85f; // 
 
         // === 6. Bias principal: playerTeam mais difícil, AI mais fácil ===
         float finalChance = rawChance;
@@ -1989,7 +1989,7 @@ public class MatchManager : MonoBehaviour
             finalChance *= 1.18f;   // +18% de eficiência
         }
         if (chooseToBlock)        {
-            finalChance *= 0.90f; // Debuff de 10% 
+            finalChance *= 0.80f; // Debuff de 20% 
         }
 
         return Mathf.Clamp(finalChance, 0.20f, 0.93f);
@@ -2445,7 +2445,7 @@ public class MatchManager : MonoBehaviour
 
         if (chooseToSteal)
         {
-            finalChance *= 0.90f;
+            finalChance *= 0.80f;
         }
 
         if (!teamWithball.IsPlayerTeam)
