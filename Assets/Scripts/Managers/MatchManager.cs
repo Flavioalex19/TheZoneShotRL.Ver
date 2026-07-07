@@ -549,7 +549,7 @@ public class MatchManager : MonoBehaviour
             {
                 if (!isSimulation) if (AwayTeam.playersListRoster[i].HasTheBall) print(AwayTeam.playersListRoster[i].playerLastName + "has the ball");
             }
-            adrenaline_addUp = 15;
+            adrenaline_addUp = 12;
             //AwayTeam.AdrenalineBar = 0;
             if (!isSimulation) _matchUI.OffesnivePanelOnOff(false);
             CanChooseAction = false;
