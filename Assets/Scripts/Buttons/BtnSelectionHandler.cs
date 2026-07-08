@@ -48,7 +48,13 @@ public class BtnSelectionHandler : MonoBehaviour
         //Ensure all selectables are reset to original scale
         for (int i = 0; i < Selectables.Count; i++)
         {
-            Selectables[i].transform.localScale = _scales[Selectables[i]];
+            //Selectables[i].transform.localScale = _scales[Selectables[i]];
+            if (Selectables[i] != null)
+            {
+                Selectables[i].transform.DOKill();
+                Selectables[i].transform.localScale = _scales[Selectables[i]];
+                   
+            }
         }
     }
     public virtual void OnDisable()
@@ -135,6 +141,13 @@ public class BtnSelectionHandler : MonoBehaviour
             // ADDED: Store the hovered selectable.
             _lastHovered = pointerEventData.pointerEnter.GetComponent<Selectable>();
 
+            if (_lastHovered != null)
+            {
+                _lastHovered.transform.DOKill();                    
+                                                                    
+                ChangeTextColor(pointerEventData.pointerEnter, color1);
+            }
+
             //Change color text
             ChangeTextColor(pointerEventData.pointerEnter, color1);
 
@@ -151,6 +164,9 @@ public class BtnSelectionHandler : MonoBehaviour
         // Use the stored _lastHovered instead of pointerEventData.pointerEnter.
         if (_lastHovered != null && _scales.ContainsKey(_lastHovered))
         {
+            _lastHovered.transform.DOKill();
+            _lastHovered.transform.localScale = _scales[_lastHovered];
+
             _scaleDownTween?.Kill(); // Kill any running tween
             _scaleDownTween = _lastHovered.transform.DOScale(_scales[_lastHovered], _scaleDuration);
 
@@ -173,6 +189,7 @@ public class BtnSelectionHandler : MonoBehaviour
             _lastHovered.OnDeselect(null);
         }
         //_lastHovered = null; // Clear the reference
+        _lastHovered = null;
     }
     public List<Selectable> GetSelectabes()
     {

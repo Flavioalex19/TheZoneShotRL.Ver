@@ -1865,7 +1865,6 @@ public class MatchManager : MonoBehaviour
     }
     float ScoringEquation(Player offense, Player defense, int zone, int momentumModifier)
     {
-        
         int ovr = offense.SetOVR();
 
         // X = Offense
@@ -1894,7 +1893,6 @@ public class MatchManager : MonoBehaviour
                             + (zone * 10f);
 
         float shotResult = offenseShot - defenseShot;
-
 
         float defenderQualityMultiplier = 1f;
 
@@ -1991,7 +1989,14 @@ public class MatchManager : MonoBehaviour
         if (chooseToBlock)        {
             finalChance *= 0.80f; // Debuff de 20% 
         }
-
+        if (offense.MatchBuff > 0)
+        {
+            finalChance *= 1.10f; // +10% de chance
+        }
+        if (defense.MatchBuff > 0)
+        {
+            finalChance *= .90f; 
+        }
         return Mathf.Clamp(finalChance, 0.20f, 0.93f);
     }
     float ActivateSpecialAttk(bool isPercentage)
@@ -2405,7 +2410,7 @@ public class MatchManager : MonoBehaviour
         float jukeResult = offenseValue - defenseValue;
 
         // ====================== CONVERSÃO DO RESULTADO ======================
-        bool success = jukeResult > 0;
+        //bool success = jukeResult > 0;
 
         // Calcula a porcentagem para a UI (baseado no resultado)
         float baseJukeChance = Mathf.Clamp01((jukeResult + 50f) / 100f); // Normaliza para visual
@@ -2450,19 +2455,30 @@ public class MatchManager : MonoBehaviour
 
         if (!teamWithball.IsPlayerTeam)
         {
-            finalChance *= 1.08f; // Bônus da CPU (20%)
+            finalChance *= 1.08f; // Bônus da CPU (%)
+        }
+
+        if (offense.MatchBuff > 0)
+        {
+            finalChance *= 1.10f; // +10% de chance
+        }
+        if (defense.MatchBuff > 0)
+        {
+            finalChance *= .90f; // -10% de chance
         }
 
         finalChance = Mathf.Clamp(finalChance, 0.28f, 0.92f);
         jukePercentage = finalChance;
 
+
         // ====================== RESULTADO FINAL ======================
+        bool success = UnityEngine.Random.value <= finalChance;
         if (!success/*|| isAutoJuke == false*/)
         {
             offense.CurrentZone = 0;
             return false; // Turnover / Steal
         }
-
+        
         offense.CurrentZone = Mathf.Min(zone + 1, 2);
         
         //New/verofy

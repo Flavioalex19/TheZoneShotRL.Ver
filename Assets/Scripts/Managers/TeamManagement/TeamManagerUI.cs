@@ -285,6 +285,8 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Button _closeGameForTestersBtn;
     //Testing
     [SerializeField]Transform teamStatsTextsArea;
+    [Header("Demonstration")]
+    [SerializeField] GameObject go_DemoEndScreen;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -320,6 +322,13 @@ public class TeamManagerUI : MonoBehaviour
         if (leagueManager.TotalChampionships == 10) leagueManager.UnlockLegacy(2);
         if (leagueManager.Week >= gameManager.leagueTeams.Count)
         {
+            if (gameManager.isDemonstration)
+            {
+                if (go_DemoEndScreen != null)
+                    go_DemoEndScreen.SetActive(true);
+                else
+                    Debug.LogWarning("DemoEndScreen não encontrado!");
+            }
 
             if (IsPlayerTeamInTop8())
             {

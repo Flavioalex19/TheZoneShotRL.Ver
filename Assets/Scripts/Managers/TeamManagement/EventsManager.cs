@@ -287,7 +287,6 @@ public class EventsManager : MonoBehaviour
             eventType = EventType.Structure
         });
 
-        //Debug.Log($"[EventsManager] {leagueManager.eventOptions.Count} eventos criados.");
     }
 
     // ====================== ETAPA 1: Botões de Tipo ======================
@@ -331,7 +330,6 @@ public class EventsManager : MonoBehaviour
         SetNewChoiceForEvent(eventType);
     }
 
-    // ====================== ETAPA 2: Botões de Escolha ======================
     void SetNewChoiceForEvent(EventType type)
     {
         List<EventOption> filteredEvents = new List<EventOption>();
@@ -347,7 +345,6 @@ public class EventsManager : MonoBehaviour
 
         if (EventChoiceButtonsTransform == null) return;
 
-        // Esconde painel de tipos e mostra painel de escolhas
         ChoiceButtonsTransform?.gameObject.SetActive(false);
         EventChoiceButtonsTransform.gameObject.SetActive(true);
 
@@ -374,116 +371,9 @@ public class EventsManager : MonoBehaviour
         GameObject.Find("EventText").GetComponent<TextMeshProUGUI>().text = event1.Description.ToString();
     }
 
-    // ====================== APLICA O EFEITO (exatamente o switch que você mandou) ======================
     public void AddOnClick(EventOption eventOption, int indexOfChoice)
     {
-        /*
-        if (eventOption == null) return;
 
-        // Garante que o playerTeam está setado
-        if (gameManager.playerTeam == null)
-        {
-            Debug.LogError("[EventsManager] playerTeam é null em AddOnClick!");
-            return;
-        }
-
-        switch (eventOption.Index)
-        {
-            case 0:
-                if (indexOfChoice == 0) gameManager.playerTeam.FinancesLvl++;
-                else gameManager.playerTeam.OfficeLvl++;
-                break;
-            case 1:
-                if (indexOfChoice == 0) gameManager.playerTeam.TeamEquipmentLvl++;
-                else PlayerBuff(playerSelected, 5);
-                break;
-            case 2:
-                if (indexOfChoice == 0) gameManager.playerTeam.TeamEquipmentLvl++;
-                else gameManager.playerTeam.MarketingLvl++;
-                break;
-            case 3:
-                if (indexOfChoice == 0) ChangePlayerPersonality(playerSelected);
-                else PlayerBuff(playerSelected, 5);
-                break;
-            case 4:
-                if (indexOfChoice == 0) TeamBuff();
-                else MatchBuff(5);
-                break;
-            case 5:
-                if (indexOfChoice == 0) ChangePlayerPersonality(playerSelected);
-                else PlayerBuff(playerSelected, 5);
-                break;
-            case 6:
-                if (indexOfChoice == 0) gameManager.playerTeam.ArenaLvl++;
-                else gameManager.playerTeam.MarketingLvl++;
-                break;
-            case 7:
-                if (indexOfChoice == 0) gameManager.playerTeam.TeamEquipmentLvl++;
-                else LevelUpPlayer(playerSelected);
-                break;
-            case 8:
-                if (indexOfChoice == 0) PlayerBuff(playerSelected, 5);
-                else MatchBuff(5);
-                break;
-            case 9:
-                if (indexOfChoice == 0) gameManager.playerTeam.FinancesLvl++;
-                else gameManager.playerTeam.MedicalLvl++;
-                break;
-            case 10:
-                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
-                else gameManager.playerTeam.ArenaLvl++;
-                break;
-            case 11:
-                if (indexOfChoice == 0) VsRivals();
-                else TeamBuff();
-                break;
-            case 12:
-                if (indexOfChoice == 0) ChangePlayerPersonality(playerSelected);
-                else gameManager.playerTeam.MarketingLvl++;
-                break;
-            case 13:
-                if (indexOfChoice == 0) MatchBuff(5);
-                else TeamBuff();
-                break;
-            case 14:
-                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
-                else gameManager.playerTeam.FinancesLvl++;
-                break;
-            case 15:
-                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
-                else gameManager.playerTeam.FinancesLvl++;
-                break;
-            case 16:
-                if (indexOfChoice == 0) gameManager.playerTeam.OfficeLvl++;
-                else gameManager.playerTeam.FinancesLvl++;
-                break;
-            default:
-                break;
-        }
-
-
-
-        // Limpa após uso
-        leagueManager.eventOptions.Clear();
-
-        // Esconde painel de escolhas
-        if (EventChoiceButtonsTransform != null)
-            EventChoiceButtonsTransform.gameObject.SetActive(false);
-
-        // Atualiza toda a UI do Headquarters após aplicar o efeito do evento
-        if (teamManagerUI != null)
-        {
-            teamManagerUI.UpdateHeadquartersUI();
-            leagueManager.HandleFreeAgents();
-        }
-        Debug.Log($"[EventsManager] Efeito aplicado - Index {eventOption.Index}, Escolha {indexOfChoice}");
-        // Salva
-        gameManager.saveSystem.SaveLeague();
-        for (int i = 0; i < gameManager.leagueTeams.Count; i++)
-        {
-            gameManager.saveSystem.SaveTeamInfo(gameManager.leagueTeams[i]);
-        }
-        */
         if (eventOption == null) return;
 
         if (eventEffects.TryGetValue(eventOption.Index, out var action))
@@ -547,7 +437,6 @@ public class EventsManager : MonoBehaviour
             return "";
         }
 
-        // ====================== LÓGICA DE ALTERAÇÃO DE PERSONALIDADE ======================
         if (player.Personality == 1)
         {
             // Personalidade 1 só pode aumentar
