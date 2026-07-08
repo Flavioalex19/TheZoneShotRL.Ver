@@ -29,7 +29,7 @@ public class Player : MonoBehaviour
         "Efrem", "Elliot", "Finn", "Flynt", "Fry", "Gavin", "Geoff", "Gilligan", "Glenn", "Hank","Alistair", "Benedict", "Harold", "Hercules", "Herman", "Hugh", "Hugo", "Iggy",
         "Igor", "Thiago", "Rod", "Ichiro", "Iniko", "Itashi", "J.B.", "J.D.", "J.T.", "J.R.", "Jacub", "Jarrett", "Jax", "Keith", "Keyshawn", "Kirk", "Lawrence", "Lee", "Leif",
         "Leigh", "Lemarcus", "Lennox", "Lenny", "Leonardo", "Levy", "Lionel", "Logan", "Lonnie", "Lowell", "L.P", "L.J", "Lucian", "Mackenzi", "Manny", "Marcel", "Marlon", "Marvin",
-        "Mason", "Nolan", "Jose", "Justin", "Derek"
+        "Mason", "Nolan", "Jose", "Justin", "Derek", "D.K", "Devin", "Luiz", "Luis"
     };
     private static readonly string[] secondNames = 
     {
@@ -41,7 +41,7 @@ public class Player : MonoBehaviour
         "Acker", "Alderman", "Allerdale", "Asimov", "Applegarth", "Ashburn", "Axford", "Backman", "Ballard", "Barlow", "Baron", "Barrick", "Barrowcliff", "Bartholomew", "Batara",
         "Baumann", "Bayfield", "Beaver", "Beckett", "Beckford", "Beesley", "Behrens", "Bellamy", "Bellington", "Bender", "Bendett", "Benson", "Bernstein", "Bertolini", "Blackford",
         "Blanc", "Bledsoe", "Borchardt", "Breakspear", "Breakwell", "Chevallier", "Christensen", "Christopher", "Clarkson", "Clemens", "Colby", "Cook", "Grimmes", "Ramos","Graham",
-        "Simmons", "Jane", "Clason", "Assis", "Paxton", "Powers", "Dick", "Todd", "Bowden"
+        "Simmons", "Jane", "Clason", "Assis", "Paxton", "Powers", "Dick", "Todd", "Bowden", "Becker", "Newman"
     };
     [SerializeField] public string playerFirstName;
     [SerializeField] public string playerLastName;

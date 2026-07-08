@@ -67,6 +67,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] List<string> list_chargeFail = new List<string>();
     [SerializeField] List<string> list_shoveSucesses = new List<string>();
     [SerializeField] List<string> list_shoveFail = new List<string>();
+    [SerializeField] List<string> list_genericFail = new List<string>();
     public string gameAction = " ";
     public string ResultplayerAction = " ";
 
@@ -517,6 +518,11 @@ public class MatchUI : MonoBehaviour
                 text_actionResultS.text = list_charge[Random.Range(0, list_charge.Count)];
                 text_actionResultF.text = list_chargeFail[Random.Range(0, list_chargeFail.Count)];
                 break;
+            case 7:
+                text_actionResultS.text = list_genericFail[Random.Range(0, list_genericFail.Count)];
+                text_actionResultF.text = list_genericFail[Random.Range(0, list_genericFail.Count)];
+                break;
+
         }
     }
     public void ActivateVictoryDefeat(string endText)

@@ -13,6 +13,10 @@ public enum CardStyle
     Style,
     AttackDefense,
     AttackJuke,
+    PassJuke,
+    PassDefense,
+    AttackPass,
+    DefenseJuke,
     Streak
 }
 [CreateAssetMenu(fileName = "NewGameCard", menuName = "ScriptableObjects/GameCard", order = 1)]

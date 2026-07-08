@@ -287,6 +287,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField]Transform teamStatsTextsArea;
     [Header("Demonstration")]
     [SerializeField] GameObject go_DemoEndScreen;
+    [SerializeField] Button btn_closeRetunAplication;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -324,6 +325,7 @@ public class TeamManagerUI : MonoBehaviour
         {
             if (gameManager.isDemonstration)
             {
+                btn_closeRetunAplication.onClick.AddListener(() => StartNewLeagueRun());
                 if (go_DemoEndScreen != null)
                     go_DemoEndScreen.SetActive(true);
                 else

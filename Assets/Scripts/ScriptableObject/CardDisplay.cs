@@ -76,6 +76,10 @@ public class CardDisplay : MonoBehaviour
                 matchManager.buff_Atk += card.modifyValue;
                 matchManager.buff_Defense += card.modifyValue;
                 break;
+            case CardStyle.PassDefense:
+                matchManager.buff_Pass += card.modifyValue;
+                matchManager.buff_Defense += card.modifyValue;
+                break;
         }
         matchManager.canUseCards = false;
         this.transform.SetParent(usedCradsFolder);

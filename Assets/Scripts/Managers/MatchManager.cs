@@ -116,6 +116,7 @@ public class MatchManager : MonoBehaviour
 
     [Header("Cards Variables")]
     [SerializeField] Transform cardsFolder;
+    [SerializeField] Transform cardsFolderLvl2;
     public Transform cards_cardsUsedFolder;
     public Transform cards_handCards;
     public int mod_Attk = 0;
@@ -542,6 +543,7 @@ public class MatchManager : MonoBehaviour
     }
     IEnumerator HandlePossession()
     {
+        sfxManager.ChangeCrowd(HomeTeam,AwayTeam);
         if (isSimulation) AISub();
         if( teamWithball.IsPlayerTeam == false)
         {
@@ -646,7 +648,7 @@ public class MatchManager : MonoBehaviour
                             {
                                 if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                             }
-                            if (IsFastforward == false) if (!isSimulation) _matchUI.ResultActionPanel("F", 3);
+                            if (IsFastforward == false) if (!isSimulation) _matchUI.ResultActionPanel("F", 7);
                             if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
                             SelectDefender();
                             if (IsFastforward == false)
@@ -2305,14 +2307,32 @@ public class MatchManager : MonoBehaviour
         else if (manager.playerTeam.TeamEquipmentLvl >= 2 && manager.playerTeam.TeamEquipmentLvl < 4) cardRange = 18;
         else if (manager.playerTeam.TeamEquipmentLvl >= 4) cardRange = cardsFolder.childCount;
 
-        
+        Transform sourceFolder = cardsFolder;
+
+        if (manager.playerTeam.TeamEquipmentLvl > 1 && cardsFolderLvl2 != null && cardsFolderLvl2.childCount > 0)
+        {
+            sourceFolder = cardsFolderLvl2;
+        }
 
         // choose cards
         for (int i = 0; i < 3; i++)
         {
-            int randomIndex = UnityEngine.Random.Range(0, cardsFolder.childCount);
-            Transform chosenCard = cardsFolder.GetChild(randomIndex);
+            //int randomIndex = UnityEngine.Random.Range(0, cardsFolder.childCount);
+            //Transform chosenCard = cardsFolder.GetChild(randomIndex);
 
+            //
+            int randomIndex;
+            if (i == 0 && sourceFolder == cardsFolderLvl2) // Primeira carta = LVL2 (se disponível)
+            {
+                randomIndex = UnityEngine.Random.Range(0, sourceFolder.childCount);
+            }
+            else
+            {
+                randomIndex = UnityEngine.Random.Range(0, cardsFolder.childCount);
+                sourceFolder = cardsFolder; // as outras vêm do folder normal
+            }
+            Transform chosenCard = sourceFolder.GetChild(randomIndex);
+            //
             chosenCard.SetParent(cards_handCards);
             chosenCard.localScale = Vector3.one;
             chosenCard.localPosition = Vector3.zero;

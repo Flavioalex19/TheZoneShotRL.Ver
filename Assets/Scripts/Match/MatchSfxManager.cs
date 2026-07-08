@@ -6,7 +6,7 @@ public class MatchSfxManager : MonoBehaviour
 {
     [SerializeField] AudioSource mainAudioSource;
     [SerializeField] AudioSource matchMainAudioSource;
-    [SerializeField] AudioSource matchSfxAudioSource;
+    [SerializeField] AudioSource matchSfxAudioSCrowd;
     [SerializeField] AudioClip sfx_win;
     [SerializeField] AudioClip sfx_lose;
     [SerializeField] AudioClip sfx_startWhisle;
@@ -58,4 +58,12 @@ public class MatchSfxManager : MonoBehaviour
     {
         mainSFXaudio.volume = volumeSFX;
     }
+    public void ChangeCrowd(Team A, Team B)
+    {
+        if(A.Score >= B.Score)
+        {
+            matchSfxAudioSCrowd.clip = sfx_Cheer;
+        }
+        else matchSfxAudioSCrowd.clip = sfx_booing;
+    } 
 }
