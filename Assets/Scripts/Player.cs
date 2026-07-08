@@ -159,15 +159,18 @@ public class Player : MonoBehaviour
     private void GeneratePlayerByTier(int minLow, int maxLow, int minHigh, int maxHigh)
     {
         // Primeiro: Portrait e Personality
+        TraitIndex = Random.Range(0, 8);
         ImageCharacterPortrait = Random.Range(0, 80); // 0 a 35
         Personality = Random.Range(1, 6); // 1 a 5
         int traitBonus = 5;
         // Define atributos específicos baseado no trait
-        bool isShootingSpec = /*ImageCharacterPortrait <= 20*/TraitIndex==0;
-        bool isJukingSpec = /*ImageCharacterPortrait >= 21 && ImageCharacterPortrait <= 40*/TraitIndex == 1;
-        bool isControlSpec = /*ImageCharacterPortrait >= 41 && ImageCharacterPortrait <= 60*/TraitIndex == 2;
-        bool isDefendingSpec = /*ImageCharacterPortrait >= 61 && ImageCharacterPortrait <= 80*/TraitIndex == 3;
+        bool isShootingSpec = /*ImageCharacterPortrait <= 20*/TraitIndex==1;
+        bool isJukingSpec = /*ImageCharacterPortrait >= 21 && ImageCharacterPortrait <= 40*/TraitIndex == 2;
+        bool isControlSpec = /*ImageCharacterPortrait >= 41 && ImageCharacterPortrait <= 60*/TraitIndex == 3 || TraitIndex == 7;
+        bool isDefendingSpec = /*ImageCharacterPortrait >= 61 && ImageCharacterPortrait <= 80*/TraitIndex == 4;
+        bool isBrawler = TraitIndex == 5;
 
+        /*
         // Gera atributos
         Shooting = isShootingSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
         Inside = isShootingSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
@@ -184,6 +187,49 @@ public class Player : MonoBehaviour
         Defending = isDefendingSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
         Guarding = isDefendingSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
         Positioning = isDefendingSpec ? Random.Range(minHigh, maxHigh + traitBonus) : Random.Range(minLow, maxLow + traitBonus);
+        */
+        Shooting = isShootingSpec ? Random.Range(minHigh, maxHigh) : Random.Range(minLow, maxLow);
+        Inside = isShootingSpec ? Random.Range(minHigh, maxHigh) : Random.Range(minLow, maxLow);
+        Mid = isShootingSpec ? Random.Range(minHigh, maxHigh) : Random.Range(minLow, maxLow);
+        Outside = isShootingSpec ? Random.Range(minHigh, maxHigh) : Random.Range(minLow, maxLow);
+        Juking = isJukingSpec ? Random.Range(minHigh, maxHigh) : Random.Range(minLow, maxLow);
+        Stealing = isJukingSpec ? Random.Range(minHigh, maxHigh) : Random.Range(minLow, maxLow);
+        Consistency = isJukingSpec ? Random.Range(minHigh, maxHigh) : Random.Range(minLow, maxLow);
+        Control = isControlSpec ? Random.Range(minHigh, maxHigh) : Random.Range(minLow, maxLow);
+        Awareness = isControlSpec ? Random.Range(minHigh, maxHigh) : Random.Range(minLow, maxLow);
+        Defending = isDefendingSpec ? Random.Range(minHigh, maxHigh) : Random.Range(minLow, maxLow);
+        Guarding = isDefendingSpec ? Random.Range(minHigh, maxHigh) : Random.Range(minLow, maxLow);
+        Positioning = isDefendingSpec ? Random.Range(minHigh, maxHigh) : Random.Range(minLow, maxLow);
+
+        if (isShootingSpec)
+        {
+            Shooting = Mathf.Min(99, Shooting + traitBonus);
+            //Inside = Mathf.Min(99, Inside + traitBonus);
+            //Mid = Mathf.Min(99, Mid + traitBonus);
+            Outside = Mathf.Min(99, Outside + traitBonus);
+        }
+        if (isJukingSpec)
+        {
+            Juking = Mathf.Min(99, Juking + traitBonus);
+            //Stealing = Mathf.Min(99, Stealing + traitBonus);
+            Consistency = Mathf.Min(99, Consistency + traitBonus);
+        }
+        if (isControlSpec)
+        {
+            Control = Mathf.Min(99, Control + traitBonus);
+            Awareness = Mathf.Min(99, Awareness + traitBonus);
+        }
+        if (isDefendingSpec)
+        {
+            Defending = Mathf.Min(99, Defending + traitBonus);
+            Guarding = Mathf.Min(99, Guarding + traitBonus);
+            //Positioning = Mathf.Min(99, Positioning + traitBonus);
+        }
+        if (isBrawler)
+        {
+            Inside = Mathf.Min(99, Inside + traitBonus);
+            Defending = Mathf.Min(99, Defending + traitBonus);
+        }
 
         // Calcula OVR (média arredondada)
         int sum = Shooting + Inside + Mid + Outside + Awareness + Defending + Guarding + Stealing + Juking + Consistency + Control + Positioning;
@@ -193,7 +239,6 @@ public class Player : MonoBehaviour
         playerFirstName = names[Random.Range(0, names.Length)];
         playerLastName = secondNames[Random.Range(0, secondNames.Length)];
         Age = Random.Range(20, 34);
-        TraitIndex = Random.Range(0, 8);
         print(TraitIndex + " This is the trait index");
         GenerateContract();
         buff = 0;
