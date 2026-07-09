@@ -65,7 +65,9 @@ public class DraftUiManager : MonoBehaviour
             for (int i = 0; i < totalPicksPerTeam; i++)   // totalPicksPerTeam = 8
             {
                 Player newPlayer = CreateRandomPlayer(false);
+
                 team.playersListRoster.Add(newPlayer);
+                newPlayer.J_Number = team.GenerateUniqueShirtNumber();
             }
         }
 
@@ -134,15 +136,6 @@ public class DraftUiManager : MonoBehaviour
         {
             if (!leagueManager.isOnDraftLVL0 && !leagueManager.isOnDraftLVL1 && !leagueManager.isOnDraftLVL2)
             {
-                // Todas falsas  Piores jogadores (muitos End, poucos Early)
-                /*
-                if (rand < 0.20f)
-                    newPlayer.GenerateEarlyPlayer();      // 20% Early
-                else if (rand < 0.80f)
-                    newPlayer.GenerateMidPlayer();        // 60% Mid
-                else
-                    newPlayer.GenerateEarlyPlayer();        // 20% End
-                */
                 if (rand < 50) newPlayer.GenerateStarters();
                 else newPlayer.GenerateEarlyPlayer();
             }
@@ -186,7 +179,7 @@ public class DraftUiManager : MonoBehaviour
         }
         else
         {
-            print("Isnot player team");
+            //print("Isnot player team");
             if (rand < 0.10f)
                 newPlayer.GenerateEarlyPlayer();      // 10% Early
             else if (rand < 0.70f)

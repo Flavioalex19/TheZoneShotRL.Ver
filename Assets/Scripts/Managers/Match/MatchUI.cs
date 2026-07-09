@@ -102,7 +102,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_bonusSp;
 
 
-    [Header("Casrds")]
+    [Header("Cards")]
     [SerializeField] Animator animator_HandCards;
 
     [Header("OffensivePanel")]
@@ -127,7 +127,10 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Animator anim_Sp_Button_Activate;
     [SerializeField] Image image_adrenalineBar;
     [SerializeField] Image image_offensivePanel_awayTeamHpBAR;
+    [SerializeField] Image image_offensivePanel_awayTeamHpBARSecondary;
     [SerializeField] TextMeshProUGUI text_currentDMG;
+    private Coroutine awayHpDrainCoroutine;
+    private float currentAwayHpVisual = 100f;
     //Away Team
     [SerializeField] Transform transform_OffensivePanel_awayTeamPlayers;
     //Scoreboard
@@ -182,6 +185,8 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Animator _animatorResultPanel;
     [SerializeField] TextMeshProUGUI text_actionResultS;
     [SerializeField] TextMeshProUGUI text_actionResultF;
+    [SerializeField] TextMeshProUGUI text_resultAction_SAction;
+    [SerializeField] TextMeshProUGUI text_resultAction_FAction;
 
     [Header("Defensive State")]
     [SerializeField] Image image_defensive_AwayTeamAdrenalineBar;
@@ -294,14 +299,14 @@ public class MatchUI : MonoBehaviour
             transform_ActiveHomePlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].PointsMatch.ToString();
             transform_ActiveHomePlayers.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = _matchManager.HomeTeam.playersListRoster[i].J_Number.ToString();
             //AwayTeams
-            transform_ActiveAwayPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].J_Number.ToString();
-            transform_ActiveAwayPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].playerLastName.ToString();
+            //transform_ActiveAwayPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].SetOVR().ToString();
+            //transform_ActiveAwayPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].playerLastName.ToString();
             
                 
 
         }
         image_adrenalineBar.fillAmount = (float)gameManager.playerTeam.AdrenalineBar / (float)gameManager.playerTeam.AdrenalineBarFull;
-        image_offensivePanel_awayTeamHpBAR.fillAmount = (float)_matchManager.awayHP / (float)100;
+        //image_offensivePanel_awayTeamHpBAR.fillAmount = (float)_matchManager.awayHP / (float)100;
 
         
 
@@ -485,7 +490,7 @@ public class MatchUI : MonoBehaviour
         image_actionPanel.sprite = sprite;
         text_actionNameText.text = actionName;
     }
-    public void ResultActionPanel(string triggerName, int actionIndex)
+    public void ResultActionPanel(string triggerName, int actionIndex, string playerAction)
     {
         _animatorResultPanel.SetTrigger(triggerName);
         switch (actionIndex)
@@ -524,6 +529,8 @@ public class MatchUI : MonoBehaviour
                 break;
 
         }
+        text_resultAction_SAction.text = playerAction;
+        text_resultAction_FAction.text = playerAction;
     }
     public void ActivateVictoryDefeat(string endText)
     {
@@ -965,24 +972,6 @@ public class MatchUI : MonoBehaviour
 
     private IEnumerator MoveCoroutine(Transform obj, Vector3 targetWorldPosition, float duration)
     {
-        /*
-        float elapsed = 0f;
-        Vector3 startPosition = obj.position;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / duration;
-
-            // Movimento suave 
-            obj.position = Vector3.Lerp(startPosition, targetWorldPosition, t);
-
-            yield return null;
-        }
-
-        // Garante que o objeto chegue exatamente na posição final
-        obj.position = targetWorldPosition;
-        */
         float elapsed = 0f;
         Vector3 startPosition = obj.position;
 
@@ -1002,5 +991,44 @@ public class MatchUI : MonoBehaviour
 
         // Garante que chegue exatamente no destino
         obj.position = targetWorldPosition;
+    }
+    //away Hpbar
+    public void UpdateAwayHpBar(float newHpValue)
+    {
+        // Barra principal - atualiza imediatamente
+        image_offensivePanel_awayTeamHpBAR.fillAmount = newHpValue / _matchManager.AwayTeam.match_hpMax;
+
+        // Barra secundária - diminui gradualmente
+        if (awayHpDrainCoroutine != null)
+            StopCoroutine(awayHpDrainCoroutine);
+
+        awayHpDrainCoroutine = StartCoroutine(DrainAwayHpBar(newHpValue));
+    }
+
+    private IEnumerator DrainAwayHpBar(float targetHp)
+    {
+        float duration = 1.5f; // tempo para drenar (ajuste se quiser)
+        float elapsed = 0f;
+        float startVisual = currentAwayHpVisual;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            // Suavização (smoothstep)
+            float smoothT = t * t * (3f - 2f * t);
+
+            currentAwayHpVisual = Mathf.Lerp(startVisual, targetHp, smoothT);
+
+            // Atualiza a barra secundária
+            image_offensivePanel_awayTeamHpBARSecondary.fillAmount = currentAwayHpVisual / 100f;
+
+            yield return null;
+        }
+
+        // Garante que chegue exatamente no valor final
+        currentAwayHpVisual = targetHp;
+        image_offensivePanel_awayTeamHpBARSecondary.fillAmount = targetHp / 100f;
     }
 }

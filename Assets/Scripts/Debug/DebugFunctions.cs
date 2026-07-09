@@ -53,4 +53,13 @@ public class DebugFunctions : MonoBehaviour
 
         matchManager.HomeTeam.match_hp -= 25;
     }
+    public void HitAwayTeamShield()
+    {
+        MatchManager matchManager = GameObject.Find("MatchManager").GetComponent<MatchManager>();
+        MatchUI matchUI = GameObject.Find("MatchUIManager").GetComponent<MatchUI>();
+
+        matchManager.awayHP -= 25;
+        matchUI.UpdateAwayHpBar(matchManager.awayHP);
+
+    }
 }
