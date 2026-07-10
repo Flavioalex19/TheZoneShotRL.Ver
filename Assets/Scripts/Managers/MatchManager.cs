@@ -650,7 +650,7 @@ public class MatchManager : MonoBehaviour
                                 if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
                             }
                             if (IsFastforward == false) if (!isSimulation) _matchUI.ResultActionPanel("F", 7, "Pass");
-                            if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " " + _matchUI.ReceiveBallText());
+                            if (!isSimulation) uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " make the pass" /*+ _matchUI.ReceiveBallText()*/);
                             SelectDefender();
                             if (IsFastforward == false)
                             {
@@ -686,7 +686,7 @@ public class MatchManager : MonoBehaviour
                             // juke success  continua posse (loop)
                             if (teamWithball.AdrenalineBar < teamWithball.AdrenalineBarFull) teamWithball.AdrenalineBar += adrenaline_addUp;
                             uiManager.PlaybyPlayText(playerWithTheBall.playerLastName + " juke by the defender");
-                            if (IsFastforward == false) if (!isSimulation) _matchUI.ResultActionPanel("F", 3, "Juke");
+                            if (IsFastforward == false) if (!isSimulation) _matchUI.ResultActionPanel("F", 7, "Juke");
                             ResetDefensiveOptions();
                             continue;
                         }
@@ -728,7 +728,7 @@ public class MatchManager : MonoBehaviour
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
 
                         // === EFEITO DO SPECIAL ===
-                        teamWithball.Score += 10;
+                        teamWithball.Score += 8;
                         teamWithball.AdrenalineBar = 0;
 
                         if (!isSimulation) HomeTeam.match_hp -= 30; // ou AwayTeam, dependendo de quem está defendendo

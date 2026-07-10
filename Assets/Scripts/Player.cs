@@ -128,7 +128,7 @@ public class Player : MonoBehaviour
         playerFirstName = names[Random.Range(0, names.Length)];
         playerLastName = secondNames[Random.Range(0,secondNames.Length)];
         Age = Random.Range(20, 34);
-        TraitIndex = Random.Range(0, 3);
+        TraitIndex = Random.Range(0, 8);
         //ImageCharacterPortrait = Random.Range(0, 7);
         ImageCharacterPortrait = Random.Range(0, 30);
         GenerateContract();
@@ -159,7 +159,7 @@ public class Player : MonoBehaviour
     private void GeneratePlayerByTier(int minLow, int maxLow, int minHigh, int maxHigh)
     {
         // Primeiro: Portrait e Personality
-        TraitIndex = Random.Range(0, 8);
+        TraitIndex = Random.Range(0, 9);
         ImageCharacterPortrait = Random.Range(0, 80); // 0 a 35
         Personality = Random.Range(1, 6); // 1 a 5
         int traitBonus = 5;

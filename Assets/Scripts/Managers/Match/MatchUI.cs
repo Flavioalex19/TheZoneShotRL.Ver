@@ -365,21 +365,25 @@ public class MatchUI : MonoBehaviour
         }
         for (int i = 0; i < 4; i++)
         {
-            _activeAwayPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].playerLastName.ToString();
-            _activeAwayPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].PointsMatch.ToString();
-            _activeAwayPlayers.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].J_Number.ToString();
-            if (_matchManager.AwayTeam.playersListRoster[i].HasTheBall)
+            if(_matchManager.HomeTeam== gameManager.playerTeam)
             {
-                _activeAwayPlayers.GetChild(i).GetChild(3).gameObject.SetActive(true);
-                //print(_matchManager.HomeTeam.playersListRoster[i] + "Here DUDE");
+                _activeAwayPlayers.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].playerLastName.ToString();
+                _activeAwayPlayers.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].PointsMatch.ToString();
+                _activeAwayPlayers.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].J_Number.ToString();
+                if (_matchManager.AwayTeam.playersListRoster[i].HasTheBall)
+                {
+                    _activeAwayPlayers.GetChild(i).GetChild(3).gameObject.SetActive(true);
+                    //print(_matchManager.HomeTeam.playersListRoster[i] + "Here DUDE");
+                }
+                else
+                {
+                    _activeAwayPlayers.GetChild(i).GetChild(3).gameObject.SetActive(false);
+                }
+                _activeAwayPlayers.GetChild(i).GetChild(4).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].CurrentStamina.ToString();
+                _activeAwayPlayers.GetChild(i).GetChild(6).GetChild(0).GetComponent<Image>().fillAmount =
+                    (float)_matchManager.AwayTeam.playersListRoster[i].CurrentStamina / _matchManager.AwayTeam.playersListRoster[i].MaxStamina;
             }
-            else
-            {
-                _activeAwayPlayers.GetChild(i).GetChild(3).gameObject.SetActive(false);
-            }
-            _activeAwayPlayers.GetChild(i).GetChild(4).GetComponent<TextMeshProUGUI>().text = _matchManager.AwayTeam.playersListRoster[i].CurrentStamina.ToString();
-            _activeAwayPlayers.GetChild(i).GetChild(6).GetChild(0).GetComponent<Image>().fillAmount =
-                (float)_matchManager.AwayTeam.playersListRoster[i].CurrentStamina / _matchManager.AwayTeam.playersListRoster[i].MaxStamina;
+            
 
         }
         for (int i = 0; i < 4; i++)
