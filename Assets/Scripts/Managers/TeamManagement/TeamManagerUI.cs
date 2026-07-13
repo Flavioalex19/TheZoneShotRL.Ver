@@ -1459,7 +1459,7 @@ public class TeamManagerUI : MonoBehaviour
         //_training_assistancePortrait.sprite = _training_AssistanceSprite;
         if (isOn)
         {
-            portaritTransform.GetChild(0).gameObject.SetActive(true);
+            //portaritTransform.GetChild(0).gameObject.SetActive(true);
         }
         
     }
