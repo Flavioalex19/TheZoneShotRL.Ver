@@ -203,6 +203,10 @@ public class MatchUI : MonoBehaviour
 
     [Header("Crowd")]
     [SerializeField] Image material_crowd;
+
+    [Header("Zball")]
+    [SerializeField] GameObject go_ZBall;
+    [SerializeField] Transform transform_zBallPostionOff;
     //debug 
     [SerializeField] Transform debugTest;
     private void Awake()
@@ -1034,5 +1038,29 @@ public class MatchUI : MonoBehaviour
         // Garante que chegue exatamente no valor final
         currentAwayHpVisual = targetHp;
         image_offensivePanel_awayTeamHpBARSecondary.fillAmount = targetHp / 100f;
+    }
+    //mpve zBall
+    public void MoveZball( int targetIndex, Player parentTransform,  float duration = 0.5f)
+    {
+        Transform startPos = null;
+        Transform endPos = transform_ActiveHomePlayers.GetChild(targetIndex);
+        for (int i = 0; i < _matchManager.HomeTeam.playersListRoster.Count; i++)
+        {
+            if (_matchManager.HomeTeam.playersListRoster[i] == parentTransform)
+            {
+                startPos = transform_ActiveHomePlayers.transform.GetChild(i);
+            }
+        }
+
+        go_ZBall.transform.position = startPos.position;
+        if (go_ZBall == null || endPos == null)
+        {
+            Debug.LogWarning("MoveUIObject: Um dos Transforms está nulo!");
+            return;
+        }
+
+        StartCoroutine(MoveCoroutine(go_ZBall.transform, endPos.position, duration));
+        go_ZBall.transform.position = transform_zBallPostionOff.position;
+        
     }
 }

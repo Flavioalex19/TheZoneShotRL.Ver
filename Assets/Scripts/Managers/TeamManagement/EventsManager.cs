@@ -22,7 +22,7 @@ public class EventsManager : MonoBehaviour
     public Image eventImage0;
 
     public Image eventImage1;
-
+     public TextMeshProUGUI eventText;
 
     Player playerSelected;
 
@@ -368,7 +368,7 @@ public class EventsManager : MonoBehaviour
             EventChoiceButtonsTransform.GetChild(1).GetComponent<Image>().sprite = spriteList[event1.btnIndex1];
         }
 
-        GameObject.Find("EventText").GetComponent<TextMeshProUGUI>().text = event1.Description.ToString();
+        /*GameObject.Find("EventDescriptionText").GetComponent<TextMeshProUGUI>().text*/ eventText.text= event1.Description.ToString();
     }
 
     public void AddOnClick(EventOption eventOption, int indexOfChoice)

@@ -262,9 +262,9 @@ public class SaveSystem : MonoBehaviour
             team.ArenaLvl = 0;
             team.MedicalLvl = 0;
             team.SalaryCap = team.fixSalaryCap;
-            
+            team._schedule.Clear();
             File.Delete(filePath);
-            Debug.Log($"Save file for team {teamName} has been deleted.");
+            //Debug.Log($"Save file for team {teamName} has been deleted.");
         }
         else
         {

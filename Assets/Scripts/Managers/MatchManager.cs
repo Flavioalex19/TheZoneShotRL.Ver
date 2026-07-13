@@ -133,6 +133,10 @@ public class MatchManager : MonoBehaviour
     [SerializeField] public int awayHP;
     //charge
     [SerializeField]bool isOnChargeLimit = false;
+
+    [Header("ZballOFFESIVE")]
+    [SerializeField] GameObject go_Zball;
+
     //UI Elemens test
     [Header("Debugs")]
     [SerializeField] TextMeshProUGUI _debugTimeoutText;
@@ -866,6 +870,7 @@ public class MatchManager : MonoBehaviour
                     //Lose Stamina
                     StaminaLossByAction(playerWithTheBall);
                     yield return new WaitForSeconds(1f);
+                    
                     if (IsFastforward == false)
                     {
                         if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
@@ -873,6 +878,17 @@ public class MatchManager : MonoBehaviour
                     if (MakePassToTeammate(passPlayerIndex))
                     {
                         RegisterSuccess();
+                        if (IsFastforward == false)
+                        {
+                            int passDirectionIdex=0;
+                            for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
+                            {
+                                if (playerWithTheBall == HomeTeam.playersListRoster[i]) passDirectionIdex = i;
+                            }
+                            
+                            //_matchUI.MoveZball(passPlayerIndex,
+                               // passDirectionIdex);
+                        }
                         if (IsFastforward == false)
                         {
                             if (!isSimulation) yield return new WaitForSeconds(_actionTimer);
@@ -1139,7 +1155,6 @@ public class MatchManager : MonoBehaviour
             }
             
         }
-        //currentGamePossessons--;
     }
     void ResetChoices()
     {

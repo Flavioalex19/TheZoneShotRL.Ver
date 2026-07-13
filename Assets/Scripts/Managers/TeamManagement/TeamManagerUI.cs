@@ -261,7 +261,7 @@ public class TeamManagerUI : MonoBehaviour
     [Header("GameOverPanel")]
     [SerializeField] GameObject go_playerGameOverFiredPanel;
     [SerializeField] Button btn_go_ReturnToMainTitle;
-    bool isGameOver = false;
+    [SerializeField] bool isGameOver = false;
 
     [Header("UI")]
     [SerializeField]TextMeshProUGUI WeekText;
@@ -302,6 +302,7 @@ public class TeamManagerUI : MonoBehaviour
     }
     void Start()
     {
+        if (leagueManager.Week <= 1) isGameOver = false;
         gb_optiosPanel.SetActive(false);
         if (leagueManager.isGameOver)
         {
