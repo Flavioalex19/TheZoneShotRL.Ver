@@ -612,7 +612,7 @@ public class LeagueManager : MonoBehaviour
             return;
         }
 
-        teamManagerUI._freeAgents_panel.SetActive(false);   // Note: você vai precisar declarar essa variável no LeagueManager ou acessar via teamManagerUI
+        //teamManagerUI._freeAgents_panel.SetActive(false);   // Note: você vai precisar declarar essa variável no LeagueManager ou acessar via teamManagerUI
 
         if (gameManager.playerTeam != null)
         {
