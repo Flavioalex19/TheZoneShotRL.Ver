@@ -45,7 +45,7 @@ public class MatchUI : MonoBehaviour
     
     Substitutions _substitutions;
     [Header("Substitutions")]
-    [SerializeField] GameObject _panel_SubsPanel;
+    [SerializeField] public GameObject _panel_SubsPanel;
     [SerializeField] TextMeshProUGUI text_playerStarter;
     [SerializeField] TextMeshProUGUI text_playerBench;
     [SerializeField] TextMeshProUGUI text_CurrentDefensiveStyle;
@@ -278,7 +278,7 @@ public class MatchUI : MonoBehaviour
         if(_matchManager.IsOnTimeout == true)
         {
             //print("Here");
-            _panel_SubsPanel.SetActive(true);
+            //_panel_SubsPanel.SetActive(true);
         }
         if (_matchManager.HomeTeam.hasHDefense)
         {

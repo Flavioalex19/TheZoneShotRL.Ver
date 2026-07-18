@@ -1141,7 +1141,9 @@ public class MatchManager : MonoBehaviour
                 }
                 else if(_canCallTimeout == false)
                 {
+                    _matchUI._panel_SubsPanel.SetActive(true);
                     if (!isSimulation) yield return StartCoroutine(WaitForTimeOut());
+                    _matchUI._panel_SubsPanel.SetActive(false);
                     //CheckAndSwapLowStaminaPlayers(AwayTeam);
                     consecutiveSuccesses = 0;
                     for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
@@ -2024,6 +2026,7 @@ public class MatchManager : MonoBehaviour
         {
             finalChance *= .90f; 
         }
+        finalChance *= shootingBuffMultiplier;
         return Mathf.Clamp(finalChance, 0.20f, 0.93f);
     }
     float ActivateSpecialAttk(bool isPercentage)
@@ -2396,10 +2399,11 @@ public class MatchManager : MonoBehaviour
         // BUFF DO PASSE (facilitador forte)
         float passBuffMultiplier = 1f + (buff_Pass / 100f);        // ex: buff_Pass = 20  +20%
 
-        float finalChance = baseChance * difficulty * passBuffMultiplier;
-
+        //float finalChance = baseChance * difficulty * passBuffMultiplier;
+        float finalChance = baseChance * difficulty;
         float staminaFactor = GetStaminaMultiplier(playerWithTheBall.CurrentStamina);
         finalChance *= staminaFactor;
+        finalChance *= passBuffMultiplier;
         finalChance = Mathf.Clamp(finalChance, 0.38f, 0.94f);
 
         if (UnityEngine.Random.value > finalChance)
@@ -2470,7 +2474,7 @@ public class MatchManager : MonoBehaviour
         float finalChance = baseJukeChance * difficulty;
 
         float jukeBuffMultiplier = 1f + (buff_Juke / 100f);
-        finalChance *= jukeBuffMultiplier * (1f + bonus / 100f);
+        //finalChance *= jukeBuffMultiplier * (1f + bonus / 100f);
 
         float staminaFactor = GetStaminaMultiplier(offense.CurrentStamina);
         finalChance *= staminaFactor;
@@ -2511,7 +2515,7 @@ public class MatchManager : MonoBehaviour
         {
             finalChance *= .90f; // -10% de chance
         }
-
+        finalChance *= jukeBuffMultiplier * (1f + bonus / 100f);
         finalChance = Mathf.Clamp(finalChance, 0.28f, 0.92f);
         jukePercentage = finalChance;
 

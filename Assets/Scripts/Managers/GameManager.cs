@@ -164,22 +164,9 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        /*
-        for (int i = 0; i < leagueTeams.Count; i++)
-        {
-            if (leagueTeams[i].IsPlayerTeam)
-            {
-                //leagueTeams[i].CreateEquips();
-                playerTeam = leagueTeams[i];
-                //leagueTeams[0].ActivatePlayerTeam();
-            }
-        }
-        */
         // If the ESC key is pressed and there is a save file, clear the save
         if (Input.GetKeyDown(KeyCode.Tab) && IsSaveFileExists(leagueTeams[0].TeamName) && IsSaveFileExists(leagueTeams[1].TeamName))
         {
-            //saveSystem.ClearSave(leagueTeams[0].TeamName, leagueTeams[0]);
-            //saveSystem.ClearSave(leagueTeams[1].TeamName, leagueTeams[1]);
             for (int i = 0; i < leagueTeams.Count; i++)
             {
                 saveSystem.ClearSave(leagueTeams[i].TeamName, leagueTeams[i]);
