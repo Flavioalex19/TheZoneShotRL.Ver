@@ -1032,10 +1032,12 @@ public class TeamManagerUI : MonoBehaviour
     void SetSeasonStats(int index)
     {
         transform_seasonStatsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].CareerGamesPlayed.ToString();
-        transform_seasonStatsArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = 
-            (gameManager.playerTeam.playersListRoster[index].CareerPoints/ gameManager.playerTeam.playersListRoster[index].CareerGamesPlayed).ToString();
-        transform_seasonStatsArea.GetChild(2).GetComponent<TextMeshProUGUI>().text = 
-            (gameManager.playerTeam.playersListRoster[index].FieldGoalsMade/ gameManager.playerTeam.playersListRoster[index].FieldGoalsAtt).ToString();
+        if (gameManager.playerTeam.playersListRoster[index].CareerGamesPlayed > 0) transform_seasonStatsArea.GetChild(1).GetComponent<TextMeshProUGUI>().text =
+            (gameManager.playerTeam.playersListRoster[index].CareerPoints / gameManager.playerTeam.playersListRoster[index].CareerGamesPlayed).ToString();
+        else transform_seasonStatsArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = 0.ToString();
+        if (gameManager.playerTeam.playersListRoster[index].FieldGoalsAtt > 0) transform_seasonStatsArea.GetChild(2).GetComponent<TextMeshProUGUI>().text =
+            (gameManager.playerTeam.playersListRoster[index].FieldGoalsMade / gameManager.playerTeam.playersListRoster[index].FieldGoalsAtt).ToString();
+        else transform_seasonStatsArea.GetChild(2).GetComponent<TextMeshProUGUI>().text = "0";
     }
     public void AnimCallTeamOpen()
     {
