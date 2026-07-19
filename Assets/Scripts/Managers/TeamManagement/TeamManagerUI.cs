@@ -1448,9 +1448,34 @@ public class TeamManagerUI : MonoBehaviour
                 gameManager.playerTeam.playersListRoster[i].playerLastName.ToString();
             _training_btns.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].ovr.ToString();
             _training_btns.GetChild(i).GetChild(2).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].Age.ToString();
-            _training_btns.GetChild(i).GetChild(3).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[i].ContractYears.ToString();
+            //personality
+            Sprite personalitySprite = null;
+            switch (gameManager.playerTeam.playersListRoster[i].Personality)
+            {
+                case 1:
+                    personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_01");
+                    break;
+                case 2:
+                    personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_02");
+                    break;
+                case 3:
+                    personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_03");
+                    break;
+
+                case 4:
+                    personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_04");
+                    break;
+
+                case 5:
+                    personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_05");
+                    break;
+
+                default:
+                    break;
+            }
+            _training_btns.GetChild(i).GetChild(3).GetComponent<Image>().sprite = personalitySprite;
             int index = gameManager.playerTeam.playersListRoster.IndexOf(gameManager.playerTeam.playersListRoster[i]);
-            _training_btns.GetChild(i).GetComponent<Button>().onClick.AddListener(() => trainingManager.SetPlayerToTrainIndex(index/*, _textPlayerSelected, _textDrillSelected*/));
+            _training_btns.GetChild(i).GetComponent<Button>().onClick.AddListener(() => trainingManager.SetPlayerToTrainIndex(index));
         }
         
     }

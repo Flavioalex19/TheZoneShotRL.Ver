@@ -255,16 +255,6 @@ public class MatchUI : MonoBehaviour
         {
             _actionArea.SetActive(false);
         }
-        /*
-        if (_matchManager.CanChooseDefenseAction)
-        {
-            _actionDefense.SetActive(true);
-        }
-        else
-        {
-            _actionDefense.SetActive(false);
-        }
-        */
         HomeTeamHp();
         //Debug Area
         if (GameObject.Find("DebugTextHome"))
@@ -280,14 +270,7 @@ public class MatchUI : MonoBehaviour
             //print("Here");
             //_panel_SubsPanel.SetActive(true);
         }
-        if (_matchManager.HomeTeam.hasHDefense)
-        {
-            text_CurrentDefensiveStyle.text = "Aggressive";
-        }
-        else
-        {
-            text_CurrentDefensiveStyle.text = "Normal";
-        }
+      
 
         for (int i = 0; i < debugTest.transform.childCount; i++)
         {
