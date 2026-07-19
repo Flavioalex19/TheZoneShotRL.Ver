@@ -1362,7 +1362,6 @@ public class TeamManagerUI : MonoBehaviour
             go_tradeFinished.SetActive(true);
             gameManager.playerTeam.CurrentBudget -= trade_costOfTrade;
             text_trade_frontoffeicePoints.text = gameManager.playerTeam.CurrentBudget.ToString();
-            //print("current points: " + gameManager.playerTeam.CurrentBudget);
             for (int i = 0; i < gameManager.leagueTeams.Count; i++)
             {
                 gameManager.saveSystem.SaveTeamInfo(gameManager.leagueTeams[i]);
@@ -1372,36 +1371,10 @@ public class TeamManagerUI : MonoBehaviour
         {
             text_tradeWarningForNoTrade.text = "Not enought points";
         }
-        
-
-
     }
     int TradeCalculateCost(Player player, Player targetPlayer)
     {
-        /*
-        int ovr = player.SetOVR();
-        int baseCost;
-        if (ovr < 70)
-        {
-            baseCost = 10;
-        }
-        else if (ovr <= 80)
-        {
-            baseCost = 20;
-        }
-        else if (ovr <= 90)
-        {
-            baseCost = 30;
-        }
-        else
-        {
-            baseCost = 40;
-        }
-        int financeLvl = gameManager.playerTeam.FinancesLvl;  // Assuma que existe essa propriedade (0-7)
-        int discount = financeLvl;  // Simples: reduz por lvl (max -7)
-        int cost = Mathf.Max(0, baseCost - discount);  // Evita negativo
-        return cost;
-        */
+        
         if (player == null || targetPlayer == null)
             return 500;
 
@@ -1431,13 +1404,11 @@ public class TeamManagerUI : MonoBehaviour
         text_tradeWarningForNoTrade.text = "No trade options available";
 
         // Limpa imagens
-        if (image_trade_playerReceivePortrait != null) image_trade_playerReceivePortrait.sprite = sprite_transparent;   // ou seu sprite transparente
+        if (image_trade_playerReceivePortrait != null) image_trade_playerReceivePortrait.sprite = sprite_transparent;   
         if (image_trade_receiveArchtype != null) image_trade_receiveArchtype.sprite = sprite_transparent;
         if (image_trade_receivePersonality != null) image_trade_receivePersonality.sprite = sprite_transparent;
         if (image_trade_receiveTeamImage != null) image_trade_receiveTeamImage.sprite = sprite_transparent;
 
-        // Opcional: desativa o painel de receive se quiser
-        // TradeReceivePlayerArea.SetActive(false);
     }
     //Training
     public void SetTrainingBtns()
@@ -1469,7 +1440,6 @@ public class TeamManagerUI : MonoBehaviour
                 case 5:
                     personalitySprite = Resources.Load<Sprite>("2D/Player Personalities/UI_icon_Personalite_05");
                     break;
-
                 default:
                     break;
             }
