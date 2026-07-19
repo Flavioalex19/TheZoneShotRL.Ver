@@ -192,6 +192,8 @@ public class MatchUI : MonoBehaviour
     [Header("Defensive State")]
     [SerializeField] Image image_defensive_AwayTeamAdrenalineBar;
     [SerializeField] Image image_defensive_HomeTeamHpBar;
+    [SerializeField] GameObject go_awayAdreanlineBar;
+    [SerializeField] GameObject go_homeTeamHpBar;
 
     [Header("Defensive Panel")]
     [SerializeField] TextMeshProUGUI text_defensivePanel_ShootPerc;
@@ -250,11 +252,11 @@ public class MatchUI : MonoBehaviour
 
         if(_matchManager.CanChooseAction)
         {
-            _actionArea.SetActive(true);
+            //_actionArea.SetActive(true);
         }
         else
         {
-            _actionArea.SetActive(false);
+            //_actionArea.SetActive(false);
         }
         HomeTeamHp();
         //Debug Area
@@ -544,14 +546,14 @@ public class MatchUI : MonoBehaviour
     {
         float chance = value;
         int roundNumber = Mathf.RoundToInt(chance * 100f);
-        text_shootPercentage.text = roundNumber.ToString() + "%";
+        //text_shootPercentage.text = roundNumber.ToString() + "%";
         text_offensiveScorePercentage.text = roundNumber.ToString() + "%";
     }
     public void SetPassPercentage(float value)
     {
         float chance = value;
         int roundNumber = Mathf.RoundToInt(chance * 100f);
-        text_passPercentage.text = roundNumber.ToString() + "%";
+        //text_passPercentage.text = roundNumber.ToString() + "%";
         text_offensivePassPercentage.text = roundNumber.ToString() + "%"; 
     }
     public void SetJukePercentage(float value)
@@ -625,12 +627,15 @@ public class MatchUI : MonoBehaviour
                 //print(transform_ActiveHomePlayers.GetChild(i).GetChild(8).name);
                 
             }
-            
+            OnOffMoveblePlayers(false);
+
+
         }
         else
         {
             env_offensive.SetActive(false);
             env_defensive.SetActive(true);
+            OnOffMoveblePlayers(true);
         }
     }
     public void CallAnim()
@@ -640,33 +645,21 @@ public class MatchUI : MonoBehaviour
     }
     public void PlayerWithBallButtonsOnOff()
     {
-        //print("Check btns");
-        //print("playerWithTheBall = " + _matchManager.playerWithTheBall.playerLastName);
         for (int i = 0; i < 4; i++)
         {
             if (_matchManager.HomeTeam.playersListRoster[i] == _matchManager.playerWithTheBall)
             {
-                //off_Animator = transform_ActiveHomePlayers.GetChild(i).GetChild(7).GetComponent<Animator>();
-                //print(animator + "New");
                 transform_ActiveHomePlayers.GetChild(i).GetChild(7).gameObject.SetActive(true);
                 transform_ActiveHomePlayers.GetChild(i).GetChild(5).gameObject.SetActive(true);
                 transform_ActiveHomePlayers.GetChild(i).GetChild(3).gameObject.SetActive(true);
-                //off_Animator.enabled = true;
-                //off_Animator.SetBool("On", true);
-                
-                
             }
             else
             {
-                //Animator animator = transform_ActiveHomePlayers.GetChild(i).GetChild(7).GetComponent<Animator>();
                 transform_ActiveHomePlayers.GetChild(i).GetChild(7).gameObject.SetActive(false);
                 transform_ActiveHomePlayers.GetChild(i).GetChild(5).gameObject.SetActive(false);
                 transform_ActiveHomePlayers.GetChild(i).GetChild(3).gameObject.SetActive(false);
-                //animator.SetBool("On", false);
-                //animator.Update(0f);  // Força update imediato do state machine
                 
             }
-            //print(_matchManager.HomeTeam.playersListRoster[i].playerLastName + " this is his zone: " + _matchManager.HomeTeam.playersListRoster[i].CurrentZone);
         }
 
     }
@@ -686,7 +679,6 @@ public class MatchUI : MonoBehaviour
             else
             {
                 transform_ActiveHomePlayers.GetChild(i).position =
-                   /*transform_ActiveHomePlayers.GetChild(i).GetChild(6).GetChild(0).position;*/
                    transform_playersZones.GetChild(i).GetChild(0).GetChild(_matchManager.HomeTeam.playersListRoster[i].CurrentZone).position;
             }
             if(_matchManager.HomeTeam.playersListRoster[i].CurrentZone > 1)
@@ -1054,5 +1046,7 @@ public class MatchUI : MonoBehaviour
         HomeTeamActive_Starters.gameObject.SetActive(value);
         AwayTeamActive_Starters.gameObject.SetActive(value);
         scoreboardAreaDef.SetActive(value);
+        go_awayAdreanlineBar.SetActive(value);
+        go_homeTeamHpBar.SetActive(value);
     }
 }

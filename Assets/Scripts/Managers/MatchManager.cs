@@ -559,8 +559,9 @@ public class MatchManager : MonoBehaviour
             }
             adrenaline_addUp = 12;
             //AwayTeam.AdrenalineBar = 0;
+            //_matchUI.OnOffMoveblePlayers(true);
             if (!isSimulation) _matchUI.OffesnivePanelOnOff(false);
-            _matchUI.OnOffMoveblePlayers(true);
+            
             CanChooseAction = false;
             
             ai_currentNumberOfPasses = ai_maxNumberOfPasses;
@@ -577,7 +578,7 @@ public class MatchManager : MonoBehaviour
             //_matchUI._actionDefense.SetActive(true);
             while (true)
             {
-                if (!isSimulation) _matchUI.percentagePanel.SetActive(false);
+                //if (!isSimulation) _matchUI.percentagePanel.SetActive(false);
                 if (!isSimulation) _matchUI.HomeTeamHp();
                 if(!isSimulation) _matchUI.AwayTeamAdrenalineBar();
                 CanChooseDefenseAction = true;
@@ -772,7 +773,7 @@ public class MatchManager : MonoBehaviour
         }
         else if (teamWithball.IsPlayerTeam)
         {
-            _matchUI.OnOffMoveblePlayers(false);
+            //_matchUI.OnOffMoveblePlayers(false);
             //_matchUI.OffesnivePanelOnOff(true);
             for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
             {
@@ -817,7 +818,7 @@ public class MatchManager : MonoBehaviour
             {
                 _matchUI.TimeoutStartsUpdateBtns();
                 if (!isSimulation) _matchUI.ActivateDefensivePanel();
-                if (!isSimulation) _matchUI.percentagePanel.SetActive(true);
+                //if (!isSimulation) _matchUI.percentagePanel.SetActive(true);
                 if (!isSimulation) _matchUI.PlayerWithTheBallOff();
                 if (!isSimulation) _matchUI.PlayerWithBallButtonsOnOff();
                 if (!isSimulation) _matchUI.UpdatePlayerPlacements();
@@ -1363,6 +1364,7 @@ public class MatchManager : MonoBehaviour
     void SwitchPossession()
     {
         if (!isSimulation) _matchUI.OffesnivePanelOnOff(false);
+        //if (!isSimulation) if(teamWithball!=HomeTeam)_matchUI.OnOffMoveblePlayers(true);
         if (!isSimulation) AISub();
         ControlStamina(HomeTeam);
         ControlStamina(AwayTeam);
@@ -1476,6 +1478,7 @@ public class MatchManager : MonoBehaviour
         if (_canCallTimeout)
         {
             _canCallTimeout = false;
+            _matchUI._panel_SubsPanel.SetActive(true);
             _debugTimeoutText.text = "Timeout Called!";
         }
 
