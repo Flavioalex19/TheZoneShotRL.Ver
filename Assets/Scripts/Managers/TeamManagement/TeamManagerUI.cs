@@ -75,6 +75,7 @@ public class TeamManagerUI : MonoBehaviour
     [SerializeField] Image image_TeamPlayerArchtype;
     [SerializeField] Transform transform_TeamPlayerAllStats;
     [SerializeField] Animator _animator_team;
+    [SerializeField] Transform transform_seasonStatsArea;
     Player currentPlayer;
     Sprite _sprite;
     
@@ -1026,6 +1027,15 @@ public class TeamManagerUI : MonoBehaviour
                 break;
         }
         image_teamPlayerPersonality.sprite = personalitySprite;
+        SetSeasonStats(index);
+    }
+    void SetSeasonStats(int index)
+    {
+        transform_seasonStatsArea.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameManager.playerTeam.playersListRoster[index].CareerGamesPlayed.ToString();
+        transform_seasonStatsArea.GetChild(1).GetComponent<TextMeshProUGUI>().text = 
+            (gameManager.playerTeam.playersListRoster[index].CareerPoints/ gameManager.playerTeam.playersListRoster[index].CareerGamesPlayed).ToString();
+        transform_seasonStatsArea.GetChild(2).GetComponent<TextMeshProUGUI>().text = 
+            (gameManager.playerTeam.playersListRoster[index].FieldGoalsMade/ gameManager.playerTeam.playersListRoster[index].FieldGoalsAtt).ToString();
     }
     public void AnimCallTeamOpen()
     {
