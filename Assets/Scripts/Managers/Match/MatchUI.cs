@@ -22,6 +22,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] Transform AwayTeamActive_Starters;
     [SerializeField] Transform _activeHomePlayers;
     [SerializeField] Transform _activeAwayPlayers;
+    [SerializeField] GameObject scoreboardAreaDef;
 
     [Header("BenchPlayers")]
     [SerializeField] Transform _benchPlayers;
@@ -1045,5 +1046,13 @@ public class MatchUI : MonoBehaviour
         StartCoroutine(MoveCoroutine(go_ZBall.transform, endPos.position, duration));
         go_ZBall.transform.position = transform_zBallPostionOff.position;
         
+    }
+
+    //Turn off moveble players
+    public void OnOffMoveblePlayers(bool value)
+    {
+        HomeTeamActive_Starters.gameObject.SetActive(value);
+        AwayTeamActive_Starters.gameObject.SetActive(value);
+        scoreboardAreaDef.SetActive(value);
     }
 }

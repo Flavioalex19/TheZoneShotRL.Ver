@@ -549,6 +549,7 @@ public class MatchManager : MonoBehaviour
     IEnumerator HandlePossession()
     {
         sfxManager.ChangeCrowd(HomeTeam,AwayTeam);
+        
         if (isSimulation) AISub();
         if( teamWithball.IsPlayerTeam == false)
         {
@@ -559,6 +560,7 @@ public class MatchManager : MonoBehaviour
             adrenaline_addUp = 12;
             //AwayTeam.AdrenalineBar = 0;
             if (!isSimulation) _matchUI.OffesnivePanelOnOff(false);
+            _matchUI.OnOffMoveblePlayers(true);
             CanChooseAction = false;
             
             ai_currentNumberOfPasses = ai_maxNumberOfPasses;
@@ -770,6 +772,7 @@ public class MatchManager : MonoBehaviour
         }
         else if (teamWithball.IsPlayerTeam)
         {
+            _matchUI.OnOffMoveblePlayers(false);
             //_matchUI.OffesnivePanelOnOff(true);
             for (int i = 0; i < HomeTeam.playersListRoster.Count; i++)
             {
