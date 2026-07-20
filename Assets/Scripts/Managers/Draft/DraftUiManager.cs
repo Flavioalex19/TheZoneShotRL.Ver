@@ -22,6 +22,7 @@ public class DraftUiManager : MonoBehaviour
     [SerializeField] Animator animator_transition;
     [SerializeField] BtnSelectionHandler btn_selectionHandler;
     [SerializeField] Image image_playerTeam;
+    [SerializeField] Image image_teamStyle;
     private int currentTeamIndex = 0;
     private int totalPicksPerTeam = 8;
     private int extraPlayersForPlayer = 15;
@@ -38,6 +39,7 @@ public class DraftUiManager : MonoBehaviour
         Sprite sprite;
         sprite = Resources.Load<Sprite>("2D/Team Logos/" + _gameManager.playerTeam.TeamName);
         image_playerTeam.sprite = sprite;
+        TeamStyleUpdate();
         GenerateDraftPlayers();
     }
 
@@ -306,5 +308,16 @@ public class DraftUiManager : MonoBehaviour
         animator_transition.SetTrigger("Go");
         yield return new WaitForSeconds(2.5f);
         SceneManager.LoadScene("MyTeamScreen");
+    }
+    public void TeamStyleUpdate()
+    {
+        //imagem
+        Sprite sprite = null;
+        string style;
+        style = _gameManager.playerTeam._teamStyle.ToString();
+        sprite = Resources.Load<Sprite>("2D/Styles/" + style);
+        image_teamStyle.sprite = sprite;
+        //image_timeout_style.sprite = sprite;
+        //print(style + " this is the style");
     }
 }

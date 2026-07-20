@@ -1048,5 +1048,6 @@ public class MatchUI : MonoBehaviour
         scoreboardAreaDef.SetActive(value);
         go_awayAdreanlineBar.SetActive(value);
         go_homeTeamHpBar.SetActive(value);
+        _benchPlayers.gameObject.SetActive(value);
     }
 }
