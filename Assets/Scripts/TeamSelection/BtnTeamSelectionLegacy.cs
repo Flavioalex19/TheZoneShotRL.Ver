@@ -29,31 +29,31 @@ public class BtnTeamSelectionLegacy : MonoBehaviour
         if(teamSelectionManager.legacy_currentPoints + cost < 10/*max points*/)
         {
             Btn_legacy.interactable = false;
-            teamSelectionManager.legacy_currentPoints += cost;
-            teamSelectionManager.text_legacyCurrentPoints.text = teamSelectionManager.legacy_currentPoints.ToString();
+            //teamSelectionManager.legacy_currentPoints += cost;
+            //teamSelectionManager.text_legacyCurrentPoints.text = teamSelectionManager.legacy_currentPoints.ToString();
             switch (legacyIndex)
             {
                 case 1:
-                    if (leagueManager.CanDraftlvl1) leagueManager.isOnDraftLVL0 = true;
-                    else print("NO DRAFT 1");
+                    if (leagueManager.CanDraftlvl1) { leagueManager.isOnDraftLVL0 = true; teamSelectionManager.legacy_currentPoints += cost; }
                     break;
                 case 2:
-                    if (leagueManager.CanDraftlvl2) leagueManager.isOnDraftLVL1 = true;
+                    if (leagueManager.CanDraftlvl2) { leagueManager.isOnDraftLVL1 = true; teamSelectionManager.legacy_currentPoints += cost; }
                     break;
                 case 3:
-                    if (leagueManager.CanDraftlvl3)leagueManager.isOnDraftLVL2 = true;
+                    if (leagueManager.CanDraftlvl3) { leagueManager.isOnDraftLVL2 = true; teamSelectionManager.legacy_currentPoints += cost; }
                     break;
                 case 4:
-                    if(leagueManager.CanDrafSpPlayer0)leagueManager.CanCreateLegend0 = true;
+                    if (leagueManager.CanDrafSpPlayer0) {leagueManager.CanCreateLegend0 = true; teamSelectionManager.legacy_currentPoints += cost; }
                     break;
                 case 5:
-                    if(leagueManager.CanDraftSpPlayer1)leagueManager.CanCreateLegend1 = true;
+                    if (leagueManager.CanDraftSpPlayer1) { leagueManager.CanCreateLegend1 = true; teamSelectionManager.legacy_currentPoints += cost; }
                     break;
                 case 6:
-                    if (leagueManager.CanDraftSpPlayer4) leagueManager.CanCreateLegend4 = true;
+                    if (leagueManager.CanDraftSpPlayer4){leagueManager.CanCreateLegend4 = true; teamSelectionManager.legacy_currentPoints += cost;}
                     break;
 
             }
+            teamSelectionManager.text_legacyCurrentPoints.text = teamSelectionManager.legacy_currentPoints.ToString();
         }
         
 
