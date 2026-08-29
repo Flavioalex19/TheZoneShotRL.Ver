@@ -173,6 +173,8 @@ public class SaveSystem : MonoBehaviour
         team.bonus_Pass = teamData.bPass;
         team.bonus_Defense = teamData.bDefense;
 
+        team.ChemistryPts = teamData.ChemPts;
+
         // ---------- LOAD DOS JOGADORES ----------
         foreach (PlayerData pd in teamData.playersListData)
         {
@@ -263,6 +265,7 @@ public class SaveSystem : MonoBehaviour
             team.MedicalLvl = 0;
             team.SalaryCap = team.fixSalaryCap;
             team._schedule.Clear();
+            team.ChemistryPts = 0;
             File.Delete(filePath);
             //Debug.Log($"Save file for team {teamName} has been deleted.");
         }

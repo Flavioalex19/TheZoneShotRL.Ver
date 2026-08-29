@@ -118,6 +118,7 @@ public class TeamData
     public int bJuke;
     public int bPass;
     public int bDefense;
+    public int ChemPts;
 
     public TeamData(Team team, LeagueManager leagueManager)
     {
@@ -150,6 +151,7 @@ public class TeamData
         bJuke = team.bonus_Juke;
         bPass = team.bonus_Pass;
         bDefense = team.bonus_Defense;
+        ChemPts = team.ChemistryPts;
         foreach (Player player in team.playersListRoster)
         {
             playersListData.Add(new PlayerData(player));

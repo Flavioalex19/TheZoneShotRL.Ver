@@ -293,6 +293,8 @@ public class DraftUiManager : MonoBehaviour
     {
         for (int i = 0; i < _gameManager.leagueTeams.Count; i++)
         {
+            //Depoois colocar um legacy para começar com mais chemistry points
+            if (_gameManager.leagueTeams[i].IsPlayerTeam) _gameManager.leagueTeams[i].ChemistryPts = 50;
             _gameManager.saveSystem.SaveTeamInfo(_gameManager.leagueTeams[i]);
         }
         

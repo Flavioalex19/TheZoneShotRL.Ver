@@ -50,6 +50,7 @@ public class Team : MonoBehaviour
     public int TeamEquipmentLvl = 0;
     public int ArenaLvl = 0;
     public int MedicalLvl = 0;
+    public int ChemistryPts = 0;
     HashSet<int> usedNumbers = new HashSet<int>();//Numbers on the jersey
 
     #endregion
