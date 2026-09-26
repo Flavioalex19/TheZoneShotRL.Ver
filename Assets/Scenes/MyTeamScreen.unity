@@ -56428,7 +56428,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 300, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1373309051
 GameObject:
@@ -64382,6 +64382,20 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 7991671295931463106, guid: 4eadb914599490045b6e868759fb805d, type: 3}
   m_PrefabInstance: {fileID: 9206737586025361554}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1591599197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1591599194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c38cdcfadc3c27c478cc7336923af485, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChemistryBars
+  image_teamStats_ChemestryBar: {fileID: 0}
+  text_chmestryValue: {fileID: 0}
 --- !u!1 &1592173932
 GameObject:
   m_ObjectHideFlags: 0
@@ -90315,7 +90329,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2060209973689087726, guid: 4eadb914599490045b6e868759fb805d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1372477218}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8882560206898410769, guid: 4eadb914599490045b6e868759fb805d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1591599197}
   m_SourcePrefab: {fileID: 100100000, guid: 4eadb914599490045b6e868759fb805d, type: 3}
 --- !u!114 &9206737586025361555 stripped
 MonoBehaviour:
