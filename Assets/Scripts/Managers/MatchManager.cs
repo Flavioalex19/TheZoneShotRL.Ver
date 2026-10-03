@@ -1895,8 +1895,21 @@ public class MatchManager : MonoBehaviour
         }
 
         finalChance *= streakMultiplier;
-        // === 7. Clamp final (tensão) ===
-        return Mathf.Clamp(finalChance, 0.15f, 0.95f);
+
+        if (teamWithball.IsPlayerTeam)
+        {
+            float chemistry = teamWithball.ChemistryPts;
+            float chemistryBonus = 1f;
+            if (chemistry > 20f)
+            {
+                float t = Mathf.InverseLerp(20f, 100f, chemistry);
+                chemistryBonus = 1f + (t * t * 0.14f);
+            }
+            finalChance *= chemistryBonus;
+        }
+
+            // === 7. Clamp final (tensão) ===
+            return Mathf.Clamp(finalChance, 0.15f, 0.95f);
     }
     float ScoringEquation(Player offense, Player defense, int zone, int momentumModifier)
     {
@@ -2033,6 +2046,17 @@ public class MatchManager : MonoBehaviour
             finalChance *= .90f; 
         }
         finalChance *= shootingBuffMultiplier;
+        if (teamWithball.IsPlayerTeam)
+        {
+            float chemistry = teamWithball.ChemistryPts; // 0 a 100
+            float chemistryBonus = 1f;
+            if (chemistry > 20f)
+            {
+                float t = Mathf.InverseLerp(20f, 100f, chemistry); // 0 em 20, 1 em 100
+                chemistryBonus = 1f + (t * t * 0.14f); // ate +14% no 100
+            }
+            finalChance *= chemistryBonus;
+        }
         return Mathf.Clamp(finalChance, 0.20f, 0.93f);
     }
     float ActivateSpecialAttk(bool isPercentage)
@@ -2522,6 +2546,19 @@ public class MatchManager : MonoBehaviour
             finalChance *= .90f; // -10% de chance
         }
         finalChance *= jukeBuffMultiplier * (1f + bonus / 100f);
+
+        if (teamWithball.IsPlayerTeam)
+        {
+            float chemistry = teamWithball.ChemistryPts;
+            float chemistryBonus = 1f;
+            if (chemistry > 20f)
+            {
+                float t = Mathf.InverseLerp(20f, 100f, chemistry);
+                chemistryBonus = 1f + (t * t * 0.14f);
+            }
+            finalChance *= chemistryBonus;
+        }
+
         finalChance = Mathf.Clamp(finalChance, 0.28f, 0.92f);
         jukePercentage = finalChance;
 
