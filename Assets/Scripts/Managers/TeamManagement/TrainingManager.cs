@@ -243,7 +243,8 @@ public class TrainingManager : MonoBehaviour
             leagueManager.canTrain = false;
             teamManagerUI.SetTrainingGrade();
             player.UpdateOVR();
-            gameManager.playerTeam.CurrentBudget -= cost;
+            gameManager.playerTeam.CurrentBudget -= cost;//reduce budget
+            gameManager.playerTeam.ChemistryPts += 5;
             teamManagerUI.UpdateMoralAndPointsTexts();
             gameManager.saveSystem.SaveLeague();
             for (int i = 0; i < gameManager.leagueTeams.Count; i++)

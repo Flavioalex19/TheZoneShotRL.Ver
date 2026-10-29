@@ -1372,7 +1372,8 @@ public class TeamManagerUI : MonoBehaviour
             //leagueManager.canTrade = false;
             //turn oon panel
             go_tradeFinished.SetActive(true);
-            gameManager.playerTeam.CurrentBudget -= trade_costOfTrade;
+            gameManager.playerTeam.CurrentBudget -= trade_costOfTrade;//reduce budget
+            gameManager.playerTeam.ChemistryPts -= 25;
             text_trade_frontoffeicePoints.text = gameManager.playerTeam.CurrentBudget.ToString();
             for (int i = 0; i < gameManager.leagueTeams.Count; i++)
             {
